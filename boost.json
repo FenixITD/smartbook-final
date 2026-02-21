@@ -1,0 +1,9 @@
+{
+    "agents": [
+        "junie"
+    ],
+    "guidelines": true,
+    "packages": [
+        "laravel/fortify"
+    ]
+}
