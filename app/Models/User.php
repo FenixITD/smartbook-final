@@ -54,4 +54,22 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function initials(): string
+    {
+        if (empty($this->name)) {
+            return '';
+        }
+
+        $parts = explode(' ', trim($this->name));
+        $initials = [];
+
+        foreach ($parts as $part) {
+            if (! empty($part)) {
+                $initials[] = mb_strtoupper(mb_substr($part, 0, 1)).'.';
+            }
+        }
+
+        return implode(' ', $initials);
+    }
 }
