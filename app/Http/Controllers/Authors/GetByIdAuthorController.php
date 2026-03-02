@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Authors;
 
 use App\Models\Author;
@@ -21,7 +23,6 @@ readonly class GetByIdAuthorController
         }
 
         return response()->json([
-            'success' => true,
             'author' => $authorId,
         ]);
     }

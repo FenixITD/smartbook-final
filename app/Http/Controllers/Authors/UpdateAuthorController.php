@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Authors;
 
 use App\DTO\AuthorDTO;
@@ -20,7 +22,6 @@ readonly class UpdateAuthorController
         $updated = $this->service->execute($author, $dto);
 
         return response()->json([
-            'success' => true,
             'author' => $updated,
         ]);
     }

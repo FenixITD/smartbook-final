@@ -1,26 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Eloquent;
 
+use App\DTO\AuthorFiltersDTO;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
-use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class AuthorRepository implements AuthorRepositoryInterface
 {
-    public function getList(Request $request): LengthAwarePaginator
+    public function getList(AuthorFiltersDTO $filters): LengthAwarePaginator
     {
-        $search = $request->string('search')->nullable();
-        $perPage = $request->integer('per_page', 15);
-        $sortBy = $request->string('sort_by', 'name');
-        $sortDirection = $request->string('sort_direction', 'asc');
-
         $query = Author::query()
-            ->when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"));
+            ->when($filters->search, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"));
 
-        return $query->orderBy($sortBy, $sortDirection)
-            ->paginate($perPage);
+        return $query->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage);
     }
 
     public function getById(int $id): ?Author

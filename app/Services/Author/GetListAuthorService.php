@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Author;
 
+use App\DTO\AuthorFiltersDTO;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
-use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 readonly class GetListAuthorService
@@ -12,8 +14,8 @@ readonly class GetListAuthorService
         private AuthorRepositoryInterface $repository
     ) {}
 
-    public function execute(Request $request): LengthAwarePaginator
+    public function execute(AuthorFiltersDTO $filters): LengthAwarePaginator
     {
-        return $this->repository->getList($request);
+        return $this->repository->getList($filters);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Authors;
 
 use App\Models\Author;
@@ -17,7 +19,6 @@ readonly class DeleteAuthorController
         $this->service->execute($author);
 
         return response()->json([
-            'success' => true,
             'message' => 'Author deleted successfully',
         ]);
     }

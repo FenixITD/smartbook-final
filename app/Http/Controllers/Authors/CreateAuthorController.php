@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Authors;
 
 use App\DTO\AuthorDTO;
@@ -19,7 +21,6 @@ readonly class CreateAuthorController
         $author = $this->service->execute($dto);
 
         return response()->json([
-            'success' => true,
             'author' => $author,
         ], 201);
     }

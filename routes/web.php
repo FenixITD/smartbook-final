@@ -18,7 +18,7 @@ Route::view('dashboard', 'dashboard')
 Route::prefix('authors')->group(function (): void {
     Route::get('/', GetListAuthorController::class)->name('authors.list');
     Route::get('/{author}', GetByIdAuthorController::class)->name('authors.show');
-    Route::post('/', CreateAuthorController::class)->name('authors.store');
+    Route::post('/', CreateAuthorController::class)->name('authors.create');
     Route::put('/{author}', UpdateAuthorController::class)->name('authors.update');
     Route::delete('/{author}', DeleteAuthorController::class)->name('authors.delete');
 });

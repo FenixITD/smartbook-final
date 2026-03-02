@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Interfaces;
 
+use App\DTO\AuthorFiltersDTO;
 use App\Models\Author;
-use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface AuthorRepositoryInterface
 {
-    public function getList(Request $request): LengthAwarePaginator;
+    public function getList(AuthorFiltersDTO $filters): LengthAwarePaginator;
 
     public function getById(int $id): ?Author;
 
