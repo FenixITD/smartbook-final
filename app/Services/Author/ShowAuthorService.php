@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services\Author;
 
-use App\Models\Author;
+use App\DTO\Author\AuthorResponseDTO;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
-readonly class GetByIdAuthorService
+final readonly class ShowAuthorService
 {
     public function __construct(
         private AuthorRepositoryInterface $repository
     ) {}
 
-    public function execute(int $id): ?Author
+    public function execute(int $id): ?AuthorResponseDTO
     {
         return $this->repository->getById($id);
     }

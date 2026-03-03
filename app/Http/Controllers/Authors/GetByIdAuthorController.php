@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Authors;
 
 use App\Models\Author;
-use App\Services\Author\GetByIdAuthorService;
+use App\Services\Author\ShowAuthorService;
 use Illuminate\Http\JsonResponse;
 
 readonly class GetByIdAuthorController
 {
     public function __construct(
-        private GetByIdAuthorService $service
+        private ShowAuthorService $service
     ) {}
 
     public function __invoke(Author $author): JsonResponse

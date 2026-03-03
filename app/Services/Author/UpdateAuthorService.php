@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Services\Author;
 
-use App\DTO\AuthorDTO;
+use App\DTO\Author\AuthorDTO;
+use App\DTO\Author\AuthorResponseDTO;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
-readonly class UpdateAuthorService
+final readonly class UpdateAuthorService
 {
     public function __construct(
         private AuthorRepositoryInterface $repository
     ) {}
 
-    public function execute(Author $author, AuthorDTO $dto): Author
+    public function execute(Author $author, AuthorDTO $dto): AuthorResponseDTO
     {
         $this->repository->update($author, [
             'name' => $dto->name,
         ]);
 
-        return $author->fresh();
+        return AuthorResponseDTO::fromModel($author->fresh());
     }
 }

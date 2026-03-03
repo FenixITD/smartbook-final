@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Authors;
 
-use App\DTO\AuthorDTO;
+use App\DTO\Author\AuthorFiltersDTO;
 use App\Http\Requests\AuthorRequest;
-use App\Services\Author\GetListAuthorService;
+use App\Services\Author\ListAuthorsService;
 use Illuminate\Http\JsonResponse;
 
-readonly class GetListAuthorController
+final readonly class GetListAuthorController
 {
     public function __construct(
-        private GetListAuthorService $service
+        private ListAuthorsService $service
     ) {}
 
     public function __invoke(AuthorRequest $request): JsonResponse
     {
-        $filters = AuthorDTO::filtersFromRequest($request);
+        $filters = AuthorFiltersDTO::fromRequest($request);
         $authors = $this->service->execute($filters);
 
         return response()->json([
+            'success' => true,
             'authors' => $authors,
         ]);
     }

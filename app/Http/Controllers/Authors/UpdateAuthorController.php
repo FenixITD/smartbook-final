@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Authors;
 
-use App\DTO\AuthorDTO;
+use App\DTO\Author\AuthorDTO;
 use App\Http\Requests\AuthorRequest;
 use App\Models\Author;
 use App\Services\Author\UpdateAuthorService;
