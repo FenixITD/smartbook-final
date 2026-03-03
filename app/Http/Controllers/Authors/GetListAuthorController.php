@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Authors;
 
 use App\DTO\Author\AuthorFiltersDTO;
 use App\Http\Requests\AuthorRequest;
-use App\Http\Responses\GetListAuthorResponse;
+use App\Http\Resources\AuthorCollection;
 use App\Services\Author\ListAuthorsService;
 use Illuminate\Http\JsonResponse;
 
@@ -21,6 +21,6 @@ final readonly class GetListAuthorController
         $filters = AuthorFiltersDTO::fromRequest($request);
         $authors = $this->service->execute($filters);
 
-        return new GetListAuthorResponse($authors);
+        return (new AuthorCollection($authors))->response();
     }
 }

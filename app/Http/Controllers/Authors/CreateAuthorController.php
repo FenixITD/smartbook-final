@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Authors;
 
 use App\DTO\Author\AuthorDTO;
 use App\Http\Requests\AuthorRequest;
-use App\Http\Responses\CreateAuthorResponse;
+use App\Http\Resources\AuthorResource;
 use App\Services\Author\CreateAuthorService;
 use Illuminate\Http\JsonResponse;
 
@@ -21,6 +21,6 @@ readonly class CreateAuthorController
         $dto = AuthorDTO::fromRequest($request);
         $author = $this->service->execute($dto);
 
-        return new CreateAuthorResponse($author);
+        return (new AuthorResource($author))->response()->setStatusCode(201);
     }
 }
