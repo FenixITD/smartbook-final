@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Authors;
 
+use App\Http\Responses\DeleteAuthorResponse;
 use App\Models\Author;
 use App\Services\Author\DeleteAuthorService;
 use Illuminate\Http\JsonResponse;
@@ -18,8 +19,6 @@ readonly class DeleteAuthorController
     {
         $this->service->execute($author);
 
-        return response()->json([
-            'message' => 'Author deleted successfully',
-        ]);
+        return new DeleteAuthorResponse;
     }
 }

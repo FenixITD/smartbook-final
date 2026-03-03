@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Authors;
 
 use App\DTO\Author\AuthorDTO;
 use App\Http\Requests\AuthorRequest;
+use App\Http\Responses\CreateAuthorResponse;
 use App\Services\Author\CreateAuthorService;
 use Illuminate\Http\JsonResponse;
 
@@ -20,8 +21,6 @@ readonly class CreateAuthorController
         $dto = AuthorDTO::fromRequest($request);
         $author = $this->service->execute($dto);
 
-        return response()->json([
-            'author' => $author,
-        ], 201);
+        return new CreateAuthorResponse($author);
     }
 }

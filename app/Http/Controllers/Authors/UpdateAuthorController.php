@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Authors;
 use App\DTO\Author\AuthorDTO;
 use App\Http\Requests\AuthorRequest;
 use App\Models\Author;
+use App\Http\Responses\UpdateAuthorResponse;
 use App\Services\Author\UpdateAuthorService;
 use Illuminate\Http\JsonResponse;
 
@@ -21,8 +22,6 @@ readonly class UpdateAuthorController
         $dto = AuthorDTO::fromRequest($request);
         $updated = $this->service->execute($author, $dto);
 
-        return response()->json([
-            'author' => $updated,
-        ]);
+        return new UpdateAuthorResponse($updated);
     }
 }
