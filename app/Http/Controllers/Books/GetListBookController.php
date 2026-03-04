@@ -7,19 +7,19 @@ namespace App\Http\Controllers\Books;
 use App\DTO\Book\BookFiltersDTO;
 use App\Http\Requests\BookRequest;
 use App\Http\Resources\Book\BookCollection;
-use App\Services\Book\ListBooksService;
+use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
 final readonly class GetListBookController
 {
     public function __construct(
-        private ListBooksService $service
+        private BookRepositoryInterface $repository
     ) {}
 
     public function __invoke(BookRequest $request): JsonResponse
     {
         $filters = BookFiltersDTO::fromRequest($request);
-        $books = $this->service->execute($filters);
+        $books = $this->repository->getList($filters);
 
         return (new BookCollection($books))->response();
     }

@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Books;
 
 use App\Models\Book;
-use App\Services\Book\DeleteBookService;
+use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-readonly class DeleteBookController
+final readonly class DeleteBookController
 {
     public function __construct(
-        private DeleteBookService $service
+        private BookRepositoryInterface $repository
     ) {}
 
     public function __invoke(Book $book): JsonResponse
     {
-        $this->service->execute($book);
+        $this->repository->delete($book);
 
         return response()->json([
             'message' => 'Book deleted successfully',

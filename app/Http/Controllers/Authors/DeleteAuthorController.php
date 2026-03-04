@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Authors;
 
 use App\Models\Author;
-use App\Services\Author\DeleteAuthorService;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-readonly class DeleteAuthorController
+final readonly class DeleteAuthorController
 {
     public function __construct(
-        private DeleteAuthorService $service
+        private AuthorRepositoryInterface $repository
     ) {}
 
     public function __invoke(Author $author): JsonResponse
     {
-        $this->service->execute($author);
+        $this->repository->delete($author);
 
         return response()->json([
             'message' => 'Author deleted successfully',

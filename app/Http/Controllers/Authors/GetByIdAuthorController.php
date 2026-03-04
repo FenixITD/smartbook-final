@@ -6,22 +6,18 @@ namespace App\Http\Controllers\Authors;
 
 use App\Http\Resources\Author\AuthorResource;
 use App\Models\Author;
-use App\Services\Author\ShowAuthorService;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-readonly class GetByIdAuthorController
+final readonly class GetByIdAuthorController
 {
     public function __construct(
-        private ShowAuthorService $service
+        private AuthorRepositoryInterface $repository
     ) {}
 
     public function __invoke(Author $author): JsonResponse
     {
-        $authorId = $this->service->execute($author->id);
-
-        if (! $authorId) {
-            return response()->json(['success' => false, 'message' => 'Author not found'], 404);
-        }
+        $authorId = $this->repository->getById($author->id);
 
         return (new AuthorResource($authorId))->response();
     }
