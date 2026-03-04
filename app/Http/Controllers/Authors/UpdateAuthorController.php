@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Authors;
 
 use App\DTO\Author\AuthorDTO;
 use App\Http\Requests\AuthorRequest;
-use App\Http\Resources\AuthorResource;
+use App\Http\Resources\Author\AuthorResource;
 use App\Models\Author;
 use App\Services\Author\UpdateAuthorService;
 use Illuminate\Http\JsonResponse;

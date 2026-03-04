@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Authors;
 
-use App\Http\Resources\AuthorResource;
+use App\Http\Resources\Author\AuthorResource;
 use App\Models\Author;
 use App\Services\Author\ShowAuthorService;
 use Illuminate\Http\JsonResponse;

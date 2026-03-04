@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Author;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -18,7 +18,7 @@ final class AuthorCollection extends ResourceCollection
     {
         return [
             'message' => 'Authors list retrieved successfully',
-            'authors' => $this->collection,
+            'authors' => AuthorResource::collection($this->collection),
             'pagination' => [
                 'current_page' => $this->currentPage(),
                 'last_page' => $this->lastPage(),

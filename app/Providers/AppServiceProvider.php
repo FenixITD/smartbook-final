@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Repositories\Eloquent\AuthorRepository;
+use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Repositories\Interfaces\BookRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AuthorRepositoryInterface::class,
             AuthorRepository::class
+        );
+
+        $this->app->bind(
+            BookRepositoryInterface::class,
+            BookRepository::class
         );
     }
 

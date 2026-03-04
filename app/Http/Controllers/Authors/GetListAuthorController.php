@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Authors;
 
 use App\DTO\Author\AuthorFiltersDTO;
 use App\Http\Requests\AuthorRequest;
-use App\Http\Resources\AuthorCollection;
+use App\Http\Resources\Author\AuthorCollection;
 use App\Services\Author\ListAuthorsService;
 use Illuminate\Http\JsonResponse;
 
