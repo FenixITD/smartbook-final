@@ -12,5 +12,6 @@ Route::view('dashboard', 'dashboard')
 
 require __DIR__.'/authors.php';
 require __DIR__.'/books.php';
+require __DIR__.'/cartItems.php';
 
 require __DIR__.'/settings.php';
