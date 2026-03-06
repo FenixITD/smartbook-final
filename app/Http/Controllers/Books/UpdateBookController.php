@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Books;
 
 use App\DTO\Book\BookDTO;
-use App\Http\Requests\BookRequest;
+use App\Http\Requests\Book\BookDataRequest;
 use App\Http\Resources\Book\BookResource;
 use App\Models\Book;
 use App\Services\Book\UpdateBookService;
@@ -17,7 +17,7 @@ readonly class UpdateBookController
         private UpdateBookService $service
     ) {}
 
-    public function __invoke(BookRequest $request, Book $book): JsonResponse
+    public function __invoke(BookDataRequest $request, Book $book): JsonResponse
     {
         $dto = BookDTO::fromRequest($request);
         $updated = $this->service->execute($book, $dto);

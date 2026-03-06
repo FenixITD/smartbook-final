@@ -25,7 +25,9 @@ final readonly class CreateBookService
             'stock' => $dto->stock,
             'publish_year' => $dto->publish_year,
             'cover_image' => $dto->cover_image,
-            'status' => $dto->status ?? 'draft',
+            'average_rating' => $dto->average_rating,
+            'ratings_count' => $dto->ratings_count,
+            'status' => $dto->status,
         ]);
     }
 }
