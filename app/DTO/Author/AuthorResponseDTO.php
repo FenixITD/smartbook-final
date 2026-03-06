@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\DTO\Author;
 
 use App\Models\Author;
-use Illuminate\Database\Eloquent\Collection;
 
 final readonly class AuthorResponseDTO
 {
@@ -24,14 +23,5 @@ final readonly class AuthorResponseDTO
             created_at: $author->created_at->toDateTimeString(),
             updated_at: $author->updated_at->toDateTimeString(),
         );
-    }
-
-    /**
-     * @param  Collection<int, Author>  $authors
-     * @return array<int, self>
-     */
-    public static function fromCollection(Collection $authors): array
-    {
-        return $authors->map(fn ($author) => self::fromModel($author))->all();
     }
 }

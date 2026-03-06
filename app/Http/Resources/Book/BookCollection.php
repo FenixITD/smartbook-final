@@ -17,16 +17,15 @@ final class BookCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'message' => 'Books list retrieved successfully',
             'books' => BookResource::collection($this->collection),
-            'pagination' => [
-                'current_page' => $this->currentPage(),
-                'last_page' => $this->lastPage(),
-                'per_page' => $this->perPage(),
-                'total' => $this->total(),
-                'from' => $this->firstItem(),
-                'to' => $this->lastItem(),
-            ],
+//            'pagination' => [
+//                'current_page' => $this->currentPage(),
+//                'last_page' => $this->lastPage(),
+//                'per_page' => $this->perPage(),
+//                'total' => $this->total(),
+//                'from' => $this->firstItem(),
+//                'to' => $this->lastItem(),
+//            ],
         ];
     }
 }

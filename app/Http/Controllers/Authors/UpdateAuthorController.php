@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Authors;
 
 use App\DTO\Author\AuthorDTO;
-use App\Http\Requests\AuthorRequest;
+use App\Http\Requests\Author\AuthorDataRequest;
 use App\Http\Resources\Author\AuthorResource;
 use App\Models\Author;
 use App\Services\Author\UpdateAuthorService;
@@ -17,7 +17,7 @@ readonly class UpdateAuthorController
         private UpdateAuthorService $service
     ) {}
 
-    public function __invoke(AuthorRequest $request, Author $author): JsonResponse
+    public function __invoke(AuthorDataRequest $request, Author $author): JsonResponse
     {
         $dto = AuthorDTO::fromRequest($request);
         $updated = $this->service->execute($author, $dto);

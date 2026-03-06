@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\DTO\Author\AuthorResponseDTO;
 use App\DTO\Book\BookFiltersDTO;
 use App\DTO\Book\BookResponseDTO;
-use App\Models\Author;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
@@ -22,7 +20,7 @@ final class BookRepository implements BookRepositoryInterface
             ->paginate($filters->perPage);
 
         return $paginator->getCollection()->map(
-            fn (Author $author) => AuthorResponseDTO::fromModel($author)
+            fn (Book $book) => BookResponseDTO::fromModel($book)
         )->all();
     }
 

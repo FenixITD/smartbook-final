@@ -26,6 +26,8 @@ final class BookResource extends JsonResource
             'stock' => $this->stock,
             'publish_year' => $this->publish_year,
             'cover_image' => $this->cover_image,
+            'average_rating' => $this->average_rating,
+            'ratings_count' => $this->ratings_count,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
