@@ -15,13 +15,13 @@ final readonly class UpdateFavoriteService
         private FavoriteRepositoryInterface $repository
     ) {}
 
-    public function execute(Favorite $cartItem, FavoriteDTO $dto): FavoriteResponseDTO
+    public function execute(Favorite $favorite, FavoriteDTO $dto): FavoriteResponseDTO
     {
-        $this->repository->update($cartItem, [
+        $this->repository->update($favorite, [
             'userId' => $dto->userId,
             'bookId' => $dto->bookId,
         ]);
 
-        return FavoriteResponseDTO::fromModel($cartItem->fresh());
+        return FavoriteResponseDTO::fromModel($favorite->fresh());
     }
 }
