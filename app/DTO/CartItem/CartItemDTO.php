@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace App\DTO\CartItem;
 
-use App\Http\Requests\CartItemRequest;
+use App\Http\Requests\CartItem\CartItemDataRequest;
 
 final readonly class CartItemDTO
 {
     public function __construct(
-        public int $user_id,
-        public int $book_id,
+        public int $userId,
+        public int $bookId,
         public string $quantity,
     ) {}
 
-    public static function fromRequest(CartItemRequest $request): self
+    public static function fromRequest(CartItemDataRequest $request): self
     {
         return new self(
-            user_id: $request->integer('user_id'),
-            book_id: $request->integer('book_id'),
+            userId: $request->integer('userId'),
+            bookId: $request->integer('bookId'),
             quantity: (string) $request->string('quantity'),
         );
     }

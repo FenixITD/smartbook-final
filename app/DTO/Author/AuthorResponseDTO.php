@@ -11,8 +11,8 @@ final readonly class AuthorResponseDTO
     public function __construct(
         public int $id,
         public string $name,
-        public string $created_at,
-        public string $updated_at,
+        public string $createdAt,
+        public string $updatedAt,
     ) {}
 
     public static function fromModel(Author $author): self
@@ -20,8 +20,8 @@ final readonly class AuthorResponseDTO
         return new self(
             id: $author->id,
             name: $author->name,
-            created_at: $author->created_at->toDateTimeString(),
-            updated_at: $author->updated_at->toDateTimeString(),
+            createdAt: $author->created_at->toDateTimeString(),
+            updatedAt: $author->updated_at->toDateTimeString(),
         );
     }
 }

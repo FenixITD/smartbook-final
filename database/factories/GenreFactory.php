@@ -9,7 +9,8 @@ class GenreFactory extends Factory
 {
     public function definition(): array
     {
-        $name = fake()->unique()->word() . ' ' . fake()->word();
+        $name = fake()->unique()->word().' '.fake()->word();
+
         return [
             'name' => $name,
             'slug' => Str::slug($name),
