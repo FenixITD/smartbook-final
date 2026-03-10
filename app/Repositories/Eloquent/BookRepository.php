@@ -19,9 +19,8 @@ final class BookRepository implements BookRepositoryInterface
         $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage);
 
-        return $paginator->getCollection()->map(
-            fn (Book $book) => BookResponseDTO::fromModel($book)
-        )->all();
+        return $paginator->getCollection()
+            ->map(fn (Book $book) => BookResponseDTO::fromModel($book))->all();
     }
 
     public function getById(int $id): ?BookResponseDTO

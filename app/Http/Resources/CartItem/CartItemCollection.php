@@ -17,16 +17,7 @@ final class CartItemCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'message' => 'CartItems list retrieved successfully',
             'cartItems' => CartItemResource::collection($this->collection),
-            'pagination' => [
-                'current_page' => $this->currentPage(),
-                'last_page' => $this->lastPage(),
-                'per_page' => $this->perPage(),
-                'total' => $this->total(),
-                'from' => $this->firstItem(),
-                'to' => $this->lastItem(),
-            ],
         ];
     }
 }

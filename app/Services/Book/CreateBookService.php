@@ -19,14 +19,14 @@ final readonly class CreateBookService
         return $this->repository->create([
             'title' => $dto->title,
             'slug' => $dto->slug ?? str($dto->title)->slug(),
-            'author_id' => $dto->author_id,
+            'authorId' => $dto->authorId,
             'description' => $dto->description,
             'price' => $dto->price,
             'stock' => $dto->stock,
-            'publish_year' => $dto->publish_year,
-            'cover_image' => $dto->cover_image,
-            'average_rating' => $dto->average_rating,
-            'ratings_count' => $dto->ratings_count,
+            'publishYear' => $dto->publishYear,
+            'coverImage' => $dto->coverImage,
+            'averageRating' => $dto->averageRating,
+            'ratingsCount' => $dto->ratingsCount,
             'status' => $dto->status,
         ]);
     }
