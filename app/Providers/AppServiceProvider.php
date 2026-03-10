@@ -6,10 +6,12 @@ use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
 use App\Repositories\Eloquent\FavoriteRepository;
+use App\Repositories\Eloquent\GenreRepository;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
+use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +43,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             FavoriteRepositoryInterface::class,
             FavoriteRepository::class
+        );
+
+        $this->app->bind(
+            GenreRepositoryInterface::class,
+            GenreRepository::class
         );
     }
 
