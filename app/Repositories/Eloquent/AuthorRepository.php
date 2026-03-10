@@ -19,9 +19,8 @@ final class AuthorRepository implements AuthorRepositoryInterface
         $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage);
 
-        return $paginator->getCollection()->map(
-            fn (Author $author) => AuthorResponseDTO::fromModel($author)
-        )->all();
+        return $paginator->getCollection()
+            ->map(fn (Author $author) => AuthorResponseDTO::fromModel($author))->all();
     }
 
     public function getById(int $id): ?AuthorResponseDTO

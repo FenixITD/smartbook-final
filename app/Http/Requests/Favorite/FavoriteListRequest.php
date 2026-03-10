@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Author;
+namespace App\Http\Requests\Favorite;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class AuthorListRequest extends FormRequest
+final class FavoriteListRequest extends FormRequest
 {
     public function authorize(): bool
     {

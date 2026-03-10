@@ -11,14 +11,14 @@ final readonly class BookDTO
     public function __construct(
         public string $title,
         public string $slug,
-        public int $author_id,
+        public int $authorId,
         public string $description,
         public float $price,
         public int $stock,
-        public ?int $publish_year,
-        public ?string $cover_image,
-        public ?float $average_rating,
-        public ?int $ratings_count,
+        public ?int $publishYear,
+        public ?string $coverImage,
+        public ?float $averageRating,
+        public ?int $ratingsCount,
         public string $status,
     ) {}
 
@@ -27,14 +27,14 @@ final readonly class BookDTO
         return new self(
             title: $request->string('title'),
             slug: $request->string('slug'),
-            author_id: $request->integer('author_id'),
+            authorId: $request->integer('authorId'),
             description: $request->string('description'),
             price: $request->float('price'),
             stock: $request->integer('stock', 0),
-            publish_year: $request->integer('publish_year', null),
-            cover_image: $request->string('cover_image')->nullable(),
-            average_rating: $request->float('average_rating', 0.00),
-            ratings_count: $request->integer('ratings_count', 0),
+            publishYear: $request->integer('publishYear', null),
+            coverImage: $request->string('coverImage')->nullable(),
+            averageRating: $request->float('averageRating', 0.00),
+            ratingsCount: $request->integer('ratingsCount', 0),
             status: $request->string('status', 'active'),
         );
     }

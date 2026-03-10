@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\CartItem;
+namespace App\Http\Resources\Favorite;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-final class CartItemCollection extends ResourceCollection
+final class FavoriteCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -17,7 +17,7 @@ final class CartItemCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'cartItems' => CartItemResource::collection($this->collection),
+            'favorites' => FavoriteResource::collection($this->collection),
         ];
     }
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\Author;
+namespace App\Http\Resources\Favorite;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-final class AuthorResource extends JsonResource
+final class FavoriteResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,7 +18,8 @@ final class AuthorResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'userId' => $this->userId,
+            'bookId' => $this->bookId,
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
         ];
