@@ -13,7 +13,7 @@ class BookFactory extends Factory
         return [
             'title' => fake()->sentence(4),
             'slug' => Str::slug(fake()->sentence(4)),
-            'author_id' => Author::inRandomOrder()->first()?->id,
+            'author_id' => Author::all()->random()?->id,
             'description' => fake()->paragraph(5),
             'price' => fake()->randomFloat(2, 5, 100),
             'stock' => fake()->numberBetween(0, 50),
