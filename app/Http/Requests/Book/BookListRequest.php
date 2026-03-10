@@ -17,9 +17,9 @@ final class BookListRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sort_by' => ['nullable', 'string'],
-            'sort_direction' => ['nullable', 'in:asc,desc'],
+            'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'sortBy' => ['nullable', 'string'],
+            'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }
 }

@@ -18,8 +18,8 @@ final readonly class UpdateCartItemService
     public function execute(CartItem $cartItem, CartItemDTO $dto): CartItemResponseDTO
     {
         $this->repository->update($cartItem, [
-            'user_id' => $dto->user_id,
-            'book_id' => $dto->book_id,
+            'userId' => $dto->userId,
+            'bookId' => $dto->bookId,
             'quantity' => $dto->quantity,
         ]);
 

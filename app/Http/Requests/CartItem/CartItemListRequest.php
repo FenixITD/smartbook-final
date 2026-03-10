@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Author;
+namespace App\Http\Requests\CartItem;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class AuthorListRequest extends FormRequest
+final class CartItemListRequest extends FormRequest
 {
     public function authorize(): bool
     {
