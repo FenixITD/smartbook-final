@@ -25,17 +25,17 @@ final readonly class BookDTO
     public static function fromRequest(BookDataRequest $request): self
     {
         return new self(
-            title: $request->string('title'),
-            slug: $request->string('slug'),
+            title: $request->input('title'),
+            slug: $request->input('slug'),
             author_id: $request->integer('author_id'),
-            description: $request->string('description'),
-            price: $request->float('price'),
+            description: $request->input('description'),
+            price: (float) $request->input('price'),
             stock: $request->integer('stock', 0),
-            publish_year: $request->integer('publish_year', null),
-            cover_image: $request->string('cover_image')->nullable(),
-            average_rating: $request->float('average_rating', 0.00),
+            publish_year: $request->filled('publish_year') ? $request->integer('publish_year') : null,
+            cover_image: $request->input('cover_image') ?? null,
+            average_rating: (float) ($request->input('average_rating') ?? 0.00),
             ratings_count: $request->integer('ratings_count', 0),
-            status: $request->string('status', 'active'),
+            status: $request->input('status', 'active'),
         );
     }
 }
