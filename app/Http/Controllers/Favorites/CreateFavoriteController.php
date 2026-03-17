@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Favorites;
 
-use App\DTO\Favorite\FavoriteDTO;
-use App\Http\Requests\Favorite\FavoriteDataRequest;
+use App\Http\Requests\Favorite\FavoriteDataDtoRequest;
 use App\Http\Resources\Favorite\FavoriteResource;
 use App\Services\Favorite\CreateFavoriteService;
 use Illuminate\Http\JsonResponse;
@@ -16,10 +15,9 @@ readonly class CreateFavoriteController
         private CreateFavoriteService $service
     ) {}
 
-    public function __invoke(FavoriteDataRequest $request): JsonResponse
+    public function __invoke(FavoriteDataDtoRequest $request): JsonResponse
     {
-        $dto = FavoriteDTO::fromRequest($request);
-        $favorite = $this->service->execute($dto);
+        $favorite = $this->service->execute($request->toDto());
 
         return (new FavoriteResource($favorite))->response()->setStatusCode(201);
     }

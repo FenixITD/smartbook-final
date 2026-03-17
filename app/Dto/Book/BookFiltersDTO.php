@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\Book;
+namespace App\Dto\Book;
 
 use App\Http\Requests\Book\BookListRequest;
 

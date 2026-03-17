@@ -6,7 +6,7 @@ namespace App\Http\Requests\Favorite;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class FavoriteDataRequest extends FormRequest
+class FavoriteDataRequest extends FormRequest
 {
     public function authorize(): bool
     {

@@ -2,28 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\CartItem;
+namespace App\Dto\Favorite;
 
-use App\Models\CartItem;
+use App\Models\Favorite;
 
-final readonly class CartItemResponseDTO
+final readonly class FavoriteResponseDto
 {
     public function __construct(
         public int $id,
         public int $userId,
         public int $bookId,
-        public int $quantity,
         public string $createdAt,
         public string $updatedAt,
     ) {}
 
-    public static function fromModel(CartItem $cartItem): self
+    public static function fromModel(Favorite $cartItem): self
     {
         return new self(
             id: $cartItem->id,
-            userId: (int) $cartItem->userId,
-            bookId: (int) $cartItem->bookId,
-            quantity: $cartItem->quantity,
+            userId: (int) $cartItem->user_id,
+            bookId: (int) $cartItem->book_id,
             createdAt: $cartItem->created_at->toDateTimeString(),
             updatedAt: $cartItem->updated_at->toDateTimeString(),
         );

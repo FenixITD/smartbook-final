@@ -4,44 +4,43 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\DTO\Favorite\FavoriteFiltersDTO;
-use App\DTO\Favorite\FavoriteResponseDTO;
+use App\DTO\Favorite\FavoriteFiltersDto;
+use App\DTO\Favorite\FavoriteResponseDto;
 use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 
 final class FavoriteRepository implements FavoriteRepositoryInterface
 {
-    public function getList(FavoriteFiltersDTO $filters): array
+    public function getList(FavoriteFiltersDto $filters): array
     {
-        $query = Favorite::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"));
-
-        $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
-
-        return $paginator->getCollection()
-            ->map(fn (Favorite $favorite) => FavoriteResponseDTO::fromModel($favorite))->all();
+        return Favorite::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage)
+            ->getCollection()
+            ->map(fn (Favorite $favorite) => FavoriteResponseDto::fromModel($favorite))
+            ->all();
     }
 
-    public function getById(int $id): ?FavoriteResponseDTO
+    public function getById(int $id): ?FavoriteResponseDto
     {
         $favorite = Favorite::find($id);
 
-        return $favorite ? FavoriteResponseDTO::fromModel($favorite) : null;
+        return $favorite ? FavoriteResponseDto::fromModel($favorite) : null;
     }
 
-    public function create(array $data): FavoriteResponseDTO
+    public function create(array $data): FavoriteResponseDto
     {
         $favorite = Favorite::create($data);
 
-        return FavoriteResponseDTO::fromModel($favorite);
+        return FavoriteResponseDto::fromModel($favorite);
     }
 
-    public function update(Favorite $favorite, array $data): ?FavoriteResponseDTO
+    public function update(Favorite $favorite, array $data): ?FavoriteResponseDto
     {
         $favorite->update($data);
 
-        return FavoriteResponseDTO::fromModel($favorite->fresh());
+        return FavoriteResponseDto::fromModel($favorite->fresh());
     }
 
     public function delete(Favorite $favorite): bool
