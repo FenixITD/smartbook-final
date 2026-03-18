@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Favorite;
 
-use App\DTO\Favorite\FavoriteDTO;
-use App\DTO\Favorite\FavoriteResponseDTO;
+use App\DTO\Favorite\FavoriteDto;
+use App\DTO\Favorite\FavoriteResponseDto;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 
 final readonly class CreateFavoriteService
@@ -14,11 +14,8 @@ final readonly class CreateFavoriteService
         private FavoriteRepositoryInterface $repository
     ) {}
 
-    public function execute(FavoriteDTO $dto): FavoriteResponseDTO
+    public function execute(FavoriteDto $dto): FavoriteResponseDto
     {
-        return $this->repository->create([
-            'userId' => $dto->userId,
-            'bookId' => $dto->bookId,
-        ]);
+        return $this->repository->create($dto);
     }
 }

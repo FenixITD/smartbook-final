@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\CartItem;
+namespace App\Dto\Author;
 
-use App\Http\Requests\CartItem\CartItemListRequest;
+use App\Http\Requests\Author\AuthorListRequest;
 
-final readonly class CartItemFiltersDTO
+final readonly class AuthorFiltersDTO
 {
     public function __construct(
         public ?string $search = null,
@@ -15,7 +15,7 @@ final readonly class CartItemFiltersDTO
         public string $sortDirection = 'asc',
     ) {}
 
-    public static function fromRequest(CartItemListRequest $request): self
+    public static function fromRequest(AuthorListRequest $request): self
     {
         return new self(
             search: $request->input('search'),

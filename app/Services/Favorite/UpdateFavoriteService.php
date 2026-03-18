@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Favorite;
 
-use App\DTO\Favorite\FavoriteDTO;
-use App\DTO\Favorite\FavoriteResponseDTO;
+use App\DTO\Favorite\FavoriteDto;
+use App\DTO\Favorite\FavoriteResponseDto;
 use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 
@@ -15,13 +15,8 @@ final readonly class UpdateFavoriteService
         private FavoriteRepositoryInterface $repository
     ) {}
 
-    public function execute(Favorite $cartItem, FavoriteDTO $dto): FavoriteResponseDTO
+    public function execute(Favorite $favorite, FavoriteDto $dto): FavoriteResponseDto
     {
-        $this->repository->update($cartItem, [
-            'userId' => $dto->userId,
-            'bookId' => $dto->bookId,
-        ]);
-
-        return FavoriteResponseDTO::fromModel($cartItem->fresh());
+        return $this->repository->update($favorite, $dto);
     }
 }

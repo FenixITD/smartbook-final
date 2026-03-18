@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Favorite;
 
+use App\Dto\Favorite\FavoriteFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class FavoriteListRequest extends FormRequest
+class FavoriteListRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -21,5 +22,15 @@ final class FavoriteListRequest extends FormRequest
             'sortBy' => ['nullable', 'string'],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
+    }
+
+    public function toDto(): FavoriteFiltersDto
+    {
+        return new FavoriteFiltersDto(
+            search: $this->input('search'),
+            perPage: $this->integer('per_page', 15),
+            sortBy: (string) $this->string('sort_by', 'id'),
+            sortDirection: (string) $this->string('sort_direction', 'asc'),
+        );
     }
 }
