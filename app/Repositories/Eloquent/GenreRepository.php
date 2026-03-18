@@ -4,44 +4,44 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\DTO\Genre\GenreFiltersDTO;
-use App\DTO\Genre\GenreResponseDTO;
+use App\Dto\Genre\GenreDto;
+use App\DTO\Genre\GenreFiltersDto;
+use App\DTO\Genre\GenreResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 
 final class GenreRepository implements GenreRepositoryInterface
 {
-    public function getList(GenreFiltersDTO $filters): array
+    public function getList(GenreFiltersDto $filters): array
     {
-        $query = Genre::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"));
-
-        $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
-
-        return $paginator->getCollection()
-            ->map(fn (Genre $genre) => GenreResponseDTO::fromModel($genre))->all();
+        return Genre::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage)
+            ->getCollection()
+            ->map(fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+            ->all();
     }
 
-    public function getById(int $id): ?GenreResponseDTO
+    public function getById(int $id): ?GenreResponseDto
     {
         $genre = Genre::find($id);
 
-        return $genre ? GenreResponseDTO::fromModel($genre) : null;
+        return $genre ? GenreResponseDto::fromModel($genre) : null;
     }
 
-    public function create(array $data): GenreResponseDTO
+    public function create(GenreDto $data): GenreResponseDto
     {
-        $genre = Genre::create($data);
+        $genre = Genre::create($data->toArray());
 
-        return GenreResponseDTO::fromModel($genre);
+        return GenreResponseDto::fromModel($genre);
     }
 
-    public function update(Genre $genre, array $data): ?GenreResponseDTO
+    public function update(Genre $genre, GenreDto $data): ?GenreResponseDto
     {
-        $genre->update($data);
+        $genre->update($data->toArray());
 
-        return GenreResponseDTO::fromModel($genre->fresh());
+        return GenreResponseDto::fromModel($genre->fresh());
     }
 
     public function delete(Genre $genre): bool

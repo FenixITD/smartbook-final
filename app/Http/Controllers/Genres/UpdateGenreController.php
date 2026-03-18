@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Genres;
 
-use App\DTO\Genre\GenreDTO;
+use App\DTO\Genre\GenreDto;
 use App\Http\Requests\Genre\GenreDataRequest;
 use App\Http\Resources\Genre\GenreResource;
 use App\Models\Genre;
@@ -19,8 +19,7 @@ readonly class UpdateGenreController
 
     public function __invoke(GenreDataRequest $request, Genre $genre): JsonResponse
     {
-        $dto = GenreDTO::fromRequest($request);
-        $updated = $this->service->execute($genre, $dto);
+        $updated = $this->service->execute($genre, $request->toDto());
 
         return (new GenreResource($updated))->response();
     }

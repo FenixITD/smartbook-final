@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Genre;
 
-use App\DTO\Genre\GenreDTO;
-use App\DTO\Genre\GenreResponseDTO;
+use App\DTO\Genre\GenreDto;
+use App\DTO\Genre\GenreResponseDto;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 
 final readonly class CreateGenreService
@@ -14,12 +14,8 @@ final readonly class CreateGenreService
         private GenreRepositoryInterface $repository
     ) {}
 
-    public function execute(GenreDTO $dto): GenreResponseDTO
+    public function execute(GenreDto $dto): GenreResponseDto
     {
-        return $this->repository->create([
-            'name' => $dto->name,
-            'slug' => $dto->slug ?? str($dto->name)->slug(),
-            'description' => $dto->description,
-        ]);
+        return $this->repository->create($dto);
     }
 }

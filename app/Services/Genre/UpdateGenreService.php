@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Genre;
 
-use App\DTO\Genre\GenreDTO;
-use App\DTO\Genre\GenreResponseDTO;
+use App\DTO\Genre\GenreDto;
+use App\DTO\Genre\GenreResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 
@@ -15,14 +15,8 @@ final readonly class UpdateGenreService
         private GenreRepositoryInterface $repository
     ) {}
 
-    public function execute(Genre $genre, GenreDTO $dto): GenreResponseDTO
+    public function execute(Genre $genre, GenreDto $dto): GenreResponseDto
     {
-        $this->repository->update($genre, [
-            'name' => $dto->name,
-            'slug' => $dto->slug ?? str($dto->name)->slug(),
-            'description' => $dto->description,
-        ]);
-
-        return GenreResponseDTO::fromModel($genre->fresh());
+        return $this->repository->update($genre, $dto);
     }
 }

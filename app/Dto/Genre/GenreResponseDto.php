@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\Genre;
+namespace App\Dto\Genre;
 
 use App\Models\Genre;
 
-final readonly class GenreResponseDTO
+final readonly class GenreResponseDto
 {
     public function __construct(
         public int $id,
@@ -21,9 +21,9 @@ final readonly class GenreResponseDTO
     {
         return new self(
             id: $genre->id,
-            name: $genre->name,
-            slug: $genre->slug,
-            description: $genre->description,
+            name: (string) $genre->name,
+            slug: (string) $genre->slug,
+            description: (string) $genre->description,
             createdAt: $genre->created_at->toDateTimeString(),
             updatedAt: $genre->updated_at->toDateTimeString(),
         );

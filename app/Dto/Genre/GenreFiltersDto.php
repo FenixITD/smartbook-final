@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Dto\Favorite;
+namespace App\Dto\Genre;
 
-final readonly class FavoriteFiltersDto
+final readonly class GenreFiltersDto
 {
     public function __construct(
         public ?string $search = null,
