@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
+use App\Dto\Favorite\FavoriteDto;
 use App\DTO\Favorite\FavoriteFiltersDto;
 use App\DTO\Favorite\FavoriteResponseDto;
 use App\Models\Favorite;
@@ -29,16 +30,16 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
         return $favorite ? FavoriteResponseDto::fromModel($favorite) : null;
     }
 
-    public function create(array $data): FavoriteResponseDto
+    public function create(FavoriteDto $data): FavoriteResponseDto
     {
-        $favorite = Favorite::create($data);
+        $favorite = Favorite::create($data->toArray());
 
         return FavoriteResponseDto::fromModel($favorite);
     }
 
-    public function update(Favorite $favorite, array $data): ?FavoriteResponseDto
+    public function update(Favorite $favorite, FavoriteDto $data): ?FavoriteResponseDto
     {
-        $favorite->update($data);
+        $favorite->update($data->toArray());
 
         return FavoriteResponseDto::fromModel($favorite->fresh());
     }

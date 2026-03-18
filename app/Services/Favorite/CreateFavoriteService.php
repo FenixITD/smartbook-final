@@ -16,9 +16,6 @@ final readonly class CreateFavoriteService
 
     public function execute(FavoriteDto $dto): FavoriteResponseDto
     {
-        return $this->repository->create([
-            'user_id' => $dto->userId,
-            'book_id' => $dto->bookId,
-        ]);
+        return $this->repository->create($dto);
     }
 }

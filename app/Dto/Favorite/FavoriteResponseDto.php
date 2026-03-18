@@ -16,14 +16,14 @@ final readonly class FavoriteResponseDto
         public string $updatedAt,
     ) {}
 
-    public static function fromModel(Favorite $cartItem): self
+    public static function fromModel(Favorite $favorite): self
     {
         return new self(
-            id: $cartItem->id,
-            userId: (int) $cartItem->user_id,
-            bookId: (int) $cartItem->book_id,
-            createdAt: $cartItem->created_at->toDateTimeString(),
-            updatedAt: $cartItem->updated_at->toDateTimeString(),
+            id: $favorite->id,
+            userId: (int) $favorite->user_id,
+            bookId: (int) $favorite->book_id,
+            createdAt: $favorite->created_at->toDateTimeString(),
+            updatedAt: $favorite->updated_at->toDateTimeString(),
         );
     }
 }
