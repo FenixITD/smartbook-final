@@ -18,14 +18,6 @@ final class AuthorCollection extends ResourceCollection
     {
         return [
             'authors' => AuthorResource::collection($this->collection),
-//            'pagination' => [
-//                'current_page' => $this->currentPage(),
-//                'last_page' => $this->lastPage(),
-//                'per_page' => $this->perPage(),
-//                'total' => $this->total(),
-//                'from' => $this->firstItem(),
-//                'to' => $this->lastItem(),
-//            ],
         ];
     }
 }

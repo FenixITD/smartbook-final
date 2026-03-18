@@ -14,19 +14,13 @@ final class CartItemRepository implements CartItemRepositoryInterface
     public function getList(CartItemFiltersDTO $filters): array
     {
         $query = CartItem::query()
-            ->join('books', 'cart_items.book_id', '=', 'books.id')
-            ->select('cart_items.*')
-            ->where('cart_items.user_id', auth()->id()) // only the current user's cart
-            ->when($filters->search !== null, function ($q) use ($filters) {
-                $q->where('books.title', 'like', "%{$filters->search}%");
-            });
+            ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"));
 
-        $paginator = $query->orderBy(
-            $filters->sortBy === 'title' ? 'books.title' : 'cart_items.'.$filters->sortBy,
-            $filters->sortDirection
-        )->paginate($filters->perPage);
+        $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage);
 
-        return CartItemResponseDTO::fromCollection($paginator->getCollection());
+        return $paginator->getCollection()
+            ->map(fn (CartItem $cartItem) => CartItemResponseDTO::fromModel($cartItem))->all();
     }
 
     public function getById(int $id): ?CartItemResponseDTO

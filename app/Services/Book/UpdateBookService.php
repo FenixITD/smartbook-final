@@ -20,12 +20,14 @@ final readonly class UpdateBookService
         $this->repository->update($book, [
             'title' => $dto->title,
             'slug' => $dto->slug ?? str($dto->title)->slug(),
-            'author_id' => $dto->author_id,
+            'authorId' => $dto->authorId,
             'description' => $dto->description,
             'price' => $dto->price,
             'stock' => $dto->stock,
-            'publish_year' => $dto->publish_year,
-            'cover_image' => $dto->cover_image,
+            'publishYear' => $dto->publishYear,
+            'coverImage' => $dto->coverImage,
+            'averageRating' => $dto->averageRating,
+            'ratingsCount' => $dto->ratingsCount,
             'status' => $dto->status,
         ]);
 

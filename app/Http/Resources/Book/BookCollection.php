@@ -18,14 +18,6 @@ final class BookCollection extends ResourceCollection
     {
         return [
             'books' => BookResource::collection($this->collection),
-//            'pagination' => [
-//                'current_page' => $this->currentPage(),
-//                'last_page' => $this->lastPage(),
-//                'per_page' => $this->perPage(),
-//                'total' => $this->total(),
-//                'from' => $this->firstItem(),
-//                'to' => $this->lastItem(),
-//            ],
         ];
     }
 }

@@ -13,6 +13,8 @@ Route::view('dashboard', 'dashboard')
 require __DIR__.'/authors.php';
 require __DIR__.'/books.php';
 require __DIR__.'/cartItems.php';
+require __DIR__.'/favorites.php';
+require __DIR__.'/genres.php';
 require __DIR__.'/orders.php';
 
 require __DIR__.'/settings.php';
