@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Interfaces;
 
+use App\Dto\Order\OrderDTO;
 use App\DTO\Order\OrderFiltersDTO;
 use App\DTO\Order\OrderResponseDTO;
 use App\Models\Order;
@@ -17,9 +18,9 @@ interface OrderRepositoryInterface
 
     public function getById(int $id): ?OrderResponseDTO;
 
-    public function create(array $data): OrderResponseDTO;
+    public function create(OrderDTO $data): OrderResponseDTO;
 
-    public function update(Order $order, array $data): ?OrderResponseDTO;
+    public function update(Order $order, OrderDTO $data): ?OrderResponseDTO;
 
     public function delete(Order $order): bool;
 }

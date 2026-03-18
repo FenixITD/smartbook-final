@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
+use App\Dto\Order\OrderDTO;
 use App\DTO\Order\OrderFiltersDTO;
 use App\DTO\Order\OrderResponseDTO;
 use App\Models\Order;
@@ -13,14 +14,13 @@ final class OrderRepository implements OrderRepositoryInterface
 {
     public function getList(OrderFiltersDTO $filters): array
     {
-        $query = Order::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('user_id', 'like', "%{$filters->search}%"));
-
-        $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
-
-        return $paginator->getCollection()
-            ->map(fn (Order $order) => OrderResponseDTO::fromModel($order))->all();
+        return Order::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('user_id', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage)
+            ->getCollection()
+            ->map(fn (Order $order) => OrderResponseDto::fromModel($order))
+            ->all();
     }
 
     public function getById(int $id): ?OrderResponseDTO
@@ -30,16 +30,16 @@ final class OrderRepository implements OrderRepositoryInterface
         return $order ? OrderResponseDTO::fromModel($order) : null;
     }
 
-    public function create(array $data): OrderResponseDTO
+    public function create(OrderDTO $data): OrderResponseDTO
     {
-        $order = Order::create($data);
+        $order = Order::create($data->toArray());
 
         return OrderResponseDTO::fromModel($order);
     }
 
-    public function update(Order $order, array $data): ?OrderResponseDTO
+    public function update(Order $order, OrderDTO $data): ?OrderResponseDTO
     {
-        $order->update($data);
+        $order->update($data->toArray());
 
         return OrderResponseDTO::fromModel($order->fresh());
     }

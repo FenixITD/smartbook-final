@@ -19,8 +19,7 @@ readonly class UpdateOrderController
 
     public function __invoke(OrderDataRequest $request, Order $order): JsonResponse
     {
-        $dto = OrderDTO::fromRequest($request);
-        $updated = $this->service->execute($order, $dto);
+        $updated = $this->service->execute($order, $request->toDto());
 
         return (new OrderResource($updated))->response();
     }

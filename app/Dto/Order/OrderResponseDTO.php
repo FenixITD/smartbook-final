@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\Order;
+namespace App\Dto\Order;
 
 use App\Models\Order;
 
@@ -23,11 +23,11 @@ final readonly class OrderResponseDTO
     {
         return new self(
             id: $order->id,
-            userId: (int) $order->userId,
+            userId: (int) $order->user_id,
             total: (float) $order->total,
-            status: $order->status,
-            shippingAddress: (string) $order->shippingAddress,
-            paymentMethod: (string) $order->paymentMethod,
+            status: (string) $order->status,
+            shippingAddress: (string) $order->shipping_address,
+            paymentMethod: (string) $order->payment_method,
             createdAt: $order->created_at->toDateTimeString(),
             updatedAt: $order->updated_at->toDateTimeString(),
         );

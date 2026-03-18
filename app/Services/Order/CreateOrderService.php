@@ -16,12 +16,6 @@ final readonly class CreateOrderService
 
     public function execute(OrderDTO $dto): OrderResponseDTO
     {
-        return $this->repository->create([
-            'userId' => $dto->userId,
-            'total' => $dto->total,
-            'status' => $dto->status,
-            'shippingAddress' => $dto->shippingAddress,
-            'paymentMethod' => $dto->paymentMethod,
-        ]);
+        return $this->repository->create($dto);
     }
 }

@@ -17,13 +17,7 @@ final readonly class UpdateOrderService
 
     public function execute(Order $order, OrderDTO $dto): OrderResponseDTO
     {
-        $this->repository->update($order, [
-            'userId' => $dto->userId,
-            'total' => $dto->total,
-            'status' => $dto->status,
-            'shippingAddress' => $dto->shippingAddress,
-            'paymentMethod' => $dto->paymentMethod,
-        ]);
+        $this->repository->update($order, $dto);
 
         return OrderResponseDTO::fromModel($order->fresh());
     }

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Orders;
 
-use App\DTO\Order\OrderFiltersDTO;
 use App\Http\Requests\Order\OrderListRequest;
-use App\Http\Resources\Order\OrderCollection;
+use App\Http\Resources\Order\OrderResource;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -18,9 +17,9 @@ final readonly class GetListOrderController
 
     public function __invoke(OrderListRequest $request): JsonResponse
     {
-        $filters = OrderFiltersDTO::fromRequest($request);
+        $filters = $request->toDto();
         $orders = $this->repository->getList($filters);
 
-        return (new OrderCollection($orders))->response();
+        return OrderResource::collection($orders)->response();
     }
 }
