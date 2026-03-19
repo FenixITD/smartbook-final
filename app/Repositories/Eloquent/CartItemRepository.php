@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\DTO\CartItem\CartItemFiltersDTO;
-use App\DTO\CartItem\CartItemResponseDTO;
+use App\DTO\CartItem\CartItemFiltersDto;
+use App\DTO\CartItem\CartItemResponseDto;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 
 final class CartItemRepository implements CartItemRepositoryInterface
 {
-    public function getList(CartItemFiltersDTO $filters): array
+    public function getList(CartItemFiltersDto $filters): array
     {
         $query = CartItem::query()
             ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"));
@@ -20,28 +20,28 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->paginate($filters->perPage);
 
         return $paginator->getCollection()
-            ->map(fn (CartItem $cartItem) => CartItemResponseDTO::fromModel($cartItem))->all();
+            ->map(fn (CartItem $cartItem) => CartItemResponseDto::fromModel($cartItem))->all();
     }
 
-    public function getById(int $id): ?CartItemResponseDTO
+    public function getById(int $id): ?CartItemResponseDto
     {
         $cartItem = CartItem::find($id);
 
-        return $cartItem ? CartItemResponseDTO::fromModel($cartItem) : null;
+        return $cartItem ? CartItemResponseDto::fromModel($cartItem) : null;
     }
 
-    public function create(array $data): CartItemResponseDTO
+    public function create(array $data): CartItemResponseDto
     {
         $cartItem = CartItem::create($data);
 
-        return CartItemResponseDTO::fromModel($cartItem);
+        return CartItemResponseDto::fromModel($cartItem);
     }
 
-    public function update(CartItem $cartItem, array $data): ?CartItemResponseDTO
+    public function update(CartItem $cartItem, array $data): ?CartItemResponseDto
     {
         $cartItem->update($data);
 
-        return CartItemResponseDTO::fromModel($cartItem->fresh());
+        return CartItemResponseDto::fromModel($cartItem->fresh());
     }
 
     public function delete(CartItem $cartItem): bool

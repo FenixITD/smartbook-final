@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Author;
 
+use App\Dto\Author\AuthorFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class AuthorListRequest extends FormRequest
@@ -21,5 +22,15 @@ final class AuthorListRequest extends FormRequest
             'sortBy' => ['nullable', 'string'],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
+    }
+
+    public function toDto(): AuthorFiltersDto
+    {
+        return new AuthorFiltersDto(
+            search: $this->input('search'),
+            perPage: $this->integer('per_page', 15),
+            sortBy: (string) $this->string('sort_by', 'id'),
+            sortDirection: (string) $this->string('sort_direction', 'asc'),
+        );
     }
 }

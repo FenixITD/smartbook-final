@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Order;
 
-final readonly class OrderDTO
+final readonly class OrderDto
 {
     public function __construct(
         public int $userId,

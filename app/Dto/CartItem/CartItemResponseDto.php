@@ -6,7 +6,7 @@ namespace App\Dto\CartItem;
 
 use App\Models\CartItem;
 
-final readonly class CartItemResponseDTO
+final readonly class CartItemResponseDto
 {
     public function __construct(
         public int $id,

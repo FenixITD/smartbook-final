@@ -6,7 +6,7 @@ namespace App\Dto\CartItem;
 
 use App\Http\Requests\CartItem\CartItemDataRequest;
 
-final readonly class CartItemDTO
+final readonly class CartItemDto
 {
     public function __construct(
         public int $userId,

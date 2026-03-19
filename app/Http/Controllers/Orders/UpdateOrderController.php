@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Orders;
 
-use App\DTO\Order\OrderDTO;
+use App\DTO\Order\OrderDto;
 use App\Http\Requests\Order\OrderDataRequest;
 use App\Http\Resources\Order\OrderResource;
 use App\Models\Order;

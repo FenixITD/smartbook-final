@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Order;
 
-use App\Dto\Order\OrderFiltersDTO;
+use App\Dto\Order\OrderFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class OrderListRequest extends FormRequest

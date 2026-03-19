@@ -6,7 +6,7 @@ namespace App\Dto\Book;
 
 use App\Models\Book;
 
-final readonly class BookResponseDTO
+final readonly class BookResponseDto
 {
     public function __construct(
         public int $id,

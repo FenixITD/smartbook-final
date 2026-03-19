@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Order;
 
-use App\DTO\Order\OrderDTO;
-use App\DTO\Order\OrderResponseDTO;
+use App\DTO\Order\OrderDto;
+use App\DTO\Order\OrderResponseDto;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 
 final readonly class CreateOrderService
@@ -14,7 +14,7 @@ final readonly class CreateOrderService
         private OrderRepositoryInterface $repository
     ) {}
 
-    public function execute(OrderDTO $dto): OrderResponseDTO
+    public function execute(OrderDto $dto): OrderResponseDto
     {
         return $this->repository->create($dto);
     }

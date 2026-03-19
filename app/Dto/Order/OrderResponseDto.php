@@ -6,7 +6,7 @@ namespace App\Dto\Order;
 
 use App\Models\Order;
 
-final readonly class OrderResponseDTO
+final readonly class OrderResponseDto
 {
     public function __construct(
         public int $id,

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Book;
 
-use App\DTO\Book\BookDTO;
-use App\DTO\Book\BookResponseDTO;
+use App\DTO\Book\BookDto;
+use App\DTO\Book\BookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
 final readonly class CreateBookService
@@ -14,7 +14,7 @@ final readonly class CreateBookService
         private BookRepositoryInterface $repository
     ) {}
 
-    public function execute(BookDTO $dto): BookResponseDTO
+    public function execute(BookDto $dto): BookResponseDto
     {
         return $this->repository->create([
             'title' => $dto->title,

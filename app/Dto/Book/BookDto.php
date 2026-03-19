@@ -6,7 +6,7 @@ namespace App\Dto\Book;
 
 use App\Http\Requests\Book\BookDataRequest;
 
-final readonly class BookDTO
+final readonly class BookDto
 {
     public function __construct(
         public string $title,

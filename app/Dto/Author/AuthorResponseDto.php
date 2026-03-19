@@ -6,7 +6,7 @@ namespace App\Dto\Author;
 
 use App\Models\Author;
 
-final readonly class AuthorResponseDTO
+final readonly class AuthorResponseDto
 {
     public function __construct(
         public int $id,
@@ -19,7 +19,7 @@ final readonly class AuthorResponseDTO
     {
         return new self(
             id: $author->id,
-            name: $author->name,
+            name: (string) $author->name,
             createdAt: $author->created_at->toDateTimeString(),
             updatedAt: $author->updated_at->toDateTimeString(),
         );

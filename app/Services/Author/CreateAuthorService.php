@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Author;
 
-use App\DTO\Author\AuthorDTO;
-use App\DTO\Author\AuthorResponseDTO;
+use App\DTO\Author\AuthorDto;
+use App\DTO\Author\AuthorResponseDto;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
 readonly class CreateAuthorService
@@ -14,10 +14,8 @@ readonly class CreateAuthorService
         private AuthorRepositoryInterface $repository
     ) {}
 
-    public function execute(AuthorDTO $dto): AuthorResponseDTO
+    public function execute(AuthorDto $dto): AuthorResponseDto
     {
-        return $this->repository->create([
-            'name' => $dto->name,
-        ]);
+        return $this->repository->create($dto);
     }
 }

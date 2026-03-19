@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\CartItem;
 
-use App\DTO\CartItem\CartItemDTO;
-use App\DTO\CartItem\CartItemResponseDTO;
+use App\DTO\CartItem\CartItemDto;
+use App\DTO\CartItem\CartItemResponseDto;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 
 final readonly class CreateCartItemService
@@ -14,7 +14,7 @@ final readonly class CreateCartItemService
         private CartItemRepositoryInterface $repository
     ) {}
 
-    public function execute(CartItemDTO $dto): CartItemResponseDTO
+    public function execute(CartItemDto $dto): CartItemResponseDto
     {
         return $this->repository->create([
             'userId' => $dto->userId,

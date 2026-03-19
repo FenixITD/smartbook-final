@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Order;
 
-final readonly class OrderFiltersDTO
+final readonly class OrderFiltersDto
 {
     public function __construct(
         public ?string $search = null,

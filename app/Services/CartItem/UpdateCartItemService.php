@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\CartItem;
 
-use App\DTO\CartItem\CartItemDTO;
-use App\DTO\CartItem\CartItemResponseDTO;
+use App\DTO\CartItem\CartItemDto;
+use App\DTO\CartItem\CartItemResponseDto;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 
@@ -15,7 +15,7 @@ final readonly class UpdateCartItemService
         private CartItemRepositoryInterface $repository
     ) {}
 
-    public function execute(CartItem $cartItem, CartItemDTO $dto): CartItemResponseDTO
+    public function execute(CartItem $cartItem, CartItemDto $dto): CartItemResponseDto
     {
         $this->repository->update($cartItem, [
             'userId' => $dto->userId,
@@ -23,6 +23,6 @@ final readonly class UpdateCartItemService
             'quantity' => $dto->quantity,
         ]);
 
-        return CartItemResponseDTO::fromModel($cartItem->fresh());
+        return CartItemResponseDto::fromModel($cartItem->fresh());
     }
 }
