@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\Author\AuthorDto;
-use App\DTO\Author\AuthorFiltersDto;
-use App\DTO\Author\AuthorResponseDto;
+use App\Dto\Author\AuthorFiltersDto;
+use App\Dto\Author\AuthorResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 

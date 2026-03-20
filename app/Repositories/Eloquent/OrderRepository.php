@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\Order\OrderDto;
-use App\DTO\Order\OrderFiltersDto;
-use App\DTO\Order\OrderResponseDto;
+use App\Dto\Order\OrderFiltersDto;
+use App\Dto\Order\OrderResponseDto;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\Favorite\FavoriteDto;
-use App\DTO\Favorite\FavoriteFiltersDto;
-use App\DTO\Favorite\FavoriteResponseDto;
+use App\Dto\Favorite\FavoriteFiltersDto;
+use App\Dto\Favorite\FavoriteResponseDto;
 use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 

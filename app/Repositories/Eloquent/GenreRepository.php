@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\Genre\GenreDto;
-use App\DTO\Genre\GenreFiltersDto;
-use App\DTO\Genre\GenreResponseDto;
+use App\Dto\Genre\GenreFiltersDto;
+use App\Dto\Genre\GenreResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Authors;
+namespace App\Http\Controllers\Api\Authors;
 
 use App\Http\Requests\Author\AuthorListRequest;
 use App\Http\Resources\Author\AuthorResource;
