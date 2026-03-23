@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Reviews;
 
-use App\DTO\Review\ReviewDTO;
 use App\Http\Requests\Review\ReviewDataRequest;
 use App\Http\Resources\Review\ReviewResource;
 use App\Services\Review\CreateReviewService;
@@ -18,8 +17,7 @@ readonly class CreateReviewController
 
     public function __invoke(ReviewDataRequest $request): JsonResponse
     {
-        $dto = ReviewDTO::fromRequest($request);
-        $review = $this->service->execute($dto);
+        $review = $this->service->execute($request->toDto());
 
         return (new ReviewResource($review))->response()->setStatusCode(201);
     }

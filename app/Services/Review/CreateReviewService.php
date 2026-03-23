@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Review;
 
-use App\DTO\Review\ReviewDTO;
-use App\DTO\Review\ReviewResponseDTO;
+use App\DTO\Review\ReviewDto;
+use App\DTO\Review\ReviewResponseDto;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 
 final readonly class CreateReviewService
@@ -14,13 +14,8 @@ final readonly class CreateReviewService
         private ReviewRepositoryInterface $repository
     ) {}
 
-    public function execute(ReviewDTO $dto): ReviewResponseDTO
+    public function execute(ReviewDto $dto): ReviewResponseDto
     {
-        return $this->repository->create([
-            'userId' => $dto->userId,
-            'bookId' => $dto->bookId,
-            'rating' => $dto->rating,
-            'comment' => $dto->comment,
-        ]);
+        return $this->repository->create($dto);
     }
 }

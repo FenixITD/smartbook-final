@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Reviews;
 
-use App\DTO\Review\ReviewFiltersDTO;
 use App\Http\Requests\Review\ReviewListRequest;
-use App\Http\Resources\Review\ReviewCollection;
+use App\Http\Resources\Review\ReviewResource;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -18,9 +17,9 @@ final readonly class GetListReviewController
 
     public function __invoke(ReviewListRequest $request): JsonResponse
     {
-        $filters = ReviewFiltersDTO::fromRequest($request);
+        $filters = $request->toDto();
         $reviews = $this->repository->getList($filters);
 
-        return (new ReviewCollection($reviews))->response();
+        return ReviewResource::collection($reviews)->response();
     }
 }

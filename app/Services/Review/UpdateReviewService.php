@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Review;
 
-use App\DTO\Review\ReviewDTO;
-use App\DTO\Review\ReviewResponseDTO;
+use App\DTO\Review\ReviewDto;
+use App\DTO\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 
@@ -15,15 +15,8 @@ final readonly class UpdateReviewService
         private ReviewRepositoryInterface $repository
     ) {}
 
-    public function execute(Review $review, ReviewDTO $dto): ReviewResponseDTO
+    public function execute(Review $review, ReviewDto $dto): ReviewResponseDto
     {
-        $this->repository->update($review, [
-            'userId' => $dto->userId,
-            'bookId' => $dto->bookId,
-            'rating' => $dto->rating,
-            'comment' => $dto->comment,
-        ]);
-
-        return ReviewResponseDTO::fromModel($review->fresh());
+        return $this->repository->update($review, $dto);
     }
 }

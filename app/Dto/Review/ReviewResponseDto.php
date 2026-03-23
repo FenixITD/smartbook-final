@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\Review;
+namespace App\Dto\Review;
 
 use App\Models\Review;
 
-final readonly class ReviewResponseDTO
+final readonly class ReviewResponseDto
 {
     public function __construct(
         public int $id,
@@ -22,10 +22,10 @@ final readonly class ReviewResponseDTO
     {
         return new self(
             id: $review->id,
-            userId: (int) $review->userId,
-            bookId: (int) $review->bookId,
+            userId: (int) $review->user_id,
+            bookId: (int) $review->book_id,
             rating: (float) $review->rating,
-            comment: $review->comment,
+            comment: (string) $review->comment,
             createdAt: $review->created_at->toDateTimeString(),
             updatedAt: $review->updated_at->toDateTimeString(),
         );

@@ -4,44 +4,44 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\DTO\Review\ReviewFiltersDTO;
-use App\DTO\Review\ReviewResponseDTO;
+use App\Dto\Review\ReviewDto;
+use App\DTO\Review\ReviewFiltersDto;
+use App\DTO\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 
 final class ReviewRepository implements ReviewRepositoryInterface
 {
-    public function getList(ReviewFiltersDTO $filters): array
+    public function getList(ReviewFiltersDto $filters): array
     {
-        $query = Review::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"));
-
-        $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
-
-        return $paginator->getCollection()
-            ->map(fn (Review $review) => ReviewResponseDTO::fromModel($review))->all();
+        return Review::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage)
+            ->getCollection()
+            ->map(fn (Review $favorite) => ReviewResponseDto::fromModel($favorite))
+            ->all();
     }
 
-    public function getById(int $id): ?ReviewResponseDTO
+    public function getById(int $id): ?ReviewResponseDto
     {
         $review = Review::find($id);
 
-        return $review ? ReviewResponseDTO::fromModel($review) : null;
+        return $review ? ReviewResponseDto::fromModel($review) : null;
     }
 
-    public function create(array $data): ReviewResponseDTO
+    public function create(ReviewDto $data): ReviewResponseDto
     {
-        $review = Review::create($data);
+        $review = Review::create($data->toArray());
 
-        return ReviewResponseDTO::fromModel($review);
+        return ReviewResponseDto::fromModel($review);
     }
 
-    public function update(Review $review, array $data): ?ReviewResponseDTO
+    public function update(Review $review, ReviewDto $data): ?ReviewResponseDto
     {
-        $review->update($data);
+        $review->update($data->toArray());
 
-        return ReviewResponseDTO::fromModel($review->fresh());
+        return ReviewResponseDto::fromModel($review->fresh());
     }
 
     public function delete(Review $review): bool
