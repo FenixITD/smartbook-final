@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\OrderItem;
 
-use App\DTO\OrderItem\OrderItemDTO;
-use App\DTO\OrderItem\OrderItemResponseDTO;
+use App\DTO\OrderItem\OrderItemDto;
+use App\DTO\OrderItem\OrderItemResponseDto;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
 
 final readonly class CreateOrderItemService
@@ -14,13 +14,8 @@ final readonly class CreateOrderItemService
         private OrderItemRepositoryInterface $repository
     ) {}
 
-    public function execute(OrderItemDTO $dto): OrderItemResponseDTO
+    public function execute(OrderItemDto $dto): OrderItemResponseDto
     {
-        return $this->repository->create([
-            'orderId' => $dto->orderId,
-            'bookId' => $dto->bookId,
-            'quantity' => $dto->quantity,
-            'priceAtPurchase' => $dto->priceAtPurchase,
-        ]);
+        return $this->repository->create($dto);
     }
 }

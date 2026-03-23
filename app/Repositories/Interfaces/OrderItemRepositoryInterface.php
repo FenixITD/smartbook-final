@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Repositories\Interfaces;
 
-use App\DTO\OrderItem\OrderItemFiltersDTO;
-use App\DTO\OrderItem\OrderItemResponseDTO;
+use App\Dto\OrderItem\OrderItemDto;
+use App\DTO\OrderItem\OrderItemFiltersDto;
+use App\DTO\OrderItem\OrderItemResponseDto;
 use App\Models\OrderItem;
 
 interface OrderItemRepositoryInterface
 {
     /**
-     * @return array<OrderItemResponseDTO>
+     * @return array<OrderItemResponseDto>
      */
-    public function getList(OrderItemFiltersDTO $filters): array;
+    public function getList(OrderItemFiltersDto $filters): array;
 
-    public function getById(int $id): ?OrderItemResponseDTO;
+    public function getById(int $id): ?OrderItemResponseDto;
 
-    public function create(array $data): OrderItemResponseDTO;
+    public function create(OrderItemDto $data): OrderItemResponseDto;
 
-    public function update(OrderItem $orderItem, array $data): ?OrderItemResponseDTO;
+    public function update(OrderItem $orderItem, OrderItemDto $data): ?OrderItemResponseDto;
 
     public function delete(OrderItem $orderItem): bool;
 }

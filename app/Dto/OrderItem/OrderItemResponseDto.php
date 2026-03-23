@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\DTO\OrderItem;
+namespace App\Dto\OrderItem;
 
 use App\Models\OrderItem;
 
-final readonly class OrderItemResponseDTO
+final readonly class OrderItemResponseDto
 {
     public function __construct(
         public int $id,
@@ -22,10 +22,10 @@ final readonly class OrderItemResponseDTO
     {
         return new self(
             id: $orderItem->id,
-            orderId: (int) $orderItem->userId,
-            bookId: (int) $orderItem->bookId,
-            quantity: $orderItem->quantity,
-            priceAtPurchase: (float) $orderItem->priceAtPurchase,
+            orderId: (int) $orderItem->order_id,
+            bookId: (int) $orderItem->book_id,
+            quantity: (int) $orderItem->quantity,
+            priceAtPurchase: (float) $orderItem->price_at_purchase,
             createdAt: $orderItem->created_at->toDateTimeString(),
             updatedAt: $orderItem->updated_at->toDateTimeString(),
         );
