@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Authors;
 
-use App\DTO\Author\AuthorDTO;
 use App\Http\Requests\Author\AuthorDataRequest;
 use App\Http\Resources\Author\AuthorResource;
 use App\Services\Author\CreateAuthorService;
@@ -18,8 +17,7 @@ readonly class CreateAuthorController
 
     public function __invoke(AuthorDataRequest $request): JsonResponse
     {
-        $dto = AuthorDTO::fromRequest($request);
-        $author = $this->service->execute($dto);
+        $author = $this->service->execute($request->toDto());
 
         return (new AuthorResource($author))->response()->setStatusCode(201);
     }

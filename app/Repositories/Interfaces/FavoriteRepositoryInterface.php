@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace App\Repositories\Interfaces;
 
-use App\DTO\Favorite\FavoriteFiltersDTO;
-use App\DTO\Favorite\FavoriteResponseDTO;
+use App\Dto\Favorite\FavoriteDto;
+use App\DTO\Favorite\FavoriteFiltersDto;
+use App\DTO\Favorite\FavoriteResponseDto;
 use App\Models\Favorite;
 
 interface FavoriteRepositoryInterface
 {
     /**
-     * @return array<FavoriteResponseDTO>
+     * @return array<FavoriteResponseDto>
      */
-    public function getList(FavoriteFiltersDTO $filters): array;
+    public function getList(FavoriteFiltersDto $filters): array;
 
-    public function getById(int $id): ?FavoriteResponseDTO;
+    public function getById(int $id): ?FavoriteResponseDto;
 
-    public function create(array $data): FavoriteResponseDTO;
+    public function create(FavoriteDto $data): FavoriteResponseDto;
 
-    public function update(Favorite $favorite, array $data): ?FavoriteResponseDTO;
+    public function update(Favorite $favorite, FavoriteDto $data): ?FavoriteResponseDto;
 
     public function delete(Favorite $favorite): bool;
 }

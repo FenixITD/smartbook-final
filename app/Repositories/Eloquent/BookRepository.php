@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\DTO\Book\BookFiltersDTO;
-use App\DTO\Book\BookResponseDTO;
+use App\DTO\Book\BookFiltersDto;
+use App\DTO\Book\BookResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
 final class BookRepository implements BookRepositoryInterface
 {
-    public function getList(BookFiltersDTO $filters): array
+    public function getList(BookFiltersDto $filters): array
     {
         $query = Book::query()
             ->when($filters->search !== null, fn ($q) => $q->where('title', 'like', "%{$filters->search}%"));
@@ -20,28 +20,28 @@ final class BookRepository implements BookRepositoryInterface
             ->paginate($filters->perPage);
 
         return $paginator->getCollection()
-            ->map(fn (Book $book) => BookResponseDTO::fromModel($book))->all();
+            ->map(fn (Book $book) => BookResponseDto::fromModel($book))->all();
     }
 
-    public function getById(int $id): ?BookResponseDTO
+    public function getById(int $id): ?BookResponseDto
     {
         $book = Book::find($id);
 
-        return $book ? BookResponseDTO::fromModel($book) : null;
+        return $book ? BookResponseDto::fromModel($book) : null;
     }
 
-    public function create(array $data): BookResponseDTO
+    public function create(array $data): BookResponseDto
     {
         $book = Book::create($data);
 
-        return BookResponseDTO::fromModel($book);
+        return BookResponseDto::fromModel($book);
     }
 
-    public function update(Book $book, array $data): ?BookResponseDTO
+    public function update(Book $book, array $data): ?BookResponseDto
     {
         $book->update($data);
 
-        return BookResponseDTO::fromModel($book->fresh());
+        return BookResponseDto::fromModel($book->fresh());
     }
 
     public function delete(Book $book): bool

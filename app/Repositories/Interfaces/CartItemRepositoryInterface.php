@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace App\Repositories\Interfaces;
 
-use App\DTO\CartItem\CartItemFiltersDTO;
-use App\DTO\CartItem\CartItemResponseDTO;
+use App\DTO\CartItem\CartItemFiltersDto;
+use App\DTO\CartItem\CartItemResponseDto;
 use App\Models\CartItem;
 
 interface CartItemRepositoryInterface
 {
     /**
-     * @return array<CartItemResponseDTO>
+     * @return array<CartItemResponseDto>
      */
-    public function getList(CartItemFiltersDTO $filters): array;
+    public function getList(CartItemFiltersDto $filters): array;
 
-    public function getById(int $id): ?CartItemResponseDTO;
+    public function getById(int $id): ?CartItemResponseDto;
 
-    public function create(array $data): CartItemResponseDTO;
+    public function create(array $data): CartItemResponseDto;
 
-    public function update(CartItem $cartItem, array $data): ?CartItemResponseDTO;
+    public function update(CartItem $cartItem, array $data): ?CartItemResponseDto;
 
     public function delete(CartItem $cartItem): bool;
 }
