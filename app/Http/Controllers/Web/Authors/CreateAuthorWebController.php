@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\Authors;
 
-use App\Dto\Author\AuthorDto;
+use App\Http\Requests\Author\AuthorDataRequest;
 use App\Services\Author\CreateAuthorService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 final readonly class CreateAuthorWebController
@@ -21,13 +20,9 @@ final readonly class CreateAuthorWebController
         return view('authors.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(AuthorDataRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
-
-        $this->service->execute(new AuthorDto(name: $validated['name']));
+        $this->service->execute($request->toDto());
 
         return redirect()->route('authors.index')
             ->with('success', 'Author created successfully.');

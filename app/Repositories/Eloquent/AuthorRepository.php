@@ -9,6 +9,7 @@ use App\Dto\Author\AuthorFiltersDto;
 use App\Dto\Author\AuthorResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 final class AuthorRepository implements AuthorRepositoryInterface
 {
@@ -21,6 +22,14 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->getCollection()
             ->map(fn (Author $favorite) => AuthorResponseDto::fromModel($favorite))
             ->all();
+    }
+
+    public function getWebList(AuthorFiltersDto $filters): LengthAwarePaginator
+    {
+        return Author::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage);
     }
 
     public function getById(int $id): ?AuthorResponseDto
