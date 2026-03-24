@@ -19,7 +19,7 @@ final readonly class AuthorResponseDto
     {
         return new self(
             id: $author->id,
-            name: (string) $author->name,
+            name: $author->name,
             createdAt: $author->created_at->toDateTimeString(),
             updatedAt: $author->updated_at->toDateTimeString(),
         );
