@@ -10,7 +10,7 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->first()?->id,
+            'user_id' => User::all()->random()?->id,
             'total' => fake()->randomFloat(2, 10, 500),
             'status' => fake()->randomElement(['pending', 'paid', 'shipped', 'delivered', 'cancelled']),
             'shipping_address' => fake()->address(),

@@ -4,44 +4,44 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
-use App\DTO\Author\AuthorFiltersDTO;
-use App\DTO\Author\AuthorResponseDTO;
+use App\Dto\Author\AuthorDto;
+use App\DTO\Author\AuthorFiltersDto;
+use App\DTO\Author\AuthorResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
 final class AuthorRepository implements AuthorRepositoryInterface
 {
-    public function getList(AuthorFiltersDTO $filters): array
+    public function getList(AuthorFiltersDto $filters): array
     {
-        $query = Author::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"));
-
-        $paginator = $query->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
-
-        return $paginator->getCollection()
-            ->map(fn (Author $author) => AuthorResponseDTO::fromModel($author))->all();
+        return Author::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage)
+            ->getCollection()
+            ->map(fn (Author $favorite) => AuthorResponseDto::fromModel($favorite))
+            ->all();
     }
 
-    public function getById(int $id): ?AuthorResponseDTO
+    public function getById(int $id): ?AuthorResponseDto
     {
         $author = Author::find($id);
 
-        return $author ? AuthorResponseDTO::fromModel($author) : null;
+        return $author ? AuthorResponseDto::fromModel($author) : null;
     }
 
-    public function create(array $data): AuthorResponseDTO
+    public function create(AuthorDto $data): AuthorResponseDto
     {
-        $author = Author::create($data);
+        $author = Author::create($data->toArray());
 
-        return AuthorResponseDTO::fromModel($author);
+        return AuthorResponseDto::fromModel($author);
     }
 
-    public function update(Author $author, array $data): ?AuthorResponseDTO
+    public function update(Author $author, AuthorDto $data): ?AuthorResponseDto
     {
-        $author->update($data);
+        $author->update($data->toArray());
 
-        return AuthorResponseDTO::fromModel($author->fresh());
+        return AuthorResponseDto::fromModel($author->fresh());
     }
 
     public function delete(Author $author): bool

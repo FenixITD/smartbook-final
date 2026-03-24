@@ -5,13 +5,19 @@ namespace App\Providers;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
+use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\FavoriteRepository;
 use App\Repositories\Eloquent\ReviewRepository;
+use App\Repositories\Eloquent\OrderItemRepository;
+use App\Repositories\Eloquent\GenreRepository;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use App\Repositories\Interfaces\OrderItemRepositoryInterface;
+use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +47,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            OrderRepositoryInterface::class,
+            OrderRepository::class
+        );
+
+        $this->app->bind(
             FavoriteRepositoryInterface::class,
             FavoriteRepository::class
         );
@@ -48,6 +59,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ReviewRepositoryInterface::class,
             ReviewRepository::class
+        );
+      
+        $this->app->bind(
+            GenreRepositoryInterface::class,
+            GenreRepository::class
+        );
+
+        $this->app->bind(
+            OrderItemRepositoryInterface::class,
+            OrderItemRepository::class
         );
     }
 

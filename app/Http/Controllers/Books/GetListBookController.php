@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Books;
 
-use App\DTO\Book\BookFiltersDTO;
+use App\DTO\Book\BookFiltersDto;
 use App\Http\Requests\Book\BookListRequest;
 use App\Http\Resources\Book\BookCollection;
 use App\Repositories\Interfaces\BookRepositoryInterface;
@@ -18,7 +18,7 @@ final readonly class GetListBookController
 
     public function __invoke(BookListRequest $request): JsonResponse
     {
-        $filters = BookFiltersDTO::fromRequest($request);
+        $filters = BookFiltersDto::fromRequest($request);
         $books = $this->repository->getList($filters);
 
         return (new BookCollection($books))->response();

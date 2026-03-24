@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Book;
 
-use App\DTO\Book\BookDTO;
-use App\DTO\Book\BookResponseDTO;
+use App\DTO\Book\BookDto;
+use App\DTO\Book\BookResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
@@ -15,7 +15,7 @@ final readonly class UpdateBookService
         private BookRepositoryInterface $repository
     ) {}
 
-    public function execute(Book $book, BookDTO $dto): BookResponseDTO
+    public function execute(Book $book, BookDto $dto): BookResponseDto
     {
         $this->repository->update($book, [
             'title' => $dto->title,
@@ -31,6 +31,6 @@ final readonly class UpdateBookService
             'status' => $dto->status,
         ]);
 
-        return BookResponseDTO::fromModel($book->fresh());
+        return BookResponseDto::fromModel($book->fresh());
     }
 }
