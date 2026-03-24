@@ -13,7 +13,7 @@ class ReviewFactory extends Factory
         return [
             'user_id' => User::all()->random()?->id,
             'book_id' => Book::all()->random()?->id,
-            'rating' => fake()->numberBetween(1, 5),
+            'rating' => fake()->randomFloat(1, 1, 5),
             'comment' => fake()->paragraph(3),
         ];
     }

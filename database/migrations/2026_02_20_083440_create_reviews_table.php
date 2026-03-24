@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('book_id')->constrained()->onDelete('cascade');
-            $table->integer('rating');
+            $table->float('rating');
             $table->text('comment')->nullable();
             $table->timestamps();
         });
