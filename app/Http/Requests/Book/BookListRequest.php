@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Book;
 
+use App\Dto\Book\BookFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class BookListRequest extends FormRequest
+class BookListRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -21,5 +22,15 @@ final class BookListRequest extends FormRequest
             'sortBy' => ['nullable', 'string'],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
+    }
+
+    public function toDto(): BookFiltersDto
+    {
+        return new BookFiltersDto(
+            search: $this->input('search'),
+            perPage: $this->integer('per_page', 15),
+            sortBy: (string) $this->string('sort_by', 'id'),
+            sortDirection: (string) $this->string('sort_direction', 'asc'),
+        );
     }
 }

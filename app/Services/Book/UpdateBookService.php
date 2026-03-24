@@ -17,20 +17,6 @@ final readonly class UpdateBookService
 
     public function execute(Book $book, BookDto $dto): BookResponseDto
     {
-        $this->repository->update($book, [
-            'title' => $dto->title,
-            'slug' => $dto->slug ?? str($dto->title)->slug(),
-            'authorId' => $dto->authorId,
-            'description' => $dto->description,
-            'price' => $dto->price,
-            'stock' => $dto->stock,
-            'publishYear' => $dto->publishYear,
-            'coverImage' => $dto->coverImage,
-            'averageRating' => $dto->averageRating,
-            'ratingsCount' => $dto->ratingsCount,
-            'status' => $dto->status,
-        ]);
-
-        return BookResponseDto::fromModel($book->fresh());
+        return $this->repository->update($book, $dto);
     }
 }
