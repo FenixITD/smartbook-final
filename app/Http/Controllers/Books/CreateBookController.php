@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Books;
 
-use App\DTO\Book\BookDTO;
 use App\Http\Requests\Book\BookDataRequest;
 use App\Http\Resources\Book\BookResource;
 use App\Services\Book\CreateBookService;
@@ -18,8 +17,7 @@ readonly class CreateBookController
 
     public function __invoke(BookDataRequest $request): JsonResponse
     {
-        $dto = BookDTO::fromRequest($request);
-        $book = $this->service->execute($dto);
+        $book = $this->service->execute($request->toDto());
 
         return (new BookResource($book))->response()->setStatusCode(201);
     }
