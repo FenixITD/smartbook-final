@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Book;
 
+use App\Dto\Book\BookDto;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class BookDataRequest extends FormRequest
+class BookDataRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -28,5 +29,22 @@ final class BookDataRequest extends FormRequest
             'ratingsCount' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'string', 'in:draft,published,archived'],
         ];
+    }
+
+    public function toDto(): BookDto
+    {
+        return new BookDto(
+            title: $this->input('title'),
+            slug: $this->input('slug'),
+            authorId: $this->integer('authorId'),
+            description: $this->input('description'),
+            price: $this->float('price'),
+            stock: $this->integer('stock'),
+            publishYear: $this->integer('publishYear'),
+            coverImage: $this->input('coverImage'),
+            averageRating: $this->float('averageRating'),
+            ratingsCount: $this->integer('ratingsCount'),
+            status: $this->input('status'),
+        );
     }
 }

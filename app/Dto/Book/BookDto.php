@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\Book;
 
-use App\Http\Requests\Book\BookDataRequest;
-
 final readonly class BookDto
 {
     public function __construct(
@@ -22,20 +20,20 @@ final readonly class BookDto
         public string $status,
     ) {}
 
-    public static function fromRequest(BookDataRequest $request): self
+    public function toArray(): array
     {
-        return new self(
-            title: $request->string('title'),
-            slug: $request->string('slug'),
-            authorId: $request->integer('authorId'),
-            description: $request->string('description'),
-            price: $request->float('price'),
-            stock: $request->integer('stock', 0),
-            publishYear: $request->integer('publishYear', null),
-            coverImage: $request->string('coverImage')->nullable(),
-            averageRating: $request->float('averageRating', 0.00),
-            ratingsCount: $request->integer('ratingsCount', 0),
-            status: $request->string('status', 'active'),
-        );
+        return [
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'author_id' => $this->authorId,
+            'description' => $this->description,
+            'price' => $this->price,
+            'stock' => $this->stock,
+            'publish_year' => $this->publishYear,
+            'cover_image' => $this->coverImage,
+            'average_rating' => $this->averageRating,
+            'ratings_count' => $this->ratingsCount,
+            'status' => $this->status,
+        ];
     }
 }

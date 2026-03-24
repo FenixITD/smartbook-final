@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Dto\Book;
 
-use App\Http\Requests\Book\BookListRequest;
-
 final readonly class BookFiltersDto
 {
     public function __construct(
@@ -14,14 +12,4 @@ final readonly class BookFiltersDto
         public string $sortBy = 'id',
         public string $sortDirection = 'asc',
     ) {}
-
-    public static function fromRequest(BookListRequest $request): self
-    {
-        return new self(
-            search: $request->input('search'),
-            perPage: $request->integer('per_page', 15),
-            sortBy: (string) $request->string('sort_by', 'id'),
-            sortDirection: (string) $request->string('sort_direction', 'asc'),
-        );
-    }
 }
