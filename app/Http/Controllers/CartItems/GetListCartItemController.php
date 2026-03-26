@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\CartItems;
 
-use App\DTO\CartItem\CartItemFiltersDto;
 use App\Http\Requests\CartItem\CartItemListRequest;
-use App\Http\Resources\CartItem\CartItemCollection;
+use App\Http\Resources\CartItem\CartItemResource;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -18,9 +17,9 @@ final readonly class GetListCartItemController
 
     public function __invoke(CartItemListRequest $request): JsonResponse
     {
-        $filters = CartItemFiltersDto::fromRequest($request);
+        $filters = $request->toDto();
         $cartItems = $this->repository->getList($filters);
 
-        return (new CartItemCollection($cartItems))->response();
+        return CartItemResource::collection($cartItems)->response();
     }
 }
