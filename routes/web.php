@@ -6,7 +6,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', App\Http\Controllers\Web\DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\CartItems;
+namespace App\Http\Controllers\Api\CartItems;
 
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
