@@ -16,18 +16,6 @@ final readonly class CreateBookService
 
     public function execute(BookDto $dto): BookResponseDto
     {
-        return $this->repository->create([
-            'title' => $dto->title,
-            'slug' => $dto->slug ?? str($dto->title)->slug(),
-            'authorId' => $dto->authorId,
-            'description' => $dto->description,
-            'price' => $dto->price,
-            'stock' => $dto->stock,
-            'publishYear' => $dto->publishYear,
-            'coverImage' => $dto->coverImage,
-            'averageRating' => $dto->averageRating,
-            'ratingsCount' => $dto->ratingsCount,
-            'status' => $dto->status,
-        ]);
+        return $this->repository->create($dto);
     }
 }

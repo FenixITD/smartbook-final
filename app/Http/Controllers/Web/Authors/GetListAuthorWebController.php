@@ -11,14 +11,13 @@ use Illuminate\View\View;
 final readonly class GetListAuthorWebController
 {
     public function __construct(
-        private AuthorRepositoryInterface $repository
+        private AuthorRepositoryInterface $repository,
     ) {}
 
     public function __invoke(AuthorListRequest $request): View
     {
-        $filters = $request->toDto();
-        $authors = $this->repository->getWebList($filters);
+        $paginated = $this->repository->getWebList($request->toDto());
 
-        return view('authors.list', compact('authors'));
+        return view('authors.list', compact('paginated'));
     }
 }

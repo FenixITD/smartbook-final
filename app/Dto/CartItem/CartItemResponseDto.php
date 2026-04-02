@@ -21,9 +21,9 @@ final readonly class CartItemResponseDto
     {
         return new self(
             id: $cartItem->id,
-            userId: (int) $cartItem->userId,
-            bookId: (int) $cartItem->bookId,
-            quantity: $cartItem->quantity,
+            userId: (int) $cartItem->user_id,
+            bookId: (int) $cartItem->book_id,
+            quantity: (int) $cartItem->quantity,
             createdAt: $cartItem->created_at->toDateTimeString(),
             updatedAt: $cartItem->updated_at->toDateTimeString(),
         );

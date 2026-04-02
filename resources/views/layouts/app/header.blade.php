@@ -30,7 +30,7 @@
     <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
         <flux:tooltip content="Cart" position="bottom">
             <div class="relative">
-                <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="shopping-cart" href="#" />
+                <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="shopping-cart" href="{{ route('cart.index') }}" />
                 @auth
                     @php $cartCount = auth()->user()->cartItems()->count(); @endphp
                     @if ($cartCount > 0)

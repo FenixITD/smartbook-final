@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\CartItem;
 
+use App\Dto\CartItem\CartItemDto;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class CartItemDataRequest extends FormRequest
+class CartItemDataRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -18,7 +19,16 @@ final class CartItemDataRequest extends FormRequest
         return [
             'userId' => ['required', 'integer', 'exists:users,id'],
             'bookId' => ['required', 'integer', 'exists:books,id'],
-            'quantity' => ['required', 'integer', 'min:1'],
+            'quantity' => ['required', 'integer'],
         ];
+    }
+
+    public function toDto(): CartItemDto
+    {
+        return new CartItemDto(
+            userId: $this->integer('userId'),
+            bookId: $this->integer('bookId'),
+            quantity: $this->integer('quantity'),
+        );
     }
 }

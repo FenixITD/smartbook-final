@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Repositories\Interfaces;
 
 use App\Dto\Author\AuthorDto;
-use App\DTO\Author\AuthorFiltersDto;
-use App\DTO\Author\AuthorResponseDto;
+use App\Dto\Author\AuthorFiltersDto;
+use App\Dto\Author\AuthorResponseDto;
+use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface AuthorRepositoryInterface
 {
@@ -17,7 +17,7 @@ interface AuthorRepositoryInterface
      */
     public function getList(AuthorFiltersDto $filters): array;
 
-    public function getWebList(AuthorFiltersDto $filters): LengthAwarePaginator;
+    public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto;
 
     public function getById(int $id): ?AuthorResponseDto;
 

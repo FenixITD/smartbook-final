@@ -91,13 +91,13 @@
                 <div>
                     <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Books</h2>
                     <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-                        {{ $books->total() }} {{ Str::plural('book', $books->total()) }} found
+                        {{ $paginated->total }} {{ Str::plural('book', $paginated->total) }} found
                     </p>
                 </div>
             </div>
 
             {{-- Books Grid --}}
-            @if ($books->isEmpty())
+            @if (empty($paginated->items))
                 <div class="flex flex-col items-center justify-center py-24 text-zinc-400">
                     <flux:icon name="book-open" class="w-12 h-12 mb-3" />
                     <p class="text-sm">No books found</p>
@@ -105,17 +105,21 @@
                 </div>
             @else
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                    @foreach ($books as $book)
+                    @foreach ($paginated->items as $book)
                         <div class="group flex flex-col rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden hover:shadow-md transition-shadow">
 
                             {{-- Cover --}}
                             <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                                 @if ($book->cover_image)
-                                    <img src="{{ $book->cover_image }}" alt="{{ $book->title }}"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    <img
+                                        src="{{ Storage::url($book->cover_image) }}"
+                                        alt="{{ $book->title }}"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        onerror="this.src='https://picsum.photos/400/600?random={{ $book->id }}'; this.onerror=null;"
+                                    >
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center">
-                                        <flux:icon name="book-open" class="w-10 h-10 text-zinc-300" />
+                                    <div class="w-full h-full flex items-center justify-center bg-zinc-200 dark:bg-zinc-700">
+                                        <flux:icon name="book-open" class="w-12 h-12 text-zinc-400" />
                                     </div>
                                 @endif
 
@@ -153,20 +157,60 @@
                                     <span class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                                         ${{ number_format($book->price, 2) }}
                                     </span>
-                                    <button
-                                        class="p-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-                                        title="Add to cart">
-                                        <flux:icon name="shopping-cart" class="w-3.5 h-3.5" />
-                                    </button>
+                                    <form action="{{ route('cart.store') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="book_id" value="{{ $book->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit"
+                                                class="p-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+                                                title="Add to cart">
+                                            <flux:icon name="shopping-cart" class="w-3.5 h-3.5" />
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                @if ($books->hasPages())
-                    <div class="mt-8">
-                        {{ $books->links() }}
+                {{-- Pagination --}}
+                @if ($paginated->lastPage > 1)
+                    @php
+                        $query = request()->query();
+                        $current = $paginated->currentPage;
+                        $last = $paginated->lastPage;
+                    @endphp
+                    <div class="mt-8 flex items-center justify-between">
+                        <p class="text-sm text-zinc-500">
+                            Showing {{ $paginated->perPage * ($current - 1) + 1 }}
+                            to {{ min($paginated->perPage * $current, $paginated->total) }}
+                            of {{ $paginated->total }} results
+                        </p>
+                        <div class="flex items-center gap-1">
+                            @if ($current > 1)
+                                <a href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $current - 1])) }}"
+                                   class="px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                                    ‹
+                                </a>
+                            @endif
+
+                            @for ($page = max(1, $current - 2); $page <= min($last, $current + 2); $page++)
+                                <a href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $page])) }}"
+                                   class="px-3 py-1.5 text-sm rounded-lg border transition-colors
+                                          {{ $page === $current
+                                             ? 'border-blue-600 bg-blue-600 text-white'
+                                             : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800' }}">
+                                    {{ $page }}
+                                </a>
+                            @endfor
+
+                            @if ($current < $last)
+                                <a href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $current + 1])) }}"
+                                   class="px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                                    ›
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 @endif
             @endif

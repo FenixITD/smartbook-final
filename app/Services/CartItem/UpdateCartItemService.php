@@ -17,12 +17,6 @@ final readonly class UpdateCartItemService
 
     public function execute(CartItem $cartItem, CartItemDto $dto): CartItemResponseDto
     {
-        $this->repository->update($cartItem, [
-            'userId' => $dto->userId,
-            'bookId' => $dto->bookId,
-            'quantity' => $dto->quantity,
-        ]);
-
-        return CartItemResponseDto::fromModel($cartItem->fresh());
+        return $this->repository->update($cartItem, $dto);
     }
 }

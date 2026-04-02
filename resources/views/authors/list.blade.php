@@ -1,10 +1,8 @@
 <x-layouts::app.header title="Authors">
     <div class="flex min-h-screen flex-col">
 
-        {{-- Основной контент --}}
         <div class="flex-1 flex flex-col gap-6 p-6">
 
-            {{-- Header (заголовок страницы + кнопка) --}}
             <div class="flex items-center justify-between">
                 <div>
                     <flux:heading size="xl">Authors</flux:heading>
@@ -15,7 +13,6 @@
                 </flux:button>
             </div>
 
-            {{-- Flash message --}}
             @if (session('success'))
                 <flux:callout variant="success" icon="check-circle">
                     {{ session('success') }}
@@ -59,22 +56,14 @@
                     <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                         <thead class="bg-zinc-50 dark:bg-zinc-800">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider w-12">
-                                #
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                                Name
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                                Created at
-                            </th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-                                Actions
-                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider w-12">#</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Created at</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                        @forelse ($authors as $author)
+                        @forelse ($paginated->items as $author)
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                                 <td class="px-6 py-4 text-sm text-zinc-400 dark:text-zinc-500">
                                     {{ $author->id }}
@@ -85,8 +74,8 @@
                                             {{ mb_strtoupper(mb_substr($author->name, 0, 1)) }}
                                         </div>
                                         <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                                            {{ $author->name }}
-                                        </span>
+                                                {{ $author->name }}
+                                            </span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
@@ -94,19 +83,13 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <flux:button href="{{ route('authors.show', $author) }}" variant="ghost" size="sm" icon="eye">
-                                            View
-                                        </flux:button>
-                                        <flux:button href="{{ route('authors.edit', $author) }}" variant="ghost" size="sm" icon="pencil">
-                                            Edit
-                                        </flux:button>
+                                        <flux:button href="{{ route('authors.show', $author) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
+                                        <flux:button href="{{ route('authors.edit', $author) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
                                         <form action="{{ route('authors.destroy', $author) }}" method="POST" class="inline"
                                               onsubmit="return confirm('Delete author \'{{ $author->name }}\'?')">
                                             @csrf
                                             @method('DELETE')
-                                            <flux:button type="submit" variant="ghost" size="sm" icon="trash">
-                                                Delete
-                                            </flux:button>
+                                            <flux:button type="submit" variant="ghost" size="sm" icon="trash">Delete</flux:button>
                                         </form>
                                     </div>
                                 </td>
@@ -128,20 +111,55 @@
                     </table>
                 </div>
 
-                @if ($authors->hasPages())
-                    <div class="border-t border-zinc-200 dark:border-zinc-700 px-6 py-4 mt-auto">
-                        {{ $authors->appends(request()->query())->links() }}
+                {{-- Pagination --}}
+                @if ($paginated->lastPage > 1)
+                    @php
+                        $query = request()->query();
+                        $current = $paginated->currentPage;
+                        $last = $paginated->lastPage;
+                    @endphp
+                    <div class="border-t border-zinc-200 dark:border-zinc-700 px-6 py-4 mt-auto flex items-center justify-between">
+                        <p class="text-sm text-zinc-500">
+                            Page {{ $current }} of {{ $last }}
+                        </p>
+                        <div class="flex items-center gap-1">
+                            {{-- Prev --}}
+                            @if ($current > 1)
+                                <a href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $current - 1])) }}"
+                                   class="px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                                    ‹
+                                </a>
+                            @endif
+
+                            {{-- Pages --}}
+                            @for ($page = max(1, $current - 2); $page <= min($last, $current + 2); $page++)
+                                <a href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $page])) }}"
+                                   class="px-3 py-1.5 text-sm rounded-lg border transition-colors
+                                          {{ $page === $current
+                                             ? 'border-blue-600 bg-blue-600 text-white'
+                                             : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800' }}">
+                                    {{ $page }}
+                                </a>
+                            @endfor
+
+                            {{-- Next --}}
+                            @if ($current < $last)
+                                <a href="{{ request()->fullUrlWithQuery(array_merge($query, ['page' => $current + 1])) }}"
+                                   class="px-3 py-1.5 text-sm rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                                    ›
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 @endif
             </div>
 
             <flux:text class="text-zinc-400 text-sm">
-                Total authors: {{ $authors->total() }}
+                Total authors: {{ $paginated->total }}
             </flux:text>
 
         </div>
 
-        {{-- Тестовый футер --}}
         <footer class="bg-zinc-50 dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 py-4 px-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
             <p>© {{ date('Y') }} Your Book Library. All rights reserved.</p>
             <p class="mt-1">Built with Laravel + Flux UI • Test version</p>

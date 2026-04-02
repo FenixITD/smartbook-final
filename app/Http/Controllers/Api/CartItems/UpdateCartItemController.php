@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\CartItems;
 
-use App\DTO\CartItem\CartItemDto;
 use App\Http\Requests\CartItem\CartItemDataRequest;
 use App\Http\Resources\CartItem\CartItemResource;
 use App\Models\CartItem;
@@ -19,8 +18,7 @@ readonly class UpdateCartItemController
 
     public function __invoke(CartItemDataRequest $request, CartItem $cartItem): JsonResponse
     {
-        $dto = CartItemDto::fromRequest($request);
-        $updated = $this->service->execute($cartItem, $dto);
+        $updated = $this->service->execute($cartItem, $request->toDto());
 
         return (new CartItemResource($updated))->response();
     }

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\CartItem;
 
+use App\Dto\CartItem\CartItemFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class CartItemListRequest extends FormRequest
+class CartItemListRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -21,5 +22,15 @@ final class CartItemListRequest extends FormRequest
             'sortBy' => ['nullable', 'string'],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
+    }
+
+    public function toDto(): CartItemFiltersDto
+    {
+        return new CartItemFiltersDto(
+            search: $this->input('search'),
+            perPage: $this->integer('per_page', 15),
+            sortBy: (string) $this->string('sort_by', 'id'),
+            sortDirection: (string) $this->string('sort_direction', 'asc'),
+        );
     }
 }

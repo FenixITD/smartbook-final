@@ -16,10 +16,6 @@ final readonly class CreateCartItemService
 
     public function execute(CartItemDto $dto): CartItemResponseDto
     {
-        return $this->repository->create([
-            'userId' => $dto->userId,
-            'bookId' => $dto->bookId,
-            'quantity' => $dto->quantity,
-        ]);
+        return $this->repository->create($dto);
     }
 }
