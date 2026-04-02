@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\Web\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
+Route::get('dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -18,5 +19,7 @@ require __DIR__.'/genres.php';
 require __DIR__.'/orders.php';
 require __DIR__.'/orderItems.php';
 require __DIR__.'/reviews.php';
+require __DIR__.'/carts.php';
+require __DIR__.'/webBooks.php';
 
 require __DIR__.'/settings.php';

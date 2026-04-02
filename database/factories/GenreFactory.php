@@ -9,7 +9,13 @@ class GenreFactory extends Factory
 {
     public function definition(): array
     {
-        $name = fake()->unique()->word().' '.fake()->word();
+        $name = fake()->unique()->randomElement([
+            'Action', 'Adventure', 'Fantasy', 'Science Fiction', 'Cyberpunk', 'Post-Apocalyptic', 'Space Opera',
+            'Mystery', 'Horror', 'Thriller', 'Psychological Thriller', 'Crime Novel', 'Detective', 'Historical Novel',
+            'Romance', 'Romantic Comedy', 'Erotica', 'Family Saga', 'Social Drama', 'Coming-of-Age', 'Middle Grade',
+            'Poetry', 'Drama/Play', 'Comedy', 'Travelogue', 'Self-Help', 'Psychology', 'Popular Science', 'Philosophy',
+            'Cookbook', 'Home & Garden', 'Art & Design', 'Novella', 'Experimental Fiction', 'Music Biography',
+        ]);
 
         return [
             'name' => $name,

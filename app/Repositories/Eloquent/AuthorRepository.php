@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\Author\AuthorDto;
-use App\DTO\Author\AuthorFiltersDto;
-use App\DTO\Author\AuthorResponseDto;
+use App\Dto\Author\AuthorFiltersDto;
+use App\Dto\Author\AuthorResponseDto;
+use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
@@ -19,8 +20,18 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()
-            ->map(fn (Author $favorite) => AuthorResponseDto::fromModel($favorite))
+            ->map(fn (Author $author) => AuthorResponseDto::fromModel($author))
             ->all();
+    }
+
+    public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto
+    {
+        $paginator = Author::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage);
+
+        return PaginatedResponseDto::fromPaginator($paginator);
     }
 
     public function getById(int $id): ?AuthorResponseDto

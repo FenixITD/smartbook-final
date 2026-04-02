@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\CartItems\CreateCartItemController;
-use App\Http\Controllers\CartItems\DeleteCartItemController;
-use App\Http\Controllers\CartItems\GetByIdCartItemController;
-use App\Http\Controllers\CartItems\GetListCartItemController;
-use App\Http\Controllers\CartItems\UpdateCartItemController;
+use App\Http\Controllers\Api\CartItems\CreateCartItemController;
+use App\Http\Controllers\Api\CartItems\DeleteCartItemController;
+use App\Http\Controllers\Api\CartItems\GetByIdCartItemController;
+use App\Http\Controllers\Api\CartItems\GetListCartItemController;
+use App\Http\Controllers\Api\CartItems\UpdateCartItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('cartItems')->group(function (): void {

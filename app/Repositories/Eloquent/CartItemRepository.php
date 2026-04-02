@@ -30,6 +30,24 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return $cartItem ? CartItemResponseDto::fromModel($cartItem) : null;
     }
 
+    public function addOrIncrement(CartItemDto $data): void
+    {
+        $existing = CartItem::where('user_id', $data->userId)
+            ->where('book_id', $data->bookId)
+            ->first();
+
+        if ($existing) {
+            $existing->increment('quantity', $data->quantity);
+        } else {
+            CartItem::create($data->toArray());
+        }
+    }
+
+    public function updateQuantity(CartItem $cartItem, int $quantity): void
+    {
+        $cartItem->update(['quantity' => $quantity]);
+    }
+
     public function create(CartItemDto $data): CartItemResponseDto
     {
         $cartItem = CartItem::create($data->toArray());
