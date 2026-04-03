@@ -2,27 +2,30 @@
 
 namespace App\Providers;
 
+use App\Listeners\MergeCartOnLogin;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
 use App\Repositories\Eloquent\DashboardRepository;
-use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\FavoriteRepository;
 use App\Repositories\Eloquent\GenreRepository;
 use App\Repositories\Eloquent\OrderItemRepository;
+use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use App\Repositories\Interfaces\DashboardRepositoryInterface;
-use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -85,6 +88,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        Event::listen(
+            Login::class,
+            MergeCartOnLogin::class,
+        );
     }
 
     /**

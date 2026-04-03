@@ -5,13 +5,26 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\CartItems;
 
 use App\Models\CartItem;
+use App\Services\Cart\CartService;
 use Illuminate\Http\RedirectResponse;
 
 final readonly class RemoveFromCartWebController
 {
-    public function __invoke(CartItem $cartItem): RedirectResponse
+    public function __construct(
+        private CartService $cartService,
+    ) {}
+
+    public function __invoke(int $bookId): RedirectResponse
     {
-        $cartItem->delete();
+        $cartItem = auth()->check()
+            ? CartItem::where('user_id', auth()->id())->where('book_id', $bookId)->first()
+            : null;
+
+        if ($cartItem) {
+            abort_if($cartItem->user_id !== auth()->id(), 403);
+        }
+
+        $this->cartService->remove(bookId: $bookId, cartItem: $cartItem);
 
         return back()->with('success', 'Item removed from cart.');
     }

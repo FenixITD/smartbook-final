@@ -6,18 +6,30 @@ namespace App\Http\Controllers\Web\CartItems;
 
 use App\Http\Requests\CartItem\UpdateCartWebRequest;
 use App\Models\CartItem;
-use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use App\Services\Cart\CartService;
 use Illuminate\Http\RedirectResponse;
 
 final readonly class UpdateCartItemWebController
 {
     public function __construct(
-        private CartItemRepositoryInterface $repository,
+        private CartService $cartService,
     ) {}
 
-    public function __invoke(UpdateCartWebRequest $request, CartItem $cartItem): RedirectResponse
+    public function __invoke(UpdateCartWebRequest $request, int $bookId): RedirectResponse
     {
-        $this->repository->updateQuantity($cartItem, $request->integer('quantity'));
+        $cartItem = auth()->check()
+            ? CartItem::where('user_id', auth()->id())->where('book_id', $bookId)->first()
+            : null;
+
+        if ($cartItem) {
+            abort_if($cartItem->user_id !== auth()->id(), 403);
+        }
+
+        $this->cartService->update(
+            bookId: $bookId,
+            quantity: $request->integer('quantity'),
+            cartItem: $cartItem,
+        );
 
         return back()->with('success', 'Cart updated.');
     }

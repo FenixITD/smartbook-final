@@ -3,13 +3,9 @@
 use App\Http\Controllers\Web\DashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', fn () => redirect()->route('dashboard'))->name('home');
 
-Route::get('dashboard', DashboardController::class)
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::get('dashboard', DashboardController::class)->name('dashboard');
 
 require __DIR__.'/authors.php';
 require __DIR__.'/books.php';

@@ -2,19 +2,12 @@
     <div class="flex min-h-screen flex-col">
         <div class="flex-1 flex flex-col lg:flex-row gap-6 p-6">
 
-            {{-- Cart Items --}}
             <div class="flex-1 flex flex-col gap-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Cart</h2>
                         <p class="text-sm text-zinc-500 mt-0.5">{{ $cartItems->count() }} {{ Str::plural('item', $cartItems->count()) }}</p>
                     </div>
-                    @if ($cartItems->isNotEmpty())
-                        <form action="{{ route('cart.destroy', 'all') }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                        </form>
-                    @endif
                 </div>
 
                 @if (session('success'))
@@ -38,7 +31,7 @@
                                     {{-- Cover --}}
                                     <div class="w-14 h-20 rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0">
                                         @if ($item->book->cover_image)
-                                            <img src="{{ $item->book->cover_image }}" alt="{{ $item->book->title }}"
+                                            <img src="{{ Storage::url($item->book->cover_image) }}" alt="{{ $item->book->title }}"
                                                  class="w-full h-full object-cover">
                                         @else
                                             <div class="w-full h-full flex items-center justify-center">
@@ -57,7 +50,7 @@
                                     </div>
 
                                     {{-- Quantity --}}
-                                    <form action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-2">
+                                    <form action="{{ route('cart.update', $item->book_id) }}" method="POST" class="flex items-center gap-2">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" name="quantity" value="{{ max(1, $item->quantity - 1) }}"
@@ -81,7 +74,7 @@
                                     </div>
 
                                     {{-- Remove --}}
-                                    <form action="{{ route('cart.destroy', $item) }}" method="POST">
+                                    <form action="{{ route('cart.destroy', $item->book_id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
@@ -90,7 +83,6 @@
                                             <flux:icon name="trash" class="w-4 h-4" />
                                         </button>
                                     </form>
-
                                 </div>
                             @endforeach
                         </div>
@@ -119,9 +111,14 @@
                             </div>
                         </div>
 
-                        <flux:button variant="primary" class="w-full mt-5">
-                            Checkout
-                        </flux:button>
+                        @auth
+                            <flux:button variant="primary" class="w-full mt-5">Checkout</flux:button>
+                        @else
+                            <a href="{{ route('login') }}"
+                               class="block w-full mt-5 text-center py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">
+                                Sign in to checkout
+                            </a>
+                        @endauth
 
                         <a href="{{ route('dashboard') }}"
                            class="block text-center text-sm text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200 mt-3">

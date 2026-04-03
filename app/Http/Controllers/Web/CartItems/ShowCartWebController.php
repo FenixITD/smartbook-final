@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\CartItems;
 
-use App\Models\CartItem;
+use App\Services\Cart\CartService;
 use Illuminate\View\View;
 
 final readonly class ShowCartWebController
 {
+    public function __construct(
+        private CartService $cartService,
+    ) {}
+
     public function __invoke(): View
     {
-        $cartItems = CartItem::with('book.author')
-            ->where('user_id', auth()->id())
-            ->get();
-
-        $total = $cartItems->sum(fn ($item) => $item->book->price * $item->quantity);
+        $cartItems = $this->cartService->getItems();
+        $total = $this->cartService->total();
 
         return view('cart.index', compact('cartItems', 'total'));
     }

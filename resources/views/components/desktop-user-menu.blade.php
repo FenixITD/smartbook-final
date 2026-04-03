@@ -17,7 +17,20 @@
                 <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
             </div>
         </div>
+
         <flux:menu.separator />
+
+        <flux:menu.radio.group>
+            <flux:menu.item icon="shopping-cart" :href="route('cart.index')" wire:navigate>
+                Cart
+            </flux:menu.item>
+            <flux:menu.item icon="heart" href="#">
+                Favorites
+            </flux:menu.item>
+        </flux:menu.radio.group>
+
+        <flux:menu.separator />
+
         <flux:menu.radio.group>
             <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
                 {{ __('Settings') }}

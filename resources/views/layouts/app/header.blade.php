@@ -31,19 +31,30 @@
         <flux:tooltip content="Cart" position="bottom">
             <div class="relative">
                 <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="shopping-cart" href="{{ route('cart.index') }}" />
-                @auth
-                    @php $cartCount = auth()->user()->cartItems()->count(); @endphp
-                    @if ($cartCount > 0)
-                        <span class="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none">
-                                    {{ $cartCount > 9 ? '9+' : $cartCount }}
-                                </span>
-                    @endif
-                @endauth
+                @php
+                    $cartCount = auth()->check()
+                        ? auth()->user()->cartItems()->count()
+                        : array_sum(array_column(session('guest_cart', []), 'quantity'));
+                @endphp
+                @if ($cartCount > 0)
+                    <span class="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none">
+                        {{ $cartCount > 9 ? '9+' : $cartCount }}
+                    </span>
+                @endif
             </div>
         </flux:tooltip>
     </flux:navbar>
 
-    <x-desktop-user-menu />
+    {{-- Profile / Login --}}
+    @auth
+        <x-desktop-user-menu />
+    @else
+        <flux:navbar class="py-0!">
+            <flux:tooltip content="Sign in" position="bottom">
+                <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="user" href="{{ route('login') }}" />
+            </flux:tooltip>
+        </flux:navbar>
+    @endauth
 </flux:header>
 
 <!-- Mobile Menu -->
@@ -64,12 +75,15 @@
     <flux:spacer />
 
     <flux:sidebar.nav>
-        <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-            {{ __('Repository') }}
-        </flux:sidebar.item>
-        <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-            {{ __('Documentation') }}
-        </flux:sidebar.item>
+        @auth
+            <flux:sidebar.item icon="user" :href="route('profile.edit')" wire:navigate>
+                {{ __('Profile') }}
+            </flux:sidebar.item>
+        @else
+            <flux:sidebar.item icon="arrow-right-end-on-rectangle" :href="route('login')" wire:navigate>
+                {{ __('Sign in') }}
+            </flux:sidebar.item>
+        @endauth
     </flux:sidebar.nav>
 
     {{-- Mobile search --}}

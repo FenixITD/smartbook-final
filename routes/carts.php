@@ -6,9 +6,7 @@ use App\Http\Controllers\Web\CartItems\ShowCartWebController;
 use App\Http\Controllers\Web\CartItems\UpdateCartItemWebController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->group(function (): void {
-    Route::get('/cart', ShowCartWebController::class)->name('cart.index');
-    Route::post('/cart', AddToCartWebController::class)->name('cart.store');
-    Route::put('/cart/{cartItem}', UpdateCartItemWebController::class)->name('cart.update');
-    Route::delete('/cart/{cartItem}', RemoveFromCartWebController::class)->name('cart.destroy');
-});
+Route::get('/cart', ShowCartWebController::class)->name('cart.index');
+Route::post('/cart', AddToCartWebController::class)->name('cart.store');
+Route::put('/cart/{bookId}', UpdateCartItemWebController::class)->name('cart.update');
+Route::delete('/cart/{bookId}', RemoveFromCartWebController::class)->name('cart.destroy');
