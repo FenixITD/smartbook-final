@@ -6,13 +6,13 @@ namespace App\Http\Controllers\Web\CartItems;
 
 use App\Http\Requests\CartItem\UpdateCartWebRequest;
 use App\Models\CartItem;
-use App\Services\Cart\CartService;
+use App\Services\Cart\UpdateCartService;
 use Illuminate\Http\RedirectResponse;
 
 final readonly class UpdateCartItemWebController
 {
     public function __construct(
-        private CartService $cartService,
+        private UpdateCartService $updateCartService,
     ) {}
 
     public function __invoke(UpdateCartWebRequest $request, int $bookId): RedirectResponse
@@ -25,7 +25,7 @@ final readonly class UpdateCartItemWebController
             abort_if($cartItem->user_id !== auth()->id(), 403);
         }
 
-        $this->cartService->update(
+        $this->updateCartService->execute(
             bookId: $bookId,
             quantity: $request->integer('quantity'),
             cartItem: $cartItem,

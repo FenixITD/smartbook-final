@@ -35,7 +35,7 @@ final class DashboardListRequest extends FormRequest
             year: $this->integer('year') ?: null,
             status: $this->input('status'),
             sort: $this->input('sort', 'rating'),
-            perPage: 15,
+            perPage: 18,
         );
     }
 }

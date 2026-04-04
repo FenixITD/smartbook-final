@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\CartItems;
 
 use App\Models\CartItem;
-use App\Services\Cart\CartService;
+use App\Services\Cart\RemoveFromCartService;
 use Illuminate\Http\RedirectResponse;
 
 final readonly class RemoveFromCartWebController
 {
     public function __construct(
-        private CartService $cartService,
+        private RemoveFromCartService $removeFromCartService,
     ) {}
 
     public function __invoke(int $bookId): RedirectResponse
@@ -24,7 +24,7 @@ final readonly class RemoveFromCartWebController
             abort_if($cartItem->user_id !== auth()->id(), 403);
         }
 
-        $this->cartService->remove(bookId: $bookId, cartItem: $cartItem);
+        $this->removeFromCartService->execute(bookId: $bookId, cartItem: $cartItem);
 
         return back()->with('success', 'Item removed from cart.');
     }

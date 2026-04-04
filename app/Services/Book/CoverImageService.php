@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Book;
 
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 final class CoverImageService
 {
@@ -64,12 +66,12 @@ final class CoverImageService
         $lines = array_slice($lines, 0, 5);
 
         $fontSize = 4;
-        $lineHeight = imageFontHeight($fontSize) + 6;
+        $lineHeight = imagefontheight($fontSize) + 6;
         $totalHeight = count($lines) * $lineHeight;
         $startY = ($height - $totalHeight) / 2;
 
         foreach ($lines as $i => $lineText) {
-            $lineWidth = imageFontWidth($fontSize) * strlen($lineText);
+            $lineWidth = imagefontwidth($fontSize) * strlen($lineText);
             $x = ($width - $lineWidth) / 2;
             $y = (int) ($startY + $i * $lineHeight);
             imagestring($image, $fontSize, (int) $x, $y, $lineText, $textColor);
@@ -77,7 +79,7 @@ final class CoverImageService
 
         // Bottom label
         $label = 'SMARTBOOK';
-        $labelW = imageFontWidth(2) * strlen($label);
+        $labelW = imagefontwidth(2) * strlen($label);
         imagestring($image, 2, ($width - $labelW) / 2, $height - 30, $label, $textColor);
 
         ob_start();
@@ -93,10 +95,10 @@ final class CoverImageService
 
     public function uploadFromUrl(string $url, int $seed): string
     {
-        $response = \Illuminate\Support\Facades\Http::timeout(15)->get($url);
+        $response = Http::timeout(15)->get($url);
 
         if (! $response->successful()) {
-            throw new \RuntimeException("Failed to download image from: {$url}");
+            throw new RuntimeException("Failed to download image from: {$url}");
         }
 
         $filename = 'covers/'.Str::uuid().'.jpg';

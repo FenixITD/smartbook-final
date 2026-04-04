@@ -1,6 +1,6 @@
 <x-layouts::app.header title="Dashboard">
     <div class="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-        <div class="max-w-screen-xl mx-auto px-16 py-6">
+        <div class="max-w-5xl mx-auto py-6">
 
             {{-- Banner + Genres row --}}
             @if(!request()->hasAny(['genre', 'status', 'year', 'search', 'sort']))
@@ -97,7 +97,7 @@
                     </a>
                 @endif
 
-                @if(request()->hasAny(['genre', 'status', 'year', 'search']))
+                @if(request()->hasAny(['genre', 'status', 'year']))
                     <a href="{{ route('dashboard') }}" class="text-sm text-red-500 hover:text-red-600 ml-auto">
                         Clear all
                     </a>

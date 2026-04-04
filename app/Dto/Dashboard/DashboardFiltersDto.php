@@ -13,6 +13,6 @@ final readonly class DashboardFiltersDto
         public ?int $year = null,
         public ?string $status = null,
         public string $sort = 'rating',
-        public int $perPage = 15,
+        public int $perPage = 18,
     ) {}
 }
