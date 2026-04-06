@@ -50,11 +50,6 @@ class User extends Authenticatable
         return $this->hasMany(CartItem::class);
     }
 
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
     public function initials(): string
     {
         if (empty($this->name)) {
