@@ -31,7 +31,7 @@ class BookFactory extends Factory
             'cover_image' => $coverImage,
             'average_rating' => fake()->randomFloat(2, 0, 5),
             'ratings_count' => fake()->numberBetween(0, 500),
-            'status' => fake()->randomElement(['active', 'draft', 'archived']),
+            'status' => fake()->randomElement(['published', 'draft', 'archived']),
         ];
     }
 }

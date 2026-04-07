@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Services;
+namespace Services\Author;
 
 use App\Dto\Author\AuthorDto;
 use App\Dto\Author\AuthorResponseDto;

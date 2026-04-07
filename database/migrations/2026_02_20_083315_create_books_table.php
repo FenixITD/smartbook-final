@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->foreignId('author_id')->constrained()->onDelete('restrict');
+            $table->foreignId('author_id')->index()->constrained()->onDelete('restrict');
             $table->text('description');
             $table->decimal('price', 6, 2);
             $table->integer('stock')->default(0);
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('cover_image')->nullable();
             $table->decimal('average_rating', 3, 2)->default(0.00);
             $table->integer('ratings_count')->default(0);
-            $table->enum('status', ['active', 'draft', 'archived'])->default('active');
+            $table->enum('status', ['published', 'draft', 'archived'])->default('active');
             $table->timestamps();
         });
     }

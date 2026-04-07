@@ -28,9 +28,9 @@ class ReviewListRequest extends FormRequest
     {
         return new ReviewFiltersDto(
             search: $this->input('search'),
-            perPage: $this->integer('per_page', 15),
-            sortBy: (string) $this->string('sort_by', 'id'),
-            sortDirection: (string) $this->string('sort_direction', 'asc'),
+            perPage: $this->integer('perPage', 15),
+            sortBy: (string) $this->string('sortBy', 'id'),
+            sortDirection: (string) $this->string('sortDirection', 'asc'),
         );
     }
 }

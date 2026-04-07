@@ -30,7 +30,7 @@ class AuthorDtoTest extends TestCase
 
     public function test_author_filters_dto_has_correct_defaults(): void
     {
-        $dto = new AuthorFiltersDto();
+        $dto = new AuthorFiltersDto;
 
         $this->assertNull($dto->search);
         $this->assertSame(15, $dto->perPage);
@@ -55,7 +55,7 @@ class AuthorDtoTest extends TestCase
 
     public function test_author_response_dto_from_model(): void
     {
-        $author = new Author();
+        $author = new Author;
         $author->id = 5;
         $author->name = 'Boris Pasternak';
         $author->created_at = now()->setDateTimeFrom('2024-03-01 12:00:00');

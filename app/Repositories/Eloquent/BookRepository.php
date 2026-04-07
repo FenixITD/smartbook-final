@@ -15,7 +15,7 @@ final class BookRepository implements BookRepositoryInterface
     public function getList(BookFiltersDto $filters): array
     {
         return Book::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->when($filters->search !== null, fn ($q) => $q->where('title', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()

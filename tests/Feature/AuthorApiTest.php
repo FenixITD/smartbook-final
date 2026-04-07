@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Authors;
+namespace Tests\Feature;
 
 use App\Models\Author;
 use Illuminate\Foundation\Testing\RefreshDatabase;
