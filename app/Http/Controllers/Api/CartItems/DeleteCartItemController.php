@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\CartItems;
 
-use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -14,7 +13,7 @@ final readonly class DeleteCartItemController
         private CartItemRepositoryInterface $repository
     ) {}
 
-    public function __invoke(CartItem $cartItem): JsonResponse
+    public function __invoke(int $cartItem): JsonResponse
     {
         $this->repository->delete($cartItem);
 

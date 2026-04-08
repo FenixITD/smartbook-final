@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\Books;
 
-use App\Models\Book;
-use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Services\Book\DeleteBookService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 
 final readonly class DeleteBookWebController
 {
     public function __construct(
-        private BookRepositoryInterface $repository,
+        private DeleteBookService $service,
     ) {}
 
-    public function __invoke(Book $book): RedirectResponse
+    public function __invoke(int $bookId): RedirectResponse
     {
-        if ($book->cover_image) {
-            Storage::disk('public')->delete($book->cover_image);
-        }
-
-        $this->repository->delete($book);
+        $this->service->execute($bookId);
 
         return redirect()->route('books.index')
             ->with('success', 'Book deleted successfully.');

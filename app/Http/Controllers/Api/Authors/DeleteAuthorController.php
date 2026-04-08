@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Authors;
 
-use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -14,7 +13,7 @@ final readonly class DeleteAuthorController
         private AuthorRepositoryInterface $repository
     ) {}
 
-    public function __invoke(Author $author): JsonResponse
+    public function __invoke(int $author): JsonResponse
     {
         $this->repository->delete($author);
 

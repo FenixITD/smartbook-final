@@ -20,7 +20,7 @@ interface OrderRepositoryInterface
 
     public function create(OrderDto $data): OrderResponseDto;
 
-    public function update(Order $order, OrderDto $data): ?OrderResponseDto;
+    public function update(int $id, OrderDto $data): ?OrderResponseDto;
 
-    public function delete(Order $order): bool;
+    public function delete(int $id): bool;
 }

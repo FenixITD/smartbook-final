@@ -7,6 +7,7 @@ namespace App\Repositories\Eloquent;
 use App\Dto\Book\BookDto;
 use App\DTO\Book\BookFiltersDto;
 use App\DTO\Book\BookResponseDto;
+use App\Dto\PaginatedResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
@@ -23,6 +24,24 @@ final class BookRepository implements BookRepositoryInterface
             ->all();
     }
 
+    public function getWebList(): PaginatedResponseDto
+    {
+        $paginator = Book::with(['author', 'genres'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return PaginatedResponseDto::fromPaginator($paginator);
+    }
+    public function findModel(int $id): Book
+    {
+        return Book::findOrFail($id);
+    }
+
+    public function findModelWithRelations(int $id): Book
+    {
+        return Book::with(['author', 'genres'])->findOrFail($id);
+    }
+
     public function getById(int $id): ?BookResponseDto
     {
         $book = Book::find($id);
@@ -37,15 +56,17 @@ final class BookRepository implements BookRepositoryInterface
         return BookResponseDto::fromModel($book);
     }
 
-    public function update(Book $book, BookDto $data): ?BookResponseDto
+    public function update(int $id, BookDto $data): ?BookResponseDto
     {
+        $book = Book::findOrFail($id);
+
         $book->update($data->toArray());
 
         return BookResponseDto::fromModel($book->fresh());
     }
 
-    public function delete(Book $book): bool
+    public function delete(int $id): bool
     {
-        return $book->delete();
+        return (bool) Book::destroy($id);
     }
 }

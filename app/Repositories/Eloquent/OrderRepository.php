@@ -7,6 +7,7 @@ namespace App\Repositories\Eloquent;
 use App\Dto\Order\OrderDto;
 use App\Dto\Order\OrderFiltersDto;
 use App\Dto\Order\OrderResponseDto;
+use App\Models\Genre;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 
@@ -37,15 +38,17 @@ final class OrderRepository implements OrderRepositoryInterface
         return OrderResponseDto::fromModel($order);
     }
 
-    public function update(Order $order, OrderDto $data): ?OrderResponseDto
+    public function update(int $id, OrderDto $data): ?OrderResponseDto
     {
+        $order = Order::findOrFail($id);
+
         $order->update($data->toArray());
 
         return OrderResponseDto::fromModel($order->fresh());
     }
 
-    public function delete(Order $order): bool
+    public function delete(int $id): bool
     {
-        return $order->delete();
+        return (bool) Genre::destroy($id);
     }
 }

@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Books;
 
 use App\Http\Requests\Book\BookListRequest;
-use App\Models\Book;
+use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\View\View;
 
 final readonly class GetListBookWebController
 {
+    public function __construct(
+        private BookRepositoryInterface $repository
+    ) {}
+
     public function __invoke(BookListRequest $request): View
     {
-        $books = Book::with(['author', 'genres'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $books = $this->repository->getWebList();
 
         return view('books.list', compact('books'));
     }

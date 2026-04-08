@@ -20,7 +20,7 @@ interface ReviewRepositoryInterface
 
     public function create(ReviewDto $data): ReviewResponseDto;
 
-    public function update(Review $review, ReviewDto $data): ?ReviewResponseDto;
+    public function update(int $id, ReviewDto $data): ?ReviewResponseDto;
 
-    public function delete(Review $review): bool;
+    public function delete(int $id): bool;
 }

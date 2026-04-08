@@ -24,6 +24,11 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->all();
     }
 
+    public function all(): array
+    {
+        return Author::orderBy('name')->get()->all();
+    }
+
     public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto
     {
         $paginator = Author::query()
@@ -48,15 +53,17 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return AuthorResponseDto::fromModel($author);
     }
 
-    public function update(Author $author, AuthorDto $data): ?AuthorResponseDto
+    public function update(int $id, AuthorDto $data): ?AuthorResponseDto
     {
+        $author = Author::findOrFail($id);
+
         $author->update($data->toArray());
 
         return AuthorResponseDto::fromModel($author->fresh());
     }
 
-    public function delete(Author $author): bool
+    public function delete(int $id): bool
     {
-        return $author->delete();
+        return (bool) Author::destroy($id);
     }
 }

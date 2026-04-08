@@ -37,15 +37,17 @@ final class ReviewRepository implements ReviewRepositoryInterface
         return ReviewResponseDto::fromModel($review);
     }
 
-    public function update(Review $review, ReviewDto $data): ?ReviewResponseDto
+    public function update(int $id, ReviewDto $data): ?ReviewResponseDto
     {
+        $review = Review::findOrFail($id);
+
         $review->update($data->toArray());
 
         return ReviewResponseDto::fromModel($review->fresh());
     }
 
-    public function delete(Review $review): bool
+    public function delete(int $id): bool
     {
-        return $review->delete();
+        return (bool) Review::destroy($id);
     }
 }

@@ -5,33 +5,35 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Books;
 
 use App\Http\Requests\Book\BookWebDataRequest;
-use App\Models\Author;
-use App\Models\Book;
-use App\Models\Genre;
-use App\Services\Book\CreateBookService;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Services\Book\SyncBookGenresService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 final readonly class CreateBookWebController
 {
     public function __construct(
-        private CreateBookService $service,
-    ) {}
+        private BookRepositoryInterface $bookRepository,
+        private AuthorRepositoryInterface $authorRepository,
+        private GenreRepositoryInterface $genreRepository,
+        private SyncBookGenresService $syncGenresService, ) {}
 
     public function create(): View
     {
-        $authors = Author::orderBy('name')->get();
-        $genres = Genre::orderBy('name')->get();
+        $authors = $this->authorRepository->all();
+        $genres = $this->genreRepository->all();
 
         return view('books.create', compact('authors', 'genres'));
     }
 
     public function store(BookWebDataRequest $request): RedirectResponse
     {
-        $dto = $request->toDto();
-        $responseDto = $this->service->execute($dto);
+        $responseDto = $this->bookRepository->create($request->toDto());
 
-        Book::findOrFail($responseDto->id)->genres()->sync($request->genres());
+        $book = $this->bookRepository->findModel($responseDto->id);
+        $this->syncGenresService->execute($book, $request->genres());
 
         return redirect()->route('books.index')
             ->with('success', 'Book created successfully.');

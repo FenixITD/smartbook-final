@@ -6,18 +6,18 @@ namespace App\Http\Controllers\Api\Authors;
 
 use App\Http\Requests\Author\AuthorDataRequest;
 use App\Http\Resources\Author\AuthorResource;
-use App\Services\Author\CreateAuthorService;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
 readonly class CreateAuthorController
 {
     public function __construct(
-        private CreateAuthorService $service
+        private AuthorRepositoryInterface $repository
     ) {}
 
     public function __invoke(AuthorDataRequest $request): JsonResponse
     {
-        $author = $this->service->execute($request->toDto());
+        $author = $this->repository->create($request->toDto());
 
         return (new AuthorResource($author))->response()->setStatusCode(201);
     }

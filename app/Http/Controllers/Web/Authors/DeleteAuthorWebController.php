@@ -14,7 +14,7 @@ final readonly class DeleteAuthorWebController
         private AuthorRepositoryInterface $repository,
     ) {}
 
-    public function __invoke(Author $author): RedirectResponse
+    public function __invoke(int $author): RedirectResponse
     {
         $this->repository->delete($author);
 

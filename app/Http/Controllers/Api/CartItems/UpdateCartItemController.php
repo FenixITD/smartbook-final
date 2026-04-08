@@ -6,19 +6,18 @@ namespace App\Http\Controllers\Api\CartItems;
 
 use App\Http\Requests\CartItem\CartItemDataRequest;
 use App\Http\Resources\CartItem\CartItemResource;
-use App\Models\CartItem;
-use App\Services\CartItem\UpdateCartItemService;
+use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
 readonly class UpdateCartItemController
 {
     public function __construct(
-        private UpdateCartItemService $service
+        private CartItemRepositoryInterface $repository
     ) {}
 
-    public function __invoke(CartItemDataRequest $request, CartItem $cartItem): JsonResponse
+    public function __invoke(CartItemDataRequest $request, int $cartItem): JsonResponse
     {
-        $updated = $this->service->execute($cartItem, $request->toDto());
+        $updated = $this->repository->update($cartItem, $request->toDto());
 
         return (new CartItemResource($updated))->response();
     }

@@ -55,15 +55,17 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return CartItemResponseDto::fromModel($cartItem);
     }
 
-    public function update(CartItem $cartItem, CartItemDto $data): ?CartItemResponseDto
+    public function update(int $id, CartItemDto $data): ?CartItemResponseDto
     {
+        $cartItem = CartItem::findOrFail($id);
+
         $cartItem->update($data->toArray());
 
         return CartItemResponseDto::fromModel($cartItem->fresh());
     }
 
-    public function delete(CartItem $cartItem): bool
+    public function delete(int $id): bool
     {
-        return $cartItem->delete();
+        return (bool) CartItem::destroy($id);
     }
 }

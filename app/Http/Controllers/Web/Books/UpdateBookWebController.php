@@ -5,33 +5,38 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Books;
 
 use App\Http\Requests\Book\BookWebDataRequest;
-use App\Models\Author;
-use App\Models\Book;
-use App\Models\Genre;
-use App\Services\Book\UpdateBookService;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Services\Book\SyncBookGenresService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 final readonly class UpdateBookWebController
 {
     public function __construct(
-        private UpdateBookService $service,
+        private BookRepositoryInterface $bookRepository,
+        private AuthorRepositoryInterface $authorRepository,
+        private GenreRepositoryInterface $genreRepository,
+        private SyncBookGenresService $syncGenresService,
     ) {}
 
-    public function edit(Book $book): View
+    public function edit(int $bookId): View
     {
+        $book = $this->bookRepository->findModel($bookId);
         $book->load('genres');
-        $authors = Author::orderBy('name')->get();
-        $genres = Genre::orderBy('name')->get();
+        $authors = $this->authorRepository->all();
+        $genres = $this->genreRepository->all();
 
         return view('books.edit', compact('book', 'authors', 'genres'));
     }
 
-    public function update(BookWebDataRequest $request, Book $book): RedirectResponse
+    public function update(BookWebDataRequest $request, int $bookId): RedirectResponse
     {
-        $this->service->execute($book, $request->toDtoForUpdate($book));
+        $book = $this->bookRepository->findModel($bookId);
 
-        $book->genres()->sync($request->genres());
+        $this->bookRepository->update($bookId, $request->toDtoForUpdate($book));
+        $this->syncGenresService->execute($book, $request->genres());
 
         return redirect()->route('books.index')
             ->with('success', 'Book updated successfully.');

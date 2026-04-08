@@ -65,7 +65,7 @@
 
                             <flux:field>
                                 <flux:label for="publishYear">Publish year</flux:label>
-                                <flux:input id="publishYear" name="publishYear" type="number" min="1900" max="{{ date('Y') + 1 }}" value="{{ old('publishYear') }}" />
+                                <flux:input id="publishYear" name="publishYear" type="number" min="1900" max="{{ (int) date('Y') + 1 }}" value="{{ old('publishYear') }}" />
                             </flux:field>
 
                             <flux:field>

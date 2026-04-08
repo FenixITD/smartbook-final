@@ -23,6 +23,11 @@ final class GenreRepository implements GenreRepositoryInterface
             ->all();
     }
 
+    public function all(): array
+    {
+        return Genre::orderBy('name')->get()->all();
+    }
+
     public function getById(int $id): ?GenreResponseDto
     {
         $genre = Genre::find($id);
@@ -37,15 +42,17 @@ final class GenreRepository implements GenreRepositoryInterface
         return GenreResponseDto::fromModel($genre);
     }
 
-    public function update(Genre $genre, GenreDto $data): ?GenreResponseDto
+    public function update(int $id, GenreDto $data): ?GenreResponseDto
     {
+        $genre = Genre::findOrFail($id);
+
         $genre->update($data->toArray());
 
         return GenreResponseDto::fromModel($genre->fresh());
     }
 
-    public function delete(Genre $genre): bool
+    public function delete(int $id): bool
     {
-        return $genre->delete();
+        return (bool) Genre::destroy($id);
     }
 }

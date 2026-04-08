@@ -8,7 +8,6 @@ use App\Dto\Author\AuthorDto;
 use App\Dto\Author\AuthorFiltersDto;
 use App\Dto\Author\AuthorResponseDto;
 use App\Dto\PaginatedResponseDto;
-use App\Models\Author;
 
 interface AuthorRepositoryInterface
 {
@@ -17,13 +16,15 @@ interface AuthorRepositoryInterface
      */
     public function getList(AuthorFiltersDto $filters): array;
 
+    public function all(): array;
+
     public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto;
 
     public function getById(int $id): ?AuthorResponseDto;
 
     public function create(AuthorDto $data): AuthorResponseDto;
 
-    public function update(Author $author, AuthorDto $data): ?AuthorResponseDto;
+    public function update(int $id, AuthorDto $data): ?AuthorResponseDto;
 
-    public function delete(Author $author): bool;
+    public function delete(int $id): bool;
 }

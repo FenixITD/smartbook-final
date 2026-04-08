@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\Genres\CreateGenreController;
-use App\Http\Controllers\Genres\DeleteGenreController;
-use App\Http\Controllers\Genres\GetByIdGenreController;
-use App\Http\Controllers\Genres\GetListGenreController;
-use App\Http\Controllers\Genres\UpdateGenreController;
+use App\Http\Controllers\Api\Genres\CreateGenreController;
+use App\Http\Controllers\Api\Genres\DeleteGenreController;
+use App\Http\Controllers\Api\Genres\GetByIdGenreController;
+use App\Http\Controllers\Api\Genres\GetListGenreController;
+use App\Http\Controllers\Api\Genres\UpdateGenreController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('genres')->group(function (): void {
-    Route::get('/', GetListGenreController::class)->name('genres.list');
-    Route::get('/{genre}', GetByIdGenreController::class)->name('genres.show');
-    Route::post('/', CreateGenreController::class)->name('genres.create');
-    Route::put('/{genre}', UpdateGenreController::class)->name('genres.update');
-    Route::delete('/{genre}', DeleteGenreController::class)->name('genres.delete');
+Route::prefix('genres')->name('api.genres.')->group(function (): void {
+    Route::get('/', GetListGenreController::class)->name('list');
+    Route::get('/{genre}', GetByIdGenreController::class)->name('show');
+    Route::post('/', CreateGenreController::class)->name('create');
+    Route::put('/{genre}', UpdateGenreController::class)->name('update');
+    Route::delete('/{genre}', DeleteGenreController::class)->name('delete');
 });

@@ -20,7 +20,7 @@ interface FavoriteRepositoryInterface
 
     public function create(FavoriteDto $data): FavoriteResponseDto;
 
-    public function update(Favorite $favorite, FavoriteDto $data): ?FavoriteResponseDto;
+    public function update(int $id, FavoriteDto $data): ?FavoriteResponseDto;
 
-    public function delete(Favorite $favorite): bool;
+    public function delete(int $id): bool;
 }

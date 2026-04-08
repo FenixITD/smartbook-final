@@ -6,19 +6,18 @@ namespace App\Http\Controllers\Api\Authors;
 
 use App\Http\Requests\Author\AuthorDataRequest;
 use App\Http\Resources\Author\AuthorResource;
-use App\Models\Author;
-use App\Services\Author\UpdateAuthorService;
+use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
 readonly class UpdateAuthorController
 {
     public function __construct(
-        private UpdateAuthorService $service
+        private AuthorRepositoryInterface $repository
     ) {}
 
-    public function __invoke(AuthorDataRequest $request, Author $author): JsonResponse
+    public function __invoke(AuthorDataRequest $request, int $author): JsonResponse
     {
-        $updated = $this->service->execute($author, $request->toDto());
+        $updated = $this->repository->update($author, $request->toDto());
 
         return (new AuthorResource($updated))->response();
     }

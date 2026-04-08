@@ -30,7 +30,7 @@ final class OrderItemDataRequest extends FormRequest
             orderId: $this->integer('orderId'),
             bookId: $this->integer('bookId'),
             quantity: $this->integer('quantity'),
-            priceAtPurchase: $this->integer('priceAtPurchase'),
+            priceAtPurchase: $this->float('priceAtPurchase'),
         );
     }
 }

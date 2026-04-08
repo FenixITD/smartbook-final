@@ -16,11 +16,13 @@ interface GenreRepositoryInterface
      */
     public function getList(GenreFiltersDto $filters): array;
 
+    public function all(): array;
+
     public function getById(int $id): ?GenreResponseDto;
 
     public function create(GenreDto $data): GenreResponseDto;
 
-    public function update(Genre $genre, GenreDto $data): ?GenreResponseDto;
+    public function update(int $id, GenreDto $data): ?GenreResponseDto;
 
-    public function delete(Genre $genre): bool;
+    public function delete(int $id): bool;
 }

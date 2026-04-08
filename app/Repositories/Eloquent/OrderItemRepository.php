@@ -37,15 +37,17 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
         return OrderItemResponseDto::fromModel($orderItem);
     }
 
-    public function update(OrderItem $orderItem, OrderItemDto $data): ?OrderItemResponseDto
+    public function update(int $id, OrderItemDto $data): ?OrderItemResponseDto
     {
+        $orderItem = OrderItem::findOrFail($id);
+
         $orderItem->update($data->toArray());
 
         return OrderItemResponseDto::fromModel($orderItem->fresh());
     }
 
-    public function delete(OrderItem $orderItem): bool
+    public function delete(int $id): bool
     {
-        return $orderItem->delete();
+        return (bool) OrderItem::destroy($id);
     }
 }

@@ -24,7 +24,7 @@ interface CartItemRepositoryInterface
 
     public function create(CartItemDto $data): CartItemResponseDto;
 
-    public function update(CartItem $cartItem, CartItemDto $data): ?CartItemResponseDto;
+    public function update(int $id, CartItemDto $data): ?CartItemResponseDto;
 
-    public function delete(CartItem $cartItem): bool;
+    public function delete(int $id): bool;
 }
