@@ -14,6 +14,7 @@ final readonly class PaginatedResponseDto
         public int $perPage,
         public int $currentPage,
         public int $lastPage,
+        public string $links = '',
     ) {}
 
     public static function fromPaginator(LengthAwarePaginator $paginator): self
@@ -24,6 +25,7 @@ final readonly class PaginatedResponseDto
             perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
             lastPage: $paginator->lastPage(),
+            links: $paginator->links()->toHtml(),
         );
     }
 }

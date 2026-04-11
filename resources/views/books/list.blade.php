@@ -32,7 +32,7 @@
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    @forelse ($books as $book)
+                    @forelse ($books->items as $book)
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                             <td class="px-6 py-4 text-sm text-zinc-400">{{ $book->id }}</td>
                             <td class="px-6 py-4">
@@ -82,9 +82,9 @@
                     </tbody>
                 </table>
 
-                @if ($books->hasPages())
+                @if ($books->lastPage > 1)
                     <div class="border-t border-zinc-200 dark:border-zinc-700 px-6 py-4">
-                        {{ $books->links() }}
+                        {!! $books->links !!}
                     </div>
                 @endif
             </div>

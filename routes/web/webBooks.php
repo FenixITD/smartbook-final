@@ -11,8 +11,8 @@ Route::middleware(['auth'])->prefix('books')->name('books.')->group(function ():
     Route::get('/', GetListBookWebController::class)->name('index');
     Route::get('/create', [CreateBookWebController::class, 'create'])->name('create');
     Route::post('/', [CreateBookWebController::class, 'store'])->name('store');
-    Route::get('/{book}', GetByIdBookWebController::class)->name('show');
-    Route::get('/{book}/edit', [UpdateBookWebController::class, 'edit'])->name('edit');
-    Route::put('/{book}', [UpdateBookWebController::class, 'update'])->name('update');
-    Route::delete('/{book}', DeleteBookWebController::class)->name('destroy');
+    Route::get('/{book}', GetByIdBookWebController::class)->name('show')->whereNumber('book');
+    Route::get('/{book}/edit', [UpdateBookWebController::class, 'edit'])->name('edit')->whereNumber('book');
+    Route::put('/{book}', [UpdateBookWebController::class, 'update'])->name('update')->whereNumber('book');
+    Route::delete('/{book}', DeleteBookWebController::class)->name('destroy')->whereNumber('book');
 });
