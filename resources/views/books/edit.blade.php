@@ -44,7 +44,7 @@
                             <flux:field>
                                 <flux:label for="status">Status</flux:label>
                                 <flux:select id="status" name="status">
-                                    <flux:select.option value="active" :selected="old('status', $book->status) === 'active'">Active</flux:select.option>
+                                    <flux:select.option value="published" :selected="old('status', $book->status) === 'published'">Published</flux:select.option>
                                     <flux:select.option value="draft" :selected="old('status', $book->status) === 'draft'">Draft</flux:select.option>
                                     <flux:select.option value="archived" :selected="old('status', $book->status) === 'archived'">Archived</flux:select.option>
                                 </flux:select>

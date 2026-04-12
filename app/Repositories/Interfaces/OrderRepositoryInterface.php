@@ -7,7 +7,7 @@ namespace App\Repositories\Interfaces;
 use App\Dto\Order\OrderDto;
 use App\DTO\Order\OrderFiltersDto;
 use App\DTO\Order\OrderResponseDto;
-use App\Models\Order;
+use App\Dto\PaginatedResponseDto;
 
 interface OrderRepositoryInterface
 {
@@ -15,6 +15,10 @@ interface OrderRepositoryInterface
      * @return array<OrderResponseDto>
      */
     public function getList(OrderFiltersDto $filters): array;
+
+    public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto;
+
+    public function all(): array;
 
     public function getById(int $id): ?OrderResponseDto;
 

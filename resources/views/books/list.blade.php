@@ -18,6 +18,38 @@
                 </flux:callout>
             @endif
 
+            {{-- Filters --}}
+            <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
+                <form method="GET" action="{{ route('books.index') }}" class="flex flex-wrap gap-3 items-end">
+                    <div class="flex-1 min-w-48">
+                        <flux:input
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Search by title..."
+                            icon="magnifying-glass"
+                        />
+                    </div>
+                    <div class="w-40">
+                        <flux:select name="sortBy">
+                            <flux:select.option value="id" :selected="request('sortBy') === 'id'">By ID</flux:select.option>
+                            <flux:select.option value="title" :selected="request('sortBy') === 'title'">By title</flux:select.option>
+                            <flux:select.option value="price" :selected="request('sortBy') === 'price'">By price</flux:select.option>
+                            <flux:select.option value="created_at" :selected="request('sortBy') === 'created_at'">By date</flux:select.option>
+                        </flux:select>
+                    </div>
+                    <div class="w-40">
+                        <flux:select name="sortDirection">
+                            <flux:select.option value="asc" :selected="request('sortDirection') === 'asc'">Ascending</flux:select.option>
+                            <flux:select.option value="desc" :selected="request('sortDirection') === 'desc'">Descending</flux:select.option>
+                        </flux:select>
+                    </div>
+                    <flux:button type="submit" variant="filled">Apply</flux:button>
+                    @if(request('search') || request('sortBy'))
+                        <flux:button href="{{ route('books.index') }}" variant="ghost">Reset</flux:button>
+                    @endif
+                </form>
+            </div>
+
             <div class="rounded-xl border border-zinc-200 bg-white overflow-hidden dark:border-zinc-700 dark:bg-zinc-900">
                 <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
                     <thead class="bg-zinc-50 dark:bg-zinc-800">
@@ -54,10 +86,16 @@
                             <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">{{ $book->author?->name }}</td>
                             <td class="px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">${{ number_format($book->price, 2) }}</td>
                             <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-                                        {{ $book->status === 'active' ? 'bg-green-100 text-green-700' : ($book->status === 'draft' ? 'bg-yellow-100 text-yellow-700' : 'bg-zinc-100 text-zinc-600') }}">
-                                        {{ ucfirst($book->status) }}
-                                    </span>
+                                @php
+                                    $statusClass = match($book->status) {
+                                        'published' => 'bg-green-100 text-green-700',
+                                        'draft'     => 'bg-yellow-100 text-yellow-700',
+                                        default     => 'bg-zinc-100 text-zinc-600',
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $statusClass }}">
+        {{ ucfirst($book->status) }}
+    </span>
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end gap-2">

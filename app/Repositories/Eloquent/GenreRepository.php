@@ -7,6 +7,7 @@ namespace App\Repositories\Eloquent;
 use App\Dto\Genre\GenreDto;
 use App\Dto\Genre\GenreFiltersDto;
 use App\Dto\Genre\GenreResponseDto;
+use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 
@@ -21,6 +22,16 @@ final class GenreRepository implements GenreRepositoryInterface
             ->getCollection()
             ->map(fn (Genre $genre) => GenreResponseDto::fromModel($genre))
             ->all();
+    }
+
+    public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto
+    {
+        $paginator = Genre::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage);
+
+        return PaginatedResponseDto::fromPaginator($paginator);
     }
 
     public function all(): array

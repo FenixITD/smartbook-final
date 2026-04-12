@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\Authors;
 
-use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 

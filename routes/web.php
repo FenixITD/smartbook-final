@@ -17,6 +17,10 @@ require __DIR__.'/api/orderItems.php';
 require __DIR__.'/api/reviews.php';
 require __DIR__.'/web/webAuthors.php';
 require __DIR__.'/web/webBooks.php';
+require __DIR__.'/web/webGenres.php';
+require __DIR__.'/web/webOrders.php';
+require __DIR__.'/web/webOrders.php';
+require __DIR__.'/web/webReviews.php';
 require __DIR__.'/web/carts.php';
 
 require __DIR__.'/settings.php';

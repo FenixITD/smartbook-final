@@ -17,7 +17,7 @@ interface BookRepositoryInterface
      */
     public function getList(BookFiltersDto $filters): array;
 
-    public function getWebList(): PaginatedResponseDto;
+    public function getWebList(BookFiltersDto $filters): PaginatedResponseDto;
 
     public function findModel(int $id): Book;
 

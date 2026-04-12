@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Eloquent;
 
+use App\Dto\PaginatedResponseDto;
 use App\Dto\Review\ReviewDto;
 use App\DTO\Review\ReviewFiltersDto;
 use App\DTO\Review\ReviewResponseDto;
@@ -21,6 +22,21 @@ final class ReviewRepository implements ReviewRepositoryInterface
             ->getCollection()
             ->map(fn (Review $review) => ReviewResponseDto::fromModel($review))
             ->all();
+    }
+
+    public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto
+    {
+        $paginator = Review::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage);
+
+        return PaginatedResponseDto::fromPaginator($paginator);
+    }
+
+    public function all(): array
+    {
+        return Review::orderBy('id')->get()->all();
     }
 
     public function getById(int $id): ?ReviewResponseDto

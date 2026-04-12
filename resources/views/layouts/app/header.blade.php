@@ -11,6 +11,9 @@
         <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
             {{ __('Dashboard') }}
         </flux:navbar.item>
+        <flux:navbar.item icon="cog-6-tooth" :href="route('books.index')" :current="request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*')" wire:navigate>
+            {{ __('Admin panel') }}
+        </flux:navbar.item>
     </flux:navbar>
 
     <flux:spacer />
@@ -56,6 +59,28 @@
         </flux:navbar>
     @endauth
 </flux:header>
+
+@if (request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*'))
+    <div class="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden">
+        <div class="flex items-center gap-1 px-4 py-2">
+            @foreach ([
+                'Authors'    => 'authors.index',
+                'Books'      => 'books.index',
+                'Genres'     => 'genres.index',
+                'Orders'     => 'orders.index',
+                'Reviews'    => 'reviews.index',
+            ] as $label => $routeName)
+                <a href="{{ route($routeName) }}"
+                   class="text-sm px-3 py-1.5 rounded-lg transition-colors
+                          {{ request()->routeIs(strtolower($label).'.*')
+                             ? 'bg-zinc-100 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100'
+                             : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                    {{ $label }}
+                </a>
+            @endforeach
+        </div>
+    </div>
+@endif
 
 <!-- Mobile Menu -->
 <flux:sidebar collapsible="mobile" sticky class="lg:hidden border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">

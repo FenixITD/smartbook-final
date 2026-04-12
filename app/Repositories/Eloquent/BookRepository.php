@@ -24,14 +24,17 @@ final class BookRepository implements BookRepositoryInterface
             ->all();
     }
 
-    public function getWebList(): PaginatedResponseDto
+    public function getWebList(BookFiltersDto $filters): PaginatedResponseDto
     {
         $paginator = Book::with(['author', 'genres'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->when($filters->search, fn ($q) => $q->where('title', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage)
+            ->withQueryString();
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }
+
     public function findModel(int $id): Book
     {
         return Book::findOrFail($id);

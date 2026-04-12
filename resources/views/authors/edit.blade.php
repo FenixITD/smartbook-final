@@ -25,7 +25,7 @@
                             type="text"
                             value="{{ old('name', $author->name) }}"
                             placeholder="e.g. Leo Tolstoy"
-                            autofocus
+                            autofocus=""
                             :invalid="$errors->has('name')"
                         />
                         @error('name')

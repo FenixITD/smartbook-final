@@ -7,6 +7,7 @@ namespace App\Repositories\Eloquent;
 use App\Dto\Order\OrderDto;
 use App\Dto\Order\OrderFiltersDto;
 use App\Dto\Order\OrderResponseDto;
+use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
@@ -22,6 +23,21 @@ final class OrderRepository implements OrderRepositoryInterface
             ->getCollection()
             ->map(fn (Order $order) => OrderResponseDto::fromModel($order))
             ->all();
+    }
+
+    public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto
+    {
+        $paginator = Order::query()
+            ->when($filters->search !== null, fn ($q) => $q->where('user_id', 'like', "%{$filters->search}%"))
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage);
+
+        return PaginatedResponseDto::fromPaginator($paginator);
+    }
+
+    public function all(): array
+    {
+        return Order::orderBy('user_id')->get()->all();
     }
 
     public function getById(int $id): ?OrderResponseDto
@@ -49,6 +65,6 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) Genre::destroy($id);
+        return (bool) Order::destroy($id);
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Repositories\Interfaces;
 
+use App\Dto\PaginatedResponseDto;
 use App\Dto\Review\ReviewDto;
 use App\DTO\Review\ReviewFiltersDto;
 use App\DTO\Review\ReviewResponseDto;
-use App\Models\Review;
 
 interface ReviewRepositoryInterface
 {
@@ -15,6 +15,10 @@ interface ReviewRepositoryInterface
      * @return array<ReviewResponseDto>
      */
     public function getList(ReviewFiltersDto $filters): array;
+
+    public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto;
+
+    public function all(): array;
 
     public function getById(int $id): ?ReviewResponseDto;
 

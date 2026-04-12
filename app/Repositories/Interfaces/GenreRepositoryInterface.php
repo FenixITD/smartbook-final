@@ -7,7 +7,7 @@ namespace App\Repositories\Interfaces;
 use App\Dto\Genre\GenreDto;
 use App\DTO\Genre\GenreFiltersDto;
 use App\DTO\Genre\GenreResponseDto;
-use App\Models\Genre;
+use App\Dto\PaginatedResponseDto;
 
 interface GenreRepositoryInterface
 {
@@ -15,6 +15,8 @@ interface GenreRepositoryInterface
      * @return array<GenreResponseDto>
      */
     public function getList(GenreFiltersDto $filters): array;
+
+    public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto;
 
     public function all(): array;
 

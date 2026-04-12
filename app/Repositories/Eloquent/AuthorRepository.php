@@ -24,11 +24,6 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->all();
     }
 
-    public function all(): array
-    {
-        return Author::orderBy('name')->get()->all();
-    }
-
     public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto
     {
         $paginator = Author::query()
@@ -37,6 +32,11 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->paginate($filters->perPage);
 
         return PaginatedResponseDto::fromPaginator($paginator);
+    }
+
+    public function all(): array
+    {
+        return Author::orderBy('name')->get()->all();
     }
 
     public function getById(int $id): ?AuthorResponseDto

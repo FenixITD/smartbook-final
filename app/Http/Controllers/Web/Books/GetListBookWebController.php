@@ -16,7 +16,7 @@ final readonly class GetListBookWebController
 
     public function __invoke(BookListRequest $request): View
     {
-        $books = $this->repository->getWebList();
+        $books = $this->repository->getWebList($request->toDto());
 
         return view('books.list', compact('books'));
     }
