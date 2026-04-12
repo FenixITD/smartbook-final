@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Services\Book;
 
+use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
-use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Storage;
 
 final readonly class DeleteBookService
 {
     public function __construct(
         private BookRepositoryInterface $bookRepository,
-        private ConnectionInterface $db,
+        private TransactionManagerInterface $transactionManager,
     ) {}
 
     public function execute(int $bookId): void
     {
-        $this->db->transaction(function () use ($bookId): void {
+        $this->transactionManager->transaction(function () use ($bookId): void {
             $book = $this->bookRepository->findModel($bookId);
 
             if ($book->cover_image) {

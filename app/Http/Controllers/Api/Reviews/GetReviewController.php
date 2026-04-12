@@ -9,7 +9,7 @@ use App\Models\Review;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-final readonly class GetByIdReviewController
+final readonly class GetReviewController
 {
     public function __construct(
         private ReviewRepositoryInterface $repository

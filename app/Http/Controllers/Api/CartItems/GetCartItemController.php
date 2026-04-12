@@ -9,7 +9,7 @@ use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-final readonly class GetByIdCartItemController
+final readonly class GetCartItemController
 {
     public function __construct(
         private CartItemRepositoryInterface $repository

@@ -9,7 +9,7 @@ use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-final readonly class GetByIdBookController
+final readonly class GetBookController
 {
     public function __construct(
         private BookRepositoryInterface $repository

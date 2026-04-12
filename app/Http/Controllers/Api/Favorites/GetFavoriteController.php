@@ -9,7 +9,7 @@ use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-final readonly class GetByIdFavoriteController
+final readonly class GetFavoriteController
 {
     public function __construct(
         private FavoriteRepositoryInterface $repository

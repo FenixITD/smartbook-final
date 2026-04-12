@@ -9,7 +9,7 @@ use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-final readonly class GetByIdGenreController
+final readonly class GetGenreController
 {
     public function __construct(
         private GenreRepositoryInterface $repository

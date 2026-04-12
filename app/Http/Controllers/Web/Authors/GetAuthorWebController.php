@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Web\Authors;
 use App\Models\Author;
 use Illuminate\View\View;
 
-final readonly class GetByIdAuthorWebController
+final readonly class GetAuthorWebController
 {
     public function __invoke(Author $author): View
     {

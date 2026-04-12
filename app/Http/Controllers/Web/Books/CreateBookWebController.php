@@ -6,19 +6,17 @@ namespace App\Http\Controllers\Web\Books;
 
 use App\Http\Requests\Book\BookWebDataRequest;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
-use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
-use App\Services\Book\SyncBookGenresService;
+use App\Services\Book\BookCreatorService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 final readonly class CreateBookWebController
 {
     public function __construct(
-        private BookRepositoryInterface $bookRepository,
         private AuthorRepositoryInterface $authorRepository,
         private GenreRepositoryInterface $genreRepository,
-        private SyncBookGenresService $syncGenresService, ) {}
+        private BookCreatorService $service) {}
 
     public function create(): View
     {
@@ -30,10 +28,7 @@ final readonly class CreateBookWebController
 
     public function store(BookWebDataRequest $request): RedirectResponse
     {
-        $responseDto = $this->bookRepository->create($request->toDto());
-
-        $book = $this->bookRepository->findModel($responseDto->id);
-        $this->syncGenresService->execute($book, $request->genres());
+        $this->service->execute($request);
 
         return redirect()->route('books.index')
             ->with('success', 'Book created successfully.');

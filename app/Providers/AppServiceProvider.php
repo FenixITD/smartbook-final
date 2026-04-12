@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Infrastructure\Interfaces\TransactionManagerInterface;
+use App\Infrastructure\Persistence\EloquentTransactionManager;
 use App\Listeners\MergeCartOnLogin;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
@@ -79,6 +81,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             DashboardRepositoryInterface::class,
             DashboardRepository::class
+        );
+
+        $this->app->bind(
+            TransactionManagerInterface::class,
+            EloquentTransactionManager::class,
         );
     }
 

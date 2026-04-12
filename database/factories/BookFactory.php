@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Author;
-use App\Services\Book\CoverImageService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -12,13 +11,6 @@ class BookFactory extends Factory
     public function definition(): array
     {
         $title = fake()->sentence(4);
-        $seed = $this->faker->numberBetween(1, 1000);
-
-        try {
-            $coverImage = app(CoverImageService::class)->generatePlaceholder($title, $seed);
-        } catch (\Exception) {
-            $coverImage = null;
-        }
 
         return [
             'title' => $title,
@@ -28,7 +20,7 @@ class BookFactory extends Factory
             'price' => fake()->randomFloat(2, 5, 100),
             'stock' => fake()->numberBetween(0, 50),
             'publish_year' => fake()->year(),
-            'cover_image' => $coverImage,
+            'cover_image' => fake()->imageUrl,
             'average_rating' => fake()->randomFloat(2, 0, 5),
             'ratings_count' => fake()->numberBetween(0, 500),
             'status' => fake()->randomElement(['published', 'draft', 'archived']),

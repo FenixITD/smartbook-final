@@ -9,7 +9,7 @@ use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-final readonly class GetByIdAuthorController
+final readonly class GetAuthorController
 {
     public function __construct(
         private AuthorRepositoryInterface $repository

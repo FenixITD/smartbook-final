@@ -9,7 +9,7 @@ use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
-final readonly class GetByIdOrderController
+final readonly class GetOrderController
 {
     public function __construct(
         private OrderRepositoryInterface $repository

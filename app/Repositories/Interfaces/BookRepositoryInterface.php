@@ -23,6 +23,8 @@ interface BookRepositoryInterface
 
     public function findModelWithRelations(int $id): Book;
 
+    public function syncBookGenres(Book $book, array $genreIds): void;
+
     public function getById(int $id): ?BookResponseDto;
 
     public function create(BookDto $data): BookResponseDto;

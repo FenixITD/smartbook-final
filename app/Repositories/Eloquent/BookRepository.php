@@ -45,6 +45,11 @@ final class BookRepository implements BookRepositoryInterface
         return Book::with(['author', 'genres'])->findOrFail($id);
     }
 
+    public function syncBookGenres(Book $book, array $genreIds): void
+    {
+        $book->genres()->sync($genreIds);
+    }
+
     public function getById(int $id): ?BookResponseDto
     {
         $book = Book::find($id);

@@ -18,7 +18,7 @@ final readonly class RemoveFromCartService
     public function execute(int $bookId, ?CartItem $cartItem = null): void
     {
         if (Auth::check() && $cartItem) {
-            $this->repository->delete($cartItem);
+            $this->repository->delete($cartItem->id);
         } else {
             $this->guestCart->remove($bookId);
         }
