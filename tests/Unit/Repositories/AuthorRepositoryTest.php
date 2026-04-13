@@ -150,7 +150,7 @@ class AuthorRepositoryTest extends TestCase
         $author = Author::factory()->create(['name' => 'Old Name']);
         $dto = new AuthorDto(name: 'New Name');
 
-        $result = $this->repository->update($author, $dto);
+        $result = $this->repository->update($author->id, $dto);
 
         $this->assertInstanceOf(AuthorResponseDto::class, $result);
         $this->assertSame('New Name', $result->name);
@@ -162,7 +162,7 @@ class AuthorRepositoryTest extends TestCase
         $author = Author::factory()->create(['name' => 'Before']);
         $dto = new AuthorDto(name: 'After');
 
-        $this->repository->update($author, $dto);
+        $this->repository->update($author->id, $dto);
 
         $this->assertDatabaseCount('authors', 1);
     }
@@ -175,7 +175,7 @@ class AuthorRepositoryTest extends TestCase
     {
         $author = Author::factory()->create();
 
-        $result = $this->repository->delete($author);
+        $result = $this->repository->delete($author->id);
 
         $this->assertTrue($result);
         $this->assertDatabaseMissing('authors', ['id' => $author->id]);
@@ -185,7 +185,7 @@ class AuthorRepositoryTest extends TestCase
     {
         $author = Author::factory()->create();
 
-        $result = $this->repository->delete($author);
+        $result = $this->repository->delete($author->id);
 
         $this->assertTrue($result);
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
-use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,15 +11,19 @@ final readonly class UpdateCartService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-        private GuestCartService $guestCart,
+        private GuestCartService $service,
     ) {}
 
-    public function execute(int $bookId, int $quantity, ?CartItem $cartItem = null): void
+    public function execute(int $bookId, int $quantity): void
     {
-        if (Auth::check() && $cartItem) {
-            $this->repository->updateQuantity($cartItem, $quantity);
+        if (Auth::check()) {
+            $cartItem = $this->repository->findByUserAndBook(Auth::id(), $bookId);
+
+            if ($cartItem) {
+                $this->repository->updateQuantity($cartItem, $quantity);
+            }
         } else {
-            $this->guestCart->update($bookId, $quantity);
+            $this->service->update($bookId, $quantity);
         }
     }
 }

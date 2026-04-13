@@ -8,6 +8,7 @@ use App\Dto\CartItem\CartItemDto;
 use App\Dto\CartItem\CartItemFiltersDto;
 use App\Dto\CartItem\CartItemResponseDto;
 use App\Models\CartItem;
+use Illuminate\Support\Collection;
 
 interface CartItemRepositoryInterface
 {
@@ -17,6 +18,14 @@ interface CartItemRepositoryInterface
     public function getList(CartItemFiltersDto $filters): array;
 
     public function getById(int $id): ?CartItemResponseDto;
+
+    public function findByUserAndBook(int $userId, int $bookId): ?CartItem;
+
+    public function getByUserId(int $userId): Collection;
+
+    public function countByUserId(int $userId): int;
+
+    public function deleteByUserId(int $userId): void;
 
     public function addOrIncrement(CartItemDto $data): void;
 

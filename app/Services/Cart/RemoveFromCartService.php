@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
-use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,15 +11,19 @@ final readonly class RemoveFromCartService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-        private GuestCartService $guestCart,
+        private GuestCartService $service,
     ) {}
 
-    public function execute(int $bookId, ?CartItem $cartItem = null): void
+    public function execute(int $bookId): void
     {
-        if (Auth::check() && $cartItem) {
-            $this->repository->delete($cartItem->id);
+        if (Auth::check()) {
+            $cartItem = $this->repository->findByUserAndBook(Auth::id(), $bookId);
+
+            if ($cartItem) {
+                $this->repository->delete($cartItem->id);
+            }
         } else {
-            $this->guestCart->remove($bookId);
+            $this->service->remove($bookId);
         }
     }
 }

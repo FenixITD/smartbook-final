@@ -235,7 +235,7 @@ class CartItemRepositoryTest extends TestCase
             'quantity' => 1,
         ]);
 
-        $result = $this->repository->update($cartItem, $this->makeDto(['quantity' => 9]));
+        $result = $this->repository->update($cartItem->id, $this->makeDto(['quantity' => 9]));
 
         $this->assertInstanceOf(CartItemResponseDto::class, $result);
         $this->assertSame(9, $result->quantity);
@@ -249,7 +249,7 @@ class CartItemRepositoryTest extends TestCase
             'book_id' => $this->book->id,
         ]);
 
-        $this->repository->update($cartItem, $this->makeDto(['quantity' => 3]));
+        $this->repository->update($cartItem->id, $this->makeDto(['quantity' => 3]));
 
         $this->assertDatabaseCount('cart_items', 1);
     }
@@ -265,7 +265,7 @@ class CartItemRepositoryTest extends TestCase
             'book_id' => $this->book->id,
         ]);
 
-        $result = $this->repository->delete($cartItem);
+        $result = $this->repository->delete($cartItem->id);
 
         $this->assertTrue($result);
         $this->assertDatabaseMissing('cart_items', ['id' => $cartItem->id]);
@@ -278,7 +278,7 @@ class CartItemRepositoryTest extends TestCase
             'book_id' => $this->book->id,
         ]);
 
-        $result = $this->repository->delete($cartItem);
+        $result = $this->repository->delete($cartItem->id);
 
         $this->assertTrue($result);
     }

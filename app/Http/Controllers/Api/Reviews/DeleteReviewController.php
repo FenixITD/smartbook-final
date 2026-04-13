@@ -16,6 +16,10 @@ final readonly class DeleteReviewController
 
     public function __invoke(int $review): JsonResponse
     {
+        if (! Review::find($review)) {
+            return response()->json(['message' => 'Review not found'], 404);
+        }
+
         $this->repository->delete($review);
 
         return response()->json([

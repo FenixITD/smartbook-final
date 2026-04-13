@@ -191,7 +191,7 @@ class BookRepositoryTest extends TestCase
         $book = Book::factory()->create(['title' => 'Old Title', 'author_id' => $this->author->id]);
         $dto = $this->makeDto(['title' => 'New Title', 'slug' => 'new-title']);
 
-        $result = $this->repository->update($book, $dto);
+        $result = $this->repository->update($book->id, $dto); // передаём int, не модель
 
         $this->assertInstanceOf(BookResponseDto::class, $result);
         $this->assertSame('New Title', $result->title);
@@ -203,7 +203,7 @@ class BookRepositoryTest extends TestCase
         $book = Book::factory()->create(['author_id' => $this->author->id]);
         $dto = $this->makeDto(['title' => 'Updated', 'slug' => 'updated']);
 
-        $this->repository->update($book, $dto);
+        $this->repository->update($book->id, $dto); // передаём int, не модель
 
         $this->assertDatabaseCount('books', 1);
     }
@@ -216,7 +216,7 @@ class BookRepositoryTest extends TestCase
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
-        $result = $this->repository->delete($book);
+        $result = $this->repository->delete($book->id); // передаём int, не модель
 
         $this->assertTrue($result);
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
@@ -226,8 +226,15 @@ class BookRepositoryTest extends TestCase
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
-        $result = $this->repository->delete($book);
+        $result = $this->repository->delete($book->id); // передаём int, не модель
 
         $this->assertTrue($result);
+    }
+
+    public function test_delete_returns_false_for_nonexistent_book(): void
+    {
+        $result = $this->repository->delete(99999);
+
+        $this->assertFalse($result);
     }
 }

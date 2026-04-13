@@ -9,6 +9,7 @@ use App\DTO\CartItem\CartItemFiltersDto;
 use App\DTO\CartItem\CartItemResponseDto;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use Illuminate\Support\Collection;
 
 final class CartItemRepository implements CartItemRepositoryInterface
 {
@@ -28,6 +29,30 @@ final class CartItemRepository implements CartItemRepositoryInterface
         $cartItem = CartItem::find($id);
 
         return $cartItem ? CartItemResponseDto::fromModel($cartItem) : null;
+    }
+
+    public function findByUserAndBook(int $userId, int $bookId): ?CartItem
+    {
+        return CartItem::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->first();
+    }
+
+    public function getByUserId(int $userId): Collection
+    {
+        return CartItem::with('book.author')
+            ->where('user_id', $userId)
+            ->get();
+    }
+
+    public function countByUserId(int $userId): int
+    {
+        return CartItem::where('user_id', $userId)->count();
+    }
+
+    public function deleteByUserId(int $userId): void
+    {
+        CartItem::where('user_id', $userId)->delete();
     }
 
     public function addOrIncrement(CartItemDto $data): void

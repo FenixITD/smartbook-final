@@ -27,7 +27,7 @@ final class AddToCartWebRequest extends FormRequest
         return new CartItemDto(
             userId: auth()->id(),
             bookId: $this->integer('book_id'),
-            quantity: $this->integer('quantity'),
+            quantity: $this->integer('quantity', 1),
         );
     }
 }

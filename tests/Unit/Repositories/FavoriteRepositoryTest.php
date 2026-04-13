@@ -166,7 +166,7 @@ class FavoriteRepositoryTest extends TestCase
         $anotherBook = Book::factory()->create(['author_id' => $this->author->id]);
         $dto = $this->makeDto(['bookId' => $anotherBook->id]);
 
-        $result = $this->repository->update($favorite, $dto);
+        $result = $this->repository->update($favorite->id, $dto);
 
         $this->assertInstanceOf(FavoriteResponseDto::class, $result);
         $this->assertSame($anotherBook->id, $result->bookId);
@@ -177,7 +177,7 @@ class FavoriteRepositoryTest extends TestCase
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
 
-        $this->repository->update($favorite, $this->makeDto());
+        $this->repository->update($favorite->id, $this->makeDto());
 
         $this->assertDatabaseCount('favorites', 1);
     }
@@ -190,7 +190,7 @@ class FavoriteRepositoryTest extends TestCase
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
 
-        $result = $this->repository->delete($favorite);
+        $result = $this->repository->delete($favorite->id);
 
         $this->assertTrue($result);
         $this->assertDatabaseMissing('favorites', ['id' => $favorite->id]);
@@ -200,7 +200,7 @@ class FavoriteRepositoryTest extends TestCase
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
 
-        $result = $this->repository->delete($favorite);
+        $result = $this->repository->delete($favorite->id);
 
         $this->assertTrue($result);
     }

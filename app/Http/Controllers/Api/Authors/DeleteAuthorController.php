@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Authors;
 
+use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -15,6 +16,10 @@ final readonly class DeleteAuthorController
 
     public function __invoke(int $author): JsonResponse
     {
+        if (! Author::find($author)) {
+            return response()->json(['message' => 'Author not found'], 404);
+        }
+
         $this->repository->delete($author);
 
         return response()->json([

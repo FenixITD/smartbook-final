@@ -16,6 +16,10 @@ final readonly class DeleteFavoriteController
 
     public function __invoke(int $favorite): JsonResponse
     {
+        if (! Favorite::find($favorite)) {
+            return response()->json(['message' => 'Favorite not found'], 404);
+        }
+
         $this->repository->delete($favorite);
 
         return response()->json([
