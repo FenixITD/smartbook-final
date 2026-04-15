@@ -5,18 +5,26 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\Book\BookDto;
-use App\DTO\Book\BookFiltersDto;
-use App\DTO\Book\BookResponseDto;
+use App\Dto\Book\BookFiltersDto;
+use App\Dto\Book\BookResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Services\Elasticsearch\BookIndexService;
 
 final class BookRepository implements BookRepositoryInterface
 {
+    public function __construct(
+        private readonly BookIndexService $searchService,
+    ) {}
+
     public function getList(BookFiltersDto $filters): array
     {
+        if ($filters->search !== null) {
+            return $this->searchWithElasticsearch($filters);
+        }
+
         return Book::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('title', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()
@@ -26,8 +34,11 @@ final class BookRepository implements BookRepositoryInterface
 
     public function getWebList(BookFiltersDto $filters): PaginatedResponseDto
     {
+        if ($filters->search) {
+            return $this->searchWebWithElasticsearch($filters);
+        }
+
         $paginator = Book::with(['author', 'genres'])
-            ->when($filters->search, fn ($q) => $q->where('title', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->withQueryString();
@@ -76,5 +87,63 @@ final class BookRepository implements BookRepositoryInterface
     public function delete(int $id): bool
     {
         return (bool) Book::destroy($id);
+    }
+
+    // -------------------------------------------------------------------------
+
+    /** @return array<BookResponseDto> */
+    private function searchWithElasticsearch(BookFiltersDto $filters): array
+    {
+        $result = $this->searchService->search($filters);
+
+        if (empty($result['ids'])) {
+            return [];
+        }
+
+        $ids = $result['ids'];
+
+        return Book::query()
+            ->whereIn('id', $ids)
+            ->orderByRaw($this->orderByIds($ids))
+            ->paginate($filters->perPage)
+            ->getCollection()
+            ->map(fn (Book $book) => BookResponseDto::fromModel($book))
+            ->all();
+    }
+
+    private function searchWebWithElasticsearch(BookFiltersDto $filters): PaginatedResponseDto
+    {
+        $result = $this->searchService->search($filters);
+
+        if (empty($result['ids'])) {
+            $paginator = Book::query()
+                ->whereRaw('1 = 0')
+                ->with(['author', 'genres'])
+                ->paginate($filters->perPage)
+                ->withQueryString();
+
+            return PaginatedResponseDto::fromPaginator($paginator);
+        }
+
+        $ids = $result['ids'];
+
+        $paginator = Book::with(['author', 'genres'])
+            ->whereIn('id', $ids)
+            ->orderByRaw($this->orderByIds($ids))
+            ->paginate($filters->perPage)
+            ->withQueryString();
+
+        return PaginatedResponseDto::fromPaginator($paginator);
+    }
+
+    /** Build CASE WHEN to preserve Elasticsearch relevance order in SQL. */
+    private function orderByIds(array $ids): string
+    {
+        $cases = collect($ids)
+            ->values()
+            ->map(fn (int $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
+            ->implode(' ');
+
+        return "CASE {$cases} ELSE " . count($ids) . ' END';
     }
 }

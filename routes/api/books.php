@@ -4,10 +4,12 @@ use App\Http\Controllers\Api\Books\CreateBookController;
 use App\Http\Controllers\Api\Books\DeleteBookController;
 use App\Http\Controllers\Api\Books\GetBookController;
 use App\Http\Controllers\Api\Books\GetListBookController;
+use App\Http\Controllers\Api\Books\SearchSuggestController;
 use App\Http\Controllers\Api\Books\UpdateBookController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('books')->name('api.books.')->group(function (): void {
+    Route::get('/suggest', SearchSuggestController::class)->name('suggest');
     Route::get('/', GetListBookController::class)->name('list');
     Route::get('/{book}', GetBookController::class)->name('show');
     Route::post('/', CreateBookController::class)->name('create');
