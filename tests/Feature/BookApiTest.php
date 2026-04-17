@@ -321,10 +321,10 @@ final class BookApiTest extends TestCase
         $this->author = Author::factory()->create();
     }
 
-    /** @param array<string, mixed> $overrides
-     *  @return array<string, mixed> */
-    /** @param array<string, mixed> $overrides */
-    /** @return array<string, mixed> */
+    /**
+     * @param array<string, mixed> $overrides
+     * @return array<string, mixed>
+     */
     private function validPayload(array $overrides = []): array
     {
         return array_merge([

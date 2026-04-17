@@ -11,10 +11,17 @@ final class GuestCartService
 {
     private const SESSION_KEY = 'guest_cart';
 
+    /** @return array<int, array{book_id: int, quantity: int}> */
+    private function cart(): array
+    {
+        $raw = session(self::SESSION_KEY, []);
+
+        return is_array($raw) ? $raw : [];
+    }
+
     public function add(int $bookId, int $quantity): void
     {
-        /** @var array<int, array{book_id: int, quantity: int}> $cart */
-        $cart = session(self::SESSION_KEY, []);
+        $cart = $this->cart();
 
         if (isset($cart[$bookId])) {
             $cart[$bookId]['quantity'] += $quantity;
@@ -27,8 +34,7 @@ final class GuestCartService
 
     public function update(int $bookId, int $quantity): void
     {
-        /** @var array<int, array{book_id: int, quantity: int}> $cart */
-        $cart = session(self::SESSION_KEY, []);
+        $cart = $this->cart();
 
         if (isset($cart[$bookId])) {
             $cart[$bookId]['quantity'] = $quantity;
@@ -38,8 +44,7 @@ final class GuestCartService
 
     public function remove(int $bookId): void
     {
-        /** @var array<int, array{book_id: int, quantity: int}> $cart */
-        $cart = session(self::SESSION_KEY, []);
+        $cart = $this->cart();
         unset($cart[$bookId]);
         session([self::SESSION_KEY => $cart]);
     }
@@ -49,11 +54,10 @@ final class GuestCartService
         session()->forget(self::SESSION_KEY);
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}> */
     public function getItems(): Collection
     {
-        /** @var array<int, array{book_id: int, quantity: int}> $cart */
-        $cart = session(self::SESSION_KEY, []);
+        $cart = $this->cart();
 
         if ($cart === []) {
             return collect();
@@ -78,16 +82,12 @@ final class GuestCartService
 
     public function count(): int
     {
-        /** @var array<int, array{quantity: int}> $cart */
-        $cart = session(self::SESSION_KEY, []);
-
-        return (int) array_sum(array_column($cart, 'quantity'));
+        return array_sum(array_column($this->cart(), 'quantity'));
     }
 
     /** @return array<int, array{book_id: int, quantity: int}> */
     public function all(): array
     {
-        /** @var array<int, array{book_id: int, quantity: int}> $cart */
-        return session(self::SESSION_KEY, []);
+        return $this->cart();
     }
 }

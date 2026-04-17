@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
+use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -16,11 +17,12 @@ final readonly class GetCartItemsService
     ) {
     }
 
-    /** @return Collection<int, mixed> */
+    /**
+     * @return Collection<int, CartItem>|Collection<int, object{id: null, book_id: int, quantity: int, book: \App\Models\Book|null, user_id: null}>
+     */
     public function execute(): Collection
     {
         if (Auth::check()) {
-            /** @var Collection<int, mixed> $result */
             return $this->repository->getByUserId((int) Auth::id());
         }
 

@@ -269,10 +269,10 @@ final class FavoriteApiTest extends TestCase
         $this->book = Book::factory()->create(['author_id' => $this->author->id]);
     }
 
-    /** @param array<string, mixed> $overrides
-     *  @return array<string, mixed> */
-    /** @param array<string, mixed> $overrides */
-    /** @return array<string, mixed> */
+    /**
+     * @param array<string, mixed> $overrides
+     * @return array<string, mixed>
+     */
     private function validPayload(array $overrides = []): array
     {
         return array_merge([

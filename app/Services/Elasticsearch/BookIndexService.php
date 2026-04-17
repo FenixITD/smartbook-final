@@ -24,12 +24,9 @@ final class BookIndexService
             ->setHosts([config('elasticsearch.host')])
             ->build();
 
-        $this->index = config('elasticsearch.books_index');
+        $this->index = (string) config('elasticsearch.books_index');
     }
 
-    /**
-     * Create index with mapping if it doesn't exist.
-     */
     public function createIndexIfNotExists(): void
     {
         $exists = $this->client->indices()->exists(['index' => $this->index]);
@@ -42,9 +39,6 @@ final class BookIndexService
         }
     }
 
-    /**
-     * Index (create or update) a single book document.
-     */
     public function indexBook(Book $book): void
     {
         $this->client->index([
@@ -54,9 +48,6 @@ final class BookIndexService
         ]);
     }
 
-    /**
-     * Delete a book document from the index.
-     */
     public function deleteBook(int $bookId): void
     {
         try {
@@ -70,13 +61,11 @@ final class BookIndexService
     }
 
     /**
-     * Search books in Elasticsearch and return matching IDs ordered by score.
-     *
      * @return array{ids: int[], total: int}
      */
     public function search(BookFiltersDto $filters): array
     {
-        $query = $filters->search
+        $query = $filters->search !== null
             ? [
                 'multi_match' => [
                     'query' => $filters->search,
@@ -91,7 +80,7 @@ final class BookIndexService
             'body' => [
                 'query' => $query,
                 'from' => 0,
-                'size' => 1000, // fetch all matching IDs; pagination done by Eloquent
+                'size' => 1000,
             ],
         ]);
 
@@ -108,8 +97,6 @@ final class BookIndexService
     }
 
     /**
-     * Re-index all books in bulk.
-     *
      * @param iterable<Book> $books
      */
     public function bulkIndex(iterable $books): void
@@ -125,21 +112,17 @@ final class BookIndexService
             ];
             $params['body'][] = $this->toDocument($book);
 
-            // Flush every 500 documents to avoid memory spikes
             if (count($params['body']) >= 1000) {
                 $this->client->bulk($params);
                 $params['body'] = [];
             }
         }
 
-        if (!empty($params['body'])) {
+        if ($params['body'] !== []) {
             $this->client->bulk($params);
         }
     }
 
-    /**
-     * Drop and recreate the index.
-     */
     public function resetIndex(): void
     {
         $exists = $this->client->indices()->exists(['index' => $this->index]);
@@ -154,8 +137,7 @@ final class BookIndexService
         ]);
     }
 
-    // -------------------------------------------------------------------------
-
+    /** @return array<string, mixed> */
     private function toDocument(Book $book): array
     {
         return [
@@ -164,12 +146,12 @@ final class BookIndexService
             'slug' => $book->slug,
             'description' => $book->description,
             'author_id' => $book->author_id,
-            'price' => (float) $book->price,
-            'stock' => (int) $book->stock,
-            'publish_year' => $book->publish_year ? (int) $book->publish_year : null,
+            'price' => $book->price,
+            'stock' => $book->stock,
+            'publish_year' => $book->publish_year !== null ? (int) $book->publish_year : null,
             'cover_image' => $book->cover_image,
-            'average_rating' => $book->average_rating ? (float) $book->average_rating : null,
-            'ratings_count' => (int) $book->ratings_count,
+            'average_rating' => $book->average_rating !== null ? (float) $book->average_rating : null,
+            'ratings_count' => $book->ratings_count,
             'status' => $book->status,
             'created_at' => $book->created_at?->toIso8601String(),
             'updated_at' => $book->updated_at?->toIso8601String(),

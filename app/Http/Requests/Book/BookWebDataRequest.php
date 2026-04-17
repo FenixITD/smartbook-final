@@ -77,8 +77,8 @@ final class BookWebDataRequest extends FormRequest
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
             coverImage: $coverImage,
-            averageRating: (float) $book->average_rating,
-            ratingsCount: (int) $book->ratings_count,
+            averageRating: $book->average_rating,
+            ratingsCount: $book->ratings_count,
             status: (string) $this->string('status'),
         );
     }
@@ -86,7 +86,12 @@ final class BookWebDataRequest extends FormRequest
     /** @return array<int, int> */
     public function genres(): array
     {
-        /** @var array<int, int> $genres */
-        return $this->input('genres', []);
+        $raw = $this->input('genres', []);
+
+        if (!is_array($raw)) {
+            return [];
+        }
+
+        return array_values(array_map('intval', $raw));
     }
 }

@@ -360,10 +360,10 @@ final class ReviewApiTest extends TestCase
         $this->book = Book::factory()->create(['author_id' => Author::factory()->create()->id]);
     }
 
-    /** @param array<string, mixed> $overrides
-     *  @return array<string, mixed> */
-    /** @param array<string, mixed> $overrides */
-    /** @return array<string, mixed> */
+    /**
+     * @param array<string, mixed> $overrides
+     * @return array<string, mixed>
+     */
     private function validPayload(array $overrides = []): array
     {
         return array_merge([

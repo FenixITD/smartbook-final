@@ -13,7 +13,14 @@ final readonly class CartTotalService
 
     public function execute(): float
     {
-        return $this->getCartItems->execute()
-            ->sum(static fn ($item) => $item->book->price * $item->quantity);
+        return (float) $this->getCartItems->execute()
+            ->sum(static function (mixed $item): float {
+                $price = is_object($item) && isset($item->book) && is_object($item->book)
+                    ? (float) $item->book->price
+                    : 0.0;
+                $qty = is_object($item) && isset($item->quantity) ? (int) $item->quantity : 0;
+
+                return $price * $qty;
+            });
     }
 }

@@ -383,10 +383,10 @@ final class OrderItemApiTest extends TestCase
         $this->order = Order::factory()->create(['user_id' => $this->user->id]);
     }
 
-    /** @param array<string, mixed> $overrides
-     *  @return array<string, mixed> */
-    /** @param array<string, mixed> $overrides */
-    /** @return array<string, mixed> */
+    /**
+     * @param array<string, mixed> $overrides
+     * @return array<string, mixed>
+     */
     private function validPayload(array $overrides = []): array
     {
         return array_merge([

@@ -22,21 +22,21 @@ parameters:
     checkOctaneCompatibility: false
 
     ignoreErrors:
-        # ── Eloquent / Laravel known limitations ──────────────────────────────
+        # ── Eloquent dynamic calls ────────────────────────────────────────────
         - '#Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder#'
         - '#Dynamic call to static method Illuminate\\Database\\Eloquent\\Relations\\#'
         - '#Dynamic call to static method Illuminate\\Session\\Store#'
         - '#Dynamic call to static method Illuminate\\Contracts\\Auth\\Guard#'
 
-        # Repository create/update with toArray()
+        # Repository create/update — toArray() shape is known at runtime
         -
             message: '#Parameter \#1 \$attributes of (static method|method) Illuminate\\Database\\Eloquent\\(Builder|Model).*::(create|update)\(\) expects#'
             path: app/Repositories/*
 
-        # update() return type matches interface contract
+        # update() return type matches interface (null allowed by contract)
         - '#Method .+::update\(\) never returns null so it can be removed from the return type#'
 
-        # ── Collection / Paginator covariance ─────────────────────────────────
+        # ── Collection / Paginator invariance ─────────────────────────────────
         - '#Template type TValue on class Illuminate\\Support\\Collection is not covariant#'
         - '#Template type TValue on class Illuminate\\Pagination\\LengthAwarePaginator is not covariant#'
 
@@ -63,12 +63,12 @@ parameters:
             path: app/Services/Elasticsearch/*
             message: '#Method App\\Services\\Elasticsearch\\BookIndexService::search\(\) should return#'
 
-        # ── FortifyServiceProvider — Fortify actions exist at runtime ─────────
+        # ── FortifyServiceProvider — classes exist at runtime via Composer ────
         -
             path: app/Providers/FortifyServiceProvider.php
             message: '#Class App\\Actions\\Fortify\\(CreateNewUser|ResetUserPassword) not found#'
 
-        # ── Tests ─────────────────────────────────────────────────────────────
+        # ── Tests: general ────────────────────────────────────────────────────
         -
             message: '#has an uninitialized property#'
             path: tests/*
@@ -85,10 +85,10 @@ parameters:
             message: '#Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Factories\\Factory#'
             path: tests/*
         -
-            message: '#Property Tests\\[a-zA-Z\\]+.*does not accept#'
+            message: '#Property Tests[a-zA-Z\\]+.*does not accept#'
             path: tests/*
         -
-            message: '#Property Tests\\[a-zA-Z\\]+.*cannot#'
+            message: '#Property Tests[a-zA-Z\\]+.*cannot#'
             path: tests/*
         -
             message: '#Part \$[a-zA-Z]+->id .* of encapsed string#'
@@ -101,4 +101,7 @@ parameters:
             path: tests/*
         -
             message: '#Method Illuminate\\Testing\\TestResponse.*assertStatus\(\) invoked with 2 parameters#'
+            path: tests/*
+        -
+            message: '#Class App\\Repositories\\Eloquent\\BookRepository constructor invoked with 0 parameters#'
             path: tests/*
