@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
-use function is_object;
+use stdClass;
 
 final readonly class CartTotalService
 {
@@ -17,12 +17,11 @@ final readonly class CartTotalService
     {
         return $this->getCartItems->execute()
             ->sum(static function (mixed $item): float {
-                $price = is_object($item) && isset($item->book) && is_object($item->book)
-                    ? $item->book->price
-                    : 0.0;
-                $qty = is_object($item) && isset($item->quantity) ? $item->quantity : 0;
+                /** @var object{id: null, book_id: int, quantity: int, book: \App\Models\Book|null, user_id: null}&stdClass $item */
+                $book = $item->book;
+                $price = $book !== null ? $book->price : 0.0;
 
-                return $price * $qty;
+                return $price * $item->quantity;
             });
     }
 }

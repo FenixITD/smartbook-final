@@ -6,6 +6,7 @@ namespace App\Services\Cart;
 
 use App\Models\Book;
 use Illuminate\Support\Collection;
+use stdClass;
 
 use function is_array;
 
@@ -48,13 +49,16 @@ final class GuestCartService
         session()->forget(self::SESSION_KEY);
     }
 
-    /** @return Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}> */
+    /** @return Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}&stdClass> */
     public function getItems(): Collection
     {
         $cart = $this->cart();
 
         if ($cart === []) {
-            return collect();
+            /** @var Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}&stdClass> $empty */
+            $empty = collect();
+
+            return $empty;
         }
 
         $books = Book::with('author')
@@ -62,7 +66,8 @@ final class GuestCartService
             ->get()
             ->keyBy('id');
 
-        return collect($cart)
+        /** @var Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}&stdClass> $result */
+        $result = collect($cart)
             ->map(static fn (array $item) => (object) [
                 'id' => null,
                 'book_id' => $item['book_id'],
@@ -72,6 +77,8 @@ final class GuestCartService
             ])
             ->filter(static fn (mixed $item) => $item->book !== null)
             ->values();
+
+        return $result;
     }
 
     public function count(): int
@@ -90,6 +97,11 @@ final class GuestCartService
     {
         $raw = session(self::SESSION_KEY, []);
 
-        return is_array($raw) ? $raw : [];
+        if (!is_array($raw)) {
+            return [];
+        }
+
+        /** @var array<int, array{book_id: int, quantity: int}> $raw */
+        return $raw;
     }
 }

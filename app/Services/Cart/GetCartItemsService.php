@@ -8,6 +8,7 @@ use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use stdClass;
 
 final readonly class GetCartItemsService
 {
@@ -18,7 +19,7 @@ final readonly class GetCartItemsService
     }
 
     /**
-     * @return Collection<int, CartItem>|Collection<int, object{id: null, book_id: int, quantity: int, book: \App\Models\Book|null, user_id: null}>
+     * @return Collection<int, CartItem>|Collection<int, object{id: null, book_id: int, quantity: int, book: \App\Models\Book|null, user_id: null}&stdClass>
      */
     public function execute(): Collection
     {

@@ -94,6 +94,6 @@ final class BookWebDataRequest extends FormRequest
             return [];
         }
 
-        return array_values(array_map('intval', $raw));
+        return array_values(array_map(static fn (mixed $v): int => is_numeric($v) ? (int) $v : 0, $raw));
     }
 }
