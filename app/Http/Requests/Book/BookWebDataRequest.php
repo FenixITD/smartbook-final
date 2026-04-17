@@ -8,6 +8,8 @@ use App\Dto\Book\BookDto;
 use App\Models\Book;
 use Illuminate\Foundation\Http\FormRequest;
 
+use function is_array;
+
 final class BookWebDataRequest extends FormRequest
 {
     public function authorize(): bool

@@ -24,7 +24,7 @@ final class BookIndexService
             ->setHosts([config('elasticsearch.host')])
             ->build();
 
-        $this->index = (string) config('elasticsearch.books_index');
+        $this->index = config('elasticsearch.books_index');
     }
 
     public function createIndexIfNotExists(): void
@@ -148,9 +148,9 @@ final class BookIndexService
             'author_id' => $book->author_id,
             'price' => $book->price,
             'stock' => $book->stock,
-            'publish_year' => $book->publish_year !== null ? (int) $book->publish_year : null,
+            'publish_year' => $book->publish_year !== null ? $book->publish_year : null,
             'cover_image' => $book->cover_image,
-            'average_rating' => $book->average_rating !== null ? (float) $book->average_rating : null,
+            'average_rating' => $book->average_rating !== null ? $book->average_rating : null,
             'ratings_count' => $book->ratings_count,
             'status' => $book->status,
             'created_at' => $book->created_at?->toIso8601String(),

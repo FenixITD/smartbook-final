@@ -362,6 +362,7 @@ final class ReviewApiTest extends TestCase
 
     /**
      * @param array<string, mixed> $overrides
+     *
      * @return array<string, mixed>
      */
     private function validPayload(array $overrides = []): array

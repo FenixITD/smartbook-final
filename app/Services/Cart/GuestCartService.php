@@ -7,17 +7,11 @@ namespace App\Services\Cart;
 use App\Models\Book;
 use Illuminate\Support\Collection;
 
+use function is_array;
+
 final class GuestCartService
 {
     private const SESSION_KEY = 'guest_cart';
-
-    /** @return array<int, array{book_id: int, quantity: int}> */
-    private function cart(): array
-    {
-        $raw = session(self::SESSION_KEY, []);
-
-        return is_array($raw) ? $raw : [];
-    }
 
     public function add(int $bookId, int $quantity): void
     {
@@ -89,5 +83,13 @@ final class GuestCartService
     public function all(): array
     {
         return $this->cart();
+    }
+
+    /** @return array<int, array{book_id: int, quantity: int}> */
+    private function cart(): array
+    {
+        $raw = session(self::SESSION_KEY, []);
+
+        return is_array($raw) ? $raw : [];
     }
 }
