@@ -12,7 +12,8 @@ final readonly class GetListAuthorWebController
 {
     public function __construct(
         private AuthorRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(AuthorListRequest $request): View
     {

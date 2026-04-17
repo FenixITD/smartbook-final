@@ -5,39 +5,41 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\CartItem\CartItemDto;
-use App\DTO\CartItem\CartItemFiltersDto;
-use App\DTO\CartItem\CartItemResponseDto;
+use App\Dto\CartItem\CartItemFiltersDto;
+use App\Dto\CartItem\CartItemResponseDto;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Support\Collection;
 
 final class CartItemRepository implements CartItemRepositoryInterface
 {
+    /** @return array<CartItemResponseDto> */
     public function getList(CartItemFiltersDto $filters): array
     {
         return CartItem::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->when($filters->search !== null, static fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()
-            ->map(fn (CartItem $cartItem) => CartItemResponseDto::fromModel($cartItem))
+            ->map(static fn (CartItem $cartItem) => CartItemResponseDto::fromModel($cartItem))
             ->all();
     }
 
-    public function getById(int $id): ?CartItemResponseDto
+    public function getById(int $id): CartItemResponseDto|null
     {
         $cartItem = CartItem::find($id);
 
-        return $cartItem ? CartItemResponseDto::fromModel($cartItem) : null;
+        return $cartItem !== null ? CartItemResponseDto::fromModel($cartItem) : null;
     }
 
-    public function findByUserAndBook(int $userId, int $bookId): ?CartItem
+    public function findByUserAndBook(int $userId, int $bookId): CartItem|null
     {
         return CartItem::where('user_id', $userId)
             ->where('book_id', $bookId)
             ->first();
     }
 
+    /** @return Collection<int, CartItem> */
     public function getByUserId(int $userId): Collection
     {
         return CartItem::with('book.author')
@@ -61,7 +63,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->where('book_id', $data->bookId)
             ->first();
 
-        if ($existing) {
+        if ($existing !== null) {
             $existing->increment('quantity', $data->quantity);
         } else {
             CartItem::create($data->toArray());
@@ -75,18 +77,22 @@ final class CartItemRepository implements CartItemRepositoryInterface
 
     public function create(CartItemDto $data): CartItemResponseDto
     {
+        /** @var CartItem $cartItem */
         $cartItem = CartItem::create($data->toArray());
 
         return CartItemResponseDto::fromModel($cartItem);
     }
 
-    public function update(int $id, CartItemDto $data): ?CartItemResponseDto
+    public function update(int $id, CartItemDto $data): CartItemResponseDto|null
     {
         $cartItem = CartItem::findOrFail($id);
 
         $cartItem->update($data->toArray());
 
-        return CartItemResponseDto::fromModel($cartItem->fresh());
+        /** @var CartItem $fresh */
+        $fresh = $cartItem->fresh();
+
+        return CartItemResponseDto::fromModel($fresh);
     }
 
     public function delete(int $id): bool

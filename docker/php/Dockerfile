@@ -19,10 +19,10 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY composer.json composer.lock* ./
+COPY ../../composer.json composer.lock* ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
 
-COPY . .
+COPY ../.. .
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache

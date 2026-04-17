@@ -11,12 +11,13 @@ use Illuminate\Http\JsonResponse;
 final readonly class DeleteFavoriteController
 {
     public function __construct(
-        private FavoriteRepositoryInterface $repository
-    ) {}
+        private FavoriteRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(int $favorite): JsonResponse
     {
-        if (! Favorite::find($favorite)) {
+        if (Favorite::find($favorite) === null) {
             return response()->json(['message' => 'Favorite not found'], 404);
         }
 

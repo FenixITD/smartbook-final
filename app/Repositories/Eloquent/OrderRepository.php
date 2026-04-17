@@ -8,59 +8,64 @@ use App\Dto\Order\OrderDto;
 use App\Dto\Order\OrderFiltersDto;
 use App\Dto\Order\OrderResponseDto;
 use App\Dto\PaginatedResponseDto;
-use App\Models\Genre;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
+    /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array
     {
         return Order::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('user_id', 'like', "%{$filters->search}%"))
+            ->when($filters->search !== null, static fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()
-            ->map(fn (Order $order) => OrderResponseDto::fromModel($order))
+            ->map(static fn (Order $order) => OrderResponseDto::fromModel($order))
             ->all();
     }
 
     public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto
     {
         $paginator = Order::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('user_id', 'like', "%{$filters->search}%"))
+            ->when($filters->search !== null, static fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage);
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
+    /** @return array<mixed> */
     public function all(): array
     {
-        return Order::orderBy('user_id')->get()->all();
+        return Order::orderBy('id')->get()->all();
     }
 
-    public function getById(int $id): ?OrderResponseDto
+    public function getById(int $id): OrderResponseDto|null
     {
         $order = Order::find($id);
 
-        return $order ? OrderResponseDto::fromModel($order) : null;
+        return $order !== null ? OrderResponseDto::fromModel($order) : null;
     }
 
     public function create(OrderDto $data): OrderResponseDto
     {
+        /** @var Order $order */
         $order = Order::create($data->toArray());
 
         return OrderResponseDto::fromModel($order);
     }
 
-    public function update(int $id, OrderDto $data): ?OrderResponseDto
+    public function update(int $id, OrderDto $data): OrderResponseDto|null
     {
         $order = Order::findOrFail($id);
 
         $order->update($data->toArray());
 
-        return OrderResponseDto::fromModel($order->fresh());
+        /** @var Order $fresh */
+        $fresh = $order->fresh();
+
+        return OrderResponseDto::fromModel($fresh);
     }
 
     public function delete(int $id): bool

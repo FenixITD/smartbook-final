@@ -11,7 +11,8 @@ final class BookObserver
 {
     public function __construct(
         private readonly BookIndexService $indexService,
-    ) {}
+    ) {
+    }
 
     public function created(Book $book): void
     {

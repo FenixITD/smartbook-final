@@ -16,7 +16,9 @@ final readonly class CreateBookWebController
     public function __construct(
         private AuthorRepositoryInterface $authorRepository,
         private GenreRepositoryInterface $genreRepository,
-        private BookCreatorService $service) {}
+        private BookCreatorService $service)
+    {
+    }
 
     public function create(): View
     {

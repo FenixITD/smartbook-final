@@ -10,9 +10,14 @@ use App\Dto\OrderItem\OrderItemResponseDto;
 use App\Models\OrderItem;
 use Tests\TestCase;
 
-class OrderItemDtoTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class OrderItemDtoTest extends TestCase
 {
-    public function test_order_item_dto_to_array_returns_correct_structure(): void
+    public function testOrderItemDtoToArrayReturnsCorrectStructure(): void
     {
         $dto = new OrderItemDto(
             orderId: 1,
@@ -23,7 +28,7 @@ class OrderItemDtoTest extends TestCase
 
         $result = $dto->toArray();
 
-        $this->assertSame([
+        self::assertSame([
             'order_id' => 1,
             'book_id' => 2,
             'quantity' => 3,
@@ -31,7 +36,7 @@ class OrderItemDtoTest extends TestCase
         ], $result);
     }
 
-    public function test_order_item_dto_stores_properties_correctly(): void
+    public function testOrderItemDtoStoresPropertiesCorrectly(): void
     {
         $dto = new OrderItemDto(
             orderId: 5,
@@ -40,23 +45,23 @@ class OrderItemDtoTest extends TestCase
             priceAtPurchase: 49.99,
         );
 
-        $this->assertSame(5, $dto->orderId);
-        $this->assertSame(10, $dto->bookId);
-        $this->assertSame(7, $dto->quantity);
-        $this->assertSame(49.99, $dto->priceAtPurchase);
+        self::assertSame(5, $dto->orderId);
+        self::assertSame(10, $dto->bookId);
+        self::assertSame(7, $dto->quantity);
+        self::assertSame(49.99, $dto->priceAtPurchase);
     }
 
-    public function test_order_item_filters_dto_has_correct_defaults(): void
+    public function testOrderItemFiltersDtoHasCorrectDefaults(): void
     {
-        $dto = new OrderItemFiltersDto;
+        $dto = new OrderItemFiltersDto();
 
-        $this->assertNull($dto->search);
-        $this->assertSame(15, $dto->perPage);
-        $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        self::assertNull($dto->search);
+        self::assertSame(15, $dto->perPage);
+        self::assertSame('id', $dto->sortBy);
+        self::assertSame('asc', $dto->sortDirection);
     }
 
-    public function test_order_item_filters_dto_accepts_custom_values(): void
+    public function testOrderItemFiltersDtoAcceptsCustomValues(): void
     {
         $dto = new OrderItemFiltersDto(
             search: '42',
@@ -65,15 +70,15 @@ class OrderItemDtoTest extends TestCase
             sortDirection: 'desc',
         );
 
-        $this->assertSame('42', $dto->search);
-        $this->assertSame(25, $dto->perPage);
-        $this->assertSame('quantity', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        self::assertSame('42', $dto->search);
+        self::assertSame(25, $dto->perPage);
+        self::assertSame('quantity', $dto->sortBy);
+        self::assertSame('desc', $dto->sortDirection);
     }
 
-    public function test_order_item_response_dto_from_model(): void
+    public function testOrderItemResponseDtoFromModel(): void
     {
-        $orderItem = new OrderItem;
+        $orderItem = new OrderItem();
         $orderItem->id = 8;
         $orderItem->order_id = 3;
         $orderItem->book_id = 11;
@@ -84,18 +89,18 @@ class OrderItemDtoTest extends TestCase
 
         $dto = OrderItemResponseDto::fromModel($orderItem);
 
-        $this->assertSame(8, $dto->id);
-        $this->assertSame(3, $dto->orderId);
-        $this->assertSame(11, $dto->bookId);
-        $this->assertSame(2, $dto->quantity);
-        $this->assertSame(19.99, $dto->priceAtPurchase);
-        $this->assertSame('2024-04-01 10:00:00', $dto->createdAt);
-        $this->assertSame('2024-04-05 16:00:00', $dto->updatedAt);
+        self::assertSame(8, $dto->id);
+        self::assertSame(3, $dto->orderId);
+        self::assertSame(11, $dto->bookId);
+        self::assertSame(2, $dto->quantity);
+        self::assertSame(19.99, $dto->priceAtPurchase);
+        self::assertSame('2024-04-01 10:00:00', $dto->createdAt);
+        self::assertSame('2024-04-05 16:00:00', $dto->updatedAt);
     }
 
-    public function test_order_item_response_dto_casts_fields_to_correct_types(): void
+    public function testOrderItemResponseDtoCastsFieldsToCorrectTypes(): void
     {
-        $orderItem = new OrderItem;
+        $orderItem = new OrderItem();
         $orderItem->id = 1;
         $orderItem->order_id = 1;
         $orderItem->book_id = 1;
@@ -106,9 +111,9 @@ class OrderItemDtoTest extends TestCase
 
         $dto = OrderItemResponseDto::fromModel($orderItem);
 
-        $this->assertIsInt($dto->orderId);
-        $this->assertIsInt($dto->bookId);
-        $this->assertIsInt($dto->quantity);
-        $this->assertIsFloat($dto->priceAtPurchase);
+        self::assertIsInt($dto->orderId);
+        self::assertIsInt($dto->bookId);
+        self::assertIsInt($dto->quantity);
+        self::assertIsFloat($dto->priceAtPurchase);
     }
 }

@@ -13,7 +13,8 @@ final readonly class ShowCartWebController
     public function __construct(
         private GetCartItemsService $getCartItemsService,
         private CartTotalService $cartTotalService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(): View
     {

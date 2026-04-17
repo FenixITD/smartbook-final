@@ -11,7 +11,8 @@ final readonly class MergeCartOnLogin
 {
     public function __construct(
         private MergeSessionCartService $mergeSessionCartService,
-    ) {}
+    ) {
+    }
 
     public function handle(Login $event): void
     {

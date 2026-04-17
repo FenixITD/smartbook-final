@@ -13,8 +13,9 @@ use Illuminate\View\View;
 final readonly class UpdateReviewWebController
 {
     public function __construct(
-        private ReviewRepositoryInterface $repository
-    ) {}
+        private ReviewRepositoryInterface $repository,
+    ) {
+    }
 
     public function edit(Review $review): View
     {

@@ -12,15 +12,14 @@ use Illuminate\Support\Collection;
 
 interface CartItemRepositoryInterface
 {
-    /**
-     * @return array<CartItemResponseDto>
-     */
+    /** @return array<CartItemResponseDto> */
     public function getList(CartItemFiltersDto $filters): array;
 
-    public function getById(int $id): ?CartItemResponseDto;
+    public function getById(int $id): CartItemResponseDto|null;
 
-    public function findByUserAndBook(int $userId, int $bookId): ?CartItem;
+    public function findByUserAndBook(int $userId, int $bookId): CartItem|null;
 
+    /** @return Collection<int, CartItem> */
     public function getByUserId(int $userId): Collection;
 
     public function countByUserId(int $userId): int;
@@ -33,7 +32,7 @@ interface CartItemRepositoryInterface
 
     public function create(CartItemDto $data): CartItemResponseDto;
 
-    public function update(int $id, CartItemDto $data): ?CartItemResponseDto;
+    public function update(int $id, CartItemDto $data): CartItemResponseDto|null;
 
     public function delete(int $id): bool;
 }

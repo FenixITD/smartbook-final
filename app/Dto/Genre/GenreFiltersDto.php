@@ -7,9 +7,10 @@ namespace App\Dto\Genre;
 final readonly class GenreFiltersDto
 {
     public function __construct(
-        public ?string $search = null,
+        public string|null $search = null,
         public int $perPage = 15,
         public string $sortBy = 'id',
         public string $sortDirection = 'asc',
-    ) {}
+    ) {
+    }
 }

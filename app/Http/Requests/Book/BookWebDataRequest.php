@@ -15,6 +15,7 @@ final class BookWebDataRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -37,47 +38,55 @@ final class BookWebDataRequest extends FormRequest
         $coverImage = null;
 
         if ($this->hasFile('cover_image')) {
-            $coverImage = $this->file('cover_image')->store('covers', 'public');
+            /** @var string $stored */
+            $stored = $this->file('cover_image')?->store('covers', 'public');
+            $coverImage = $stored;
         }
 
         return new BookDto(
-            title: $this->input('title'),
-            slug: $this->input('slug'),
+            title: (string) $this->string('title'),
+            slug: (string) $this->string('slug'),
             authorId: $this->integer('authorId'),
-            description: $this->input('description'),
-            price: (float) $this->input('price'),
+            description: (string) $this->string('description'),
+            price: (float) $this->string('price')->toString(),
             stock: $this->integer('stock'),
-            publishYear: $this->integer('publishYear') ?: null,
+            publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
             coverImage: $coverImage,
             averageRating: 0.0,
             ratingsCount: 0,
-            status: $this->input('status'),
+            status: (string) $this->string('status'),
         );
     }
 
     public function toDtoForUpdate(Book $book): BookDto
     {
-        $coverImage = $this->hasFile('cover_image')
-            ? $this->file('cover_image')->store('covers', 'public')
-            : $book->cover_image;
+        $coverImage = $book->cover_image;
+
+        if ($this->hasFile('cover_image')) {
+            /** @var string $stored */
+            $stored = $this->file('cover_image')?->store('covers', 'public');
+            $coverImage = $stored;
+        }
 
         return new BookDto(
-            title: $this->input('title'),
-            slug: $this->input('slug'),
+            title: (string) $this->string('title'),
+            slug: (string) $this->string('slug'),
             authorId: $this->integer('authorId'),
-            description: $this->input('description'),
-            price: (float) $this->input('price'),
+            description: (string) $this->string('description'),
+            price: (float) $this->string('price')->toString(),
             stock: $this->integer('stock'),
-            publishYear: $this->integer('publishYear') ?: null,
+            publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
             coverImage: $coverImage,
             averageRating: (float) $book->average_rating,
             ratingsCount: (int) $book->ratings_count,
-            status: $this->input('status'),
+            status: (string) $this->string('status'),
         );
     }
 
+    /** @return array<int, int> */
     public function genres(): array
     {
+        /** @var array<int, int> $genres */
         return $this->input('genres', []);
     }
 }

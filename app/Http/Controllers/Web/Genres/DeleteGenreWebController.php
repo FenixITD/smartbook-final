@@ -11,7 +11,8 @@ final readonly class DeleteGenreWebController
 {
     public function __construct(
         private GenreRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $genre): RedirectResponse
     {

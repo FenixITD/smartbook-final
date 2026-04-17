@@ -10,9 +10,14 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Models\Genre;
 use Tests\TestCase;
 
-class GenreDtoTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class GenreDtoTest extends TestCase
 {
-    public function test_genre_dto_to_array_returns_correct_structure(): void
+    public function testGenreDtoToArrayReturnsCorrectStructure(): void
     {
         $dto = new GenreDto(
             name: 'Science Fiction',
@@ -22,14 +27,14 @@ class GenreDtoTest extends TestCase
 
         $result = $dto->toArray();
 
-        $this->assertSame([
+        self::assertSame([
             'name' => 'Science Fiction',
             'slug' => 'science-fiction',
             'description' => 'A genre about science and the future.',
         ], $result);
     }
 
-    public function test_genre_dto_stores_properties_correctly(): void
+    public function testGenreDtoStoresPropertiesCorrectly(): void
     {
         $dto = new GenreDto(
             name: 'Fantasy',
@@ -37,22 +42,22 @@ class GenreDtoTest extends TestCase
             description: 'A genre with magic and mythical creatures.',
         );
 
-        $this->assertSame('Fantasy', $dto->name);
-        $this->assertSame('fantasy', $dto->slug);
-        $this->assertSame('A genre with magic and mythical creatures.', $dto->description);
+        self::assertSame('Fantasy', $dto->name);
+        self::assertSame('fantasy', $dto->slug);
+        self::assertSame('A genre with magic and mythical creatures.', $dto->description);
     }
 
-    public function test_genre_filters_dto_has_correct_defaults(): void
+    public function testGenreFiltersDtoHasCorrectDefaults(): void
     {
-        $dto = new GenreFiltersDto;
+        $dto = new GenreFiltersDto();
 
-        $this->assertNull($dto->search);
-        $this->assertSame(15, $dto->perPage);
-        $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        self::assertNull($dto->search);
+        self::assertSame(15, $dto->perPage);
+        self::assertSame('id', $dto->sortBy);
+        self::assertSame('asc', $dto->sortDirection);
     }
 
-    public function test_genre_filters_dto_accepts_custom_values(): void
+    public function testGenreFiltersDtoAcceptsCustomValues(): void
     {
         $dto = new GenreFiltersDto(
             search: 'Fiction',
@@ -61,15 +66,15 @@ class GenreDtoTest extends TestCase
             sortDirection: 'desc',
         );
 
-        $this->assertSame('Fiction', $dto->search);
-        $this->assertSame(30, $dto->perPage);
-        $this->assertSame('name', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        self::assertSame('Fiction', $dto->search);
+        self::assertSame(30, $dto->perPage);
+        self::assertSame('name', $dto->sortBy);
+        self::assertSame('desc', $dto->sortDirection);
     }
 
-    public function test_genre_response_dto_from_model(): void
+    public function testGenreResponseDtoFromModel(): void
     {
-        $genre = new Genre;
+        $genre = new Genre();
         $genre->id = 3;
         $genre->name = 'Horror';
         $genre->slug = 'horror';
@@ -79,17 +84,17 @@ class GenreDtoTest extends TestCase
 
         $dto = GenreResponseDto::fromModel($genre);
 
-        $this->assertSame(3, $dto->id);
-        $this->assertSame('Horror', $dto->name);
-        $this->assertSame('horror', $dto->slug);
-        $this->assertSame('A genre designed to frighten.', $dto->description);
-        $this->assertSame('2024-01-01 10:00:00', $dto->createdAt);
-        $this->assertSame('2024-06-01 12:00:00', $dto->updatedAt);
+        self::assertSame(3, $dto->id);
+        self::assertSame('Horror', $dto->name);
+        self::assertSame('horror', $dto->slug);
+        self::assertSame('A genre designed to frighten.', $dto->description);
+        self::assertSame('2024-01-01 10:00:00', $dto->createdAt);
+        self::assertSame('2024-06-01 12:00:00', $dto->updatedAt);
     }
 
-    public function test_genre_response_dto_casts_fields_to_string(): void
+    public function testGenreResponseDtoCastsFieldsToString(): void
     {
-        $genre = new Genre;
+        $genre = new Genre();
         $genre->id = 1;
         $genre->name = 'Mystery';
         $genre->slug = 'mystery';
@@ -99,8 +104,8 @@ class GenreDtoTest extends TestCase
 
         $dto = GenreResponseDto::fromModel($genre);
 
-        $this->assertIsString($dto->name);
-        $this->assertIsString($dto->slug);
-        $this->assertIsString($dto->description);
+        self::assertIsString($dto->name);
+        self::assertIsString($dto->slug);
+        self::assertIsString($dto->description);
     }
 }

@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 readonly class UpdateBookController
 {
     public function __construct(
-        private BookRepositoryInterface $repository
-    ) {}
+        private BookRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(BookDataRequest $request, int $book): JsonResponse
     {

@@ -13,13 +13,15 @@ final readonly class BookDto
         public string $description,
         public float $price,
         public int $stock,
-        public ?int $publishYear,
-        public ?string $coverImage,
-        public ?float $averageRating,
-        public ?int $ratingsCount,
+        public int|null $publishYear,
+        public string|null $coverImage,
+        public float|null $averageRating,
+        public int|null $ratingsCount,
         public string $status,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,7 +13,12 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+
+    /** @use HasFactory<UserFactory> */
+    use HasFactory;
+
+    use Notifiable;
 
     protected $fillable = [
         'name',
@@ -30,21 +38,25 @@ class User extends Authenticatable
         'role' => 'string',
     ];
 
+    /** @return HasMany<Order, $this> */
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
 
+    /** @return HasMany<Review, $this> */
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
+    /** @return HasMany<Favorite, $this> */
     public function favorites(): HasMany
     {
         return $this->hasMany(Favorite::class);
     }
 
+    /** @return HasMany<CartItem, $this> */
     public function cartItems(): HasMany
     {
         return $this->hasMany(CartItem::class);
@@ -52,7 +64,7 @@ class User extends Authenticatable
 
     public function initials(): string
     {
-        if (empty($this->name)) {
+        if ($this->name === '') {
             return '';
         }
 
@@ -60,7 +72,7 @@ class User extends Authenticatable
         $initials = [];
 
         foreach ($parts as $part) {
-            if (! empty($part)) {
+            if ($part !== '') {
                 $initials[] = mb_strtoupper(mb_substr($part, 0, 1)).'.';
             }
         }

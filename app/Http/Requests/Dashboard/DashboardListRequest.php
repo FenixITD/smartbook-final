@@ -14,6 +14,7 @@ final class DashboardListRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -29,12 +30,12 @@ final class DashboardListRequest extends FormRequest
     public function toDto(): DashboardFiltersDto
     {
         return new DashboardFiltersDto(
-            search: $this->input('search'),
-            genre: $this->integer('genre') ?: null,
-            author: $this->integer('author') ?: null,
-            year: $this->integer('year') ?: null,
-            status: $this->input('status'),
-            sort: $this->input('sort', 'rating'),
+            search: $this->has('search') ? (string) $this->string('search') : null,
+            genre: $this->integer('genre') !== 0 ? $this->integer('genre') : null,
+            author: $this->integer('author') !== 0 ? $this->integer('author') : null,
+            year: $this->integer('year') !== 0 ? $this->integer('year') : null,
+            status: $this->has('status') ? (string) $this->string('status') : null,
+            sort: (string) $this->string('sort', 'rating'),
             perPage: 18,
         );
     }

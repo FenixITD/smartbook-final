@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 final readonly class GetFavoriteController
 {
     public function __construct(
-        private FavoriteRepositoryInterface $repository
-    ) {}
+        private FavoriteRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(Favorite $favorite): JsonResponse
     {

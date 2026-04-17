@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Order;
 
+use App\Dto\Order\OrderResponseDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin OrderResponseDto
+ */
 final class OrderResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

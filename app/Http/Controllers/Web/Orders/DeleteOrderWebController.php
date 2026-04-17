@@ -11,7 +11,8 @@ final readonly class DeleteOrderWebController
 {
     public function __construct(
         private OrderRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $order): RedirectResponse
     {

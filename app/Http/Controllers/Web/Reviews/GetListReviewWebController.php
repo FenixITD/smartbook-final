@@ -12,7 +12,8 @@ final readonly class GetListReviewWebController
 {
     public function __construct(
         private ReviewRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(ReviewListRequest $request): View
     {

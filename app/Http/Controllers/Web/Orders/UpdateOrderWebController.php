@@ -13,8 +13,9 @@ use Illuminate\View\View;
 final readonly class UpdateOrderWebController
 {
     public function __construct(
-        private OrderRepositoryInterface $repository
-    ) {}
+        private OrderRepositoryInterface $repository,
+    ) {
+    }
 
     public function edit(Order $order): View
     {

@@ -10,15 +10,19 @@ use App\Services\Elasticsearch\BookIndexService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+use function array_slice;
+use function count;
+
 final readonly class SearchSuggestController
 {
     public function __construct(
         private BookIndexService $searchService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(Request $request): JsonResponse
     {
-        $query = trim((string) $request->get('q', ''));
+        $query = trim((string) $request->string('q'));
 
         if (mb_strlen($query) < 2) {
             return response()->json([]);
@@ -27,7 +31,7 @@ final readonly class SearchSuggestController
         $filters = new BookFiltersDto(search: $query, perPage: 5);
         $result = $this->searchService->search($filters);
 
-        if (empty($result['ids'])) {
+        if ($result['ids'] === []) {
             return response()->json([]);
         }
 
@@ -37,7 +41,7 @@ final readonly class SearchSuggestController
             ->orderByRaw($this->orderByIds($ids))
             ->get();
 
-        $suggestions = $books->map(fn (Book $book) => [
+        $suggestions = $books->map(static fn (Book $book) => [
             'id' => $book->id,
             'title' => $book->title,
             'author' => $book->author?->name,
@@ -49,11 +53,12 @@ final readonly class SearchSuggestController
         return response()->json($suggestions);
     }
 
+    /** @param array<int> $ids */
     private function orderByIds(array $ids): string
     {
         $cases = collect($ids)
             ->values()
-            ->map(fn (int $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
+            ->map(static fn (mixed $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
             ->implode(' ');
 
         return 'CASE '.$cases.' ELSE '.count($ids).' END';

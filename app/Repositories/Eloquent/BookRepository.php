@@ -12,12 +12,16 @@ use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Services\Elasticsearch\BookIndexService;
 
+use function count;
+
 final class BookRepository implements BookRepositoryInterface
 {
     public function __construct(
         private readonly BookIndexService $searchService,
-    ) {}
+    ) {
+    }
 
+    /** @return array<BookResponseDto> */
     public function getList(BookFiltersDto $filters): array
     {
         if ($filters->search !== null) {
@@ -28,13 +32,13 @@ final class BookRepository implements BookRepositoryInterface
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()
-            ->map(fn (Book $book) => BookResponseDto::fromModel($book))
+            ->map(static fn (Book $book) => BookResponseDto::fromModel($book))
             ->all();
     }
 
     public function getWebList(BookFiltersDto $filters): PaginatedResponseDto
     {
-        if ($filters->search) {
+        if ($filters->search !== null) {
             return $this->searchWebWithElasticsearch($filters);
         }
 
@@ -56,32 +60,37 @@ final class BookRepository implements BookRepositoryInterface
         return Book::with(['author', 'genres'])->findOrFail($id);
     }
 
+    /** @param array<int> $genreIds */
     public function syncBookGenres(Book $book, array $genreIds): void
     {
         $book->genres()->sync($genreIds);
     }
 
-    public function getById(int $id): ?BookResponseDto
+    public function getById(int $id): BookResponseDto|null
     {
         $book = Book::find($id);
 
-        return $book ? BookResponseDto::fromModel($book) : null;
+        return $book !== null ? BookResponseDto::fromModel($book) : null;
     }
 
     public function create(BookDto $data): BookResponseDto
     {
+        /** @var Book $book */
         $book = Book::create($data->toArray());
 
         return BookResponseDto::fromModel($book);
     }
 
-    public function update(int $id, BookDto $data): ?BookResponseDto
+    public function update(int $id, BookDto $data): BookResponseDto|null
     {
         $book = Book::findOrFail($id);
 
         $book->update($data->toArray());
 
-        return BookResponseDto::fromModel($book->fresh());
+        /** @var Book $fresh */
+        $fresh = $book->fresh();
+
+        return BookResponseDto::fromModel($fresh);
     }
 
     public function delete(int $id): bool
@@ -96,7 +105,7 @@ final class BookRepository implements BookRepositoryInterface
     {
         $result = $this->searchService->search($filters);
 
-        if (empty($result['ids'])) {
+        if ($result['ids'] === []) {
             return [];
         }
 
@@ -107,7 +116,7 @@ final class BookRepository implements BookRepositoryInterface
             ->orderByRaw($this->orderByIds($ids))
             ->paginate($filters->perPage)
             ->getCollection()
-            ->map(fn (Book $book) => BookResponseDto::fromModel($book))
+            ->map(static fn (Book $book) => BookResponseDto::fromModel($book))
             ->all();
     }
 
@@ -115,7 +124,7 @@ final class BookRepository implements BookRepositoryInterface
     {
         $result = $this->searchService->search($filters);
 
-        if (empty($result['ids'])) {
+        if ($result['ids'] === []) {
             $paginator = Book::query()
                 ->whereRaw('1 = 0')
                 ->with(['author', 'genres'])
@@ -136,14 +145,14 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** Build CASE WHEN to preserve Elasticsearch relevance order in SQL. */
+    /** @param array<int> $ids */
     private function orderByIds(array $ids): string
     {
         $cases = collect($ids)
             ->values()
-            ->map(fn (int $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
+            ->map(static fn (int $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
             ->implode(' ');
 
-        return "CASE {$cases} ELSE " . count($ids) . ' END';
+        return "CASE {$cases} ELSE ".count($ids).' END';
     }
 }

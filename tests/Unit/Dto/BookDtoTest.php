@@ -10,9 +10,14 @@ use App\Dto\Book\BookResponseDto;
 use App\Models\Book;
 use Tests\TestCase;
 
-class BookDtoTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class BookDtoTest extends TestCase
 {
-    public function test_book_dto_to_array_returns_correct_structure(): void
+    public function testBookDtoToArrayReturnsCorrectStructure(): void
     {
         $dto = new BookDto(
             title: 'Clean Code',
@@ -30,7 +35,7 @@ class BookDtoTest extends TestCase
 
         $result = $dto->toArray();
 
-        $this->assertSame([
+        self::assertSame([
             'title' => 'Clean Code',
             'slug' => 'clean-code',
             'author_id' => 1,
@@ -45,7 +50,7 @@ class BookDtoTest extends TestCase
         ], $result);
     }
 
-    public function test_book_dto_stores_properties_correctly(): void
+    public function testBookDtoStoresPropertiesCorrectly(): void
     {
         $dto = new BookDto(
             title: 'Refactoring',
@@ -61,29 +66,29 @@ class BookDtoTest extends TestCase
             status: 'active',
         );
 
-        $this->assertSame('Refactoring', $dto->title);
-        $this->assertSame('refactoring', $dto->slug);
-        $this->assertSame(5, $dto->authorId);
-        $this->assertSame(49.99, $dto->price);
-        $this->assertSame(20, $dto->stock);
-        $this->assertSame(1999, $dto->publishYear);
-        $this->assertSame('covers/refactoring.jpg', $dto->coverImage);
-        $this->assertSame(4.8, $dto->averageRating);
-        $this->assertSame(350, $dto->ratingsCount);
-        $this->assertSame('active', $dto->status);
+        self::assertSame('Refactoring', $dto->title);
+        self::assertSame('refactoring', $dto->slug);
+        self::assertSame(5, $dto->authorId);
+        self::assertSame(49.99, $dto->price);
+        self::assertSame(20, $dto->stock);
+        self::assertSame(1999, $dto->publishYear);
+        self::assertSame('covers/refactoring.jpg', $dto->coverImage);
+        self::assertSame(4.8, $dto->averageRating);
+        self::assertSame(350, $dto->ratingsCount);
+        self::assertSame('active', $dto->status);
     }
 
-    public function test_book_filters_dto_has_correct_defaults(): void
+    public function testBookFiltersDtoHasCorrectDefaults(): void
     {
-        $dto = new BookFiltersDto;
+        $dto = new BookFiltersDto();
 
-        $this->assertNull($dto->search);
-        $this->assertSame(15, $dto->perPage);
-        $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        self::assertNull($dto->search);
+        self::assertSame(15, $dto->perPage);
+        self::assertSame('id', $dto->sortBy);
+        self::assertSame('asc', $dto->sortDirection);
     }
 
-    public function test_book_filters_dto_accepts_custom_values(): void
+    public function testBookFiltersDtoAcceptsCustomValues(): void
     {
         $dto = new BookFiltersDto(
             search: 'Clean Code',
@@ -92,15 +97,15 @@ class BookDtoTest extends TestCase
             sortDirection: 'desc',
         );
 
-        $this->assertSame('Clean Code', $dto->search);
-        $this->assertSame(30, $dto->perPage);
-        $this->assertSame('title', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        self::assertSame('Clean Code', $dto->search);
+        self::assertSame(30, $dto->perPage);
+        self::assertSame('title', $dto->sortBy);
+        self::assertSame('desc', $dto->sortDirection);
     }
 
-    public function test_book_response_dto_from_model(): void
+    public function testBookResponseDtoFromModel(): void
     {
-        $book = new Book;
+        $book = new Book();
         $book->id = 7;
         $book->title = 'The Pragmatic Programmer';
         $book->slug = 'the-pragmatic-programmer';
@@ -118,25 +123,25 @@ class BookDtoTest extends TestCase
 
         $dto = BookResponseDto::fromModel($book);
 
-        $this->assertSame(7, $dto->id);
-        $this->assertSame('The Pragmatic Programmer', $dto->title);
-        $this->assertSame('the-pragmatic-programmer', $dto->slug);
-        $this->assertSame(2, $dto->authorId);
-        $this->assertSame('Your journey to mastery.', $dto->description);
-        $this->assertSame(39.99, $dto->price);
-        $this->assertSame(5, $dto->stock);
-        $this->assertSame(1999, $dto->publishYear);
-        $this->assertSame('covers/pragmatic.jpg', $dto->coverImage);
-        $this->assertSame(4.7, $dto->averageRating);
-        $this->assertSame(200, $dto->ratingsCount);
-        $this->assertSame('active', $dto->status);
-        $this->assertSame('2024-01-01 10:00:00', $dto->createdAt);
-        $this->assertSame('2024-06-01 12:00:00', $dto->updatedAt);
+        self::assertSame(7, $dto->id);
+        self::assertSame('The Pragmatic Programmer', $dto->title);
+        self::assertSame('the-pragmatic-programmer', $dto->slug);
+        self::assertSame(2, $dto->authorId);
+        self::assertSame('Your journey to mastery.', $dto->description);
+        self::assertSame(39.99, $dto->price);
+        self::assertSame(5, $dto->stock);
+        self::assertSame(1999, $dto->publishYear);
+        self::assertSame('covers/pragmatic.jpg', $dto->coverImage);
+        self::assertSame(4.7, $dto->averageRating);
+        self::assertSame(200, $dto->ratingsCount);
+        self::assertSame('active', $dto->status);
+        self::assertSame('2024-01-01 10:00:00', $dto->createdAt);
+        self::assertSame('2024-06-01 12:00:00', $dto->updatedAt);
     }
 
-    public function test_book_response_dto_handles_nullable_fields(): void
+    public function testBookResponseDtoHandlesNullableFields(): void
     {
-        $book = new Book;
+        $book = new Book();
         $book->id = 1;
         $book->title = 'Minimal Book';
         $book->slug = 'minimal-book';
@@ -154,6 +159,6 @@ class BookDtoTest extends TestCase
 
         $dto = BookResponseDto::fromModel($book);
 
-        $this->assertNull($dto->publishYear);
+        self::assertNull($dto->publishYear);
     }
 }

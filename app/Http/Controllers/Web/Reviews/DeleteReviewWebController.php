@@ -11,7 +11,8 @@ final readonly class DeleteReviewWebController
 {
     public function __construct(
         private ReviewRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $review): RedirectResponse
     {

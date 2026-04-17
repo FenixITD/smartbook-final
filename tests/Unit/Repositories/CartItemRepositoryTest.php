@@ -15,7 +15,12 @@ use App\Repositories\Eloquent\CartItemRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CartItemRepositoryTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class CartItemRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -27,50 +32,32 @@ class CartItemRepositoryTest extends TestCase
 
     private Author $author;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->repository = new CartItemRepository;
-        $this->user = User::factory()->create();
-        $this->author = Author::factory()->create();
-        $this->book = Book::factory()->create(['author_id' => $this->author->id]);
-    }
-
-    private function makeDto(array $overrides = []): CartItemDto
-    {
-        return new CartItemDto(
-            userId: $overrides['userId'] ?? $this->user->id,
-            bookId: $overrides['bookId'] ?? $this->book->id,
-            quantity: $overrides['quantity'] ?? 2,
-        );
-    }
-
     // -----------------------------------------------------------------------
     // getList
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_array_of_cart_item_response_dtos(): void
+    public function testGetListReturnsArrayOfCartItemResponseDtos(): void
     {
         CartItem::factory()->count(3)->create([
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
         ]);
 
-        $result = $this->repository->getList(new CartItemFiltersDto);
+        $result = $this->repository->getList(new CartItemFiltersDto());
 
-        $this->assertIsArray($result);
-        $this->assertCount(3, $result);
-        $this->assertContainsOnlyInstancesOf(CartItemResponseDto::class, $result);
+        self::assertIsArray($result);
+        self::assertCount(3, $result);
+        self::assertContainsOnlyInstancesOf(CartItemResponseDto::class, $result);
     }
 
-    public function test_get_list_returns_empty_array_when_no_cart_items(): void
+    public function testGetListReturnsEmptyArrayWhenNoCartItems(): void
     {
-        $result = $this->repository->getList(new CartItemFiltersDto);
+        $result = $this->repository->getList(new CartItemFiltersDto());
 
-        $this->assertSame([], $result);
+        self::assertSame([], $result);
     }
 
-    public function test_get_list_respects_per_page(): void
+    public function testGetListRespectsPerPage(): void
     {
         CartItem::factory()->count(10)->create([
             'user_id' => $this->user->id,
@@ -79,10 +66,10 @@ class CartItemRepositoryTest extends TestCase
 
         $result = $this->repository->getList(new CartItemFiltersDto(perPage: 3));
 
-        $this->assertCount(3, $result);
+        self::assertCount(3, $result);
     }
 
-    public function test_get_list_sorts_by_quantity_asc(): void
+    public function testGetListSortsByQuantityAsc(): void
     {
         CartItem::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id, 'quantity' => 5]);
         $anotherBook = Book::factory()->create(['author_id' => $this->author->id]);
@@ -90,11 +77,11 @@ class CartItemRepositoryTest extends TestCase
 
         $result = $this->repository->getList(new CartItemFiltersDto(sortBy: 'quantity', sortDirection: 'asc'));
 
-        $this->assertSame(1, $result[0]->quantity);
-        $this->assertSame(5, $result[1]->quantity);
+        self::assertSame(1, $result[0]->quantity);
+        self::assertSame(5, $result[1]->quantity);
     }
 
-    public function test_get_list_sorts_by_quantity_desc(): void
+    public function testGetListSortsByQuantityDesc(): void
     {
         CartItem::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id, 'quantity' => 1]);
         $anotherBook = Book::factory()->create(['author_id' => $this->author->id]);
@@ -102,15 +89,15 @@ class CartItemRepositoryTest extends TestCase
 
         $result = $this->repository->getList(new CartItemFiltersDto(sortBy: 'quantity', sortDirection: 'desc'));
 
-        $this->assertSame(5, $result[0]->quantity);
-        $this->assertSame(1, $result[1]->quantity);
+        self::assertSame(5, $result[0]->quantity);
+        self::assertSame(1, $result[1]->quantity);
     }
 
     // -----------------------------------------------------------------------
     // getById
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_cart_item_response_dto(): void
+    public function testGetByIdReturnsCartItemResponseDto(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -120,23 +107,23 @@ class CartItemRepositoryTest extends TestCase
 
         $result = $this->repository->getById($cartItem->id);
 
-        $this->assertInstanceOf(CartItemResponseDto::class, $result);
-        $this->assertSame($cartItem->id, $result->id);
-        $this->assertSame(3, $result->quantity);
+        self::assertInstanceOf(CartItemResponseDto::class, $result);
+        self::assertSame($cartItem->id, $result->id);
+        self::assertSame(3, $result->quantity);
     }
 
-    public function test_get_by_id_returns_null_when_not_found(): void
+    public function testGetByIdReturnsNullWhenNotFound(): void
     {
         $result = $this->repository->getById(99999);
 
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     // -----------------------------------------------------------------------
     // addOrIncrement
     // -----------------------------------------------------------------------
 
-    public function test_add_or_increment_creates_new_cart_item_when_not_exists(): void
+    public function testAddOrIncrementCreatesNewCartItemWhenNotExists(): void
     {
         $dto = $this->makeDto(['quantity' => 2]);
 
@@ -149,7 +136,7 @@ class CartItemRepositoryTest extends TestCase
         ]);
     }
 
-    public function test_add_or_increment_increments_quantity_when_already_exists(): void
+    public function testAddOrIncrementIncrementsQuantityWhenAlreadyExists(): void
     {
         CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -166,7 +153,7 @@ class CartItemRepositoryTest extends TestCase
         ]);
     }
 
-    public function test_add_or_increment_does_not_create_duplicate_records(): void
+    public function testAddOrIncrementDoesNotCreateDuplicateRecords(): void
     {
         $dto = $this->makeDto(['quantity' => 1]);
 
@@ -180,7 +167,7 @@ class CartItemRepositoryTest extends TestCase
     // updateQuantity
     // -----------------------------------------------------------------------
 
-    public function test_update_quantity_changes_cart_item_quantity(): void
+    public function testUpdateQuantityChangesCartItemQuantity(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -200,14 +187,14 @@ class CartItemRepositoryTest extends TestCase
     // create
     // -----------------------------------------------------------------------
 
-    public function test_create_persists_cart_item_and_returns_dto(): void
+    public function testCreatePersistsCartItemAndReturnsDto(): void
     {
         $dto = $this->makeDto(['quantity' => 4]);
 
         $result = $this->repository->create($dto);
 
-        $this->assertInstanceOf(CartItemResponseDto::class, $result);
-        $this->assertSame(4, $result->quantity);
+        self::assertInstanceOf(CartItemResponseDto::class, $result);
+        self::assertSame(4, $result->quantity);
         $this->assertDatabaseHas('cart_items', [
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
@@ -215,19 +202,19 @@ class CartItemRepositoryTest extends TestCase
         ]);
     }
 
-    public function test_create_assigns_id_to_returned_dto(): void
+    public function testCreateAssignsIdToReturnedDto(): void
     {
         $result = $this->repository->create($this->makeDto());
 
-        $this->assertIsInt($result->id);
-        $this->assertGreaterThan(0, $result->id);
+        self::assertIsInt($result->id);
+        self::assertGreaterThan(0, $result->id);
     }
 
     // -----------------------------------------------------------------------
     // update
     // -----------------------------------------------------------------------
 
-    public function test_update_changes_cart_item_and_returns_dto(): void
+    public function testUpdateChangesCartItemAndReturnsDto(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -237,12 +224,12 @@ class CartItemRepositoryTest extends TestCase
 
         $result = $this->repository->update($cartItem->id, $this->makeDto(['quantity' => 9]));
 
-        $this->assertInstanceOf(CartItemResponseDto::class, $result);
-        $this->assertSame(9, $result->quantity);
+        self::assertInstanceOf(CartItemResponseDto::class, $result);
+        self::assertSame(9, $result->quantity);
         $this->assertDatabaseHas('cart_items', ['id' => $cartItem->id, 'quantity' => 9]);
     }
 
-    public function test_update_does_not_create_new_record(): void
+    public function testUpdateDoesNotCreateNewRecord(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -258,7 +245,7 @@ class CartItemRepositoryTest extends TestCase
     // delete
     // -----------------------------------------------------------------------
 
-    public function test_delete_removes_cart_item_from_database(): void
+    public function testDeleteRemovesCartItemFromDatabase(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -267,11 +254,11 @@ class CartItemRepositoryTest extends TestCase
 
         $result = $this->repository->delete($cartItem->id);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
         $this->assertDatabaseMissing('cart_items', ['id' => $cartItem->id]);
     }
 
-    public function test_delete_returns_true_on_success(): void
+    public function testDeleteReturnsTrueOnSuccess(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -280,6 +267,25 @@ class CartItemRepositoryTest extends TestCase
 
         $result = $this->repository->delete($cartItem->id);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->repository = new CartItemRepository();
+        $this->user = User::factory()->create();
+        $this->author = Author::factory()->create();
+        $this->book = Book::factory()->create(['author_id' => $this->author->id]);
+    }
+
+    /** @param array<string, mixed> $overrides */
+    private function makeDto(array $overrides = []): CartItemDto
+    {
+        return new CartItemDto(
+            userId: (int) ($overrides['userId'] ?? $this->user->id),
+            bookId: (int) ($overrides['bookId'] ?? $this->book->id),
+            quantity: (int) ($overrides['quantity'] ?? 2),
+        );
     }
 }

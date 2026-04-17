@@ -14,7 +14,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class OrderRepositoryTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class OrderRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -22,59 +27,41 @@ class OrderRepositoryTest extends TestCase
 
     private User $user;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->repository = new OrderRepository;
-        $this->user = User::factory()->create();
-    }
-
-    private function makeDto(array $overrides = []): OrderDto
-    {
-        return new OrderDto(
-            userId: $overrides['userId'] ?? $this->user->id,
-            total: $overrides['total'] ?? 99.99,
-            status: $overrides['status'] ?? 'pending',
-            shippingAddress: $overrides['shippingAddress'] ?? '123 Main St, London',
-            paymentMethod: $overrides['paymentMethod'] ?? 'credit_card',
-        );
-    }
-
     // -----------------------------------------------------------------------
     // getList
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_array_of_order_response_dtos(): void
+    public function testGetListReturnsArrayOfOrderResponseDtos(): void
     {
         Order::factory()->count(3)->create(['user_id' => $this->user->id]);
 
-        $filters = new OrderFiltersDto;
+        $filters = new OrderFiltersDto();
         $result = $this->repository->getList($filters);
 
-        $this->assertIsArray($result);
-        $this->assertCount(3, $result);
-        $this->assertContainsOnlyInstancesOf(OrderResponseDto::class, $result);
+        self::assertIsArray($result);
+        self::assertCount(3, $result);
+        self::assertContainsOnlyInstancesOf(OrderResponseDto::class, $result);
     }
 
-    public function test_get_list_returns_empty_array_when_no_orders(): void
+    public function testGetListReturnsEmptyArrayWhenNoOrders(): void
     {
-        $filters = new OrderFiltersDto;
+        $filters = new OrderFiltersDto();
         $result = $this->repository->getList($filters);
 
-        $this->assertSame([], $result);
+        self::assertSame([], $result);
     }
 
-    public function test_get_list_respects_per_page(): void
+    public function testGetListRespectsPerPage(): void
     {
         Order::factory()->count(10)->create(['user_id' => $this->user->id]);
 
         $filters = new OrderFiltersDto(perPage: 4);
         $result = $this->repository->getList($filters);
 
-        $this->assertCount(4, $result);
+        self::assertCount(4, $result);
     }
 
-    public function test_get_list_sorts_by_total_asc(): void
+    public function testGetListSortsByTotalAsc(): void
     {
         Order::factory()->create(['total' => 500.00, 'user_id' => $this->user->id]);
         Order::factory()->create(['total' => 10.00, 'user_id' => $this->user->id]);
@@ -82,11 +69,11 @@ class OrderRepositoryTest extends TestCase
         $filters = new OrderFiltersDto(sortBy: 'total', sortDirection: 'asc');
         $result = $this->repository->getList($filters);
 
-        $this->assertSame(10.00, $result[0]->total);
-        $this->assertSame(500.00, $result[1]->total);
+        self::assertSame(10.00, $result[0]->total);
+        self::assertSame(500.00, $result[1]->total);
     }
 
-    public function test_get_list_sorts_by_total_desc(): void
+    public function testGetListSortsByTotalDesc(): void
     {
         Order::factory()->create(['total' => 10.00, 'user_id' => $this->user->id]);
         Order::factory()->create(['total' => 500.00, 'user_id' => $this->user->id]);
@@ -94,61 +81,61 @@ class OrderRepositoryTest extends TestCase
         $filters = new OrderFiltersDto(sortBy: 'total', sortDirection: 'desc');
         $result = $this->repository->getList($filters);
 
-        $this->assertSame(500.00, $result[0]->total);
-        $this->assertSame(10.00, $result[1]->total);
+        self::assertSame(500.00, $result[0]->total);
+        self::assertSame(10.00, $result[1]->total);
     }
 
     // -----------------------------------------------------------------------
     // getById
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_order_response_dto(): void
+    public function testGetByIdReturnsOrderResponseDto(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id, 'status' => 'paid']);
 
         $result = $this->repository->getById($order->id);
 
-        $this->assertInstanceOf(OrderResponseDto::class, $result);
-        $this->assertSame($order->id, $result->id);
-        $this->assertSame('paid', $result->status);
+        self::assertInstanceOf(OrderResponseDto::class, $result);
+        self::assertSame($order->id, $result->id);
+        self::assertSame('paid', $result->status);
     }
 
-    public function test_get_by_id_returns_null_when_not_found(): void
+    public function testGetByIdReturnsNullWhenNotFound(): void
     {
         $result = $this->repository->getById(99999);
 
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     // -----------------------------------------------------------------------
     // create
     // -----------------------------------------------------------------------
 
-    public function test_create_persists_order_and_returns_dto(): void
+    public function testCreatePersistsOrderAndReturnsDto(): void
     {
         $dto = $this->makeDto(['status' => 'shipped']);
 
         $result = $this->repository->create($dto);
 
-        $this->assertInstanceOf(OrderResponseDto::class, $result);
-        $this->assertSame('shipped', $result->status);
+        self::assertInstanceOf(OrderResponseDto::class, $result);
+        self::assertSame('shipped', $result->status);
         $this->assertDatabaseHas('orders', [
             'user_id' => $this->user->id,
             'status' => 'shipped',
         ]);
     }
 
-    public function test_create_assigns_id_to_returned_dto(): void
+    public function testCreateAssignsIdToReturnedDto(): void
     {
         $dto = $this->makeDto();
 
         $result = $this->repository->create($dto);
 
-        $this->assertIsInt($result->id);
-        $this->assertGreaterThan(0, $result->id);
+        self::assertIsInt($result->id);
+        self::assertGreaterThan(0, $result->id);
     }
 
-    public function test_create_stores_all_fields_correctly(): void
+    public function testCreateStoresAllFieldsCorrectly(): void
     {
         $dto = $this->makeDto([
             'total' => 249.50,
@@ -159,29 +146,29 @@ class OrderRepositoryTest extends TestCase
 
         $result = $this->repository->create($dto);
 
-        $this->assertSame(249.50, $result->total);
-        $this->assertSame('delivered', $result->status);
-        $this->assertSame('456 Oxford St, London', $result->shippingAddress);
-        $this->assertSame('paypal', $result->paymentMethod);
+        self::assertSame(249.50, $result->total);
+        self::assertSame('delivered', $result->status);
+        self::assertSame('456 Oxford St, London', $result->shippingAddress);
+        self::assertSame('paypal', $result->paymentMethod);
     }
 
     // -----------------------------------------------------------------------
     // update
     // -----------------------------------------------------------------------
 
-    public function test_update_changes_order_fields_and_returns_dto(): void
+    public function testUpdateChangesOrderFieldsAndReturnsDto(): void
     {
         $order = Order::factory()->create(['status' => 'pending', 'user_id' => $this->user->id]);
         $dto = $this->makeDto(['status' => 'cancelled']);
 
         $result = $this->repository->update($order->id, $dto);
 
-        $this->assertInstanceOf(OrderResponseDto::class, $result);
-        $this->assertSame('cancelled', $result->status);
+        self::assertInstanceOf(OrderResponseDto::class, $result);
+        self::assertSame('cancelled', $result->status);
         $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'cancelled']);
     }
 
-    public function test_update_does_not_create_new_record(): void
+    public function testUpdateDoesNotCreateNewRecord(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
         $dto = $this->makeDto(['status' => 'paid']);
@@ -191,7 +178,7 @@ class OrderRepositoryTest extends TestCase
         $this->assertDatabaseCount('orders', 1);
     }
 
-    public function test_update_throws_exception_for_nonexistent_order(): void
+    public function testUpdateThrowsExceptionForNonexistentOrder(): void
     {
         $this->expectException(ModelNotFoundException::class);
 
@@ -202,29 +189,48 @@ class OrderRepositoryTest extends TestCase
     // delete
     // -----------------------------------------------------------------------
 
-    public function test_delete_removes_order_from_database(): void
+    public function testDeleteRemovesOrderFromDatabase(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
         $result = $this->repository->delete($order->id);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
     }
 
-    public function test_delete_returns_true_on_success(): void
+    public function testDeleteReturnsTrueOnSuccess(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
         $result = $this->repository->delete($order->id);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
-    public function test_delete_returns_false_for_nonexistent_order(): void
+    public function testDeleteReturnsFalseForNonexistentOrder(): void
     {
         $result = $this->repository->delete(99999);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->repository = new OrderRepository();
+        $this->user = User::factory()->create();
+    }
+
+    /** @param array<string, mixed> $overrides */
+    private function makeDto(array $overrides = []): OrderDto
+    {
+        return new OrderDto(
+            userId: (int) ($overrides['userId'] ?? $this->user->id),
+            total: (float) ($overrides['total'] ?? 99.99),
+            status: (string) ($overrides['status'] ?? 'pending'),
+            shippingAddress: (string) ($overrides['shippingAddress'] ?? '123 Main St, London'),
+            paymentMethod: (string) ($overrides['paymentMethod'] ?? 'credit_card'),
+        );
     }
 }

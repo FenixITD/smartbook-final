@@ -11,7 +11,8 @@ final readonly class DeleteBookWebController
 {
     public function __construct(
         private DeleteBookService $service,
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $bookId): RedirectResponse
     {

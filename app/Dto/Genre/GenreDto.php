@@ -10,8 +10,10 @@ final readonly class GenreDto
         public string $name,
         public string $slug,
         public string $description,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

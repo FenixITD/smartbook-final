@@ -12,8 +12,9 @@ use Illuminate\View\View;
 final readonly class CreateReviewWebController
 {
     public function __construct(
-        private ReviewRepositoryInterface $repository
-    ) {}
+        private ReviewRepositoryInterface $repository,
+    ) {
+    }
 
     public function create(): View
     {

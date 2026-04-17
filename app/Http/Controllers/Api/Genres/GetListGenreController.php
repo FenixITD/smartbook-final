@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 final readonly class GetListGenreController
 {
     public function __construct(
-        private GenreRepositoryInterface $repository
-    ) {}
+        private GenreRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(GenreListRequest $request): JsonResponse
     {

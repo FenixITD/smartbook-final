@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
@@ -13,17 +15,10 @@ use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         $this->configureActions();
@@ -31,40 +26,29 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
     }
 
-    /**
-     * Configure Fortify actions.
-     */
     private function configureActions(): void
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
     }
 
-    /**
-     * Configure Fortify views.
-     */
     private function configureViews(): void
     {
-        Fortify::loginView(fn () => view('pages::auth.login'));
-        Fortify::verifyEmailView(fn () => view('pages::auth.verify-email'));
-        Fortify::twoFactorChallengeView(fn () => view('pages::auth.two-factor-challenge'));
-        Fortify::confirmPasswordView(fn () => view('pages::auth.confirm-password'));
-        Fortify::registerView(fn () => view('pages::auth.register'));
-        Fortify::resetPasswordView(fn () => view('pages::auth.reset-password'));
-        Fortify::requestPasswordResetLinkView(fn () => view('pages::auth.forgot-password'));
+        Fortify::loginView(static fn () => view('pages::auth.login'));
+        Fortify::verifyEmailView(static fn () => view('pages::auth.verify-email'));
+        Fortify::twoFactorChallengeView(static fn () => view('pages::auth.two-factor-challenge'));
+        Fortify::confirmPasswordView(static fn () => view('pages::auth.confirm-password'));
+        Fortify::registerView(static fn () => view('pages::auth.register'));
+        Fortify::resetPasswordView(static fn () => view('pages::auth.reset-password'));
+        Fortify::requestPasswordResetLinkView(static fn () => view('pages::auth.forgot-password'));
     }
 
-    /**
-     * Configure rate limiting.
-     */
     private function configureRateLimiting(): void
     {
-        RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
-        });
+        RateLimiter::for('two-factor', static fn (Request $request) => Limit::perMinute(5)->by($request->session()->get('login.id')));
 
-        RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+        RateLimiter::for('login', static function (Request $request) {
+            $throttleKey = Str::transliterate(Str::lower((string) $request->string(Fortify::username())).'|'.$request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });

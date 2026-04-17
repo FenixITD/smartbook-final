@@ -6,6 +6,7 @@ namespace App\Http\Requests\CartItem;
 
 use App\Dto\CartItem\CartItemDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 final class AddToCartWebRequest extends FormRequest
 {
@@ -14,6 +15,7 @@ final class AddToCartWebRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -25,7 +27,7 @@ final class AddToCartWebRequest extends FormRequest
     public function toDto(): CartItemDto
     {
         return new CartItemDto(
-            userId: auth()->id(),
+            userId: (int) Auth::id(),
             bookId: $this->integer('book_id'),
             quantity: $this->integer('quantity', 1),
         );

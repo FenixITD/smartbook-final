@@ -12,12 +12,13 @@ final readonly class CartCountService
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $service,
-    ) {}
+    ) {
+    }
 
     public function execute(): int
     {
         if (Auth::check()) {
-            return $this->repository->countByUserId(Auth::id());
+            return $this->repository->countByUserId((int) Auth::id());
         }
 
         return $this->service->count();

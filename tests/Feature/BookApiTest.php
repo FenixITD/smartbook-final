@@ -9,40 +9,22 @@ use App\Models\Book;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class BookApiTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class BookApiTest extends TestCase
 {
     use RefreshDatabase;
 
     private Author $author;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->author = Author::factory()->create();
-    }
-
-    private function validPayload(array $overrides = []): array
-    {
-        return array_merge([
-            'title' => 'Clean Code',
-            'slug' => 'clean-code',
-            'authorId' => $this->author->id,
-            'description' => 'A book about writing clean code.',
-            'price' => 29.99,
-            'stock' => 10,
-            'publishYear' => 2008,
-            'coverImage' => null,
-            'averageRating' => null,
-            'ratingsCount' => null,
-            'status' => 'published',
-        ], $overrides);
-    }
-
     // -----------------------------------------------------------------------
     // GET /api/books
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_200_with_books(): void
+    public function testGetListReturns200WithBooks(): void
     {
         Book::factory()->count(3)->create(['author_id' => $this->author->id]);
 
@@ -56,7 +38,7 @@ class BookApiTest extends TestCase
             ]);
     }
 
-    public function test_get_list_returns_empty_data_when_no_books(): void
+    public function testGetListReturnsEmptyDataWhenNoBooks(): void
     {
         $response = $this->getJson('/api/books');
 
@@ -64,7 +46,7 @@ class BookApiTest extends TestCase
             ->assertJson(['data' => []]);
     }
 
-    public function test_get_list_filters_by_search(): void
+    public function testGetListFiltersBySearch(): void
     {
         Book::factory()->create(['title' => 'Clean Code', 'author_id' => $this->author->id]);
         Book::factory()->create(['title' => 'The Pragmatic Programmer', 'author_id' => $this->author->id]);
@@ -74,21 +56,21 @@ class BookApiTest extends TestCase
         $response->assertStatus(200);
 
         $data = $response->json('data');
-        $this->assertCount(1, $data);
-        $this->assertSame('Clean Code', $data[0]['title']);
+        self::assertCount(1, $data);
+        self::assertSame('Clean Code', $data[0]['title']);
     }
 
-    public function test_get_list_respects_per_page_param(): void
+    public function testGetListRespectsPerPageParam(): void
     {
         Book::factory()->count(10)->create(['author_id' => $this->author->id]);
 
         $response = $this->getJson('/api/books?perPage=3');
 
         $response->assertStatus(200);
-        $this->assertCount(3, $response->json('data'));
+        self::assertCount(3, $response->json('data'));
     }
 
-    public function test_get_list_sorts_by_title_desc(): void
+    public function testGetListSortsByTitleDesc(): void
     {
         Book::factory()->create(['title' => 'AAA Book', 'author_id' => $this->author->id]);
         Book::factory()->create(['title' => 'ZZZ Book', 'author_id' => $this->author->id]);
@@ -97,24 +79,24 @@ class BookApiTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json('data');
-        $this->assertSame('ZZZ Book', $data[0]['title']);
+        self::assertSame('ZZZ Book', $data[0]['title']);
     }
 
-    public function test_get_list_validates_sort_direction(): void
+    public function testGetListValidatesSortDirection(): void
     {
         $response = $this->getJson('/api/books?sortDirection=invalid');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_min(): void
+    public function testGetListValidatesPerPageMin(): void
     {
         $response = $this->getJson('/api/books?perPage=0');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_max(): void
+    public function testGetListValidatesPerPageMax(): void
     {
         $response = $this->getJson('/api/books?perPage=101');
 
@@ -125,7 +107,7 @@ class BookApiTest extends TestCase
     // GET /api/books/{book}
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_book(): void
+    public function testGetByIdReturnsBook(): void
     {
         $book = Book::factory()->create([
             'title' => 'Refactoring',
@@ -142,7 +124,7 @@ class BookApiTest extends TestCase
             ->assertJsonPath('data.title', 'Refactoring');
     }
 
-    public function test_get_by_id_returns_404_for_nonexistent_book(): void
+    public function testGetByIdReturns404ForNonexistentBook(): void
     {
         $response = $this->getJson('/api/books/99999');
 
@@ -153,7 +135,7 @@ class BookApiTest extends TestCase
     // POST /api/books
     // -----------------------------------------------------------------------
 
-    public function test_create_book_returns_201_with_data(): void
+    public function testCreateBookReturns201WithData(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload());
 
@@ -164,14 +146,14 @@ class BookApiTest extends TestCase
             ->assertJsonPath('data.title', 'Clean Code');
     }
 
-    public function test_create_book_persists_to_database(): void
+    public function testCreateBookPersistsToDatabase(): void
     {
         $this->postJson('/api/books', $this->validPayload(['title' => 'Design Patterns', 'slug' => 'design-patterns']));
 
         $this->assertDatabaseHas('books', ['title' => 'Design Patterns']);
     }
 
-    public function test_create_book_requires_title(): void
+    public function testCreateBookRequiresTitle(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['title' => '']));
 
@@ -179,7 +161,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['title']);
     }
 
-    public function test_create_book_requires_slug(): void
+    public function testCreateBookRequiresSlug(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['slug' => '']));
 
@@ -187,7 +169,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['slug']);
     }
 
-    public function test_create_book_slug_must_be_valid_format(): void
+    public function testCreateBookSlugMustBeValidFormat(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['slug' => 'Invalid Slug!']));
 
@@ -195,7 +177,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['slug']);
     }
 
-    public function test_create_book_requires_valid_author_id(): void
+    public function testCreateBookRequiresValidAuthorId(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['authorId' => 99999]));
 
@@ -203,7 +185,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['authorId']);
     }
 
-    public function test_create_book_requires_price(): void
+    public function testCreateBookRequiresPrice(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['price' => '']));
 
@@ -211,7 +193,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['price']);
     }
 
-    public function test_create_book_price_cannot_be_negative(): void
+    public function testCreateBookPriceCannotBeNegative(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['price' => -1]));
 
@@ -219,7 +201,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['price']);
     }
 
-    public function test_create_book_status_must_be_valid(): void
+    public function testCreateBookStatusMustBeValid(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['status' => 'invalid_status']));
 
@@ -227,7 +209,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['status']);
     }
 
-    public function test_create_book_title_max_255_characters(): void
+    public function testCreateBookTitleMax255Characters(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['title' => str_repeat('A', 256)]));
 
@@ -235,14 +217,14 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['title']);
     }
 
-    public function test_create_book_accepts_nullable_publish_year(): void
+    public function testCreateBookAcceptsNullablePublishYear(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['publishYear' => null]));
 
         $response->assertStatus(201);
     }
 
-    public function test_create_book_publish_year_min_1900(): void
+    public function testCreateBookPublishYearMin1900(): void
     {
         $response = $this->postJson('/api/books', $this->validPayload(['publishYear' => 1800]));
 
@@ -254,7 +236,7 @@ class BookApiTest extends TestCase
     // PUT /api/books/{book}
     // -----------------------------------------------------------------------
 
-    public function test_update_book_returns_200_with_updated_data(): void
+    public function testUpdateBookReturns200WithUpdatedData(): void
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
@@ -264,7 +246,7 @@ class BookApiTest extends TestCase
             ->assertJsonPath('data.title', 'Updated Title');
     }
 
-    public function test_update_book_persists_changes_to_database(): void
+    public function testUpdateBookPersistsChangesToDatabase(): void
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
@@ -276,14 +258,14 @@ class BookApiTest extends TestCase
         ]);
     }
 
-    public function test_update_book_returns_404_for_nonexistent_book(): void
+    public function testUpdateBookReturns404ForNonexistentBook(): void
     {
         $response = $this->putJson('/api/books/99999', $this->validPayload());
 
         $response->assertStatus(404);
     }
 
-    public function test_update_book_requires_title(): void
+    public function testUpdateBookRequiresTitle(): void
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
@@ -293,7 +275,7 @@ class BookApiTest extends TestCase
             ->assertJsonValidationErrors(['title']);
     }
 
-    public function test_update_book_title_max_255_characters(): void
+    public function testUpdateBookTitleMax255Characters(): void
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
@@ -307,7 +289,7 @@ class BookApiTest extends TestCase
     // DELETE /api/books/{book}
     // -----------------------------------------------------------------------
 
-    public function test_delete_book_returns_200_with_message(): void
+    public function testDeleteBookReturns200WithMessage(): void
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
@@ -317,7 +299,7 @@ class BookApiTest extends TestCase
             ->assertJson(['message' => 'Book deleted successfully']);
     }
 
-    public function test_delete_book_removes_from_database(): void
+    public function testDeleteBookRemovesFromDatabase(): void
     {
         $book = Book::factory()->create(['author_id' => $this->author->id]);
 
@@ -326,10 +308,37 @@ class BookApiTest extends TestCase
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
     }
 
-    public function test_delete_book_returns_404_for_nonexistent_book(): void
+    public function testDeleteBookReturns404ForNonexistentBook(): void
     {
         $response = $this->deleteJson('/api/books/99999');
 
         $response->assertStatus(404);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->author = Author::factory()->create();
+    }
+
+    /** @param array<string, mixed> $overrides
+     *  @return array<string, mixed> */
+    /** @param array<string, mixed> $overrides */
+    /** @return array<string, mixed> */
+    private function validPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'title' => 'Clean Code',
+            'slug' => 'clean-code',
+            'authorId' => $this->author->id,
+            'description' => 'A book about writing clean code.',
+            'price' => 29.99,
+            'stock' => 10,
+            'publishYear' => 2008,
+            'coverImage' => null,
+            'averageRating' => null,
+            'ratingsCount' => null,
+            'status' => 'published',
+        ], $overrides);
     }
 }

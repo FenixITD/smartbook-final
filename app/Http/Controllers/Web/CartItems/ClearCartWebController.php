@@ -11,7 +11,8 @@ final readonly class ClearCartWebController
 {
     public function __construct(
         private ClearCartService $clearCartService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(): RedirectResponse
     {

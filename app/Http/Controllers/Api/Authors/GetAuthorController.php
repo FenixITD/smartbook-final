@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 final readonly class GetAuthorController
 {
     public function __construct(
-        private AuthorRepositoryInterface $repository
-    ) {}
+        private AuthorRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(Author $author): JsonResponse
     {

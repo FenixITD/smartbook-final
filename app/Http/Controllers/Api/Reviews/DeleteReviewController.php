@@ -11,12 +11,13 @@ use Illuminate\Http\JsonResponse;
 final readonly class DeleteReviewController
 {
     public function __construct(
-        private ReviewRepositoryInterface $repository
-    ) {}
+        private ReviewRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(int $review): JsonResponse
     {
-        if (! Review::find($review)) {
+        if (Review::find($review) === null) {
             return response()->json(['message' => 'Review not found'], 404);
         }
 

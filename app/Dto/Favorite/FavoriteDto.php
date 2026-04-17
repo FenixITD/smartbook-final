@@ -9,8 +9,10 @@ final readonly class FavoriteDto
     public function __construct(
         public int $userId,
         public int $bookId,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

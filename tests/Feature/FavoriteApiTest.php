@@ -11,7 +11,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class FavoriteApiTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class FavoriteApiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,27 +26,11 @@ class FavoriteApiTest extends TestCase
 
     private Author $author;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->user = User::factory()->create();
-        $this->author = Author::factory()->create();
-        $this->book = Book::factory()->create(['author_id' => $this->author->id]);
-    }
-
-    private function validPayload(array $overrides = []): array
-    {
-        return array_merge([
-            'userId' => $this->user->id,
-            'bookId' => $this->book->id,
-        ], $overrides);
-    }
-
     // -----------------------------------------------------------------------
     // GET /api/favorites
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_200_with_favorites(): void
+    public function testGetListReturns200WithFavorites(): void
     {
         Favorite::factory()->count(3)->create([
             'user_id' => $this->user->id,
@@ -58,7 +47,7 @@ class FavoriteApiTest extends TestCase
             ]);
     }
 
-    public function test_get_list_returns_empty_data_when_no_favorites(): void
+    public function testGetListReturnsEmptyDataWhenNoFavorites(): void
     {
         $response = $this->getJson('/api/favorites');
 
@@ -66,7 +55,7 @@ class FavoriteApiTest extends TestCase
             ->assertJson(['data' => []]);
     }
 
-    public function test_get_list_respects_per_page_param(): void
+    public function testGetListRespectsPerPageParam(): void
     {
         Favorite::factory()->count(10)->create([
             'user_id' => $this->user->id,
@@ -76,24 +65,24 @@ class FavoriteApiTest extends TestCase
         $response = $this->getJson('/api/favorites?perPage=3');
 
         $response->assertStatus(200);
-        $this->assertCount(3, $response->json('data'));
+        self::assertCount(3, $response->json('data'));
     }
 
-    public function test_get_list_validates_sort_direction(): void
+    public function testGetListValidatesSortDirection(): void
     {
         $response = $this->getJson('/api/favorites?sortDirection=invalid');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_min(): void
+    public function testGetListValidatesPerPageMin(): void
     {
         $response = $this->getJson('/api/favorites?perPage=0');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_max(): void
+    public function testGetListValidatesPerPageMax(): void
     {
         $response = $this->getJson('/api/favorites?perPage=101');
 
@@ -104,7 +93,7 @@ class FavoriteApiTest extends TestCase
     // GET /api/favorites/{favorite}
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_favorite(): void
+    public function testGetByIdReturnsFavorite(): void
     {
         $favorite = Favorite::factory()->create([
             'user_id' => $this->user->id,
@@ -122,7 +111,7 @@ class FavoriteApiTest extends TestCase
             ->assertJsonPath('data.bookId', $this->book->id);
     }
 
-    public function test_get_by_id_returns_404_for_nonexistent_favorite(): void
+    public function testGetByIdReturns404ForNonexistentFavorite(): void
     {
         $response = $this->getJson('/api/favorites/99999');
 
@@ -133,7 +122,7 @@ class FavoriteApiTest extends TestCase
     // POST /api/favorites
     // -----------------------------------------------------------------------
 
-    public function test_create_favorite_returns_201_with_data(): void
+    public function testCreateFavoriteReturns201WithData(): void
     {
         $response = $this->postJson('/api/favorites', $this->validPayload());
 
@@ -145,7 +134,7 @@ class FavoriteApiTest extends TestCase
             ->assertJsonPath('data.bookId', $this->book->id);
     }
 
-    public function test_create_favorite_persists_to_database(): void
+    public function testCreateFavoritePersistsToDatabase(): void
     {
         $this->postJson('/api/favorites', $this->validPayload());
 
@@ -155,7 +144,7 @@ class FavoriteApiTest extends TestCase
         ]);
     }
 
-    public function test_create_favorite_requires_user_id(): void
+    public function testCreateFavoriteRequiresUserId(): void
     {
         $response = $this->postJson('/api/favorites', $this->validPayload(['userId' => '']));
 
@@ -163,7 +152,7 @@ class FavoriteApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_favorite_requires_valid_user_id(): void
+    public function testCreateFavoriteRequiresValidUserId(): void
     {
         $response = $this->postJson('/api/favorites', $this->validPayload(['userId' => 99999]));
 
@@ -171,7 +160,7 @@ class FavoriteApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_favorite_requires_valid_book_id(): void
+    public function testCreateFavoriteRequiresValidBookId(): void
     {
         $response = $this->postJson('/api/favorites', $this->validPayload(['bookId' => 99999]));
 
@@ -179,7 +168,7 @@ class FavoriteApiTest extends TestCase
             ->assertJsonValidationErrors(['bookId']);
     }
 
-    public function test_create_favorite_requires_book_id(): void
+    public function testCreateFavoriteRequiresBookId(): void
     {
         $response = $this->postJson('/api/favorites', $this->validPayload(['bookId' => '']));
 
@@ -191,7 +180,7 @@ class FavoriteApiTest extends TestCase
     // PUT /api/favorites/{favorite}
     // -----------------------------------------------------------------------
 
-    public function test_update_favorite_returns_200_with_updated_data(): void
+    public function testUpdateFavoriteReturns200WithUpdatedData(): void
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
         $anotherBook = Book::factory()->create(['author_id' => $this->author->id]);
@@ -202,7 +191,7 @@ class FavoriteApiTest extends TestCase
             ->assertJsonPath('data.bookId', $anotherBook->id);
     }
 
-    public function test_update_favorite_persists_changes_to_database(): void
+    public function testUpdateFavoritePersistsChangesToDatabase(): void
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
         $anotherBook = Book::factory()->create(['author_id' => $this->author->id]);
@@ -215,14 +204,14 @@ class FavoriteApiTest extends TestCase
         ]);
     }
 
-    public function test_update_favorite_returns_404_for_nonexistent_favorite(): void
+    public function testUpdateFavoriteReturns404ForNonexistentFavorite(): void
     {
         $response = $this->putJson('/api/favorites/99999', $this->validPayload());
 
         $response->assertStatus(404);
     }
 
-    public function test_update_favorite_requires_user_id(): void
+    public function testUpdateFavoriteRequiresUserId(): void
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
 
@@ -232,7 +221,7 @@ class FavoriteApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_update_favorite_requires_book_id(): void
+    public function testUpdateFavoriteRequiresBookId(): void
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
 
@@ -246,7 +235,7 @@ class FavoriteApiTest extends TestCase
     // DELETE /api/favorites/{favorite}
     // -----------------------------------------------------------------------
 
-    public function test_delete_favorite_returns_200_with_message(): void
+    public function testDeleteFavoriteReturns200WithMessage(): void
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
 
@@ -256,7 +245,7 @@ class FavoriteApiTest extends TestCase
             ->assertJson(['message' => 'Favorite deleted successfully']);
     }
 
-    public function test_delete_favorite_removes_from_database(): void
+    public function testDeleteFavoriteRemovesFromDatabase(): void
     {
         $favorite = Favorite::factory()->create(['user_id' => $this->user->id, 'book_id' => $this->book->id]);
 
@@ -265,10 +254,30 @@ class FavoriteApiTest extends TestCase
         $this->assertDatabaseMissing('favorites', ['id' => $favorite->id]);
     }
 
-    public function test_delete_favorite_returns_404_for_nonexistent_favorite(): void
+    public function testDeleteFavoriteReturns404ForNonexistentFavorite(): void
     {
         $response = $this->deleteJson('/api/favorites/99999');
 
         $response->assertStatus(404);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        $this->author = Author::factory()->create();
+        $this->book = Book::factory()->create(['author_id' => $this->author->id]);
+    }
+
+    /** @param array<string, mixed> $overrides
+     *  @return array<string, mixed> */
+    /** @param array<string, mixed> $overrides */
+    /** @return array<string, mixed> */
+    private function validPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'userId' => $this->user->id,
+            'bookId' => $this->book->id,
+        ], $overrides);
     }
 }

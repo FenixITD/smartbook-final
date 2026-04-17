@@ -8,7 +8,12 @@ use App\Models\Author;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AuthorApiTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class AuthorApiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -16,7 +21,7 @@ class AuthorApiTest extends TestCase
     // GET /api/authors
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_200_with_authors(): void
+    public function testGetListReturns200WithAuthors(): void
     {
         Author::factory()->count(3)->create();
 
@@ -30,7 +35,7 @@ class AuthorApiTest extends TestCase
             ]);
     }
 
-    public function test_get_list_returns_empty_data_when_no_authors(): void
+    public function testGetListReturnsEmptyDataWhenNoAuthors(): void
     {
         $response = $this->getJson('/api/authors');
 
@@ -38,7 +43,7 @@ class AuthorApiTest extends TestCase
             ->assertJson(['data' => []]);
     }
 
-    public function test_get_list_filters_by_search(): void
+    public function testGetListFiltersBySearch(): void
     {
         Author::factory()->create(['name' => 'Leo Tolstoy']);
         Author::factory()->create(['name' => 'Fyodor Dostoevsky']);
@@ -48,21 +53,21 @@ class AuthorApiTest extends TestCase
         $response->assertStatus(200);
 
         $data = $response->json('data');
-        $this->assertCount(1, $data);
-        $this->assertSame('Leo Tolstoy', $data[0]['name']);
+        self::assertCount(1, $data);
+        self::assertSame('Leo Tolstoy', $data[0]['name']);
     }
 
-    public function test_get_list_respects_per_page_param(): void
+    public function testGetListRespectsPerPageParam(): void
     {
         Author::factory()->count(10)->create();
 
         $response = $this->getJson('/api/authors?perPage=3');
 
         $response->assertStatus(200);
-        $this->assertCount(3, $response->json('data'));
+        self::assertCount(3, $response->json('data'));
     }
 
-    public function test_get_list_sorts_by_name_desc(): void
+    public function testGetListSortsByNameDesc(): void
     {
         Author::factory()->create(['name' => 'Anton Chekhov']);
         Author::factory()->create(['name' => 'Zelda Fitzgerald']);
@@ -71,24 +76,24 @@ class AuthorApiTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json('data');
-        $this->assertSame('Zelda Fitzgerald', $data[0]['name']);
+        self::assertSame('Zelda Fitzgerald', $data[0]['name']);
     }
 
-    public function test_get_list_validates_sort_direction(): void
+    public function testGetListValidatesSortDirection(): void
     {
         $response = $this->getJson('/api/authors?sortDirection=invalid');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_min(): void
+    public function testGetListValidatesPerPageMin(): void
     {
         $response = $this->getJson('/api/authors?perPage=0');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_max(): void
+    public function testGetListValidatesPerPageMax(): void
     {
         $response = $this->getJson('/api/authors?perPage=101');
 
@@ -99,7 +104,7 @@ class AuthorApiTest extends TestCase
     // GET /api/authors/{author}
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_author(): void
+    public function testGetByIdReturnsAuthor(): void
     {
         $author = Author::factory()->create(['name' => 'Ivan Turgenev']);
 
@@ -113,7 +118,7 @@ class AuthorApiTest extends TestCase
             ->assertJsonPath('data.name', 'Ivan Turgenev');
     }
 
-    public function test_get_by_id_returns_404_for_nonexistent_author(): void
+    public function testGetByIdReturns404ForNonexistentAuthor(): void
     {
         $response = $this->getJson('/api/authors/99999');
 
@@ -124,7 +129,7 @@ class AuthorApiTest extends TestCase
     // POST /api/authors
     // -----------------------------------------------------------------------
 
-    public function test_create_author_returns_201_with_data(): void
+    public function testCreateAuthorReturns201WithData(): void
     {
         $response = $this->postJson('/api/authors', [
             'name' => 'Nikolai Gogol',
@@ -137,14 +142,14 @@ class AuthorApiTest extends TestCase
             ->assertJsonPath('data.name', 'Nikolai Gogol');
     }
 
-    public function test_create_author_persists_to_database(): void
+    public function testCreateAuthorPersistsToDatabase(): void
     {
         $this->postJson('/api/authors', ['name' => 'Alexander Pushkin']);
 
         $this->assertDatabaseHas('authors', ['name' => 'Alexander Pushkin']);
     }
 
-    public function test_create_author_requires_name(): void
+    public function testCreateAuthorRequiresName(): void
     {
         $response = $this->postJson('/api/authors', []);
 
@@ -152,7 +157,7 @@ class AuthorApiTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function test_create_author_name_must_be_string(): void
+    public function testCreateAuthorNameMustBeString(): void
     {
         $response = $this->postJson('/api/authors', ['name' => 12345]);
 
@@ -160,7 +165,7 @@ class AuthorApiTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function test_create_author_name_max_255_characters(): void
+    public function testCreateAuthorNameMax255Characters(): void
     {
         $response = $this->postJson('/api/authors', [
             'name' => str_repeat('A', 256),
@@ -170,7 +175,7 @@ class AuthorApiTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function test_create_author_accepts_name_of_255_characters(): void
+    public function testCreateAuthorAcceptsNameOf255Characters(): void
     {
         $response = $this->postJson('/api/authors', [
             'name' => str_repeat('A', 255),
@@ -183,7 +188,7 @@ class AuthorApiTest extends TestCase
     // PUT /api/authors/{author}
     // -----------------------------------------------------------------------
 
-    public function test_update_author_returns_200_with_updated_data(): void
+    public function testUpdateAuthorReturns200WithUpdatedData(): void
     {
         $author = Author::factory()->create(['name' => 'Old Name']);
 
@@ -195,7 +200,7 @@ class AuthorApiTest extends TestCase
             ->assertJsonPath('data.name', 'New Name');
     }
 
-    public function test_update_author_persists_changes_to_database(): void
+    public function testUpdateAuthorPersistsChangesToDatabase(): void
     {
         $author = Author::factory()->create(['name' => 'Old Name']);
 
@@ -207,14 +212,14 @@ class AuthorApiTest extends TestCase
         ]);
     }
 
-    public function test_update_author_returns_404_for_nonexistent_author(): void
+    public function testUpdateAuthorReturns404ForNonexistentAuthor(): void
     {
         $response = $this->putJson('/api/authors/99999', ['name' => 'Some Name']);
 
         $response->assertStatus(404);
     }
 
-    public function test_update_author_requires_name(): void
+    public function testUpdateAuthorRequiresName(): void
     {
         $author = Author::factory()->create();
 
@@ -224,7 +229,7 @@ class AuthorApiTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function test_update_author_name_max_255_characters(): void
+    public function testUpdateAuthorNameMax255Characters(): void
     {
         $author = Author::factory()->create();
 
@@ -240,7 +245,7 @@ class AuthorApiTest extends TestCase
     // DELETE /api/authors/{author}
     // -----------------------------------------------------------------------
 
-    public function test_delete_author_returns_200_with_message(): void
+    public function testDeleteAuthorReturns200WithMessage(): void
     {
         $author = Author::factory()->create();
 
@@ -250,7 +255,7 @@ class AuthorApiTest extends TestCase
             ->assertJson(['message' => 'Author deleted successfully']);
     }
 
-    public function test_delete_author_removes_from_database(): void
+    public function testDeleteAuthorRemovesFromDatabase(): void
     {
         $author = Author::factory()->create();
 
@@ -259,7 +264,7 @@ class AuthorApiTest extends TestCase
         $this->assertDatabaseMissing('authors', ['id' => $author->id]);
     }
 
-    public function test_delete_author_returns_404_for_nonexistent_author(): void
+    public function testDeleteAuthorReturns404ForNonexistentAuthor(): void
     {
         $response = $this->deleteJson('/api/authors/99999');
 

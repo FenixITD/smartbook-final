@@ -12,14 +12,15 @@ final readonly class UpdateCartService
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $service,
-    ) {}
+    ) {
+    }
 
     public function execute(int $bookId, int $quantity): void
     {
         if (Auth::check()) {
-            $cartItem = $this->repository->findByUserAndBook(Auth::id(), $bookId);
+            $cartItem = $this->repository->findByUserAndBook((int) Auth::id(), $bookId);
 
-            if ($cartItem) {
+            if ($cartItem !== null) {
                 $this->repository->updateQuantity($cartItem, $quantity);
             }
         } else {

@@ -38,7 +38,7 @@ final class IndexBooksCommand extends Command
         $bar->start();
 
         Book::query()
-            ->chunkById(500, function ($books) use ($bar) {
+            ->chunkById(500, function ($books) use ($bar): void {
                 $this->indexService->bulkIndex($books);
                 $bar->advance($books->count());
             });

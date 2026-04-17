@@ -11,7 +11,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CartItemApiTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class CartItemApiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,28 +26,11 @@ class CartItemApiTest extends TestCase
 
     private Author $author;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->user = User::factory()->create();
-        $this->author = Author::factory()->create();
-        $this->book = Book::factory()->create(['author_id' => $this->author->id]);
-    }
-
-    private function validPayload(array $overrides = []): array
-    {
-        return array_merge([
-            'userId' => $this->user->id,
-            'bookId' => $this->book->id,
-            'quantity' => 2,
-        ], $overrides);
-    }
-
     // -----------------------------------------------------------------------
     // GET /api/cartItems
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_200_with_cart_items(): void
+    public function testGetListReturns200WithCartItems(): void
     {
         CartItem::factory()->count(3)->create([
             'user_id' => $this->user->id,
@@ -59,7 +47,7 @@ class CartItemApiTest extends TestCase
             ]);
     }
 
-    public function test_get_list_returns_empty_data_when_no_cart_items(): void
+    public function testGetListReturnsEmptyDataWhenNoCartItems(): void
     {
         $response = $this->getJson('/api/cartItems');
 
@@ -67,7 +55,7 @@ class CartItemApiTest extends TestCase
             ->assertJson(['data' => []]);
     }
 
-    public function test_get_list_respects_per_page_param(): void
+    public function testGetListRespectsPerPageParam(): void
     {
         CartItem::factory()->count(10)->create([
             'user_id' => $this->user->id,
@@ -77,24 +65,24 @@ class CartItemApiTest extends TestCase
         $response = $this->getJson('/api/cartItems?perPage=3');
 
         $response->assertStatus(200);
-        $this->assertCount(3, $response->json('data'));
+        self::assertCount(3, $response->json('data'));
     }
 
-    public function test_get_list_validates_sort_direction(): void
+    public function testGetListValidatesSortDirection(): void
     {
         $response = $this->getJson('/api/cartItems?sortDirection=invalid');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_min(): void
+    public function testGetListValidatesPerPageMin(): void
     {
         $response = $this->getJson('/api/cartItems?perPage=0');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_max(): void
+    public function testGetListValidatesPerPageMax(): void
     {
         $response = $this->getJson('/api/cartItems?perPage=101');
 
@@ -105,7 +93,7 @@ class CartItemApiTest extends TestCase
     // GET /api/cartItems/{cartItem}
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_cart_item(): void
+    public function testGetByIdReturnsCartItem(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -123,7 +111,7 @@ class CartItemApiTest extends TestCase
             ->assertJsonPath('data.quantity', 3);
     }
 
-    public function test_get_by_id_returns_404_for_nonexistent_cart_item(): void
+    public function testGetByIdReturns404ForNonexistentCartItem(): void
     {
         $response = $this->getJson('/api/cartItems/99999');
 
@@ -134,7 +122,7 @@ class CartItemApiTest extends TestCase
     // POST /api/cartItems
     // -----------------------------------------------------------------------
 
-    public function test_create_cart_item_returns_201_with_data(): void
+    public function testCreateCartItemReturns201WithData(): void
     {
         $response = $this->postJson('/api/cartItems', $this->validPayload());
 
@@ -145,7 +133,7 @@ class CartItemApiTest extends TestCase
             ->assertJsonPath('data.quantity', 2);
     }
 
-    public function test_create_cart_item_persists_to_database(): void
+    public function testCreateCartItemPersistsToDatabase(): void
     {
         $this->postJson('/api/cartItems', $this->validPayload(['quantity' => 5]));
 
@@ -156,7 +144,7 @@ class CartItemApiTest extends TestCase
         ]);
     }
 
-    public function test_create_cart_item_requires_user_id(): void
+    public function testCreateCartItemRequiresUserId(): void
     {
         $response = $this->postJson('/api/cartItems', $this->validPayload(['userId' => '']));
 
@@ -164,7 +152,7 @@ class CartItemApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_cart_item_requires_valid_user_id(): void
+    public function testCreateCartItemRequiresValidUserId(): void
     {
         $response = $this->postJson('/api/cartItems', $this->validPayload(['userId' => 99999]));
 
@@ -172,7 +160,7 @@ class CartItemApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_cart_item_requires_valid_book_id(): void
+    public function testCreateCartItemRequiresValidBookId(): void
     {
         $response = $this->postJson('/api/cartItems', $this->validPayload(['bookId' => 99999]));
 
@@ -180,7 +168,7 @@ class CartItemApiTest extends TestCase
             ->assertJsonValidationErrors(['bookId']);
     }
 
-    public function test_create_cart_item_requires_quantity(): void
+    public function testCreateCartItemRequiresQuantity(): void
     {
         $response = $this->postJson('/api/cartItems', $this->validPayload(['quantity' => '']));
 
@@ -192,7 +180,7 @@ class CartItemApiTest extends TestCase
     // PUT /api/cartItems/{cartItem}
     // -----------------------------------------------------------------------
 
-    public function test_update_cart_item_returns_200_with_updated_data(): void
+    public function testUpdateCartItemReturns200WithUpdatedData(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -206,7 +194,7 @@ class CartItemApiTest extends TestCase
             ->assertJsonPath('data.quantity', 10);
     }
 
-    public function test_update_cart_item_persists_changes_to_database(): void
+    public function testUpdateCartItemPersistsChangesToDatabase(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -222,14 +210,14 @@ class CartItemApiTest extends TestCase
         ]);
     }
 
-    public function test_update_cart_item_returns_404_for_nonexistent_cart_item(): void
+    public function testUpdateCartItemReturns404ForNonexistentCartItem(): void
     {
         $response = $this->putJson('/api/cartItems/99999', $this->validPayload());
 
         $response->assertStatus(404);
     }
 
-    public function test_update_cart_item_requires_quantity(): void
+    public function testUpdateCartItemRequiresQuantity(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -246,7 +234,7 @@ class CartItemApiTest extends TestCase
     // DELETE /api/cartItems/{cartItem}
     // -----------------------------------------------------------------------
 
-    public function test_delete_cart_item_returns_200_with_message(): void
+    public function testDeleteCartItemReturns200WithMessage(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -259,7 +247,7 @@ class CartItemApiTest extends TestCase
             ->assertJson(['message' => 'CartItem deleted successfully']);
     }
 
-    public function test_delete_cart_item_removes_from_database(): void
+    public function testDeleteCartItemRemovesFromDatabase(): void
     {
         $cartItem = CartItem::factory()->create([
             'user_id' => $this->user->id,
@@ -271,10 +259,31 @@ class CartItemApiTest extends TestCase
         $this->assertDatabaseMissing('cart_items', ['id' => $cartItem->id]);
     }
 
-    public function test_delete_cart_item_returns_404_for_nonexistent_cart_item(): void
+    public function testDeleteCartItemReturns404ForNonexistentCartItem(): void
     {
         $response = $this->deleteJson('/api/cartItems/99999');
 
         $response->assertStatus(404);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        $this->author = Author::factory()->create();
+        $this->book = Book::factory()->create(['author_id' => $this->author->id]);
+    }
+
+    /** @param array<string, mixed> $overrides
+     *  @return array<string, mixed> */
+    /** @param array<string, mixed> $overrides */
+    /** @return array<string, mixed> */
+    private function validPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'userId' => $this->user->id,
+            'bookId' => $this->book->id,
+            'quantity' => 2,
+        ], $overrides);
     }
 }

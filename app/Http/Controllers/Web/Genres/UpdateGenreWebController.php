@@ -13,8 +13,9 @@ use Illuminate\View\View;
 final readonly class UpdateGenreWebController
 {
     public function __construct(
-        private GenreRepositoryInterface $repository
-    ) {}
+        private GenreRepositoryInterface $repository,
+    ) {
+    }
 
     public function edit(Genre $genre): View
     {

@@ -11,7 +11,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ReviewApiTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class ReviewApiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -19,28 +24,11 @@ class ReviewApiTest extends TestCase
 
     private Book $book;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->user = User::factory()->create();
-        $this->book = Book::factory()->create(['author_id' => Author::factory()->create()->id]);
-    }
-
-    private function validPayload(array $overrides = []): array
-    {
-        return array_merge([
-            'userId' => $this->user->id,
-            'bookId' => $this->book->id,
-            'rating' => 4.5,
-            'comment' => 'Great book!',
-        ], $overrides);
-    }
-
     // -----------------------------------------------------------------------
     // GET /api/reviews
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_200_with_reviews(): void
+    public function testGetListReturns200WithReviews(): void
     {
         Review::factory()->count(3)->create([
             'user_id' => $this->user->id,
@@ -57,7 +45,7 @@ class ReviewApiTest extends TestCase
             ]);
     }
 
-    public function test_get_list_returns_empty_data_when_no_reviews(): void
+    public function testGetListReturnsEmptyDataWhenNoReviews(): void
     {
         $response = $this->getJson('/api/reviews');
 
@@ -65,7 +53,7 @@ class ReviewApiTest extends TestCase
             ->assertJson(['data' => []]);
     }
 
-    public function test_get_list_respects_per_page_param(): void
+    public function testGetListRespectsPerPageParam(): void
     {
         Review::factory()->count(10)->create([
             'user_id' => $this->user->id,
@@ -75,10 +63,10 @@ class ReviewApiTest extends TestCase
         $response = $this->getJson('/api/reviews?perPage=4');
 
         $response->assertStatus(200);
-        $this->assertCount(4, $response->json('data'));
+        self::assertCount(4, $response->json('data'));
     }
 
-    public function test_get_list_sorts_by_rating_desc(): void
+    public function testGetListSortsByRatingDesc(): void
     {
         Review::factory()->create(['rating' => 1.0, 'user_id' => $this->user->id, 'book_id' => $this->book->id]);
         Review::factory()->create(['rating' => 5.0, 'user_id' => $this->user->id, 'book_id' => $this->book->id]);
@@ -87,25 +75,25 @@ class ReviewApiTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json('data');
-        $this->assertEquals(5.0, $data[0]['rating']);
-        $this->assertEquals(1.0, $data[1]['rating']);
+        self::assertSame(5.0, $data[0]['rating']);
+        self::assertSame(1.0, $data[1]['rating']);
     }
 
-    public function test_get_list_validates_sort_direction(): void
+    public function testGetListValidatesSortDirection(): void
     {
         $response = $this->getJson('/api/reviews?sortDirection=invalid');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_min(): void
+    public function testGetListValidatesPerPageMin(): void
     {
         $response = $this->getJson('/api/reviews?perPage=0');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_max(): void
+    public function testGetListValidatesPerPageMax(): void
     {
         $response = $this->getJson('/api/reviews?perPage=101');
 
@@ -116,7 +104,7 @@ class ReviewApiTest extends TestCase
     // GET /api/reviews/{review}
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_review(): void
+    public function testGetByIdReturnsReview(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -134,7 +122,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonPath('data.userId', $this->user->id);
     }
 
-    public function test_get_by_id_returns_404_for_nonexistent_review(): void
+    public function testGetByIdReturns404ForNonexistentReview(): void
     {
         $response = $this->getJson('/api/reviews/99999');
 
@@ -145,7 +133,7 @@ class ReviewApiTest extends TestCase
     // POST /api/reviews
     // -----------------------------------------------------------------------
 
-    public function test_create_review_returns_201_with_data(): void
+    public function testCreateReviewReturns201WithData(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload());
 
@@ -157,7 +145,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonPath('data.bookId', $this->book->id);
     }
 
-    public function test_create_review_persists_to_database(): void
+    public function testCreateReviewPersistsToDatabase(): void
     {
         $this->postJson('/api/reviews', $this->validPayload(['comment' => 'Excellent read!']));
 
@@ -168,7 +156,7 @@ class ReviewApiTest extends TestCase
         ]);
     }
 
-    public function test_create_review_requires_user_id(): void
+    public function testCreateReviewRequiresUserId(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['userId' => '']));
 
@@ -176,7 +164,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_review_requires_valid_user_id(): void
+    public function testCreateReviewRequiresValidUserId(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['userId' => 99999]));
 
@@ -184,7 +172,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_review_requires_book_id(): void
+    public function testCreateReviewRequiresBookId(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['bookId' => '']));
 
@@ -192,7 +180,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['bookId']);
     }
 
-    public function test_create_review_requires_valid_book_id(): void
+    public function testCreateReviewRequiresValidBookId(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['bookId' => 99999]));
 
@@ -200,7 +188,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['bookId']);
     }
 
-    public function test_create_review_requires_rating(): void
+    public function testCreateReviewRequiresRating(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['rating' => '']));
 
@@ -208,7 +196,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['rating']);
     }
 
-    public function test_create_review_rating_cannot_be_negative(): void
+    public function testCreateReviewRatingCannotBeNegative(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['rating' => -1]));
 
@@ -216,7 +204,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['rating']);
     }
 
-    public function test_create_review_rating_cannot_exceed_max(): void
+    public function testCreateReviewRatingCannotExceedMax(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['rating' => 5.1]));
 
@@ -224,7 +212,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['rating']);
     }
 
-    public function test_create_review_accepts_boundary_ratings(): void
+    public function testCreateReviewAcceptsBoundaryRatings(): void
     {
         $response = $this->postJson('/api/reviews', $this->validPayload(['rating' => 0]));
         $response->assertStatus(201);
@@ -237,7 +225,7 @@ class ReviewApiTest extends TestCase
     // PUT /api/reviews/{review}
     // -----------------------------------------------------------------------
 
-    public function test_update_review_returns_200_with_updated_data(): void
+    public function testUpdateReviewReturns200WithUpdatedData(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -253,7 +241,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonPath('data.comment', 'Updated opinion');
     }
 
-    public function test_update_review_persists_changes_to_database(): void
+    public function testUpdateReviewPersistsChangesToDatabase(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -270,14 +258,14 @@ class ReviewApiTest extends TestCase
         ]);
     }
 
-    public function test_update_review_returns_404_for_nonexistent_review(): void
+    public function testUpdateReviewReturns404ForNonexistentReview(): void
     {
         $response = $this->putJson('/api/reviews/99999', $this->validPayload());
 
         $response->assertStatus(404);
     }
 
-    public function test_update_review_requires_rating(): void
+    public function testUpdateReviewRequiresRating(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -290,7 +278,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['rating']);
     }
 
-    public function test_update_review_rating_cannot_exceed_max(): void
+    public function testUpdateReviewRatingCannotExceedMax(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -303,7 +291,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['rating']);
     }
 
-    public function test_update_review_requires_valid_user_id(): void
+    public function testUpdateReviewRequiresValidUserId(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -316,7 +304,7 @@ class ReviewApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_update_review_requires_valid_book_id(): void
+    public function testUpdateReviewRequiresValidBookId(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -333,7 +321,7 @@ class ReviewApiTest extends TestCase
     // DELETE /api/reviews/{review}
     // -----------------------------------------------------------------------
 
-    public function test_delete_review_returns_200_with_message(): void
+    public function testDeleteReviewReturns200WithMessage(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -346,7 +334,7 @@ class ReviewApiTest extends TestCase
             ->assertJson(['message' => 'Review deleted successfully']);
     }
 
-    public function test_delete_review_removes_from_database(): void
+    public function testDeleteReviewRemovesFromDatabase(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -358,10 +346,31 @@ class ReviewApiTest extends TestCase
         $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
     }
 
-    public function test_delete_review_returns_404_for_nonexistent_review(): void
+    public function testDeleteReviewReturns404ForNonexistentReview(): void
     {
         $response = $this->deleteJson('/api/reviews/99999');
 
         $response->assertStatus(404);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+        $this->book = Book::factory()->create(['author_id' => Author::factory()->create()->id]);
+    }
+
+    /** @param array<string, mixed> $overrides
+     *  @return array<string, mixed> */
+    /** @param array<string, mixed> $overrides */
+    /** @return array<string, mixed> */
+    private function validPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'userId' => $this->user->id,
+            'bookId' => $this->book->id,
+            'rating' => 4.5,
+            'comment' => 'Great book!',
+        ], $overrides);
     }
 }

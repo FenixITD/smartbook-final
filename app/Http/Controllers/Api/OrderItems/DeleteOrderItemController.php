@@ -11,12 +11,13 @@ use Illuminate\Http\JsonResponse;
 final readonly class DeleteOrderItemController
 {
     public function __construct(
-        private OrderItemRepositoryInterface $repository
-    ) {}
+        private OrderItemRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(int $orderItem): JsonResponse
     {
-        if (! OrderItem::find($orderItem)) {
+        if (OrderItem::find($orderItem) === null) {
             return response()->json(['message' => 'OrderItem not found'], 404);
         }
 

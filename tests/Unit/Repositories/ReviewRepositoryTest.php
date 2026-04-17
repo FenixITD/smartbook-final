@@ -16,7 +16,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class ReviewRepositoryTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class ReviewRepositoryTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -26,52 +31,34 @@ class ReviewRepositoryTest extends TestCase
 
     private Book $book;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->repository = new ReviewRepository;
-        $this->user = User::factory()->create();
-        $this->book = Book::factory()->create(['author_id' => Author::factory()->create()->id]);
-    }
-
-    private function makeDto(array $overrides = []): ReviewDto
-    {
-        return new ReviewDto(
-            userId: $overrides['userId'] ?? $this->user->id,
-            bookId: $overrides['bookId'] ?? $this->book->id,
-            rating: $overrides['rating'] ?? 4.5,
-            comment: $overrides['comment'] ?? 'Great book!',
-        );
-    }
-
     // -----------------------------------------------------------------------
     // getList
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_array_of_review_response_dtos(): void
+    public function testGetListReturnsArrayOfReviewResponseDtos(): void
     {
         Review::factory()->count(3)->create([
             'user_id' => $this->user->id,
             'book_id' => $this->book->id,
         ]);
 
-        $filters = new ReviewFiltersDto;
+        $filters = new ReviewFiltersDto();
         $result = $this->repository->getList($filters);
 
-        $this->assertIsArray($result);
-        $this->assertCount(3, $result);
-        $this->assertContainsOnlyInstancesOf(ReviewResponseDto::class, $result);
+        self::assertIsArray($result);
+        self::assertCount(3, $result);
+        self::assertContainsOnlyInstancesOf(ReviewResponseDto::class, $result);
     }
 
-    public function test_get_list_returns_empty_array_when_no_reviews(): void
+    public function testGetListReturnsEmptyArrayWhenNoReviews(): void
     {
-        $filters = new ReviewFiltersDto;
+        $filters = new ReviewFiltersDto();
         $result = $this->repository->getList($filters);
 
-        $this->assertSame([], $result);
+        self::assertSame([], $result);
     }
 
-    public function test_get_list_respects_per_page(): void
+    public function testGetListRespectsPerPage(): void
     {
         Review::factory()->count(10)->create([
             'user_id' => $this->user->id,
@@ -81,10 +68,10 @@ class ReviewRepositoryTest extends TestCase
         $filters = new ReviewFiltersDto(perPage: 4);
         $result = $this->repository->getList($filters);
 
-        $this->assertCount(4, $result);
+        self::assertCount(4, $result);
     }
 
-    public function test_get_list_sorts_by_rating_asc(): void
+    public function testGetListSortsByRatingAsc(): void
     {
         Review::factory()->create(['rating' => 5.0, 'user_id' => $this->user->id, 'book_id' => $this->book->id]);
         Review::factory()->create(['rating' => 1.0, 'user_id' => $this->user->id, 'book_id' => $this->book->id]);
@@ -92,11 +79,11 @@ class ReviewRepositoryTest extends TestCase
         $filters = new ReviewFiltersDto(sortBy: 'rating', sortDirection: 'asc');
         $result = $this->repository->getList($filters);
 
-        $this->assertEquals(1.0, $result[0]->rating);
-        $this->assertEquals(5.0, $result[1]->rating);
+        self::assertSame(1.0, $result[0]->rating);
+        self::assertSame(5.0, $result[1]->rating);
     }
 
-    public function test_get_list_sorts_by_rating_desc(): void
+    public function testGetListSortsByRatingDesc(): void
     {
         Review::factory()->create(['rating' => 1.0, 'user_id' => $this->user->id, 'book_id' => $this->book->id]);
         Review::factory()->create(['rating' => 5.0, 'user_id' => $this->user->id, 'book_id' => $this->book->id]);
@@ -104,15 +91,15 @@ class ReviewRepositoryTest extends TestCase
         $filters = new ReviewFiltersDto(sortBy: 'rating', sortDirection: 'desc');
         $result = $this->repository->getList($filters);
 
-        $this->assertEquals(5.0, $result[0]->rating);
-        $this->assertEquals(1.0, $result[1]->rating);
+        self::assertSame(5.0, $result[0]->rating);
+        self::assertSame(1.0, $result[1]->rating);
     }
 
     // -----------------------------------------------------------------------
     // getById
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_review_response_dto(): void
+    public function testGetByIdReturnsReviewResponseDto(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -122,44 +109,44 @@ class ReviewRepositoryTest extends TestCase
 
         $result = $this->repository->getById($review->id);
 
-        $this->assertInstanceOf(ReviewResponseDto::class, $result);
-        $this->assertSame($review->id, $result->id);
-        $this->assertSame('Wonderful.', $result->comment);
+        self::assertInstanceOf(ReviewResponseDto::class, $result);
+        self::assertSame($review->id, $result->id);
+        self::assertSame('Wonderful.', $result->comment);
     }
 
-    public function test_get_by_id_returns_null_when_not_found(): void
+    public function testGetByIdReturnsNullWhenNotFound(): void
     {
         $result = $this->repository->getById(99999);
 
-        $this->assertNull($result);
+        self::assertNull($result);
     }
 
     // -----------------------------------------------------------------------
     // create
     // -----------------------------------------------------------------------
 
-    public function test_create_persists_review_and_returns_dto(): void
+    public function testCreatePersistsReviewAndReturnsDto(): void
     {
         $dto = $this->makeDto(['comment' => 'Loved it!']);
 
         $result = $this->repository->create($dto);
 
-        $this->assertInstanceOf(ReviewResponseDto::class, $result);
-        $this->assertSame('Loved it!', $result->comment);
+        self::assertInstanceOf(ReviewResponseDto::class, $result);
+        self::assertSame('Loved it!', $result->comment);
         $this->assertDatabaseHas('reviews', ['comment' => 'Loved it!']);
     }
 
-    public function test_create_assigns_id_to_returned_dto(): void
+    public function testCreateAssignsIdToReturnedDto(): void
     {
         $dto = $this->makeDto();
 
         $result = $this->repository->create($dto);
 
-        $this->assertIsInt($result->id);
-        $this->assertGreaterThan(0, $result->id);
+        self::assertIsInt($result->id);
+        self::assertGreaterThan(0, $result->id);
     }
 
-    public function test_create_stores_all_fields_correctly(): void
+    public function testCreateStoresAllFieldsCorrectly(): void
     {
         $dto = $this->makeDto([
             'rating' => 2.5,
@@ -168,17 +155,17 @@ class ReviewRepositoryTest extends TestCase
 
         $result = $this->repository->create($dto);
 
-        $this->assertSame($this->user->id, $result->userId);
-        $this->assertSame($this->book->id, $result->bookId);
-        $this->assertEquals(2.5, $result->rating);
-        $this->assertSame('Average book.', $result->comment);
+        self::assertSame($this->user->id, $result->userId);
+        self::assertSame($this->book->id, $result->bookId);
+        self::assertSame(2.5, $result->rating);
+        self::assertSame('Average book.', $result->comment);
     }
 
     // -----------------------------------------------------------------------
     // update
     // -----------------------------------------------------------------------
 
-    public function test_update_changes_review_fields_and_returns_dto(): void
+    public function testUpdateChangesReviewFieldsAndReturnsDto(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -189,12 +176,12 @@ class ReviewRepositoryTest extends TestCase
 
         $result = $this->repository->update($review->id, $dto);
 
-        $this->assertInstanceOf(ReviewResponseDto::class, $result);
-        $this->assertSame('New comment', $result->comment);
+        self::assertInstanceOf(ReviewResponseDto::class, $result);
+        self::assertSame('New comment', $result->comment);
         $this->assertDatabaseHas('reviews', ['id' => $review->id, 'comment' => 'New comment']);
     }
 
-    public function test_update_does_not_create_new_record(): void
+    public function testUpdateDoesNotCreateNewRecord(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -207,7 +194,7 @@ class ReviewRepositoryTest extends TestCase
         $this->assertDatabaseCount('reviews', 1);
     }
 
-    public function test_update_throws_exception_for_nonexistent_review(): void
+    public function testUpdateThrowsExceptionForNonexistentReview(): void
     {
         $this->expectException(ModelNotFoundException::class);
 
@@ -218,7 +205,7 @@ class ReviewRepositoryTest extends TestCase
     // delete
     // -----------------------------------------------------------------------
 
-    public function test_delete_removes_review_from_database(): void
+    public function testDeleteRemovesReviewFromDatabase(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -227,11 +214,11 @@ class ReviewRepositoryTest extends TestCase
 
         $result = $this->repository->delete($review->id);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
         $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
     }
 
-    public function test_delete_returns_true_on_success(): void
+    public function testDeleteReturnsTrueOnSuccess(): void
     {
         $review = Review::factory()->create([
             'user_id' => $this->user->id,
@@ -240,13 +227,32 @@ class ReviewRepositoryTest extends TestCase
 
         $result = $this->repository->delete($review->id);
 
-        $this->assertTrue($result);
+        self::assertTrue($result);
     }
 
-    public function test_delete_returns_false_for_nonexistent_review(): void
+    public function testDeleteReturnsFalseForNonexistentReview(): void
     {
         $result = $this->repository->delete(99999);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->repository = new ReviewRepository();
+        $this->user = User::factory()->create();
+        $this->book = Book::factory()->create(['author_id' => Author::factory()->create()->id]);
+    }
+
+    /** @param array<string, mixed> $overrides */
+    private function makeDto(array $overrides = []): ReviewDto
+    {
+        return new ReviewDto(
+            userId: (int) ($overrides['userId'] ?? $this->user->id),
+            bookId: (int) ($overrides['bookId'] ?? $this->book->id),
+            rating: (float) ($overrides['rating'] ?? 4.5),
+            comment: (string) ($overrides['comment'] ?? 'Great book!'),
+        );
     }
 }

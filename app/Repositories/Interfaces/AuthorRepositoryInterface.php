@@ -11,20 +11,19 @@ use App\Dto\PaginatedResponseDto;
 
 interface AuthorRepositoryInterface
 {
-    /**
-     * @return array<AuthorResponseDto>
-     */
+    /** @return array<AuthorResponseDto> */
     public function getList(AuthorFiltersDto $filters): array;
 
     public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto;
 
+    /** @return array<mixed> */
     public function all(): array;
 
-    public function getById(int $id): ?AuthorResponseDto;
+    public function getById(int $id): AuthorResponseDto|null;
 
     public function create(AuthorDto $data): AuthorResponseDto;
 
-    public function update(int $id, AuthorDto $data): ?AuthorResponseDto;
+    public function update(int $id, AuthorDto $data): AuthorResponseDto|null;
 
     public function delete(int $id): bool;
 }

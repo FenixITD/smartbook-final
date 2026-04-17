@@ -12,8 +12,9 @@ use Illuminate\View\View;
 final readonly class CreateAuthorWebController
 {
     public function __construct(
-        private AuthorRepositoryInterface $repository
-    ) {}
+        private AuthorRepositoryInterface $repository,
+    ) {
+    }
 
     public function create(): View
     {

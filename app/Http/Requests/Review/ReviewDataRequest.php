@@ -14,6 +14,7 @@ class ReviewDataRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -30,7 +31,7 @@ class ReviewDataRequest extends FormRequest
             userId: $this->integer('userId'),
             bookId: $this->integer('bookId'),
             rating: $this->float('rating'),
-            comment: $this->input('comment'),
+            comment: (string) $this->string('comment'),
         );
     }
 }

@@ -13,13 +13,14 @@ final readonly class AddToCartService
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $guestCart,
-    ) {}
+    ) {
+    }
 
     public function execute(int $bookId, int $quantity = 1): void
     {
         if (Auth::check()) {
             $this->repository->addOrIncrement(new CartItemDto(
-                userId: Auth::id(),
+                userId: (int) Auth::id(),
                 bookId: $bookId,
                 quantity: $quantity,
             ));

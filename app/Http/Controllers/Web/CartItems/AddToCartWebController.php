@@ -12,7 +12,8 @@ final readonly class AddToCartWebController
 {
     public function __construct(
         private AddToCartService $addToCartService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(AddToCartWebRequest $request): RedirectResponse
     {

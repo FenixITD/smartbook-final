@@ -9,34 +9,22 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class OrderApiTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class OrderApiTest extends TestCase
 {
     use RefreshDatabase;
 
     private User $user;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->user = User::factory()->create();
-    }
-
-    private function validPayload(array $overrides = []): array
-    {
-        return array_merge([
-            'userId' => $this->user->id,
-            'total' => 99.99,
-            'status' => 'pending',
-            'shippingAddress' => '123 Main St, London',
-            'paymentMethod' => 'credit_card',
-        ], $overrides);
-    }
-
     // -----------------------------------------------------------------------
     // GET /api/orders
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_200_with_orders(): void
+    public function testGetListReturns200WithOrders(): void
     {
         Order::factory()->count(3)->create(['user_id' => $this->user->id]);
 
@@ -50,7 +38,7 @@ class OrderApiTest extends TestCase
             ]);
     }
 
-    public function test_get_list_returns_empty_data_when_no_orders(): void
+    public function testGetListReturnsEmptyDataWhenNoOrders(): void
     {
         $response = $this->getJson('/api/orders');
 
@@ -58,17 +46,17 @@ class OrderApiTest extends TestCase
             ->assertJson(['data' => []]);
     }
 
-    public function test_get_list_respects_per_page_param(): void
+    public function testGetListRespectsPerPageParam(): void
     {
         Order::factory()->count(10)->create(['user_id' => $this->user->id]);
 
         $response = $this->getJson('/api/orders?perPage=3');
 
         $response->assertStatus(200);
-        $this->assertCount(3, $response->json('data'));
+        self::assertCount(3, $response->json('data'));
     }
 
-    public function test_get_list_sorts_by_total_desc(): void
+    public function testGetListSortsByTotalDesc(): void
     {
         Order::factory()->create(['total' => 10.00, 'user_id' => $this->user->id]);
         Order::factory()->create(['total' => 999.00, 'user_id' => $this->user->id]);
@@ -79,25 +67,25 @@ class OrderApiTest extends TestCase
         $data = $response->json('data');
 
         // JSON не разделяет int/float, поэтому используем assertEquals вместо assertSame
-        $this->assertEquals(999.00, $data[0]['total']);
-        $this->assertEquals(10.00, $data[1]['total']);
+        self::assertSame(999.00, $data[0]['total']);
+        self::assertSame(10.00, $data[1]['total']);
     }
 
-    public function test_get_list_validates_sort_direction(): void
+    public function testGetListValidatesSortDirection(): void
     {
         $response = $this->getJson('/api/orders?sortDirection=invalid');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_min(): void
+    public function testGetListValidatesPerPageMin(): void
     {
         $response = $this->getJson('/api/orders?perPage=0');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_max(): void
+    public function testGetListValidatesPerPageMax(): void
     {
         $response = $this->getJson('/api/orders?perPage=101');
 
@@ -108,7 +96,7 @@ class OrderApiTest extends TestCase
     // GET /api/orders/{order}
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_order(): void
+    public function testGetByIdReturnsOrder(): void
     {
         $order = Order::factory()->create([
             'user_id' => $this->user->id,
@@ -125,7 +113,7 @@ class OrderApiTest extends TestCase
             ->assertJsonPath('data.status', 'paid');
     }
 
-    public function test_get_by_id_returns_404_for_nonexistent_order(): void
+    public function testGetByIdReturns404ForNonexistentOrder(): void
     {
         $response = $this->getJson('/api/orders/99999');
 
@@ -136,7 +124,7 @@ class OrderApiTest extends TestCase
     // POST /api/orders
     // -----------------------------------------------------------------------
 
-    public function test_create_order_returns_201_with_data(): void
+    public function testCreateOrderReturns201WithData(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload());
 
@@ -147,7 +135,7 @@ class OrderApiTest extends TestCase
             ->assertJsonPath('data.status', 'pending');
     }
 
-    public function test_create_order_persists_to_database(): void
+    public function testCreateOrderPersistsToDatabase(): void
     {
         $this->postJson('/api/orders', $this->validPayload(['status' => 'shipped']));
 
@@ -157,7 +145,7 @@ class OrderApiTest extends TestCase
         ]);
     }
 
-    public function test_create_order_requires_user_id(): void
+    public function testCreateOrderRequiresUserId(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['userId' => '']));
 
@@ -165,7 +153,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_order_requires_valid_user_id(): void
+    public function testCreateOrderRequiresValidUserId(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['userId' => 99999]));
 
@@ -173,7 +161,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_create_order_requires_total(): void
+    public function testCreateOrderRequiresTotal(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['total' => '']));
 
@@ -181,7 +169,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['total']);
     }
 
-    public function test_create_order_total_cannot_be_negative(): void
+    public function testCreateOrderTotalCannotBeNegative(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['total' => -1]));
 
@@ -189,7 +177,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['total']);
     }
 
-    public function test_create_order_total_cannot_exceed_max(): void
+    public function testCreateOrderTotalCannotExceedMax(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['total' => 10000.00]));
 
@@ -197,7 +185,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['total']);
     }
 
-    public function test_create_order_requires_status(): void
+    public function testCreateOrderRequiresStatus(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['status' => '']));
 
@@ -205,7 +193,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['status']);
     }
 
-    public function test_create_order_status_must_be_valid(): void
+    public function testCreateOrderStatusMustBeValid(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['status' => 'invalid_status']));
 
@@ -213,7 +201,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['status']);
     }
 
-    public function test_create_order_accepts_all_valid_statuses(): void
+    public function testCreateOrderAcceptsAllValidStatuses(): void
     {
         foreach (['pending', 'paid', 'shipped', 'delivered', 'cancelled'] as $status) {
             $response = $this->postJson('/api/orders', $this->validPayload(['status' => $status]));
@@ -222,7 +210,7 @@ class OrderApiTest extends TestCase
         }
     }
 
-    public function test_create_order_requires_shipping_address(): void
+    public function testCreateOrderRequiresShippingAddress(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['shippingAddress' => '']));
 
@@ -230,7 +218,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['shippingAddress']);
     }
 
-    public function test_create_order_shipping_address_max_255_characters(): void
+    public function testCreateOrderShippingAddressMax255Characters(): void
     {
         $response = $this->postJson('/api/orders', $this->validPayload(['shippingAddress' => str_repeat('A', 256)]));
 
@@ -242,7 +230,7 @@ class OrderApiTest extends TestCase
     // PUT /api/orders/{order}
     // -----------------------------------------------------------------------
 
-    public function test_update_order_returns_200_with_updated_data(): void
+    public function testUpdateOrderReturns200WithUpdatedData(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -252,7 +240,7 @@ class OrderApiTest extends TestCase
             ->assertJsonPath('data.status', 'delivered');
     }
 
-    public function test_update_order_persists_changes_to_database(): void
+    public function testUpdateOrderPersistsChangesToDatabase(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -268,14 +256,14 @@ class OrderApiTest extends TestCase
         ]);
     }
 
-    public function test_update_order_returns_404_for_nonexistent_order(): void
+    public function testUpdateOrderReturns404ForNonexistentOrder(): void
     {
         $response = $this->putJson('/api/orders/99999', $this->validPayload());
 
         $response->assertStatus(404);
     }
 
-    public function test_update_order_requires_status(): void
+    public function testUpdateOrderRequiresStatus(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -285,7 +273,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['status']);
     }
 
-    public function test_update_order_status_must_be_valid(): void
+    public function testUpdateOrderStatusMustBeValid(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -295,7 +283,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['status']);
     }
 
-    public function test_update_order_requires_valid_user_id(): void
+    public function testUpdateOrderRequiresValidUserId(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -305,7 +293,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['userId']);
     }
 
-    public function test_update_order_total_cannot_be_negative(): void
+    public function testUpdateOrderTotalCannotBeNegative(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -315,7 +303,7 @@ class OrderApiTest extends TestCase
             ->assertJsonValidationErrors(['total']);
     }
 
-    public function test_update_order_shipping_address_max_255_characters(): void
+    public function testUpdateOrderShippingAddressMax255Characters(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -329,7 +317,7 @@ class OrderApiTest extends TestCase
     // DELETE /api/orders/{order}
     // -----------------------------------------------------------------------
 
-    public function test_delete_order_returns_200_with_message(): void
+    public function testDeleteOrderReturns200WithMessage(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -339,7 +327,7 @@ class OrderApiTest extends TestCase
             ->assertJson(['message' => 'Order deleted successfully']);
     }
 
-    public function test_delete_order_removes_from_database(): void
+    public function testDeleteOrderRemovesFromDatabase(): void
     {
         $order = Order::factory()->create(['user_id' => $this->user->id]);
 
@@ -348,10 +336,31 @@ class OrderApiTest extends TestCase
         $this->assertDatabaseMissing('orders', ['id' => $order->id]);
     }
 
-    public function test_delete_order_returns_404_for_nonexistent_order(): void
+    public function testDeleteOrderReturns404ForNonexistentOrder(): void
     {
         $response = $this->deleteJson('/api/orders/99999');
 
         $response->assertStatus(404);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->create();
+    }
+
+    /** @param array<string, mixed> $overrides
+     *  @return array<string, mixed> */
+    /** @param array<string, mixed> $overrides */
+    /** @return array<string, mixed> */
+    private function validPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'userId' => $this->user->id,
+            'total' => 99.99,
+            'status' => 'pending',
+            'shippingAddress' => '123 Main St, London',
+            'paymentMethod' => 'credit_card',
+        ], $overrides);
     }
 }

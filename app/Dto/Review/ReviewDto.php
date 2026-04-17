@@ -11,8 +11,10 @@ final readonly class ReviewDto
         public int $bookId,
         public float $rating,
         public string $comment,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

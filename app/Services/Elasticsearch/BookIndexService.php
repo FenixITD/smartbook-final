@@ -8,6 +8,9 @@ use App\Dto\Book\BookFiltersDto;
 use App\Models\Book;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
+use Throwable;
+
+use function count;
 
 final class BookIndexService
 {
@@ -61,7 +64,7 @@ final class BookIndexService
                 'index' => $this->index,
                 'id' => $bookId,
             ]);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             // Document may not exist — safe to ignore
         }
     }
@@ -94,7 +97,7 @@ final class BookIndexService
 
         $hits = $response->asArray()['hits'] ?? [];
         $ids = array_map(
-            fn (array $hit) => (int) $hit['_id'],
+            static fn (array $hit) => (int) $hit['_id'],
             $hits['hits'] ?? [],
         );
 
@@ -107,7 +110,7 @@ final class BookIndexService
     /**
      * Re-index all books in bulk.
      *
-     * @param  iterable<Book>  $books
+     * @param iterable<Book> $books
      */
     public function bulkIndex(iterable $books): void
     {
@@ -129,7 +132,7 @@ final class BookIndexService
             }
         }
 
-        if (! empty($params['body'])) {
+        if (!empty($params['body'])) {
             $this->client->bulk($params);
         }
     }

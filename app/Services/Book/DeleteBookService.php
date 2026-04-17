@@ -13,14 +13,15 @@ final readonly class DeleteBookService
     public function __construct(
         private BookRepositoryInterface $bookRepository,
         private TransactionManagerInterface $transactionManager,
-    ) {}
+    ) {
+    }
 
     public function execute(int $bookId): void
     {
         $this->transactionManager->transaction(function () use ($bookId): void {
             $book = $this->bookRepository->findModel($bookId);
 
-            if ($book->cover_image) {
+            if ($book->cover_image !== null && $book->cover_image !== '') {
                 Storage::disk('public')->delete($book->cover_image);
             }
 

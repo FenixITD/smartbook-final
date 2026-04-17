@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 readonly class CreateOrderItemController
 {
     public function __construct(
-        private OrderItemRepositoryInterface $repository
-    ) {}
+        private OrderItemRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(OrderItemDataRequest $request): JsonResponse
     {

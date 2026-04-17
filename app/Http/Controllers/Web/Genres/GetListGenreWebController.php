@@ -11,8 +11,9 @@ use Illuminate\View\View;
 final readonly class GetListGenreWebController
 {
     public function __construct(
-        private GenreRepositoryInterface $repository
-    ) {}
+        private GenreRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(GenreListRequest $request): View
     {

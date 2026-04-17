@@ -11,12 +11,13 @@ use Illuminate\Http\JsonResponse;
 final readonly class DeleteCartItemController
 {
     public function __construct(
-        private CartItemRepositoryInterface $repository
-    ) {}
+        private CartItemRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(int $cartItem): JsonResponse
     {
-        if (! CartItem::find($cartItem)) {
+        if (CartItem::find($cartItem) === null) {
             return response()->json(['message' => 'CartItem not found'], 404);
         }
 

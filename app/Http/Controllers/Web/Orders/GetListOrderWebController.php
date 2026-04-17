@@ -12,7 +12,8 @@ final readonly class GetListOrderWebController
 {
     public function __construct(
         private OrderRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(OrderListRequest $request): View
     {

@@ -11,12 +11,13 @@ use Illuminate\Http\JsonResponse;
 final readonly class DeleteAuthorController
 {
     public function __construct(
-        private AuthorRepositoryInterface $repository
-    ) {}
+        private AuthorRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(int $author): JsonResponse
     {
-        if (! Author::find($author)) {
+        if (Author::find($author) === null) {
             return response()->json(['message' => 'Author not found'], 404);
         }
 

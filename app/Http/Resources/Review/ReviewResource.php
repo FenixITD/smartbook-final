@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Review;
 
+use App\Dto\Review\ReviewResponseDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin ReviewResponseDto
+ */
 final class ReviewResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

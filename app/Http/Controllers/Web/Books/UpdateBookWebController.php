@@ -19,7 +19,8 @@ final readonly class UpdateBookWebController
         private AuthorRepositoryInterface $authorRepository,
         private GenreRepositoryInterface $genreRepository,
         private BookUpdaterService $service,
-    ) {}
+    ) {
+    }
 
     public function edit(int $bookId): View
     {

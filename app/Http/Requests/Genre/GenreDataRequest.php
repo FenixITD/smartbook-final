@@ -14,6 +14,7 @@ final class GenreDataRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -26,9 +27,9 @@ final class GenreDataRequest extends FormRequest
     public function toDto(): GenreDto
     {
         return new GenreDto(
-            name: $this->input('name'),
-            slug: $this->input('slug'),
-            description: $this->input('description'),
+            name: (string) $this->string('name'),
+            slug: (string) $this->string('slug'),
+            description: (string) $this->string('description'),
         );
     }
 }

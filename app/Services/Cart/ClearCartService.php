@@ -12,12 +12,13 @@ final readonly class ClearCartService
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $service,
-    ) {}
+    ) {
+    }
 
     public function execute(): void
     {
         if (Auth::check()) {
-            $this->repository->deleteByUserId(Auth::id());
+            $this->repository->deleteByUserId((int) Auth::id());
         } else {
             $this->service->clear();
         }

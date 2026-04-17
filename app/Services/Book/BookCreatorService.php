@@ -10,7 +10,9 @@ use App\Repositories\Interfaces\BookRepositoryInterface;
 readonly class BookCreatorService
 {
     public function __construct(
-        private BookRepositoryInterface $repository) {}
+        private BookRepositoryInterface $repository)
+    {
+    }
 
     public function execute(BookWebDataRequest $request): void
     {

@@ -8,8 +8,10 @@ final readonly class AuthorDto
 {
     public function __construct(
         public string $name,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

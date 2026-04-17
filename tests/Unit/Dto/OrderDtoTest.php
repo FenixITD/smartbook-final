@@ -10,9 +10,14 @@ use App\Dto\Order\OrderResponseDto;
 use App\Models\Order;
 use Tests\TestCase;
 
-class OrderDtoTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class OrderDtoTest extends TestCase
 {
-    public function test_order_dto_to_array_returns_correct_structure(): void
+    public function testOrderDtoToArrayReturnsCorrectStructure(): void
     {
         $dto = new OrderDto(
             userId: 1,
@@ -24,7 +29,7 @@ class OrderDtoTest extends TestCase
 
         $result = $dto->toArray();
 
-        $this->assertSame([
+        self::assertSame([
             'user_id' => 1,
             'total' => 99.99,
             'status' => 'pending',
@@ -33,7 +38,7 @@ class OrderDtoTest extends TestCase
         ], $result);
     }
 
-    public function test_order_dto_stores_properties_correctly(): void
+    public function testOrderDtoStoresPropertiesCorrectly(): void
     {
         $dto = new OrderDto(
             userId: 5,
@@ -43,24 +48,24 @@ class OrderDtoTest extends TestCase
             paymentMethod: 'paypal',
         );
 
-        $this->assertSame(5, $dto->userId);
-        $this->assertSame(249.50, $dto->total);
-        $this->assertSame('shipped', $dto->status);
-        $this->assertSame('456 Oxford St, London', $dto->shippingAddress);
-        $this->assertSame('paypal', $dto->paymentMethod);
+        self::assertSame(5, $dto->userId);
+        self::assertSame(249.50, $dto->total);
+        self::assertSame('shipped', $dto->status);
+        self::assertSame('456 Oxford St, London', $dto->shippingAddress);
+        self::assertSame('paypal', $dto->paymentMethod);
     }
 
-    public function test_order_filters_dto_has_correct_defaults(): void
+    public function testOrderFiltersDtoHasCorrectDefaults(): void
     {
-        $dto = new OrderFiltersDto;
+        $dto = new OrderFiltersDto();
 
-        $this->assertNull($dto->search);
-        $this->assertSame(15, $dto->perPage);
-        $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        self::assertNull($dto->search);
+        self::assertSame(15, $dto->perPage);
+        self::assertSame('id', $dto->sortBy);
+        self::assertSame('asc', $dto->sortDirection);
     }
 
-    public function test_order_filters_dto_accepts_custom_values(): void
+    public function testOrderFiltersDtoAcceptsCustomValues(): void
     {
         $dto = new OrderFiltersDto(
             search: '42',
@@ -69,15 +74,15 @@ class OrderDtoTest extends TestCase
             sortDirection: 'desc',
         );
 
-        $this->assertSame('42', $dto->search);
-        $this->assertSame(25, $dto->perPage);
-        $this->assertSame('total', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        self::assertSame('42', $dto->search);
+        self::assertSame(25, $dto->perPage);
+        self::assertSame('total', $dto->sortBy);
+        self::assertSame('desc', $dto->sortDirection);
     }
 
-    public function test_order_response_dto_from_model(): void
+    public function testOrderResponseDtoFromModel(): void
     {
-        $order = new Order;
+        $order = new Order();
         $order->id = 10;
         $order->user_id = 3;
         $order->total = 149.99;
@@ -89,19 +94,19 @@ class OrderDtoTest extends TestCase
 
         $dto = OrderResponseDto::fromModel($order);
 
-        $this->assertSame(10, $dto->id);
-        $this->assertSame(3, $dto->userId);
-        $this->assertSame(149.99, $dto->total);
-        $this->assertSame('paid', $dto->status);
-        $this->assertSame('789 Baker St, London', $dto->shippingAddress);
-        $this->assertSame('credit_card', $dto->paymentMethod);
-        $this->assertSame('2024-03-01 09:00:00', $dto->createdAt);
-        $this->assertSame('2024-03-05 15:30:00', $dto->updatedAt);
+        self::assertSame(10, $dto->id);
+        self::assertSame(3, $dto->userId);
+        self::assertSame(149.99, $dto->total);
+        self::assertSame('paid', $dto->status);
+        self::assertSame('789 Baker St, London', $dto->shippingAddress);
+        self::assertSame('credit_card', $dto->paymentMethod);
+        self::assertSame('2024-03-01 09:00:00', $dto->createdAt);
+        self::assertSame('2024-03-05 15:30:00', $dto->updatedAt);
     }
 
-    public function test_order_response_dto_casts_fields_to_correct_types(): void
+    public function testOrderResponseDtoCastsFieldsToCorrectTypes(): void
     {
-        $order = new Order;
+        $order = new Order();
         $order->id = 1;
         $order->user_id = 2;
         $order->total = 50.00;
@@ -113,10 +118,10 @@ class OrderDtoTest extends TestCase
 
         $dto = OrderResponseDto::fromModel($order);
 
-        $this->assertIsInt($dto->userId);
-        $this->assertIsFloat($dto->total);
-        $this->assertIsString($dto->status);
-        $this->assertIsString($dto->shippingAddress);
-        $this->assertIsString($dto->paymentMethod);
+        self::assertIsInt($dto->userId);
+        self::assertIsFloat($dto->total);
+        self::assertIsString($dto->status);
+        self::assertIsString($dto->shippingAddress);
+        self::assertIsString($dto->paymentMethod);
     }
 }

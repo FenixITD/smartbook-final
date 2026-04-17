@@ -10,8 +10,9 @@ use Illuminate\View\View;
 final readonly class GetByIdBookWebController
 {
     public function __construct(
-        private BookRepositoryInterface $repository
-    ) {}
+        private BookRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(int $book): View
     {

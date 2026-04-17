@@ -8,24 +8,20 @@ use App\Models\Genre;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class GenreApiTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class GenreApiTest extends TestCase
 {
     use RefreshDatabase;
-
-    private function validPayload(array $overrides = []): array
-    {
-        return array_merge([
-            'name' => 'Science Fiction',
-            'slug' => 'science-fiction',
-            'description' => 'A genre about science and the future.',
-        ], $overrides);
-    }
 
     // -----------------------------------------------------------------------
     // GET /api/genres
     // -----------------------------------------------------------------------
 
-    public function test_get_list_returns_200_with_genres(): void
+    public function testGetListReturns200WithGenres(): void
     {
         Genre::factory()->count(3)->create();
 
@@ -39,7 +35,7 @@ class GenreApiTest extends TestCase
             ]);
     }
 
-    public function test_get_list_returns_empty_data_when_no_genres(): void
+    public function testGetListReturnsEmptyDataWhenNoGenres(): void
     {
         $response = $this->getJson('/api/genres');
 
@@ -47,7 +43,7 @@ class GenreApiTest extends TestCase
             ->assertJson(['data' => []]);
     }
 
-    public function test_get_list_filters_by_search(): void
+    public function testGetListFiltersBySearch(): void
     {
         Genre::factory()->create(['name' => 'Science Fiction']);
         Genre::factory()->create(['name' => 'Fantasy']);
@@ -57,21 +53,21 @@ class GenreApiTest extends TestCase
         $response->assertStatus(200);
 
         $data = $response->json('data');
-        $this->assertCount(1, $data);
-        $this->assertSame('Science Fiction', $data[0]['name']);
+        self::assertCount(1, $data);
+        self::assertSame('Science Fiction', $data[0]['name']);
     }
 
-    public function test_get_list_respects_per_page_param(): void
+    public function testGetListRespectsPerPageParam(): void
     {
         Genre::factory()->count(10)->create();
 
         $response = $this->getJson('/api/genres?perPage=3');
 
         $response->assertStatus(200);
-        $this->assertCount(3, $response->json('data'));
+        self::assertCount(3, $response->json('data'));
     }
 
-    public function test_get_list_sorts_by_name_desc(): void
+    public function testGetListSortsByNameDesc(): void
     {
         Genre::factory()->create(['name' => 'AAA Genre']);
         Genre::factory()->create(['name' => 'ZZZ Genre']);
@@ -80,24 +76,24 @@ class GenreApiTest extends TestCase
 
         $response->assertStatus(200);
         $data = $response->json('data');
-        $this->assertSame('ZZZ Genre', $data[0]['name']);
+        self::assertSame('ZZZ Genre', $data[0]['name']);
     }
 
-    public function test_get_list_validates_sort_direction(): void
+    public function testGetListValidatesSortDirection(): void
     {
         $response = $this->getJson('/api/genres?sortDirection=invalid');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_min(): void
+    public function testGetListValidatesPerPageMin(): void
     {
         $response = $this->getJson('/api/genres?perPage=0');
 
         $response->assertStatus(422);
     }
 
-    public function test_get_list_validates_per_page_max(): void
+    public function testGetListValidatesPerPageMax(): void
     {
         $response = $this->getJson('/api/genres?perPage=101');
 
@@ -108,7 +104,7 @@ class GenreApiTest extends TestCase
     // GET /api/genres/{genre}
     // -----------------------------------------------------------------------
 
-    public function test_get_by_id_returns_genre(): void
+    public function testGetByIdReturnsGenre(): void
     {
         $genre = Genre::factory()->create(['name' => 'Horror']);
 
@@ -122,7 +118,7 @@ class GenreApiTest extends TestCase
             ->assertJsonPath('data.name', 'Horror');
     }
 
-    public function test_get_by_id_returns_404_for_nonexistent_genre(): void
+    public function testGetByIdReturns404ForNonexistentGenre(): void
     {
         $response = $this->getJson('/api/genres/99999');
 
@@ -133,7 +129,7 @@ class GenreApiTest extends TestCase
     // POST /api/genres
     // -----------------------------------------------------------------------
 
-    public function test_create_genre_returns_201_with_data(): void
+    public function testCreateGenreReturns201WithData(): void
     {
         $response = $this->postJson('/api/genres', $this->validPayload());
 
@@ -144,14 +140,14 @@ class GenreApiTest extends TestCase
             ->assertJsonPath('data.name', 'Science Fiction');
     }
 
-    public function test_create_genre_persists_to_database(): void
+    public function testCreateGenrePersistsToDatabase(): void
     {
         $this->postJson('/api/genres', $this->validPayload(['name' => 'Mystery', 'slug' => 'mystery']));
 
         $this->assertDatabaseHas('genres', ['name' => 'Mystery']);
     }
 
-    public function test_create_genre_requires_name(): void
+    public function testCreateGenreRequiresName(): void
     {
         $response = $this->postJson('/api/genres', $this->validPayload(['name' => '']));
 
@@ -159,7 +155,7 @@ class GenreApiTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function test_create_genre_requires_slug(): void
+    public function testCreateGenreRequiresSlug(): void
     {
         $response = $this->postJson('/api/genres', $this->validPayload(['slug' => '']));
 
@@ -167,7 +163,7 @@ class GenreApiTest extends TestCase
             ->assertJsonValidationErrors(['slug']);
     }
 
-    public function test_create_genre_slug_must_be_valid_format(): void
+    public function testCreateGenreSlugMustBeValidFormat(): void
     {
         $response = $this->postJson('/api/genres', $this->validPayload(['slug' => 'Invalid Slug!']));
 
@@ -175,7 +171,7 @@ class GenreApiTest extends TestCase
             ->assertJsonValidationErrors(['slug']);
     }
 
-    public function test_create_genre_requires_description(): void
+    public function testCreateGenreRequiresDescription(): void
     {
         $response = $this->postJson('/api/genres', $this->validPayload(['description' => '']));
 
@@ -183,7 +179,7 @@ class GenreApiTest extends TestCase
             ->assertJsonValidationErrors(['description']);
     }
 
-    public function test_create_genre_name_max_255_characters(): void
+    public function testCreateGenreNameMax255Characters(): void
     {
         $response = $this->postJson('/api/genres', $this->validPayload(['name' => str_repeat('A', 256)]));
 
@@ -195,7 +191,7 @@ class GenreApiTest extends TestCase
     // PUT /api/genres/{genre}
     // -----------------------------------------------------------------------
 
-    public function test_update_genre_returns_200_with_updated_data(): void
+    public function testUpdateGenreReturns200WithUpdatedData(): void
     {
         $genre = Genre::factory()->create();
 
@@ -208,7 +204,7 @@ class GenreApiTest extends TestCase
             ->assertJsonPath('data.name', 'Updated Genre');
     }
 
-    public function test_update_genre_persists_changes_to_database(): void
+    public function testUpdateGenrePersistsChangesToDatabase(): void
     {
         $genre = Genre::factory()->create();
 
@@ -223,14 +219,14 @@ class GenreApiTest extends TestCase
         ]);
     }
 
-    public function test_update_genre_returns_404_for_nonexistent_genre(): void
+    public function testUpdateGenreReturns404ForNonexistentGenre(): void
     {
         $response = $this->putJson('/api/genres/99999', $this->validPayload());
 
         $response->assertStatus(404);
     }
 
-    public function test_update_genre_requires_name(): void
+    public function testUpdateGenreRequiresName(): void
     {
         $genre = Genre::factory()->create();
 
@@ -240,7 +236,7 @@ class GenreApiTest extends TestCase
             ->assertJsonValidationErrors(['name']);
     }
 
-    public function test_update_genre_name_max_255_characters(): void
+    public function testUpdateGenreNameMax255Characters(): void
     {
         $genre = Genre::factory()->create();
 
@@ -254,7 +250,7 @@ class GenreApiTest extends TestCase
     // DELETE /api/genres/{genre}
     // -----------------------------------------------------------------------
 
-    public function test_delete_genre_returns_200_with_message(): void
+    public function testDeleteGenreReturns200WithMessage(): void
     {
         $genre = Genre::factory()->create();
 
@@ -264,7 +260,7 @@ class GenreApiTest extends TestCase
             ->assertJson(['message' => 'Genre deleted successfully']);
     }
 
-    public function test_delete_genre_removes_from_database(): void
+    public function testDeleteGenreRemovesFromDatabase(): void
     {
         $genre = Genre::factory()->create();
 
@@ -273,10 +269,23 @@ class GenreApiTest extends TestCase
         $this->assertDatabaseMissing('genres', ['id' => $genre->id]);
     }
 
-    public function test_delete_genre_returns_404_for_nonexistent_genre(): void
+    public function testDeleteGenreReturns404ForNonexistentGenre(): void
     {
         $response = $this->deleteJson('/api/genres/99999');
 
         $response->assertStatus(404);
+    }
+
+    /** @param array<string, mixed> $overrides
+     *  @return array<string, mixed> */
+    /** @param array<string, mixed> $overrides */
+    /** @return array<string, mixed> */
+    private function validPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'name' => 'Science Fiction',
+            'slug' => 'science-fiction',
+            'description' => 'A genre about science and the future.',
+        ], $overrides);
     }
 }

@@ -10,35 +10,40 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Models\Author;
 use Tests\TestCase;
 
-class AuthorDtoTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class AuthorDtoTest extends TestCase
 {
-    public function test_author_dto_to_array_returns_correct_structure(): void
+    public function testAuthorDtoToArrayReturnsCorrectStructure(): void
     {
         $dto = new AuthorDto(name: 'Ivan Turgenev');
 
         $result = $dto->toArray();
 
-        $this->assertSame(['name' => 'Ivan Turgenev'], $result);
+        self::assertSame(['name' => 'Ivan Turgenev'], $result);
     }
 
-    public function test_author_dto_stores_name_correctly(): void
+    public function testAuthorDtoStoresNameCorrectly(): void
     {
         $dto = new AuthorDto(name: 'Mikhail Bulgakov');
 
-        $this->assertSame('Mikhail Bulgakov', $dto->name);
+        self::assertSame('Mikhail Bulgakov', $dto->name);
     }
 
-    public function test_author_filters_dto_has_correct_defaults(): void
+    public function testAuthorFiltersDtoHasCorrectDefaults(): void
     {
-        $dto = new AuthorFiltersDto;
+        $dto = new AuthorFiltersDto();
 
-        $this->assertNull($dto->search);
-        $this->assertSame(15, $dto->perPage);
-        $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        self::assertNull($dto->search);
+        self::assertSame(15, $dto->perPage);
+        self::assertSame('id', $dto->sortBy);
+        self::assertSame('asc', $dto->sortDirection);
     }
 
-    public function test_author_filters_dto_accepts_custom_values(): void
+    public function testAuthorFiltersDtoAcceptsCustomValues(): void
     {
         $dto = new AuthorFiltersDto(
             search: 'Tolstoy',
@@ -47,15 +52,15 @@ class AuthorDtoTest extends TestCase
             sortDirection: 'desc',
         );
 
-        $this->assertSame('Tolstoy', $dto->search);
-        $this->assertSame(30, $dto->perPage);
-        $this->assertSame('name', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        self::assertSame('Tolstoy', $dto->search);
+        self::assertSame(30, $dto->perPage);
+        self::assertSame('name', $dto->sortBy);
+        self::assertSame('desc', $dto->sortDirection);
     }
 
-    public function test_author_response_dto_from_model(): void
+    public function testAuthorResponseDtoFromModel(): void
     {
-        $author = new Author;
+        $author = new Author();
         $author->id = 5;
         $author->name = 'Boris Pasternak';
         $author->created_at = now()->setDateTimeFrom('2024-03-01 12:00:00');
@@ -63,9 +68,9 @@ class AuthorDtoTest extends TestCase
 
         $dto = AuthorResponseDto::fromModel($author);
 
-        $this->assertSame(5, $dto->id);
-        $this->assertSame('Boris Pasternak', $dto->name);
-        $this->assertSame('2024-03-01 12:00:00', $dto->createdAt);
-        $this->assertSame('2024-04-01 15:30:00', $dto->updatedAt);
+        self::assertSame(5, $dto->id);
+        self::assertSame('Boris Pasternak', $dto->name);
+        self::assertSame('2024-03-01 12:00:00', $dto->createdAt);
+        self::assertSame('2024-04-01 15:30:00', $dto->updatedAt);
     }
 }

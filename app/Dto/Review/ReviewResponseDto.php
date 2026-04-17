@@ -8,6 +8,19 @@ use App\Models\Review;
 
 final readonly class ReviewResponseDto
 {
+    public static function fromModel(Review $review): self
+    {
+        return new self(
+            id: $review->id,
+            userId: $review->user_id,
+            bookId: $review->book_id,
+            rating: $review->rating,
+            comment: $review->comment ?? '',
+            createdAt: $review->created_at?->toDateTimeString() ?? '',
+            updatedAt: $review->updated_at?->toDateTimeString() ?? '',
+        );
+    }
+
     public function __construct(
         public int $id,
         public int $userId,
@@ -16,18 +29,6 @@ final readonly class ReviewResponseDto
         public string $comment,
         public string $createdAt,
         public string $updatedAt,
-    ) {}
-
-    public static function fromModel(Review $review): self
-    {
-        return new self(
-            id: $review->id,
-            userId: (int) $review->user_id,
-            bookId: (int) $review->book_id,
-            rating: (float) $review->rating,
-            comment: (string) $review->comment,
-            createdAt: $review->created_at->toDateTimeString(),
-            updatedAt: $review->updated_at->toDateTimeString(),
-        );
+    ) {
     }
 }

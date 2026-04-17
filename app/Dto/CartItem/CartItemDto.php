@@ -10,8 +10,10 @@ final readonly class CartItemDto
         public int $userId,
         public int $bookId,
         public int $quantity,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

@@ -12,7 +12,8 @@ final readonly class UpdateCartItemWebController
 {
     public function __construct(
         private UpdateCartService $updateCartService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateCartWebRequest $request, int $bookId): RedirectResponse
     {

@@ -66,9 +66,30 @@
         "test:lint": [
             "pint --parallel --test"
         ],
+        "stan": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpstan analyse --memory-limit=-1 --ansi"
+        ],
+        "stan:baseline": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpstan analyse --memory-limit=-1 --generate-baseline --ansi"
+        ],
+        "cs": [
+            "Composer\\Config::disableProcessTimeout",
+            "php-cs-fixer fix --ansi --diff"
+        ],
+        "cs:check": [
+            "Composer\\Config::disableProcessTimeout",
+            "php-cs-fixer fix --ansi --diff --dry-run"
+        ],
+        "analyse": [
+            "@stan",
+            "@cs:check"
+        ],
         "test": [
             "@php artisan config:clear --ansi",
             "@test:lint",
+            "@stan",
             "@php artisan test"
         ],
         "post-autoload-dump": [

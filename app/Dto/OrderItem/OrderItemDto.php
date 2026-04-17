@@ -11,8 +11,10 @@ final readonly class OrderItemDto
         public int $bookId,
         public int $quantity,
         public float $priceAtPurchase,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

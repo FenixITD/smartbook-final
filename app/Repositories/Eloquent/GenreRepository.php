@@ -13,53 +13,59 @@ use App\Repositories\Interfaces\GenreRepositoryInterface;
 
 final class GenreRepository implements GenreRepositoryInterface
 {
+    /** @return array<GenreResponseDto> */
     public function getList(GenreFiltersDto $filters): array
     {
         return Genre::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->when($filters->search !== null, static fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()
-            ->map(fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+            ->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
             ->all();
     }
 
     public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto
     {
         $paginator = Genre::query()
-            ->when($filters->search !== null, fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->when($filters->search !== null, static fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage);
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
+    /** @return array<mixed> */
     public function all(): array
     {
         return Genre::orderBy('name')->get()->all();
     }
 
-    public function getById(int $id): ?GenreResponseDto
+    public function getById(int $id): GenreResponseDto|null
     {
         $genre = Genre::find($id);
 
-        return $genre ? GenreResponseDto::fromModel($genre) : null;
+        return $genre !== null ? GenreResponseDto::fromModel($genre) : null;
     }
 
     public function create(GenreDto $data): GenreResponseDto
     {
+        /** @var Genre $genre */
         $genre = Genre::create($data->toArray());
 
         return GenreResponseDto::fromModel($genre);
     }
 
-    public function update(int $id, GenreDto $data): ?GenreResponseDto
+    public function update(int $id, GenreDto $data): GenreResponseDto|null
     {
         $genre = Genre::findOrFail($id);
 
         $genre->update($data->toArray());
 
-        return GenreResponseDto::fromModel($genre->fresh());
+        /** @var Genre $fresh */
+        $fresh = $genre->fresh();
+
+        return GenreResponseDto::fromModel($fresh);
     }
 
     public function delete(int $id): bool

@@ -12,8 +12,9 @@ use Illuminate\View\View;
 final readonly class CreateGenreWebController
 {
     public function __construct(
-        private GenreRepositoryInterface $repository
-    ) {}
+        private GenreRepositoryInterface $repository,
+    ) {
+    }
 
     public function create(): View
     {

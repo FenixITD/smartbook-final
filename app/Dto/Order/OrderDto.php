@@ -12,8 +12,10 @@ final readonly class OrderDto
         public string $status,
         public string $shippingAddress,
         public string $paymentMethod,
-    ) {}
+    ) {
+    }
 
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [

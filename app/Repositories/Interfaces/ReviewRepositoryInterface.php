@@ -6,25 +6,24 @@ namespace App\Repositories\Interfaces;
 
 use App\Dto\PaginatedResponseDto;
 use App\Dto\Review\ReviewDto;
-use App\DTO\Review\ReviewFiltersDto;
-use App\DTO\Review\ReviewResponseDto;
+use App\Dto\Review\ReviewFiltersDto;
+use App\Dto\Review\ReviewResponseDto;
 
 interface ReviewRepositoryInterface
 {
-    /**
-     * @return array<ReviewResponseDto>
-     */
+    /** @return array<ReviewResponseDto> */
     public function getList(ReviewFiltersDto $filters): array;
 
     public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto;
 
+    /** @return array<mixed> */
     public function all(): array;
 
-    public function getById(int $id): ?ReviewResponseDto;
+    public function getById(int $id): ReviewResponseDto|null;
 
     public function create(ReviewDto $data): ReviewResponseDto;
 
-    public function update(int $id, ReviewDto $data): ?ReviewResponseDto;
+    public function update(int $id, ReviewDto $data): ReviewResponseDto|null;
 
     public function delete(int $id): bool;
 }

@@ -14,7 +14,8 @@ final readonly class DashboardController
     public function __construct(
         private DashboardRepositoryInterface $dashboardRepository,
         private GenreRepositoryInterface $genreRepository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(DashboardListRequest $request): View
     {

@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Models\Genre;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
+/** @extends Factory<Genre> */
 class GenreFactory extends Factory
 {
     public function definition(): array

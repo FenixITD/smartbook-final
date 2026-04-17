@@ -12,8 +12,9 @@ use Illuminate\View\View;
 final readonly class CreateOrderWebController
 {
     public function __construct(
-        private OrderRepositoryInterface $repository
-    ) {}
+        private OrderRepositoryInterface $repository,
+    ) {
+    }
 
     public function create(): View
     {

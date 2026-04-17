@@ -14,6 +14,7 @@ final class AuthorDataRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -24,7 +25,7 @@ final class AuthorDataRequest extends FormRequest
     public function toDto(): AuthorDto
     {
         return new AuthorDto(
-            name: $this->input('name'),
+            name: (string) $this->string('name'),
         );
     }
 }

@@ -14,6 +14,7 @@ final class OrderDataRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -30,9 +31,9 @@ final class OrderDataRequest extends FormRequest
         return new OrderDto(
             userId: $this->integer('userId'),
             total: $this->float('total'),
-            status: $this->input('status'),
-            shippingAddress: $this->input('shippingAddress'),
-            paymentMethod: $this->input('paymentMethod'),
+            status: (string) $this->string('status'),
+            shippingAddress: (string) $this->string('shippingAddress'),
+            paymentMethod: (string) $this->string('paymentMethod'),
         );
     }
 }

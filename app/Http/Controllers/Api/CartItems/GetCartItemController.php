@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 final readonly class GetCartItemController
 {
     public function __construct(
-        private CartItemRepositoryInterface $repository
-    ) {}
+        private CartItemRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(CartItem $cartItem): JsonResponse
     {

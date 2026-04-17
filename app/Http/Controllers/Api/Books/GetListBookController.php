@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 final readonly class GetListBookController
 {
     public function __construct(
-        private BookRepositoryInterface $repository
-    ) {}
+        private BookRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(BookListRequest $request): JsonResponse
     {

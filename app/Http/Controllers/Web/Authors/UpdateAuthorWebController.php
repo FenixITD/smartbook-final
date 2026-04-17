@@ -13,8 +13,9 @@ use Illuminate\View\View;
 final readonly class UpdateAuthorWebController
 {
     public function __construct(
-        private AuthorRepositoryInterface $repository
-    ) {}
+        private AuthorRepositoryInterface $repository,
+    ) {
+    }
 
     public function edit(Author $author): View
     {

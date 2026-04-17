@@ -1,0 +1,104 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+    level: max
+
+    paths:
+        - app
+        - tests
+
+    excludePaths:
+        - routes
+
+    checkUninitializedProperties: true
+    treatPhpDocTypesAsCertain: true
+    reportUnmatchedIgnoredErrors: false
+
+    noUnnecessaryCollectionCall: true
+    checkModelProperties: true
+    checkOctaneCompatibility: false
+
+    ignoreErrors:
+        # ── Eloquent / Laravel known limitations ──────────────────────────────
+        - '#Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder#'
+        - '#Dynamic call to static method Illuminate\\Database\\Eloquent\\Relations\\#'
+        - '#Dynamic call to static method Illuminate\\Session\\Store#'
+        - '#Dynamic call to static method Illuminate\\Contracts\\Auth\\Guard#'
+
+        # Repository create/update with toArray()
+        -
+            message: '#Parameter \#1 \$attributes of (static method|method) Illuminate\\Database\\Eloquent\\(Builder|Model).*::(create|update)\(\) expects#'
+            path: app/Repositories/*
+
+        # update() return type matches interface contract
+        - '#Method .+::update\(\) never returns null so it can be removed from the return type#'
+
+        # ── Collection / Paginator covariance ─────────────────────────────────
+        - '#Template type TValue on class Illuminate\\Support\\Collection is not covariant#'
+        - '#Template type TValue on class Illuminate\\Pagination\\LengthAwarePaginator is not covariant#'
+
+        # ── Elasticsearch SDK — third-party typing gaps ───────────────────────
+        -
+            path: app/Services/Elasticsearch/*
+            message: '#Call to an undefined method Elastic\\Elasticsearch\\Response\\Elasticsearch#'
+        -
+            path: app/Services/Elasticsearch/*
+            message: '#Parameter \#1 \$params of method Elastic\\Elasticsearch#'
+        -
+            path: app/Services/Elasticsearch/*
+            message: '#Parameter \#1 \$callback of function array_map#'
+        -
+            path: app/Services/Elasticsearch/*
+            message: '#Parameter \#2 \$array of function array_map#'
+        -
+            path: app/Services/Elasticsearch/*
+            message: '#Cannot cast mixed to int#'
+        -
+            path: app/Services/Elasticsearch/*
+            message: '#Cannot access offset#'
+        -
+            path: app/Services/Elasticsearch/*
+            message: '#Method App\\Services\\Elasticsearch\\BookIndexService::search\(\) should return#'
+
+        # ── FortifyServiceProvider — Fortify actions exist at runtime ─────────
+        -
+            path: app/Providers/FortifyServiceProvider.php
+            message: '#Class App\\Actions\\Fortify\\(CreateNewUser|ResetUserPassword) not found#'
+
+        # ── Tests ─────────────────────────────────────────────────────────────
+        -
+            message: '#has an uninitialized property#'
+            path: tests/*
+        -
+            message: '#(will always evaluate to true|assertIsArray|assertContainsOnlyInstancesOf|assertIsInt|assertIsFloat|assertIsString)#'
+            path: tests/*
+        -
+            message: '#Cannot access offset#'
+            path: tests/*
+        -
+            message: '#Parameter \#2 \$haystack#'
+            path: tests/*
+        -
+            message: '#Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Factories\\Factory#'
+            path: tests/*
+        -
+            message: '#Property Tests\\[a-zA-Z\\]+.*does not accept#'
+            path: tests/*
+        -
+            message: '#Property Tests\\[a-zA-Z\\]+.*cannot#'
+            path: tests/*
+        -
+            message: '#Part \$[a-zA-Z]+->id .* of encapsed string#'
+            path: tests/*
+        -
+            message: '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model#'
+            path: tests/*
+        -
+            message: '#Cannot cast mixed to (string|int|float)#'
+            path: tests/*
+        -
+            message: '#Method Illuminate\\Testing\\TestResponse.*assertStatus\(\) invoked with 2 parameters#'
+            path: tests/*

@@ -14,6 +14,7 @@ class BookDataRequest extends FormRequest
         return true;
     }
 
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -34,17 +35,17 @@ class BookDataRequest extends FormRequest
     public function toDto(): BookDto
     {
         return new BookDto(
-            title: $this->input('title'),
-            slug: $this->input('slug'),
+            title: (string) $this->string('title'),
+            slug: (string) $this->string('slug'),
             authorId: $this->integer('authorId'),
-            description: $this->input('description'),
+            description: (string) $this->string('description'),
             price: $this->float('price'),
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear'),
-            coverImage: $this->input('coverImage'),
+            coverImage: $this->has('coverImage') ? (string) $this->string('coverImage') : null,
             averageRating: $this->float('averageRating'),
             ratingsCount: $this->integer('ratingsCount'),
-            status: $this->input('status'),
+            status: (string) $this->string('status'),
         );
     }
 }

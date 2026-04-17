@@ -21,11 +21,11 @@ final class DashboardRepository implements DashboardRepositoryInterface
         };
 
         $paginator = Book::with(['author', 'genres'])
-            ->when($filters->search, fn ($q) => $q->where('title', 'like', "%{$filters->search}%"))
-            ->when($filters->genre, fn ($q) => $q->whereHas('genres', fn ($q) => $q->where('genres.id', $filters->genre)))
-            ->when($filters->author, fn ($q) => $q->where('author_id', $filters->author))
-            ->when($filters->year, fn ($q) => $q->where('publish_year', $filters->year))
-            ->when($filters->status, fn ($q) => $q->where('status', $filters->status))
+            ->when($filters->search, static fn ($q) => $q->where('title', 'like', "%{$filters->search}%"))
+            ->when($filters->genre, static fn ($q) => $q->whereHas('genres', static fn ($q) => $q->where('genres.id', $filters->genre)))
+            ->when($filters->author, static fn ($q) => $q->where('author_id', $filters->author))
+            ->when($filters->year, static fn ($q) => $q->where('publish_year', $filters->year))
+            ->when($filters->status, static fn ($q) => $q->where('status', $filters->status))
             ->orderBy($column, $direction)
             ->paginate($filters->perPage)
             ->withQueryString();

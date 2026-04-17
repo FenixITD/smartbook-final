@@ -12,8 +12,9 @@ use Illuminate\Http\JsonResponse;
 final readonly class GetReviewController
 {
     public function __construct(
-        private ReviewRepositoryInterface $repository
-    ) {}
+        private ReviewRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(Review $review): JsonResponse
     {

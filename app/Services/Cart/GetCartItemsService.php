@@ -13,12 +13,15 @@ final readonly class GetCartItemsService
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $service,
-    ) {}
+    ) {
+    }
 
+    /** @return Collection<int, mixed> */
     public function execute(): Collection
     {
         if (Auth::check()) {
-            return $this->repository->getByUserId(Auth::id());
+            /** @var Collection<int, mixed> $result */
+            return $this->repository->getByUserId((int) Auth::id());
         }
 
         return $this->service->getItems();

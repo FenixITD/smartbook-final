@@ -10,9 +10,14 @@ use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use Tests\TestCase;
 
-class ReviewDtoTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class ReviewDtoTest extends TestCase
 {
-    public function test_review_dto_to_array_returns_correct_structure(): void
+    public function testReviewDtoToArrayReturnsCorrectStructure(): void
     {
         $dto = new ReviewDto(
             userId: 1,
@@ -23,7 +28,7 @@ class ReviewDtoTest extends TestCase
 
         $result = $dto->toArray();
 
-        $this->assertSame([
+        self::assertSame([
             'user_id' => 1,
             'book_id' => 2,
             'rating' => 4.5,
@@ -31,7 +36,7 @@ class ReviewDtoTest extends TestCase
         ], $result);
     }
 
-    public function test_review_dto_stores_properties_correctly(): void
+    public function testReviewDtoStoresPropertiesCorrectly(): void
     {
         $dto = new ReviewDto(
             userId: 5,
@@ -40,23 +45,23 @@ class ReviewDtoTest extends TestCase
             comment: 'Not bad.',
         );
 
-        $this->assertSame(5, $dto->userId);
-        $this->assertSame(10, $dto->bookId);
-        $this->assertSame(3.0, $dto->rating);
-        $this->assertSame('Not bad.', $dto->comment);
+        self::assertSame(5, $dto->userId);
+        self::assertSame(10, $dto->bookId);
+        self::assertSame(3.0, $dto->rating);
+        self::assertSame('Not bad.', $dto->comment);
     }
 
-    public function test_review_filters_dto_has_correct_defaults(): void
+    public function testReviewFiltersDtoHasCorrectDefaults(): void
     {
-        $dto = new ReviewFiltersDto;
+        $dto = new ReviewFiltersDto();
 
-        $this->assertNull($dto->search);
-        $this->assertSame(15, $dto->perPage);
-        $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        self::assertNull($dto->search);
+        self::assertSame(15, $dto->perPage);
+        self::assertSame('id', $dto->sortBy);
+        self::assertSame('asc', $dto->sortDirection);
     }
 
-    public function test_review_filters_dto_accepts_custom_values(): void
+    public function testReviewFiltersDtoAcceptsCustomValues(): void
     {
         $dto = new ReviewFiltersDto(
             search: '5',
@@ -65,15 +70,15 @@ class ReviewDtoTest extends TestCase
             sortDirection: 'desc',
         );
 
-        $this->assertSame('5', $dto->search);
-        $this->assertSame(20, $dto->perPage);
-        $this->assertSame('rating', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        self::assertSame('5', $dto->search);
+        self::assertSame(20, $dto->perPage);
+        self::assertSame('rating', $dto->sortBy);
+        self::assertSame('desc', $dto->sortDirection);
     }
 
-    public function test_review_response_dto_from_model(): void
+    public function testReviewResponseDtoFromModel(): void
     {
-        $review = new Review;
+        $review = new Review();
         $review->id = 7;
         $review->user_id = 3;
         $review->book_id = 12;
@@ -84,18 +89,18 @@ class ReviewDtoTest extends TestCase
 
         $dto = ReviewResponseDto::fromModel($review);
 
-        $this->assertSame(7, $dto->id);
-        $this->assertSame(3, $dto->userId);
-        $this->assertSame(12, $dto->bookId);
-        $this->assertSame(4.0, $dto->rating);
-        $this->assertSame('Really enjoyed it.', $dto->comment);
-        $this->assertSame('2024-02-01 08:00:00', $dto->createdAt);
-        $this->assertSame('2024-02-10 14:00:00', $dto->updatedAt);
+        self::assertSame(7, $dto->id);
+        self::assertSame(3, $dto->userId);
+        self::assertSame(12, $dto->bookId);
+        self::assertSame(4.0, $dto->rating);
+        self::assertSame('Really enjoyed it.', $dto->comment);
+        self::assertSame('2024-02-01 08:00:00', $dto->createdAt);
+        self::assertSame('2024-02-10 14:00:00', $dto->updatedAt);
     }
 
-    public function test_review_response_dto_casts_fields_to_correct_types(): void
+    public function testReviewResponseDtoCastsFieldsToCorrectTypes(): void
     {
-        $review = new Review;
+        $review = new Review();
         $review->id = 1;
         $review->user_id = 1;
         $review->book_id = 1;
@@ -106,9 +111,9 @@ class ReviewDtoTest extends TestCase
 
         $dto = ReviewResponseDto::fromModel($review);
 
-        $this->assertIsInt($dto->userId);
-        $this->assertIsInt($dto->bookId);
-        $this->assertIsFloat($dto->rating);
-        $this->assertIsString($dto->comment);
+        self::assertIsInt($dto->userId);
+        self::assertIsInt($dto->bookId);
+        self::assertIsFloat($dto->rating);
+        self::assertIsString($dto->comment);
     }
 }

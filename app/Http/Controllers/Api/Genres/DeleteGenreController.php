@@ -11,12 +11,13 @@ use Illuminate\Http\JsonResponse;
 final readonly class DeleteGenreController
 {
     public function __construct(
-        private GenreRepositoryInterface $repository
-    ) {}
+        private GenreRepositoryInterface $repository,
+    ) {
+    }
 
     public function __invoke(int $genre): JsonResponse
     {
-        if (! Genre::find($genre)) {
+        if (Genre::find($genre) === null) {
             return response()->json(['message' => 'Genre not found'], 404);
         }
 
