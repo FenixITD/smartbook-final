@@ -16,10 +16,10 @@ readonly class UpdateFavoriteController
     ) {
     }
 
-    public function __invoke(FavoriteDataRequest $request, int $favorite): JsonResponse
+    public function __invoke(FavoriteDataRequest $request, int $favoriteId): JsonResponse
     {
-        $updated = $this->repository->update($favorite, $request->toDto());
+        $updatedFavorite = $this->repository->update($favoriteId, $request->toDto());
 
-        return (new FavoriteResource($updated))->response();
+        return (new FavoriteResource($updatedFavorite))->response();
     }
 }

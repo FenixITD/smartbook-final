@@ -14,6 +14,10 @@ class OrderItem extends Model
     /** @use HasFactory<OrderItemFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'price_at_purchase' => 'float',
+    ];
+
     protected $fillable = [
         'order_id',
         'book_id',

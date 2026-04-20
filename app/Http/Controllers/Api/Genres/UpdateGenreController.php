@@ -16,10 +16,10 @@ readonly class UpdateGenreController
     ) {
     }
 
-    public function __invoke(GenreDataRequest $request, int $genre): JsonResponse
+    public function __invoke(GenreDataRequest $request, int $genreId): JsonResponse
     {
-        $updated = $this->repository->update($genre, $request->toDto());
+        $updatedGenre = $this->repository->update($genreId, $request->toDto());
 
-        return (new GenreResource($updated))->response();
+        return (new GenreResource($updatedGenre))->response();
     }
 }

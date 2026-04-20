@@ -7,12 +7,9 @@ namespace App\Providers;
 use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Infrastructure\Persistence\EloquentTransactionManager;
 use App\Listeners\MergeCartOnLogin;
-use App\Models\Book;
-use App\Observers\BookObserver;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
-use App\Repositories\Eloquent\DashboardRepository;
 use App\Repositories\Eloquent\FavoriteRepository;
 use App\Repositories\Eloquent\GenreRepository;
 use App\Repositories\Eloquent\OrderItemRepository;
@@ -21,14 +18,14 @@ use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
-use App\Repositories\Interfaces\DashboardRepositoryInterface;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
-use App\Services\Elasticsearch\BookIndexService;
 use Carbon\CarbonImmutable;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -43,8 +40,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(BookIndexService::class);
-
         $this->app->bind(
             AuthorRepositoryInterface::class,
             AuthorRepository::class
@@ -86,14 +81,13 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            DashboardRepositoryInterface::class,
-            DashboardRepository::class
-        );
-
-        $this->app->bind(
             TransactionManagerInterface::class,
             EloquentTransactionManager::class,
         );
+
+        $this->app->singleton(Client::class, static fn () => ClientBuilder::create()
+            ->setHosts([config('elasticsearch.host')])
+            ->build());
     }
 
     /**
@@ -102,8 +96,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-
-        Book::observe(BookObserver::class);
 
         Event::listen(
             Login::class,

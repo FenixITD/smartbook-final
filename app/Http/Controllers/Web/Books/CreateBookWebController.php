@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Web\Books;
 use App\Http\Requests\Book\BookWebDataRequest;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
-use App\Services\Book\BookCreatorService;
+use App\Services\Book\CreateBookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -16,7 +16,7 @@ final readonly class CreateBookWebController
     public function __construct(
         private AuthorRepositoryInterface $authorRepository,
         private GenreRepositoryInterface $genreRepository,
-        private BookCreatorService $service)
+        private CreateBookService $service)
     {
     }
 

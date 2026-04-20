@@ -16,10 +16,10 @@ readonly class UpdateCartItemController
     ) {
     }
 
-    public function __invoke(CartItemDataRequest $request, int $cartItem): JsonResponse
+    public function __invoke(CartItemDataRequest $request, int $cartItemId): JsonResponse
     {
-        $updated = $this->repository->update($cartItem, $request->toDto());
+        $updatedCartItem = $this->repository->update($cartItemId, $request->toDto());
 
-        return (new CartItemResource($updated))->response();
+        return (new CartItemResource($updatedCartItem))->response();
     }
 }

@@ -7,18 +7,18 @@ namespace App\Services\Book;
 use App\Http\Requests\Book\BookWebDataRequest;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-readonly class BookCreatorService
+readonly class UpdateBookService
 {
     public function __construct(
         private BookRepositoryInterface $repository)
     {
     }
 
-    public function execute(BookWebDataRequest $request): void
+    public function execute(BookWebDataRequest $request, int $bookId): void
     {
-        $responseDto = $this->repository->create($request->toDto());
+        $book = $this->repository->findModel($bookId);
 
-        $book = $this->repository->findModel($responseDto->id);
+        $this->repository->update($bookId, $request->toDtoForUpdate($book));
 
         $this->repository->syncBookGenres($book, $request->genres());
     }

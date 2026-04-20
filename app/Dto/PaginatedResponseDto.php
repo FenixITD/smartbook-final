@@ -25,6 +25,17 @@ final readonly class PaginatedResponseDto
         );
     }
 
+    public static function empty(int $perPage): self
+    {
+        return new self(
+            items: [],
+            total: 0,
+            perPage: $perPage,
+            currentPage: 1,
+            lastPage: 1,
+        );
+    }
+
     /**
      * @param array<mixed> $items
      */

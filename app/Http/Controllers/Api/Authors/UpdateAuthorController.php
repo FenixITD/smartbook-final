@@ -16,10 +16,10 @@ readonly class UpdateAuthorController
     ) {
     }
 
-    public function __invoke(AuthorDataRequest $request, int $author): JsonResponse
+    public function __invoke(AuthorDataRequest $request, int $authorId): JsonResponse
     {
-        $updated = $this->repository->update($author, $request->toDto());
+        $updatedAuthor = $this->repository->update($authorId, $request->toDto());
 
-        return (new AuthorResource($updated))->response();
+        return (new AuthorResource($updatedAuthor))->response();
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Cart;
 
 use App\Models\Book;
+use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Support\Collection;
 use stdClass;
 
@@ -13,6 +14,11 @@ use function is_array;
 final class GuestCartService
 {
     private const SESSION_KEY = 'guest_cart';
+
+    public function __construct(
+        private BookRepositoryInterface $repository,
+    ) {
+    }
 
     public function add(int $bookId, int $quantity): void
     {
@@ -61,10 +67,7 @@ final class GuestCartService
             return $empty;
         }
 
-        $books = Book::with('author')
-            ->whereIn('id', array_keys($cart))
-            ->get()
-            ->keyBy('id');
+        $books = $this->repository->getByIdsWithAuthor(array_keys($cart));
 
         /** @var Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}&stdClass> $result */
         $result = collect($cart)

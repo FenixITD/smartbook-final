@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Orders;
 
 use App\Http\Resources\Order\OrderResource;
-use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -16,10 +15,10 @@ final readonly class GetOrderController
     ) {
     }
 
-    public function __invoke(Order $order): JsonResponse
+    public function __invoke(int $orderId): JsonResponse
     {
-        $orderId = $this->repository->getById($order->id);
+        $order = $this->repository->getById($orderId);
 
-        return (new OrderResource($orderId))->response();
+        return (new OrderResource($order))->response();
     }
 }

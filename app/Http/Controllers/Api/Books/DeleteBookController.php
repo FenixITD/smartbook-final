@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Books;
 
-use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -15,13 +14,13 @@ final readonly class DeleteBookController
     ) {
     }
 
-    public function __invoke(int $book): JsonResponse
+    public function __invoke(int $bookId): JsonResponse
     {
-        if (Book::find($book) === null) {
+        if ($this->repository->getById($bookId) === null) {
             return response()->json(['message' => 'Book not found'], 404);
         }
 
-        $this->repository->delete($book);
+        $this->repository->delete($bookId);
 
         return response()->json([
             'message' => 'Book deleted successfully',

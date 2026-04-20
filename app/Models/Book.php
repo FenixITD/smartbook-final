@@ -10,11 +10,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 class Book extends Model
 {
     /** @use HasFactory<BookFactory> */
     use HasFactory;
+
+    use Searchable;
+
+    protected $casts = [
+        'price' => 'float',
+        'average_rating' => 'float',
+    ];
 
     protected $fillable = [
         'title',
@@ -29,6 +37,32 @@ class Book extends Model
         'ratings_count',
         'status',
     ];
+
+    public function searchableAs(): string
+    {
+        return 'books';
+    }
+
+    /** @return array<string, mixed> */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'description' => $this->description,
+            'author_id' => $this->author_id,
+            'price' => $this->price,
+            'stock' => $this->stock,
+            'publish_year' => $this->publish_year,
+            'cover_image' => $this->cover_image,
+            'average_rating' => $this->average_rating,
+            'ratings_count' => $this->ratings_count,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
+    }
 
     /** @return BelongsTo<Author, $this> */
     public function author(): BelongsTo

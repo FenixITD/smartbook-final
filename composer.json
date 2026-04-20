@@ -11,10 +11,12 @@
     "require": {
         "php": "^8.2",
         "ext-gd": "*",
+        "babenkoivan/elastic-scout-driver": "^4.0",
         "elasticsearch/elasticsearch": "^8.11",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "*",
+        "laravel/scout": "*",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.32",
         "livewire/flux": "^2.13",

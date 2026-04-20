@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Authors;
 
 use App\Http\Resources\Author\AuthorResource;
-use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -16,10 +15,10 @@ final readonly class GetAuthorController
     ) {
     }
 
-    public function __invoke(Author $author): JsonResponse
+    public function __invoke(int $authorId): JsonResponse
     {
-        $authorId = $this->repository->getById($author->id);
+        $author = $this->repository->getById($authorId);
 
-        return (new AuthorResource($authorId))->response();
+        return (new AuthorResource($author))->response();
     }
 }

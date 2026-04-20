@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\CartItems;
 
 use App\Http\Resources\CartItem\CartItemResource;
-use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -16,10 +15,10 @@ final readonly class GetCartItemController
     ) {
     }
 
-    public function __invoke(CartItem $cartItem): JsonResponse
+    public function __invoke(int $cartItemId): JsonResponse
     {
-        $cartItemId = $this->repository->getById($cartItem->id);
+        $cartItem = $this->repository->getById($cartItemId);
 
-        return (new CartItemResource($cartItemId))->response();
+        return (new CartItemResource($cartItem))->response();
     }
 }

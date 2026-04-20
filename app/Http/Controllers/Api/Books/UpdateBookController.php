@@ -16,10 +16,10 @@ readonly class UpdateBookController
     ) {
     }
 
-    public function __invoke(BookDataRequest $request, int $book): JsonResponse
+    public function __invoke(BookDataRequest $request, int $bookId): JsonResponse
     {
-        $updated = $this->repository->update($book, $request->toDto());
+        $updatedBook = $this->repository->update($bookId, $request->toDto());
 
-        return (new BookResource($updated))->response();
+        return (new BookResource($updatedBook))->response();
     }
 }

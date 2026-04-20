@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\OrderItems;
 
-use App\Models\OrderItem;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -15,13 +14,13 @@ final readonly class DeleteOrderItemController
     ) {
     }
 
-    public function __invoke(int $orderItem): JsonResponse
+    public function __invoke(int $orderItemId): JsonResponse
     {
-        if (OrderItem::find($orderItem) === null) {
+        if ($this->repository->getById($orderItemId) === null) {
             return response()->json(['message' => 'OrderItem not found'], 404);
         }
 
-        $this->repository->delete($orderItem);
+        $this->repository->delete($orderItemId);
 
         return response()->json([
             'message' => 'OrderItem deleted successfully',

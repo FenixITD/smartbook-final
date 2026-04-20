@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Favorites;
 
 use App\Http\Resources\Favorite\FavoriteResource;
-use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -16,10 +15,10 @@ final readonly class GetFavoriteController
     ) {
     }
 
-    public function __invoke(Favorite $favorite): JsonResponse
+    public function __invoke(int $favoriteId): JsonResponse
     {
-        $favoriteId = $this->repository->getById($favorite->id);
+        $favorite = $this->repository->getById($favoriteId);
 
-        return (new FavoriteResource($favoriteId))->response();
+        return (new FavoriteResource($favorite))->response();
     }
 }

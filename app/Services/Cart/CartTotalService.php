@@ -9,13 +9,13 @@ use stdClass;
 final readonly class CartTotalService
 {
     public function __construct(
-        private GetCartItemsService $getCartItems,
+        private GetCartItemsService $getCartItemsService,
     ) {
     }
 
     public function execute(): float
     {
-        return $this->getCartItems->execute()
+        return $this->getCartItemsService->execute()
             ->sum(static function (mixed $item): float {
                 /** @var object{id: null, book_id: int, quantity: int, book: \App\Models\Book|null, user_id: null}&stdClass $item */
                 $book = $item->book;

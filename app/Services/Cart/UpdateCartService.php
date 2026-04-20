@@ -11,7 +11,7 @@ final readonly class UpdateCartService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-        private GuestCartService $service,
+        private GuestCartService $guestCartService,
     ) {
     }
 
@@ -24,7 +24,7 @@ final readonly class UpdateCartService
                 $this->repository->updateQuantity($cartItem, $quantity);
             }
         } else {
-            $this->service->update($bookId, $quantity);
+            $this->guestCartService->update($bookId, $quantity);
         }
     }
 }

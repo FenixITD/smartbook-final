@@ -11,7 +11,7 @@ final readonly class RemoveFromCartService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-        private GuestCartService $service,
+        private GuestCartService $guestCartService,
     ) {
     }
 
@@ -24,7 +24,7 @@ final readonly class RemoveFromCartService
                 $this->repository->delete($cartItem->id);
             }
         } else {
-            $this->service->remove($bookId);
+            $this->guestCartService->remove($bookId);
         }
     }
 }

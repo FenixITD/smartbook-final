@@ -16,10 +16,10 @@ readonly class UpdateReviewController
     ) {
     }
 
-    public function __invoke(ReviewDataRequest $request, int $review): JsonResponse
+    public function __invoke(ReviewDataRequest $request, int $reviewId): JsonResponse
     {
-        $updated = $this->repository->update($review, $request->toDto());
+        $updatedReview = $this->repository->update($reviewId, $request->toDto());
 
-        return (new ReviewResource($updated))->response();
+        return (new ReviewResource($updatedReview))->response();
     }
 }

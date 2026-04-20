@@ -15,6 +15,10 @@ class Order extends Model
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
+    protected $casts = [
+        'total' => 'float',
+    ];
+
     protected $fillable = [
         'user_id',
         'total',

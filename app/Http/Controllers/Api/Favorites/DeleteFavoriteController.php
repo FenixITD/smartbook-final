@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Favorites;
 
-use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -15,13 +14,13 @@ final readonly class DeleteFavoriteController
     ) {
     }
 
-    public function __invoke(int $favorite): JsonResponse
+    public function __invoke(int $favoriteId): JsonResponse
     {
-        if (Favorite::find($favorite) === null) {
+        if ($this->repository->getById($favoriteId) === null) {
             return response()->json(['message' => 'Favorite not found'], 404);
         }
 
-        $this->repository->delete($favorite);
+        $this->repository->delete($favoriteId);
 
         return response()->json([
             'message' => 'Favorite deleted successfully',

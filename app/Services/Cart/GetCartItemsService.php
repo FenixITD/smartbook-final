@@ -14,7 +14,7 @@ final readonly class GetCartItemsService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-        private GuestCartService $service,
+        private GuestCartService $guestCartService,
     ) {
     }
 
@@ -27,6 +27,6 @@ final readonly class GetCartItemsService
             return $this->repository->getByUserId((int) Auth::id());
         }
 
-        return $this->service->getItems();
+        return $this->guestCartService->getItems();
     }
 }

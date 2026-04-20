@@ -12,13 +12,13 @@ final readonly class MergeSessionCartService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-        private GuestCartService $guestCart,
+        private GuestCartService $guestCartService,
     ) {
     }
 
     public function execute(): void
     {
-        $cart = $this->guestCart->all();
+        $cart = $this->guestCartService->all();
 
         if ($cart === []) {
             return;
@@ -32,6 +32,6 @@ final readonly class MergeSessionCartService
             ));
         }
 
-        $this->guestCart->clear();
+        $this->guestCartService->clear();
     }
 }

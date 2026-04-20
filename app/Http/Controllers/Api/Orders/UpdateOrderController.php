@@ -16,10 +16,10 @@ readonly class UpdateOrderController
     ) {
     }
 
-    public function __invoke(OrderDataRequest $request, int $order): JsonResponse
+    public function __invoke(OrderDataRequest $request, int $orderId): JsonResponse
     {
-        $updated = $this->repository->update($order, $request->toDto());
+        $updatedOrder = $this->repository->update($orderId, $request->toDto());
 
-        return (new OrderResource($updated))->response();
+        return (new OrderResource($updatedOrder))->response();
     }
 }

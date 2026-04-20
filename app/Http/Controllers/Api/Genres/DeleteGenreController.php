@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Genres;
 
-use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -15,13 +14,13 @@ final readonly class DeleteGenreController
     ) {
     }
 
-    public function __invoke(int $genre): JsonResponse
+    public function __invoke(int $genreId): JsonResponse
     {
-        if (Genre::find($genre) === null) {
+        if ($this->repository->getById($genreId) === null) {
             return response()->json(['message' => 'Genre not found'], 404);
         }
 
-        $this->repository->delete($genre);
+        $this->repository->delete($genreId);
 
         return response()->json([
             'message' => 'Genre deleted successfully',

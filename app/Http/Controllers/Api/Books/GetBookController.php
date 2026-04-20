@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Books;
 
 use App\Http\Resources\Book\BookResource;
-use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -16,10 +15,10 @@ final readonly class GetBookController
     ) {
     }
 
-    public function __invoke(Book $book): JsonResponse
+    public function __invoke(int $bookId): JsonResponse
     {
-        $bookId = $this->repository->getById($book->id);
+        $book = $this->repository->getById($bookId);
 
-        return (new BookResource($bookId))->response();
+        return (new BookResource($book))->response();
     }
 }

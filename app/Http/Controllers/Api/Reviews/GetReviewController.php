@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Reviews;
 
 use App\Http\Resources\Review\ReviewResource;
-use App\Models\Review;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -16,10 +15,10 @@ final readonly class GetReviewController
     ) {
     }
 
-    public function __invoke(Review $review): JsonResponse
+    public function __invoke(int $reviewId): JsonResponse
     {
-        $reviewId = $this->repository->getById($review->id);
+        $review = $this->repository->getById($reviewId);
 
-        return (new ReviewResource($reviewId))->response();
+        return (new ReviewResource($review))->response();
     }
 }

@@ -12,7 +12,7 @@ final readonly class AddToCartService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-        private GuestCartService $guestCart,
+        private GuestCartService $guestCartService,
     ) {
     }
 
@@ -25,7 +25,7 @@ final readonly class AddToCartService
                 quantity: $quantity,
             ));
         } else {
-            $this->guestCart->add($bookId, $quantity);
+            $this->guestCartService->add($bookId, $quantity);
         }
     }
 }

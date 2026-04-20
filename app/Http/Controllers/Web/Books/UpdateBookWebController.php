@@ -8,7 +8,7 @@ use App\Http\Requests\Book\BookWebDataRequest;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
-use App\Services\Book\BookUpdaterService;
+use App\Services\Book\UpdateBookService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -18,14 +18,13 @@ final readonly class UpdateBookWebController
         private BookRepositoryInterface $bookRepository,
         private AuthorRepositoryInterface $authorRepository,
         private GenreRepositoryInterface $genreRepository,
-        private BookUpdaterService $service,
+        private UpdateBookService $service,
     ) {
     }
 
     public function edit(int $bookId): View
     {
-        $book = $this->bookRepository->findModel($bookId);
-        $book->load('genres');
+        $book = $this->bookRepository->findModelWithRelations($bookId);
         $authors = $this->authorRepository->all();
         $genres = $this->genreRepository->all();
 
