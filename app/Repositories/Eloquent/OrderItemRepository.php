@@ -16,7 +16,7 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
     public function getList(OrderItemFiltersDto $filters): array
     {
         return OrderItem::query()
-            ->when($filters->search !== null, static fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()

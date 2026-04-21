@@ -16,7 +16,7 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
     public function getList(FavoriteFiltersDto $filters): array
     {
         return Favorite::query()
-            ->when($filters->search !== null, static fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()

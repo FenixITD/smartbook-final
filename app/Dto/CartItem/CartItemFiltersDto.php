@@ -7,6 +7,7 @@ namespace App\Dto\CartItem;
 final readonly class CartItemFiltersDto
 {
     public function __construct(
+        public int|null $id = null,
         public string|null $search = null,
         public int $perPage = 15,
         public string $sortBy = 'id',

@@ -17,7 +17,7 @@ final class OrderRepository implements OrderRepositoryInterface
     public function getList(OrderFiltersDto $filters): array
     {
         return Order::query()
-            ->when($filters->search !== null, static fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->getCollection()
@@ -28,7 +28,7 @@ final class OrderRepository implements OrderRepositoryInterface
     public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto
     {
         $paginator = Order::query()
-            ->when($filters->search !== null, static fn ($q) => $q->where('id', 'like', "%{$filters->search}%"))
+            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage);
 
