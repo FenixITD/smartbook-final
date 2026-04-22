@@ -273,7 +273,7 @@ final class CartItemRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new CartItemRepository();
+        $this->repository = $this->app->make(CartItemRepository::class);
         $this->user = User::factory()->create();
         $this->author = Author::factory()->create();
         $this->book = Book::factory()->create(['author_id' => $this->author->id]);

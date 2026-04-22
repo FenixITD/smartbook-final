@@ -9,10 +9,19 @@ use App\Dto\CartItem\CartItemFiltersDto;
 use App\Dto\CartItem\CartItemResponseDto;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Collection;
+
+use function count;
+use function sprintf;
 
 final class CartItemRepository implements CartItemRepositoryInterface
 {
+    public function __construct(
+        private readonly ConnectionInterface $db,
+    ) {
+    }
+
     /** @return array<CartItemResponseDto> */
     public function getList(CartItemFiltersDto $filters): array
     {
@@ -68,6 +77,33 @@ final class CartItemRepository implements CartItemRepositoryInterface
         } else {
             CartItem::create($data->toArray());
         }
+    }
+
+    /**
+     * @param array<int, array{book_id: int, quantity: int}> $items
+     */
+    public function bulkAddOrIncrement(int $userId, array $items): void
+    {
+        if ($items === []) {
+            return;
+        }
+
+        $rows = array_map(
+            static fn (array $item): array => [$userId, $item['book_id'], $item['quantity']],
+            $items,
+        );
+
+        $this->db->statement(
+            sprintf(
+                'INSERT INTO cart_items (user_id, book_id, quantity) VALUES %s
+         ON CONFLICT (user_id, book_id) DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity',
+                implode(', ', array_fill(0, count($items), '(?, ?, ?)')),
+            ),
+            array_merge(...array_map(
+                static fn (array $item): array => [$userId, $item['book_id'], $item['quantity']],
+                $items,
+            )),
+        );
     }
 
     public function updateQuantity(CartItem $cartItem, int $quantity): void

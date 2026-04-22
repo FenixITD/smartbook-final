@@ -28,6 +28,9 @@ interface CartItemRepositoryInterface
 
     public function addOrIncrement(CartItemDto $data): void;
 
+    /** @param array<int, array{book_id: int, quantity: int}> $items */
+    public function bulkAddOrIncrement(int $userId, array $items): void;
+
     public function updateQuantity(CartItem $cartItem, int $quantity): void;
 
     public function create(CartItemDto $data): CartItemResponseDto;
