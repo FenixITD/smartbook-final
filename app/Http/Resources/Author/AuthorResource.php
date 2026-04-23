@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Author;
 
-use App\Dto\Author\AuthorResponseDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
-/**
- * @mixin AuthorResponseDto
- */
+#[OA\Schema(
+    schema: 'AuthorResource',
+    properties: [
+        new OA\Property(property: 'name', type: 'string', example: 'Author name'),
+    ],
+    type: 'object',
+)]
 final class AuthorResource extends JsonResource
 {
     /**

@@ -6,7 +6,16 @@ namespace App\Http\Requests\Author;
 
 use App\Dto\Author\AuthorDto;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'AuthorDataRequest',
+    required: [],
+    properties: [
+        new OA\Property(property: 'name', type: 'string', example: 'Author name'),
+    ],
+    type: 'object',
+)]
 final class AuthorDataRequest extends FormRequest
 {
     public function authorize(): bool

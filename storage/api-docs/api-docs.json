@@ -1,0 +1,189 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "swagger",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/authors": {
+            "get": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Get a list of all authors",
+                "operationId": "e2064d795c83369988d8efeddaeddad2",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all authors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthorResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Create author",
+                "operationId": "00a88e2cb24709eaf3f58f864117f328",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthorDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created author",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthorResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/authors/{author}": {
+            "get": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Get author by ID",
+                "operationId": "f176a1208035b9ea39f53c8952d6efb3",
+                "parameters": [
+                    {
+                        "parameter": "author",
+                        "name": "author",
+                        "in": "path",
+                        "description": "Get a single author by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single author by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthorResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Update author by ID",
+                "operationId": "f93f5b3576d65d641fdfec4ac6f8df86",
+                "parameters": [
+                    {
+                        "parameter": "author",
+                        "name": "author",
+                        "in": "path",
+                        "description": "Update a single author by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthorDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single author by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthorResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Authors"
+                ],
+                "summary": "Delete author by ID",
+                "operationId": "23f89e2081159f339d787a38f2aeaa0e",
+                "parameters": [
+                    {
+                        "parameter": "author",
+                        "name": "author",
+                        "in": "path",
+                        "description": "Delete a single author by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single author by ID"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AuthorDataRequest": {
+                "required": [],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Author name"
+                    }
+                },
+                "type": "object"
+            },
+            "AuthorResource": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Author name"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authors",
+            "description": "Authors"
+        }
+    ]
+}

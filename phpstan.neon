@@ -13,6 +13,9 @@ parameters:
     excludePaths:
         - routes
 
+    parallel:
+        maximumNumberOfProcesses: 1
+
     checkUninitializedProperties: true
     treatPhpDocTypesAsCertain: true
     reportUnmatchedIgnoredErrors: false
@@ -22,6 +25,11 @@ parameters:
     checkOctaneCompatibility: false
 
     ignoreErrors:
+        # ── JsonResource — magic __get proxies to $this->resource ────────────────
+        -
+            message: '#Access to an undefined property App\\Http\\Resources\\#'
+            path: app/Http/Resources/*
+
         # ── Eloquent dynamic calls ────────────────────────────────────────────
         - '#Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder#'
         - '#Dynamic call to static method Illuminate\\Database\\Eloquent\\Relations\\#'
