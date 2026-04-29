@@ -17,7 +17,7 @@ interface AuthorRepositoryInterface
     public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto;
 
     /** @return array<mixed> */
-    public function all(): array;
+    public function getAll(): array;
 
     public function getById(int $id): AuthorResponseDto|null;
 

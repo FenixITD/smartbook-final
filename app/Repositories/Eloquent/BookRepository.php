@@ -11,12 +11,16 @@ use App\Dto\Dashboard\DashboardFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
-use Illuminate\Support\Collection;
+use App\Services\Book\SearchBookForDashboardService;
 
 use function count;
 
 final class BookRepository implements BookRepositoryInterface
 {
+    public function __construct(private readonly SearchBookForDashboardService $searchService)
+    {
+    }
+
     /** @return array<BookResponseDto> */
     public function getList(BookFiltersDto $filters): array
     {
@@ -66,21 +70,26 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /**
-     * @param array<int> $ids
-     *
-     * @return Collection<int, Book>
-     */
-    public function getByIdsWithAuthor(array $ids): Collection
+    /** @param array<int> $ids */
+    public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto
     {
-        return Book::with('author')
+        $paginator = Book::with('author')
             ->whereIn('id', $ids)
-            ->get()
-            ->keyBy('id');
+            ->orderByRaw($this->orderByIds($ids))
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return PaginatedResponseDto::fromPaginator($paginator);
     }
 
     public function getDashboardList(DashboardFiltersDto $filters): PaginatedResponseDto
     {
+        $ids = $this->searchService->search($filters);
+
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
+        }
+
         [$column, $direction] = match ($filters->sort) {
             'price_asc' => ['price', 'asc'],
             'price_desc' => ['price', 'desc'],
@@ -89,11 +98,7 @@ final class BookRepository implements BookRepositoryInterface
         };
 
         $paginator = Book::with(['author', 'genres'])
-            ->when($filters->search, static fn ($q) => $q->where('title', 'like', "%{$filters->search}%"))
-            ->when($filters->genre, static fn ($q) => $q->whereHas('genres', static fn ($q) => $q->where('genres.id', $filters->genre)))
-            ->when($filters->author, static fn ($q) => $q->where('author_id', $filters->author))
-            ->when($filters->year, static fn ($q) => $q->where('publish_year', $filters->year))
-            ->when($filters->status, static fn ($q) => $q->where('status', $filters->status))
+            ->whereIn('id', $ids)
             ->orderBy($column, $direction)
             ->paginate($filters->perPage)
             ->withQueryString();
@@ -101,47 +106,42 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    public function findModel(int $id): Book
+    public function getById(int $id): BookResponseDto|null
     {
-        return Book::findOrFail($id);
+        $bookId = Book::find($id);
+
+        return $bookId !== null ? BookResponseDto::fromModel($bookId) : null;
     }
 
-    public function findModelWithRelations(int $id): Book
+    public function findByIdWithRelations(int $id): BookResponseDto
     {
-        return Book::with(['author', 'genres'])->findOrFail($id);
+        $bookId = Book::with(['author', 'genres'])->findOrFail($id);
+
+        return BookResponseDto::fromModel($bookId);
     }
 
     /** @param array<int> $genreIds */
-    public function syncBookGenres(Book $book, array $genreIds): void
+    public function syncBookGenres(int $bookId, array $genreIds): void
     {
-        $book->genres()->sync($genreIds);
+        Book::findOrFail($bookId)->genres()->sync($genreIds);
     }
 
-    public function getById(int $id): BookResponseDto|null
+    /** @param array<int> $ids */
+    public function getOrderedByIds(array $ids, int $perPage): PaginatedResponseDto
     {
-        $book = Book::find($id);
-
-        return $book !== null ? BookResponseDto::fromModel($book) : null;
-    }
-
-    /**
-     * @param array<int> $ids
-     *
-     * @return Collection<int, Book>
-     */
-    public function getOrderedByIds(array $ids): Collection
-    {
-        $cases = collect($ids)
-            ->values()
-            ->map(static fn (mixed $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
-            ->implode(' ');
-
-        $orderBy = 'CASE '.$cases.' ELSE '.count($ids).' END';
-
-        return Book::with('author')
+        $paginator = Book::with('author')
             ->whereIn('id', $ids)
-            ->orderByRaw($orderBy)
-            ->get();
+            ->orderByRaw($this->orderByIds($ids))
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $paginator->setCollection(
+            $paginator->getCollection()->map(
+                static fn (Book $book): BookResponseDto => BookResponseDto::fromModel($book)
+            )
+        );
+
+        return PaginatedResponseDto::fromPaginator($paginator);
     }
 
     public function create(BookDto $data): BookResponseDto
@@ -166,7 +166,7 @@ final class BookRepository implements BookRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) Book::destroy($id);
+        return Book::findOrFail($id)->delete();
     }
 
     /** @param array<int> $ids */
@@ -177,6 +177,6 @@ final class BookRepository implements BookRepositoryInterface
             ->map(static fn (int $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
             ->implode(' ');
 
-        return "CASE {$cases} ELSE ".count($ids).' END';
+        return 'CASE '.$cases.' ELSE '.count($ids).' END';
     }
 }

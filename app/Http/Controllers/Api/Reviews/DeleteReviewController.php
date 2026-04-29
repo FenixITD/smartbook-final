@@ -16,10 +16,6 @@ final readonly class DeleteReviewController
 
     public function __invoke(int $reviewId): JsonResponse
     {
-        if ($this->repository->getById($reviewId) === null) {
-            return response()->json(['message' => 'Review not found'], 404);
-        }
-
         $this->repository->delete($reviewId);
 
         return response()->json([

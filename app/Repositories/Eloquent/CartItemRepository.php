@@ -7,21 +7,12 @@ namespace App\Repositories\Eloquent;
 use App\Dto\CartItem\CartItemDto;
 use App\Dto\CartItem\CartItemFiltersDto;
 use App\Dto\CartItem\CartItemResponseDto;
+use App\Dto\PaginatedResponseDto;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Support\Collection;
-
-use function count;
-use function sprintf;
 
 final class CartItemRepository implements CartItemRepositoryInterface
 {
-    public function __construct(
-        private readonly ConnectionInterface $db,
-    ) {
-    }
-
     /** @return array<CartItemResponseDto> */
     public function getList(CartItemFiltersDto $filters): array
     {
@@ -34,26 +25,30 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->all();
     }
 
-    public function getById(int $id): CartItemResponseDto|null
+    public function getById(int $id): ?CartItemResponseDto
     {
         $cartItem = CartItem::find($id);
 
         return $cartItem !== null ? CartItemResponseDto::fromModel($cartItem) : null;
     }
 
-    public function findByUserAndBook(int $userId, int $bookId): CartItem|null
+    public function findByUserAndBook(int $userId, int $bookId): ?CartItemResponseDto
     {
-        return CartItem::where('user_id', $userId)
+        $cartItem = CartItem::where('user_id', $userId)
             ->where('book_id', $bookId)
             ->first();
+
+        return $cartItem !== null ? CartItemResponseDto::fromModel($cartItem) : null;
     }
 
-    /** @return Collection<int, CartItem> */
-    public function getByUserId(int $userId): Collection
+    public function getByUserId(int $userId, int $perPage): PaginatedResponseDto
     {
-        return CartItem::with('book.author')
+        $paginator = CartItem::with('book.author')
             ->where('user_id', $userId)
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return PaginatedResponseDto::fromPaginator($paginator);
     }
 
     public function countByUserId(int $userId): int
@@ -80,7 +75,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
     }
 
     /**
-     * @param array<int, array{book_id: int, quantity: int}> $items
+     * @param  array<int, array{book_id: int, quantity: int}>  $items
      */
     public function bulkAddOrIncrement(int $userId, array $items): void
     {
@@ -89,26 +84,24 @@ final class CartItemRepository implements CartItemRepositoryInterface
         }
 
         $rows = array_map(
-            static fn (array $item): array => [$userId, $item['book_id'], $item['quantity']],
+            static fn (array $item): array => [
+                'user_id' => $userId,
+                'book_id' => $item['book_id'],
+                'quantity' => $item['quantity'],
+            ],
             $items,
         );
 
-        $this->db->statement(
-            sprintf(
-                'INSERT INTO cart_items (user_id, book_id, quantity) VALUES %s
-         ON CONFLICT (user_id, book_id) DO UPDATE SET quantity = cart_items.quantity + EXCLUDED.quantity',
-                implode(', ', array_fill(0, count($items), '(?, ?, ?)')),
-            ),
-            array_merge(...array_map(
-                static fn (array $item): array => [$userId, $item['book_id'], $item['quantity']],
-                $items,
-            )),
+        CartItem::upsert(
+            $rows,
+            uniqueBy: ['user_id', 'book_id'],
+            update: ['quantity'],
         );
     }
 
-    public function updateQuantity(CartItem $cartItem, int $quantity): void
+    public function updateQuantity(int $id, int $quantity): void
     {
-        $cartItem->update(['quantity' => $quantity]);
+        CartItem::findOrFail($id)->update(['quantity' => $quantity]);
     }
 
     public function create(CartItemDto $data): CartItemResponseDto
@@ -119,7 +112,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return CartItemResponseDto::fromModel($cartItem);
     }
 
-    public function update(int $id, CartItemDto $data): CartItemResponseDto|null
+    public function update(int $id, CartItemDto $data): ?CartItemResponseDto
     {
         $cartItem = CartItem::findOrFail($id);
 
@@ -133,6 +126,6 @@ final class CartItemRepository implements CartItemRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) CartItem::destroy($id);
+        return CartItem::findOrFail($id)->delete();
     }
 }

@@ -35,17 +35,11 @@ final class ReviewRepository implements ReviewRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @return array<mixed> */
-    public function all(): array
-    {
-        return Review::orderBy('id')->get()->all();
-    }
-
     public function getById(int $id): ReviewResponseDto|null
     {
-        $review = Review::find($id);
+        $reviewId = Review::find($id);
 
-        return $review !== null ? ReviewResponseDto::fromModel($review) : null;
+        return $reviewId !== null ? ReviewResponseDto::fromModel($reviewId) : null;
     }
 
     public function create(ReviewDto $data): ReviewResponseDto
@@ -70,6 +64,6 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) Review::destroy($id);
+        return Review::findOrFail($id)->delete();
     }
 }

@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\Web\Books\CreateBookWebController;
-use App\Http\Controllers\Web\Books\DeleteBookWebController;
-use App\Http\Controllers\Web\Books\GetByIdBookWebController;
-use App\Http\Controllers\Web\Books\GetListBookWebController;
-use App\Http\Controllers\Web\Books\UpdateBookWebController;
+use App\Http\Controllers\Web\Books\CreateBookController;
+use App\Http\Controllers\Web\Books\DeleteBookController;
+use App\Http\Controllers\Web\Books\GetByIdBookController;
+use App\Http\Controllers\Web\Books\GetListBookController;
+use App\Http\Controllers\Web\Books\UpdateBookController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('books')->name('books.')->group(function (): void {
-    Route::get('/', GetListBookWebController::class)->name('index');
-    Route::get('/create', [CreateBookWebController::class, 'create'])->name('create');
-    Route::post('/', [CreateBookWebController::class, 'store'])->name('store');
-    Route::get('/{book}', GetByIdBookWebController::class)->name('show')->whereNumber('book');
-    Route::get('/{book}/edit', [UpdateBookWebController::class, 'edit'])->name('edit')->whereNumber('book');
-    Route::put('/{book}', [UpdateBookWebController::class, 'update'])->name('update')->whereNumber('book');
-    Route::delete('/{book}', DeleteBookWebController::class)->name('destroy')->whereNumber('book');
+    Route::get('/', GetListBookController::class)->name('index');
+    Route::get('/create', [CreateBookController::class, 'create'])->name('create');
+    Route::post('/', [CreateBookController::class, 'store'])->name('store');
+    Route::get('/{book}', GetByIdBookController::class)->name('show')->whereNumber('book');
+    Route::get('/{book}/edit', [UpdateBookController::class, 'edit'])->name('edit')->whereNumber('book');
+    Route::put('/{book}', [UpdateBookController::class, 'update'])->name('update')->whereNumber('book');
+    Route::delete('/{book}', DeleteBookController::class)->name('destroy')->whereNumber('book');
 });

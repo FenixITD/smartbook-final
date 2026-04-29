@@ -7,8 +7,7 @@ namespace App\Repositories\Interfaces;
 use App\Dto\CartItem\CartItemDto;
 use App\Dto\CartItem\CartItemFiltersDto;
 use App\Dto\CartItem\CartItemResponseDto;
-use App\Models\CartItem;
-use Illuminate\Support\Collection;
+use App\Dto\PaginatedResponseDto;
 
 interface CartItemRepositoryInterface
 {
@@ -17,10 +16,9 @@ interface CartItemRepositoryInterface
 
     public function getById(int $id): CartItemResponseDto|null;
 
-    public function findByUserAndBook(int $userId, int $bookId): CartItem|null;
+    public function findByUserAndBook(int $userId, int $bookId): CartItemResponseDto|null;
 
-    /** @return Collection<int, CartItem> */
-    public function getByUserId(int $userId): Collection;
+    public function getByUserId(int $userId, int $perPage): PaginatedResponseDto;
 
     public function countByUserId(int $userId): int;
 
@@ -31,7 +29,7 @@ interface CartItemRepositoryInterface
     /** @param array<int, array{book_id: int, quantity: int}> $items */
     public function bulkAddOrIncrement(int $userId, array $items): void;
 
-    public function updateQuantity(CartItem $cartItem, int $quantity): void;
+    public function updateQuantity(int $id, int $quantity): void;
 
     public function create(CartItemDto $data): CartItemResponseDto;
 

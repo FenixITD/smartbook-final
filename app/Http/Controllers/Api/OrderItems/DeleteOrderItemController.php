@@ -16,10 +16,6 @@ final readonly class DeleteOrderItemController
 
     public function __invoke(int $orderItemId): JsonResponse
     {
-        if ($this->repository->getById($orderItemId) === null) {
-            return response()->json(['message' => 'OrderItem not found'], 404);
-        }
-
         $this->repository->delete($orderItemId);
 
         return response()->json([

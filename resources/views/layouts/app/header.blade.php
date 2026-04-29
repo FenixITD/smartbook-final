@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    @include('partials.head')
+    <title></title>@include('partials.head')
 </head>
 <body class="min-h-screen bg-white dark:bg-zinc-800">
 <flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
@@ -54,7 +54,7 @@
                                x-on:click.prevent="selectBook(book)"
                                class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
                                 <div class="flex-shrink-0 w-10 h-14 rounded overflow-hidden bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                                    <img x-show="book.cover_image" :src="book.cover_image" :alt="book.title" class="w-full h-full object-cover" />
+                                    <img x-show="book.cover_image" :src="book.cover_image" :alt="book.title" class="w-full h-full object-cover"  alt="" src=""/>
                                     <svg x-show="!book.cover_image" class="w-5 h-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                                     </svg>

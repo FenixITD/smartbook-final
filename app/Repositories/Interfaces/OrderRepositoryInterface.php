@@ -16,9 +16,6 @@ interface OrderRepositoryInterface
 
     public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto;
 
-    /** @return array<mixed> */
-    public function all(): array;
-
     public function getById(int $id): OrderResponseDto|null;
 
     public function create(OrderDto $data): OrderResponseDto;

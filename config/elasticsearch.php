@@ -20,6 +20,7 @@ return [
                 'slug' => ['type' => 'keyword'],
                 'description' => ['type' => 'text'],
                 'author_id' => ['type' => 'integer'],
+                'genre_ids' => ['type' => 'integer'],
                 'price' => ['type' => 'float'],
                 'stock' => ['type' => 'integer'],
                 'publish_year' => ['type' => 'integer'],

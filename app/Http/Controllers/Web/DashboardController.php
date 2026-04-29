@@ -20,7 +20,7 @@ final readonly class DashboardController
     public function __invoke(DashboardListRequest $request): View
     {
         $paginated = $this->bookRepository->getDashboardList($request->toDto());
-        $genres = $this->genreRepository->all();
+        $genres = $this->genreRepository->getAll();
 
         return view('dashboard', compact('paginated', 'genres'));
     }

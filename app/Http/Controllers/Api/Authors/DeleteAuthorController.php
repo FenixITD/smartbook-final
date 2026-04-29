@@ -43,10 +43,6 @@ final class DeleteAuthorController extends Controller
     )]
     public function __invoke(int $authorId): JsonResponse
     {
-        if ($this->repository->getById($authorId) === null) {
-            return response()->json(['message' => 'Author not found'], 404);
-        }
-
         $this->repository->delete($authorId);
 
         return response()->json([

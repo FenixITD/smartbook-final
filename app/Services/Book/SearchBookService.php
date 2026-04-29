@@ -5,26 +5,26 @@ declare(strict_types=1);
 namespace App\Services\Book;
 
 use App\Dto\Book\BookFiltersDto;
+use App\Dto\Book\BookResponseDto;
 use App\Dto\PaginatedResponseDto;
-use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
 final readonly class SearchBookService
 {
     public function __construct(
         private BookRepositoryInterface $repository,
+        private SearchBookByQueryService $searchService,
     ) {
     }
 
-    /** @return array<\App\Dto\Book\BookResponseDto> */
+    /** @return array<BookResponseDto> */
     public function getList(BookFiltersDto $filters): array
     {
         if ($filters->search === null) {
             return $this->repository->getList($filters);
         }
 
-        /** @var array<int> $ids */
-        $ids = Book::search($filters->search)->keys()->toArray();
+        $ids = $this->searchService->search($filters->search);
 
         if ($ids === []) {
             return [];
@@ -39,8 +39,7 @@ final readonly class SearchBookService
             return $this->repository->getWebList($filters);
         }
 
-        /** @var array<int> $ids */
-        $ids = Book::search($filters->search)->keys()->toArray();
+        $ids = $this->searchService->search($filters->search);
 
         if ($ids === []) {
             return PaginatedResponseDto::empty($filters->perPage);

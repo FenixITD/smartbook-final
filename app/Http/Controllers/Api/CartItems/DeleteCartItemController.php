@@ -16,10 +16,6 @@ final readonly class DeleteCartItemController
 
     public function __invoke(int $cartItemId): JsonResponse
     {
-        if ($this->repository->getById($cartItemId) === null) {
-            return response()->json(['message' => 'CartItem not found'], 404);
-        }
-
         $this->repository->delete($cartItemId);
 
         return response()->json([

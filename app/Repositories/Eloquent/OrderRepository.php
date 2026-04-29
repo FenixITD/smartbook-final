@@ -35,17 +35,11 @@ final class OrderRepository implements OrderRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @return array<mixed> */
-    public function all(): array
-    {
-        return Order::orderBy('id')->get()->all();
-    }
-
     public function getById(int $id): OrderResponseDto|null
     {
-        $order = Order::find($id);
+        $orderId = Order::find($id);
 
-        return $order !== null ? OrderResponseDto::fromModel($order) : null;
+        return $orderId !== null ? OrderResponseDto::fromModel($orderId) : null;
     }
 
     public function create(OrderDto $data): OrderResponseDto
@@ -70,6 +64,6 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) Order::destroy($id);
+        return Order::findOrFail($id)->delete();
     }
 }

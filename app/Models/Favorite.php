@@ -6,13 +6,15 @@ namespace App\Models;
 
 use Database\Factories\FavoriteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Favorite extends Model
+class Favorite extends Pivot
 {
     /** @use HasFactory<FavoriteFactory> */
     use HasFactory;
+
+    protected $table = 'favorites';
 
     protected $fillable = [
         'user_id',

@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace App\Services\Book;
 
-use App\Http\Requests\Book\BookWebDataRequest;
+use App\Dto\Book\BookDto;
+use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-readonly class CreateBookService
+final readonly class CreateBookService
 {
     public function __construct(
-        private BookRepositoryInterface $repository)
-    {
+        private BookRepositoryInterface $repository,
+        private TransactionManagerInterface $transactionManager,
+    ) {
     }
 
-    public function execute(BookWebDataRequest $request): void
+    /** @param array<int> $genreIds */
+    public function execute(BookDto $dto, array $genreIds): void
     {
-        $responseDto = $this->repository->create($request->toDto());
+        $this->transactionManager->transaction(function () use ($dto, $genreIds): void {
+            $book = $this->repository->create($dto);
 
-        $book = $this->repository->findModel($responseDto->id);
-
-        $this->repository->syncBookGenres($book, $request->genres());
+            $this->repository->syncBookGenres($book->id, $genreIds);
+        });
     }
 }

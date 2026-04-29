@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
-use App\Models\Book;
+use App\Dto\Book\BookResponseDto;
+use App\Dto\CartItem\CartItemWithBookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
-use Illuminate\Support\Collection;
-use stdClass;
 
 use function is_array;
 
@@ -55,33 +54,39 @@ final class GuestCartService
         session()->forget(self::SESSION_KEY);
     }
 
-    /** @return Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}&stdClass> */
-    public function getItems(): Collection
+    /** @return array<CartItemWithBookResponseDto> */
+    public function getItems(): array
     {
         $cart = $this->cart();
 
         if ($cart === []) {
-            /** @var Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}&stdClass> $empty */
-            $empty = collect();
-
-            return $empty;
+            return [];
         }
 
-        $books = $this->repository->getByIdsWithAuthor(array_keys($cart));
+        $paginated = $this->repository->getByIdsWithAuthor(array_keys($cart), count($cart));
 
-        /** @var Collection<int, object{id: null, book_id: int, quantity: int, book: Book|null, user_id: null}&stdClass> $result */
-        $result = collect($cart)
-            ->map(static fn (array $item) => (object) [
-                'id' => null,
-                'book_id' => $item['book_id'],
-                'quantity' => $item['quantity'],
-                'book' => $books->get($item['book_id']),
-                'user_id' => null,
-            ])
-            ->filter(static fn (mixed $item) => $item->book !== null)
-            ->values();
+        /** @var array<int, BookResponseDto> $booksById */
+        $booksById = collect($paginated->items)
+            ->keyBy(static fn (BookResponseDto $book) => $book->id)
+            ->all();
 
-        return $result;
+        $items = [];
+
+        foreach ($cart as $item) {
+            $book = $booksById[$item['book_id']] ?? null;
+
+            if ($book === null) {
+                continue;
+            }
+
+            $items[] = CartItemWithBookResponseDto::fromGuest(
+                bookId: $item['book_id'],
+                quantity: $item['quantity'],
+                book: $book,
+            );
+        }
+
+        return $items;
     }
 
     public function count(): int
@@ -90,7 +95,7 @@ final class GuestCartService
     }
 
     /** @return array<int, array{book_id: int, quantity: int}> */
-    public function all(): array
+    public function getAll(): array
     {
         return $this->cart();
     }

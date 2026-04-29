@@ -9,8 +9,6 @@ use App\Dto\Book\BookFiltersDto;
 use App\Dto\Book\BookResponseDto;
 use App\Dto\Dashboard\DashboardFiltersDto;
 use App\Dto\PaginatedResponseDto;
-use App\Models\Book;
-use Illuminate\Support\Collection;
 
 interface BookRepositoryInterface
 {
@@ -26,35 +24,23 @@ interface BookRepositoryInterface
 
     public function getWebList(BookFiltersDto $filters): PaginatedResponseDto;
 
-    /**
-     * @param array<int> $ids
-     */
+    /** @param array<int> $ids */
     public function getWebListByIds(array $ids, BookFiltersDto $filters): PaginatedResponseDto;
 
-    /**
-     * @param array<int> $ids
-     *
-     * @return Collection<int, Book>
-     */
-    public function getByIdsWithAuthor(array $ids): Collection;
+    /** @param array<int> $ids */
+    public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto;
 
     public function getDashboardList(DashboardFiltersDto $filters): PaginatedResponseDto;
 
-    public function findModel(int $id): Book;
-
-    public function findModelWithRelations(int $id): Book;
-
-    /** @param array<int> $genreIds */
-    public function syncBookGenres(Book $book, array $genreIds): void;
-
     public function getById(int $id): BookResponseDto|null;
 
-    /**
-     * @param array<int> $ids
-     *
-     * @return Collection<int, Book>
-     */
-    public function getOrderedByIds(array $ids): Collection;
+    public function findByIdWithRelations(int $id): BookResponseDto;
+
+    /** @param array<int> $genreIds */
+    public function syncBookGenres(int $bookId, array $genreIds): void;
+
+    /** @param array<int> $ids */
+    public function getOrderedByIds(array $ids, int $perPage): PaginatedResponseDto;
 
     public function create(BookDto $data): BookResponseDto;
 

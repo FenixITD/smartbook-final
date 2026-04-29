@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Book;
 
 use App\Dto\Book\BookDto;
-use App\Models\Book;
+use App\Dto\Book\BookResponseDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 use function is_array;
@@ -28,7 +28,7 @@ final class BookWebDataRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0', 'max:9999.99'],
             'stock' => ['required', 'integer', 'min:0'],
             'publishYear' => ['nullable', 'integer', 'min:1900', 'max:'.((int) date('Y') + 1)],
-            'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'coverImage' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'status' => ['required', 'string', 'in:draft,published,archived'],
             'genres' => ['nullable', 'array'],
             'genres.*' => ['integer', 'exists:genres,id'],
@@ -60,9 +60,9 @@ final class BookWebDataRequest extends FormRequest
         );
     }
 
-    public function toDtoForUpdate(Book $book): BookDto
+    public function toDtoForUpdate(BookResponseDto|null $book): BookDto
     {
-        $coverImage = $book->cover_image;
+        $coverImage = $book?->coverImage;
 
         if ($this->hasFile('cover_image')) {
             /** @var string $stored */
@@ -79,8 +79,8 @@ final class BookWebDataRequest extends FormRequest
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
             coverImage: $coverImage,
-            averageRating: $book->average_rating,
-            ratingsCount: $book->ratings_count,
+            averageRating: $book?->averageRating ?? 0.0,
+            ratingsCount: $book?->ratingsCount ?? 0,
             status: (string) $this->string('status'),
         );
     }

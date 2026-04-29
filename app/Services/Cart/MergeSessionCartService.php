@@ -17,7 +17,7 @@ final readonly class MergeSessionCartService
 
     public function execute(): void
     {
-        $cart = $this->guestCartService->all();
+        $cart = $this->guestCartService->getAll();
 
         if ($cart === []) {
             return;

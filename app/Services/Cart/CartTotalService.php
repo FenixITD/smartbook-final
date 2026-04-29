@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
-use stdClass;
+use App\Dto\CartItem\CartItemWithBookResponseDto;
+use App\Dto\PaginatedResponseDto;
 
 final readonly class CartTotalService
 {
@@ -15,13 +16,17 @@ final readonly class CartTotalService
 
     public function execute(): float
     {
-        return $this->getCartItemsService->execute()
-            ->sum(static function (mixed $item): float {
-                /** @var object{id: null, book_id: int, quantity: int, book: \App\Models\Book|null, user_id: null}&stdClass $item */
-                $book = $item->book;
-                $price = $book !== null ? $book->price : 0.0;
+        $result = $this->getCartItemsService->execute();
 
-                return $price * $item->quantity;
-            });
+        /** @var array<CartItemWithBookResponseDto> $items */
+        $items = $result instanceof PaginatedResponseDto ? $result->items : $result;
+
+        return (float) array_sum(
+            array_map(
+                static fn (CartItemWithBookResponseDto $item): float =>
+                    ($item->book?->price ?? 0.0) * $item->quantity,
+                $items,
+            ),
+        );
     }
 }

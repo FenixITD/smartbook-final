@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
-use App\Models\CartItem;
+use App\Dto\CartItem\CartItemWithBookResponseDto;
+use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use stdClass;
 
 final readonly class GetCartItemsService
 {
@@ -18,13 +17,11 @@ final readonly class GetCartItemsService
     ) {
     }
 
-    /**
-     * @return Collection<int, CartItem>|Collection<int, object{id: null, book_id: int, quantity: int, book: \App\Models\Book|null, user_id: null}&stdClass>
-     */
-    public function execute(): Collection
+    /** @return PaginatedResponseDto|array<CartItemWithBookResponseDto> */
+    public function execute(int $perPage = 15): PaginatedResponseDto|array
     {
         if (Auth::check()) {
-            return $this->repository->getByUserId((int) Auth::id());
+            return $this->repository->getByUserId((int) Auth::id(), $perPage);
         }
 
         return $this->guestCartService->getItems();

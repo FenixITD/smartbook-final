@@ -36,16 +36,16 @@ final class GenreRepository implements GenreRepositoryInterface
     }
 
     /** @return array<mixed> */
-    public function all(): array
+    public function getAll(): array
     {
-        return Genre::orderBy('name')->get()->all();
+        return Genre::orderBy('name')->lazy(15)->toArray();
     }
 
     public function getById(int $id): GenreResponseDto|null
     {
-        $genre = Genre::find($id);
+        $genreId = Genre::find($id);
 
-        return $genre !== null ? GenreResponseDto::fromModel($genre) : null;
+        return $genreId !== null ? GenreResponseDto::fromModel($genreId) : null;
     }
 
     public function create(GenreDto $data): GenreResponseDto
@@ -70,6 +70,6 @@ final class GenreRepository implements GenreRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) Genre::destroy($id);
+        return Genre::findOrFail($id)->delete();
     }
 }

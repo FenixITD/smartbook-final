@@ -46,12 +46,15 @@ class Book extends Model
     /** @return array<string, mixed> */
     public function toSearchableArray(): array
     {
+        $this->loadMissing('genres');
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
             'description' => $this->description,
             'author_id' => $this->author_id,
+            'genre_ids' => $this->genres->pluck('id')->all(),
             'price' => $this->price,
             'stock' => $this->stock,
             'publish_year' => $this->publish_year,

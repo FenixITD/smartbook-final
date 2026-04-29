@@ -24,11 +24,11 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
             ->all();
     }
 
-    public function getById(int $id): FavoriteResponseDto|null
+    public function getById(int $id): ?FavoriteResponseDto
     {
-        $favorite = Favorite::find($id);
+        $favoriteId = Favorite::find($id);
 
-        return $favorite !== null ? FavoriteResponseDto::fromModel($favorite) : null;
+        return $favoriteId !== null ? FavoriteResponseDto::fromModel($favoriteId) : null;
     }
 
     public function create(FavoriteDto $data): FavoriteResponseDto
@@ -39,7 +39,7 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
         return FavoriteResponseDto::fromModel($favorite);
     }
 
-    public function update(int $id, FavoriteDto $data): FavoriteResponseDto|null
+    public function update(int $id, FavoriteDto $data): ?FavoriteResponseDto
     {
         $favorite = Favorite::findOrFail($id);
 
@@ -53,6 +53,6 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) Favorite::destroy($id);
+        return Favorite::findOrFail($id)->delete();
     }
 }

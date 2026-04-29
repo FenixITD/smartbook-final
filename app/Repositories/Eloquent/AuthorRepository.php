@@ -36,16 +36,16 @@ final class AuthorRepository implements AuthorRepositoryInterface
     }
 
     /** @return array<mixed> */
-    public function all(): array
+    public function getAll(): array
     {
-        return Author::orderBy('name')->get()->all();
+        return Author::orderBy('name')->lazy(15)->toArray();
     }
 
     public function getById(int $id): AuthorResponseDto|null
     {
-        $author = Author::find($id);
+        $authorId = Author::find($id);
 
-        return $author !== null ? AuthorResponseDto::fromModel($author) : null;
+        return $authorId !== null ? AuthorResponseDto::fromModel($authorId) : null;
     }
 
     public function create(AuthorDto $data): AuthorResponseDto
@@ -58,18 +58,18 @@ final class AuthorRepository implements AuthorRepositoryInterface
 
     public function update(int $id, AuthorDto $data): AuthorResponseDto|null
     {
-        $author = Author::findOrFail($id);
+        $authorId = Author::findOrFail($id);
 
-        $author->update($data->toArray());
+        $authorId->update($data->toArray());
 
         /** @var Author $fresh */
-        $fresh = $author->fresh();
+        $fresh = $authorId->fresh();
 
         return AuthorResponseDto::fromModel($fresh);
     }
 
     public function delete(int $id): bool
     {
-        return (bool) Author::destroy($id);
+        return Author::findOrFail($id)->delete();
     }
 }

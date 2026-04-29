@@ -16,10 +16,6 @@ final readonly class DeleteGenreController
 
     public function __invoke(int $genreId): JsonResponse
     {
-        if ($this->repository->getById($genreId) === null) {
-            return response()->json(['message' => 'Genre not found'], 404);
-        }
-
         $this->repository->delete($genreId);
 
         return response()->json([

@@ -26,9 +26,9 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
 
     public function getById(int $id): OrderItemResponseDto|null
     {
-        $orderItem = OrderItem::find($id);
+        $orderItemId = OrderItem::find($id);
 
-        return $orderItem !== null ? OrderItemResponseDto::fromModel($orderItem) : null;
+        return $orderItemId !== null ? OrderItemResponseDto::fromModel($orderItemId) : null;
     }
 
     public function create(OrderItemDto $data): OrderItemResponseDto
@@ -53,6 +53,6 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) OrderItem::destroy($id);
+        return OrderItem::findOrFail($id)->delete();
     }
 }

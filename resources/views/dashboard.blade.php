@@ -11,9 +11,9 @@
                         <p class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-3">Genres</p>
                         <div class="flex flex-col gap-0.5">
                             @foreach ($genres as $genre)
-                                <a href="{{ request()->fullUrlWithQuery(['genre' => $genre->id]) }}"
+                                <a href="{{ request()->fullUrlWithQuery(['genre' => $genre['id']]) }}"
                                    class="text-sm px-2 py-1.5 rounded-lg transition-colors text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100">
-                                    {{ $genre->name }}
+                                    {{ $genre['name'] }}
                                 </a>
                             @endforeach
                         </div>

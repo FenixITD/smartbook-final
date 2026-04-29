@@ -21,7 +21,7 @@ final readonly class UpdateCartService
             $cartItem = $this->repository->findByUserAndBook((int) Auth::id(), $bookId);
 
             if ($cartItem !== null) {
-                $this->repository->updateQuantity($cartItem, $quantity);
+                $this->repository->updateQuantity($cartItem->id, $quantity);
             }
         } else {
             $this->guestCartService->update($bookId, $quantity);
