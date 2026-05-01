@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -43,5 +44,8 @@ class DatabaseSeeder extends Seeder
                 'order_id' => $order->id,
             ]);
         });
+
+        $this->command->info('Reindexing Elasticsearch...');
+        Artisan::call('scout:import', ['model' => 'App\Models\Book']);
     }
 }

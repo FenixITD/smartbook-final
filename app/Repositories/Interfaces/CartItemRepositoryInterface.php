@@ -7,6 +7,7 @@ namespace App\Repositories\Interfaces;
 use App\Dto\CartItem\CartItemDto;
 use App\Dto\CartItem\CartItemFiltersDto;
 use App\Dto\CartItem\CartItemResponseDto;
+use App\Dto\CartItem\CartItemWithBookResponseDto;
 use App\Dto\PaginatedResponseDto;
 
 interface CartItemRepositoryInterface
@@ -16,7 +17,12 @@ interface CartItemRepositoryInterface
 
     public function getById(int $id): CartItemResponseDto|null;
 
+    public function getTotalByUserId(int $userId): float;
+
     public function findByUserAndBook(int $userId, int $bookId): CartItemResponseDto|null;
+
+    /** @return array<CartItemWithBookResponseDto> */
+    public function getAllByUserId(int $userId): array;
 
     public function getByUserId(int $userId, int $perPage): PaginatedResponseDto;
 
@@ -35,5 +41,9 @@ interface CartItemRepositoryInterface
 
     public function update(int $id, CartItemDto $data): CartItemResponseDto|null;
 
+    public function updateByUserAndBook(int $userId, int $bookId, int $quantity): void;
+
     public function delete(int $id): bool;
+
+    public function deleteByUserAndBook(int $userId, int $bookId): void;
 }

@@ -6,9 +6,9 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-xl font-semibold text-zinc-900 dark:text-zinc-100">Cart</h2>
-                        <p class="text-sm text-zinc-500 mt-0.5">{{ $cartItems->count() }} {{ Str::plural('item', $cartItems->count()) }}</p>
+                        <p class="text-sm text-zinc-500 mt-0.5">{{ count($cartItems) }} {{ Str::plural('item', count($cartItems)) }}</p>
                     </div>
-                    @if ($cartItems->isNotEmpty())
+                    @if (count($cartItems) > 0)
                         <form action="{{ route('cart.clear') }}" method="POST"
                               onsubmit="return confirm('Remove all items from cart?')">
                             @csrf
@@ -30,7 +30,7 @@
                     </flux:callout>
                 @endif
 
-                @if ($cartItems->isEmpty())
+                @if (count($cartItems) === 0)
                     <div class="flex flex-col items-center justify-center py-24 text-zinc-400 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
                         <flux:icon name="shopping-cart" class="w-12 h-12 mb-3" />
                         <p class="text-sm">Your cart is empty</p>
@@ -44,8 +44,8 @@
 
                                     {{-- Cover --}}
                                     <div class="w-14 h-20 rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0">
-                                        @if ($item->book->cover_image)
-                                            <img src="{{ Storage::url($item->book->cover_image) }}" alt="{{ $item->book->title }}"
+                                        @if ($item->book->coverImage)
+                                            <img src="{{ Storage::url($item->book->coverImage) }}" alt="{{ $item->book->title }}"
                                                  class="w-full h-full object-cover">
                                         @else
                                             <div class="w-full h-full flex items-center justify-center">
@@ -64,7 +64,7 @@
                                     </div>
 
                                     {{-- Quantity --}}
-                                    <form action="{{ route('cart.update', $item->book_id) }}" method="POST" class="flex items-center gap-2">
+                                    <form action="{{ route('cart.update', $item->bookId) }}" method="POST" class="flex items-center gap-2">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" name="quantity" value="{{ max(1, $item->quantity - 1) }}"
@@ -88,7 +88,7 @@
                                     </div>
 
                                     {{-- Remove --}}
-                                    <form action="{{ route('cart.destroy', $item->book_id) }}" method="POST">
+                                    <form action="{{ route('cart.destroy', $item->bookId) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
@@ -105,14 +105,14 @@
             </div>
 
             {{-- Order Summary --}}
-            @if ($cartItems->isNotEmpty())
+            @if (count($cartItems) > 0)
                 <div class="w-full lg:w-80 shrink-0">
                     <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 sticky top-6">
                         <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Order summary</h3>
 
                         <div class="flex flex-col gap-3 text-sm">
                             <div class="flex justify-between text-zinc-600 dark:text-zinc-400">
-                                <span>Items ({{ $cartItems->sum('quantity') }})</span>
+                                <span>Items ({{ collect($cartItems)->sum('quantity') }})</span>
                                 <span>${{ number_format($total, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-zinc-600 dark:text-zinc-400">

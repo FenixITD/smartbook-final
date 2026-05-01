@@ -19,7 +19,7 @@ class BookFactory extends Factory
         return [
             'title' => $title,
             'slug' => Str::slug(fake()->unique()->sentence(4)),
-            'author_id' => Author::all()->random()?->id,
+            'author_id' => Author::inRandomOrder()->value('id'),
             'description' => fake()->paragraph(5),
             'price' => fake()->randomFloat(2, 5, 100),
             'stock' => fake()->numberBetween(0, 50),
@@ -27,7 +27,7 @@ class BookFactory extends Factory
             'cover_image' => fake()->imageUrl,
             'average_rating' => fake()->randomFloat(2, 0, 5),
             'ratings_count' => fake()->numberBetween(0, 500),
-            'status' => fake()->randomElement(['published', 'draft', 'archived']),
+            'status' => fake()->randomElement(['active', 'draft', 'archived']),
         ];
     }
 }

@@ -18,7 +18,7 @@ class OrderItemFactory extends Factory
 
         return [
             'order_id' => Order::factory(),
-            'book_id' => Book::all()->random()?->id,
+            'book_id' => Book::inRandomOrder()->value('id'),
             'quantity' => fake()->numberBetween(1, 5),
             'price_at_purchase' => $price,
         ];

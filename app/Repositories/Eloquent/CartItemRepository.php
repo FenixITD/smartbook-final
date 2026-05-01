@@ -7,9 +7,11 @@ namespace App\Repositories\Eloquent;
 use App\Dto\CartItem\CartItemDto;
 use App\Dto\CartItem\CartItemFiltersDto;
 use App\Dto\CartItem\CartItemResponseDto;
+use App\Dto\CartItem\CartItemWithBookResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\CartItem;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 final class CartItemRepository implements CartItemRepositoryInterface
 {
@@ -32,6 +34,14 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return $cartItem !== null ? CartItemResponseDto::fromModel($cartItem) : null;
     }
 
+    public function getTotalByUserId(int $userId): float
+    {
+        return (float) CartItem::query()
+            ->join('books', 'cart_items.book_id', '=', 'books.id')
+            ->where('cart_items.user_id', $userId)
+            ->sum(DB::raw('books.price * cart_items.quantity'));
+    }
+
     public function findByUserAndBook(int $userId, int $bookId): ?CartItemResponseDto
     {
         $cartItem = CartItem::where('user_id', $userId)
@@ -49,6 +59,15 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->withQueryString();
 
         return PaginatedResponseDto::fromPaginator($paginator);
+    }
+
+    public function getAllByUserId(int $userId): array
+    {
+        return CartItem::with('book.author')
+            ->where('user_id', $userId)
+            ->get()
+            ->map(static fn (CartItem $item) => CartItemWithBookResponseDto::fromModel($item))
+            ->all();
     }
 
     public function countByUserId(int $userId): int
@@ -124,8 +143,19 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return CartItemResponseDto::fromModel($fresh);
     }
 
+    public function updateByUserAndBook(int $userId, int $bookId, int $quantity): void
+    {
+        CartItem::where('user_id', $userId)->where('book_id', $bookId)
+            ->update(['quantity' => $quantity]);
+    }
+
     public function delete(int $id): bool
     {
         return CartItem::findOrFail($id)->delete();
+    }
+
+    public function deleteByUserAndBook(int $userId, int $bookId): void
+    {
+        CartItem::where('user_id', $userId)->where('book_id', $bookId)->delete();
     }
 }

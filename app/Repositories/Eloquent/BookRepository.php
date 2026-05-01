@@ -113,11 +113,32 @@ final class BookRepository implements BookRepositoryInterface
         return $bookId !== null ? BookResponseDto::fromModel($bookId) : null;
     }
 
+    public function getTotalByIdsAndQuantities(array $quantitiesByBookId): float
+    {
+        $ids = array_keys($quantitiesByBookId);
+
+        return (float) Book::whereIn('id', $ids)
+            ->get(['id', 'price'])
+            ->sum(fn (Book $book) => $book->price * $quantitiesByBookId[$book->id]);
+    }
+
     public function findByIdWithRelations(int $id): BookResponseDto
     {
         $bookId = Book::with(['author', 'genres'])->findOrFail($id);
 
         return BookResponseDto::fromModel($bookId);
+    }
+
+    /** @param array<int> $ids
+     *  @return array<BookResponseDto>
+     */
+    public function findByIdsWithAuthor(array $ids): array
+    {
+        return Book::with('author')
+            ->whereIn('id', $ids)
+            ->get()
+            ->map(static fn (Book $book) => BookResponseDto::fromModel($book))
+            ->all();
     }
 
     /** @param array<int> $genreIds */

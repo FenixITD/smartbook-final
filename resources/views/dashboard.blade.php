@@ -69,11 +69,11 @@
 
                 {{-- Active genre filter --}}
                 @if(request('genre'))
-                    @php $activeGenre = $genres->firstWhere('id', request('genre')); @endphp
+                    @php $activeGenre = collect($genres)->firstWhere('id', request('genre')); @endphp
                     @if($activeGenre)
                         <a href="{{ request()->fullUrlWithQuery(['genre' => null]) }}"
                            class="inline-flex items-center gap-1.5 text-sm bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 px-3 py-1.5 rounded-lg font-medium">
-                            {{ $activeGenre->name }}
+                            {{ $activeGenre['name'] }}
                             <flux:icon name="x-mark" class="w-3 h-3" />
                         </a>
                     @endif

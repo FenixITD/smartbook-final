@@ -11,14 +11,17 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /** @extends Factory<Order> */
 class OrderFactory extends Factory
 {
+    private const ORDER_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+    private const ORDER_PAYMENT_METHODS = ['card', 'cash', 'WebPay'];
+
     public function definition(): array
     {
         return [
-            'user_id' => User::all()->random()?->id,
+            'user_id' => User::inRandomOrder()->value('id'),
             'total' => fake()->randomFloat(2, 10, 500),
-            'status' => fake()->randomElement(['pending', 'paid', 'shipped', 'delivered', 'cancelled']),
+            'status' => fake()->randomElement(self::ORDER_STATUSES),
             'shipping_address' => fake()->address(),
-            'payment_method' => fake()->randomElement(['card', 'cash', 'WebPay']),
+            'payment_method' => fake()->randomElement(self::ORDER_PAYMENT_METHODS),
         ];
     }
 }

@@ -1,9 +1,0 @@
-.git
-node_modules
-public/storage
-storage/logs
-storage/framework/cache
-storage/framework/sessions
-storage/framework/views
-bootstrap/cache
-.env

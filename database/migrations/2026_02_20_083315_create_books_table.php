@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('cover_image')->nullable();
             $table->decimal('average_rating', 3, 2)->default(0.00);
             $table->integer('ratings_count')->default(0);
-            $table->enum('status', ['published', 'draft', 'archived'])->default('active');
+            $table->enum('status', ['active', 'draft', 'archived'])->default('active');
             $table->timestamps();
         });
     }

@@ -4,23 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services\Cart;
 
-use App\Repositories\Interfaces\CartItemRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
-
 final readonly class ClearCartService
 {
     public function __construct(
-        private CartItemRepositoryInterface $repository,
-        private GuestCartService $guestCartService,
-    ) {
-    }
+        private CartResolverService $cartResolverService,
+    ) {}
 
     public function execute(): void
     {
-        if (Auth::check()) {
-            $this->repository->deleteByUserId((int) Auth::id());
-        } else {
-            $this->guestCartService->clear();
-        }
+        $this->cartResolverService->resolve()->clear();
     }
 }
