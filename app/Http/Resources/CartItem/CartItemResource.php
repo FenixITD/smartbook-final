@@ -7,7 +7,17 @@ namespace App\Http\Resources\CartItem;
 use App\Dto\CartItem\CartItemResponseDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'CartItemResource',
+    properties: [
+        new OA\Property(property: 'userId', type: 'integer', example: 3),
+        new OA\Property(property: 'bookId', type: 'integer', example: 4),
+        new OA\Property(property: 'quantity', type: 'integer', example: 13),
+    ],
+    type: 'object',
+)]
 /**
  * @mixin CartItemResponseDto
  */

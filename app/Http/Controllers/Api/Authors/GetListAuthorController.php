@@ -11,6 +11,20 @@ use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
+#[OA\Get(
+    path: '/api/authors',
+    summary: 'Get a list of all authors',
+    tags: ['Authors'],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'Get a list of all authors',
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/AuthorResource'
+            )
+        ),
+    ]
+)]
 final class GetListAuthorController extends Controller
 {
     public function __construct(
@@ -18,20 +32,6 @@ final class GetListAuthorController extends Controller
     ) {
     }
 
-    #[OA\Get(
-        path: '/api/authors',
-        summary: 'Get a list of all authors',
-        tags: ['Authors'],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Get a list of all authors',
-                content: new OA\JsonContent(
-                    ref: '#/components/schemas/AuthorResource'
-                )
-            ),
-        ]
-    )]
     public function __invoke(AuthorListRequest $request): JsonResponse
     {
         $filters = $request->toDto();

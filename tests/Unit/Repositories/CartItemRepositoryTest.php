@@ -175,7 +175,7 @@ final class CartItemRepositoryTest extends TestCase
             'quantity' => 1,
         ]);
 
-        $this->repository->updateQuantity($cartItem, 10);
+        $this->repository->updateQuantity($cartItem->id, 10);
 
         $this->assertDatabaseHas('cart_items', [
             'id' => $cartItem->id,

@@ -64,6 +64,6 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return Order::findOrFail($id)->delete();
+        return (bool) Order::findOrFail($id)->delete();
     }
 }

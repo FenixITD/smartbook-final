@@ -8,7 +8,8 @@ final readonly class RemoveFromCartService
 {
     public function __construct(
         private CartResolverService $cartResolverService,
-    ) {}
+    ) {
+    }
 
     public function execute(int $bookId): void
     {

@@ -11,6 +11,38 @@ use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
+#[OA\Put(
+    path: '/api/books/{book}',
+    summary: 'Update book by ID',
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            ref: '#/components/schemas/BookDataRequest'
+        ),
+    ),
+    tags: ['Books'],
+    parameters: [
+        new OA\Parameter(
+            name: 'book',
+            description: 'Update a single book by ID',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(
+                type: 'integer',
+                example: 3,
+            )
+        ),
+    ],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'Update a single book by ID',
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/BookResource'
+            )
+        ),
+    ]
+)]
 final class UpdateBookController extends Controller
 {
     public function __construct(
@@ -18,39 +50,6 @@ final class UpdateBookController extends Controller
     ) {
     }
 
-    #[OA\Put(
-        path: '/api/books/{book}',
-        summary: 'Update book by ID',
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\JsonContent(
-                ref: '#/components/schemas/BookDataRequest'
-            ),
-        ),
-        tags: ['Books'],
-        parameters: [
-            new OA\Parameter(
-                parameter: 'book',
-                name: 'book',
-                description: 'Update a single book by ID',
-                in: 'path',
-                required: true,
-                schema: new OA\Schema(
-                    type: 'integer',
-                    example: 3,
-                )
-            ),
-        ],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Update a single book by ID',
-                content: new OA\JsonContent(
-                    ref: '#/components/schemas/BookResource'
-                )
-            ),
-        ]
-    )]
     public function __invoke(BookDataRequest $request, int $bookId): JsonResponse
     {
         $updatedBook = $this->repository->update($bookId, $request->toDto());

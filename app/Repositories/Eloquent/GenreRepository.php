@@ -70,6 +70,6 @@ final class GenreRepository implements GenreRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return Genre::findOrFail($id)->delete();
+        return (bool) Genre::findOrFail($id)->delete();
     }
 }

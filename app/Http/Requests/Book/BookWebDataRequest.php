@@ -79,8 +79,8 @@ final class BookWebDataRequest extends FormRequest
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
             coverImage: $coverImage,
-            averageRating: $book?->averageRating ?? 0.0,
-            ratingsCount: $book?->ratingsCount ?? 0,
+            averageRating: $book->averageRating ?? 0.0,
+            ratingsCount: $book->ratingsCount ?? 0,
             status: (string) $this->string('status'),
         );
     }

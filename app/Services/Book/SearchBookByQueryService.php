@@ -16,7 +16,7 @@ final readonly class SearchBookByQueryService
     public function search(string $query, int $limit = 10000): array
     {
         $response = $this->client->search([
-            'index' => config('elasticsearch.books_index'),
+            'index' => (string) config('elasticsearch.books_index'),
             'body' => [
                 'query' => [
                     'bool' => [
@@ -46,9 +46,12 @@ final readonly class SearchBookByQueryService
             ],
         ]);
 
+        /** @var array<int, array<string, mixed>> $hits */
+        $hits = $response->asArray()['hits']['hits'];
+
         return array_map(
             static fn (array $hit): int => (int) $hit['_id'],
-            $response['hits']['hits'],
+            $hits,
         );
     }
 }

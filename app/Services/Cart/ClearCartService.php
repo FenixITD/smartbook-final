@@ -8,7 +8,8 @@ final readonly class ClearCartService
 {
     public function __construct(
         private CartResolverService $cartResolverService,
-    ) {}
+    ) {
+    }
 
     public function execute(): void
     {

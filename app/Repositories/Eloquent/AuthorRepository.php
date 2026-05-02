@@ -70,6 +70,6 @@ final class AuthorRepository implements AuthorRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return Author::findOrFail($id)->delete();
+        return (bool) Author::findOrFail($id)->delete();
     }
 }

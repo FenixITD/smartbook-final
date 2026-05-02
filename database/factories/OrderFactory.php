@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class OrderFactory extends Factory
 {
     private const ORDER_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+
     private const ORDER_PAYMENT_METHODS = ['card', 'cash', 'WebPay'];
 
     public function definition(): array

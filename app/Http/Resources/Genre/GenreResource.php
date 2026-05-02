@@ -7,7 +7,17 @@ namespace App\Http\Resources\Genre;
 use App\Dto\Genre\GenreResponseDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'GenreResource',
+    properties: [
+        new OA\Property(property: 'name', type: 'string', example: 'Genre name'),
+        new OA\Property(property: 'slug', type: 'string', example: 'genre-slug'),
+        new OA\Property(property: 'description', type: 'string', example: 'Genre description'),
+    ],
+    type: 'object',
+)]
 /**
  * @mixin GenreResponseDto
  */

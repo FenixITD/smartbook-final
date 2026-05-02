@@ -7,7 +7,25 @@ namespace App\Http\Resources\Book;
 use App\Dto\Book\BookResponseDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'BookResource',
+    properties: [
+        new OA\Property(property: 'title', type: 'string', example: 'Book title'),
+        new OA\Property(property: 'slug', type: 'string', example: 'book-slug'),
+        new OA\Property(property: 'authorId', type: 'integer', example: 3),
+        new OA\Property(property: 'description', type: 'string', example: 'Book description'),
+        new OA\Property(property: 'price', type: 'number', example: 16.99),
+        new OA\Property(property: 'stock', type: 'integer', example: 8),
+        new OA\Property(property: 'publishYear', type: 'integer', example: 2012),
+        new OA\Property(property: 'coverImage', type: 'string', example: 'Book image'),
+        new OA\Property(property: 'averageRating', type: 'number', example: 4.6),
+        new OA\Property(property: 'ratingsCount', type: 'integer', example: 18),
+        new OA\Property(property: 'status', type: 'string', example: 'archived'),
+    ],
+    type: 'object',
+)]
 /**
  * @mixin BookResponseDto
  */

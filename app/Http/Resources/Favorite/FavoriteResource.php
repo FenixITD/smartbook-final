@@ -7,7 +7,16 @@ namespace App\Http\Resources\Favorite;
 use App\Dto\Favorite\FavoriteResponseDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'FavoriteResource',
+    properties: [
+        new OA\Property(property: 'userId', type: 'integer', example: 3),
+        new OA\Property(property: 'bookId', type: 'integer', example: 4),
+    ],
+    type: 'object',
+)]
 /**
  * @mixin FavoriteResponseDto
  */

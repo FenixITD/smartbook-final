@@ -8,7 +8,28 @@ use App\Http\Requests\Order\OrderDataRequest;
 use App\Http\Resources\Order\OrderResource;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
+#[OA\Post(
+    path: '/api/orders',
+    summary: 'Create order',
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            ref: '#/components/schemas/OrderDataRequest'
+        ),
+    ),
+    tags: ['Orders'],
+    responses: [
+        new OA\Response(
+            response: 201,
+            description: 'Get created order',
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/OrderResource'
+            )
+        ),
+    ]
+)]
 readonly class CreateOrderController
 {
     public function __construct(

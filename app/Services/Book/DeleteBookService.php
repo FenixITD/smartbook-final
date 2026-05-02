@@ -21,8 +21,8 @@ final readonly class DeleteBookService
         $this->transactionManager->transaction(function () use ($bookId): void {
             $book = $this->bookRepository->getById($bookId);
 
-            if ($book !== null && $book->cover_image !== null && $book->cover_image !== '') {
-                Storage::disk('public')->delete($book->cover_image);
+            if ($book !== null && $book->coverImage !== null && $book->coverImage !== '') {
+                Storage::disk('public')->delete($book->coverImage);
             }
 
             $this->bookRepository->delete($bookId);

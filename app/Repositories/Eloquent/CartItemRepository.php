@@ -27,7 +27,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->all();
     }
 
-    public function getById(int $id): ?CartItemResponseDto
+    public function getById(int $id): CartItemResponseDto|null
     {
         $cartItem = CartItem::find($id);
 
@@ -42,7 +42,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->sum(DB::raw('books.price * cart_items.quantity'));
     }
 
-    public function findByUserAndBook(int $userId, int $bookId): ?CartItemResponseDto
+    public function findByUserAndBook(int $userId, int $bookId): CartItemResponseDto|null
     {
         $cartItem = CartItem::where('user_id', $userId)
             ->where('book_id', $bookId)
@@ -94,7 +94,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
     }
 
     /**
-     * @param  array<int, array{book_id: int, quantity: int}>  $items
+     * @param array<int, array{book_id: int, quantity: int}> $items
      */
     public function bulkAddOrIncrement(int $userId, array $items): void
     {
@@ -131,7 +131,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return CartItemResponseDto::fromModel($cartItem);
     }
 
-    public function update(int $id, CartItemDto $data): ?CartItemResponseDto
+    public function update(int $id, CartItemDto $data): CartItemResponseDto|null
     {
         $cartItem = CartItem::findOrFail($id);
 
@@ -151,7 +151,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return CartItem::findOrFail($id)->delete();
+        return (bool) CartItem::findOrFail($id)->delete();
     }
 
     public function deleteByUserAndBook(int $userId, int $bookId): void

@@ -8,7 +8,40 @@ use App\Http\Requests\Review\ReviewDataRequest;
 use App\Http\Resources\Review\ReviewResource;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
+#[OA\Put(
+    path: '/api/reviews/{review}',
+    summary: 'Update review by ID',
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            ref: '#/components/schemas/ReviewDataRequest'
+        ),
+    ),
+    tags: ['Reviews'],
+    parameters: [
+        new OA\Parameter(
+            name: 'review',
+            description: 'Update a single review by ID',
+            in: 'path',
+            required: true,
+            schema: new OA\Schema(
+                type: 'integer',
+                example: 3,
+            )
+        ),
+    ],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'Update a single review by ID',
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/ReviewResource'
+            )
+        ),
+    ]
+)]
 readonly class UpdateReviewController
 {
     public function __construct(

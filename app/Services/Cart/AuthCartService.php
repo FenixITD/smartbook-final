@@ -14,7 +14,8 @@ final readonly class AuthCartService implements CartServiceInterface
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     /** @return array<int, array{book_id: int, quantity: int}> */
     public function getAll(): array

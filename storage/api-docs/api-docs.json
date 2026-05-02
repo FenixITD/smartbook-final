@@ -11,7 +11,7 @@
                     "Authors"
                 ],
                 "summary": "Get a list of all authors",
-                "operationId": "e2064d795c83369988d8efeddaeddad2",
+                "operationId": "d2e2b5c6358e6a606b05783d76147cf4",
                 "responses": {
                     "200": {
                         "description": "Get a list of all authors",
@@ -30,7 +30,7 @@
                     "Authors"
                 ],
                 "summary": "Create author",
-                "operationId": "00a88e2cb24709eaf3f58f864117f328",
+                "operationId": "81229b3e50e47e6b5ef732ba633f1234",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -61,10 +61,9 @@
                     "Authors"
                 ],
                 "summary": "Get author by ID",
-                "operationId": "f176a1208035b9ea39f53c8952d6efb3",
+                "operationId": "1814365d72bc4803847c5317bd70dd51",
                 "parameters": [
                     {
-                        "parameter": "author",
                         "name": "author",
                         "in": "path",
                         "description": "Get a single author by ID",
@@ -93,10 +92,9 @@
                     "Authors"
                 ],
                 "summary": "Update author by ID",
-                "operationId": "f93f5b3576d65d641fdfec4ac6f8df86",
+                "operationId": "3509a81ccd58dfd1680966cf04a0d471",
                 "parameters": [
                     {
-                        "parameter": "author",
                         "name": "author",
                         "in": "path",
                         "description": "Update a single author by ID",
@@ -135,10 +133,9 @@
                     "Authors"
                 ],
                 "summary": "Delete author by ID",
-                "operationId": "23f89e2081159f339d787a38f2aeaa0e",
+                "operationId": "5ac0567429fc5d09f30094c0d558d437",
                 "parameters": [
                     {
-                        "parameter": "author",
                         "name": "author",
                         "in": "path",
                         "description": "Delete a single author by ID",
@@ -155,16 +152,1254 @@
                     }
                 }
             }
+        },
+        "/api/books": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get a list of all books",
+                "operationId": "4c1d0f45ac1bae416aadc42efbb2f86b",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all books",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Create book",
+                "operationId": "0630f1a0496bb45fd220be9b2b0cbe19",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BookDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/books/{book}": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get book by ID",
+                "operationId": "933fc70e164ed2ca0edc37869fb8b26c",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Get a single book by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single book by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update book by ID",
+                "operationId": "8ae5ccfcb9130d85fbab7b470807ea89",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Update a single book by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BookDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single book by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BookResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Delete book by ID",
+                "operationId": "acb3a50f8a13b65e02fa01646f37dd7c",
+                "parameters": [
+                    {
+                        "name": "book",
+                        "in": "path",
+                        "description": "Delete a single book by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single book by ID"
+                    }
+                }
+            }
+        },
+        "/api/cartItems": {
+            "get": {
+                "tags": [
+                    "CartItems"
+                ],
+                "summary": "Get a list of all cartItems",
+                "operationId": "65c48dfec709200be76df23b4c1d20e7",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all cartItems",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CartItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "CartItems"
+                ],
+                "summary": "Create cartItem",
+                "operationId": "38d3916f8b25eb216dfdf2c839870022",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CartItemDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created cartItem",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CartItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cartItems/{cartItem}": {
+            "get": {
+                "tags": [
+                    "CartItems"
+                ],
+                "summary": "Get cartItem by ID",
+                "operationId": "fe6ac5246d6ad2f794d66c0df091c987",
+                "parameters": [
+                    {
+                        "name": "cartItem",
+                        "in": "path",
+                        "description": "Get a single cartItem by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single cartItem by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CartItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "CartItems"
+                ],
+                "summary": "Update cartItem by ID",
+                "operationId": "58ee4ffcdcb0804622af00720e25e733",
+                "parameters": [
+                    {
+                        "name": "cartItem",
+                        "in": "path",
+                        "description": "Update a single cartItem by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CartItemDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single cartItem by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CartItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "CartItems"
+                ],
+                "summary": "Delete cartItem by ID",
+                "operationId": "46933ba9441a2abcdfcbd7b2c1e4262c",
+                "parameters": [
+                    {
+                        "name": "cartItem",
+                        "in": "path",
+                        "description": "Delete a single cartItem by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single cartItem by ID"
+                    }
+                }
+            }
+        },
+        "/api/favorites": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Get a list of all favorites",
+                "operationId": "deb28e118e0a712671774bc3db268b26",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all favorites",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Create favorite",
+                "operationId": "100a886d3ec344a337d3681b989a8d92",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FavoriteDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created favorite",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/favorites/{favorite}": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Get favorite by ID",
+                "operationId": "026ebc8ab304eea933e42d8e0f8b38bf",
+                "parameters": [
+                    {
+                        "name": "favorite",
+                        "in": "path",
+                        "description": "Get a single favorite by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single favorite by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Update favorite by ID",
+                "operationId": "c069ac231323c78a5cdf4ee9132237ce",
+                "parameters": [
+                    {
+                        "name": "favorite",
+                        "in": "path",
+                        "description": "Update a single favorite by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FavoriteDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single favorite by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Delete favorite by ID",
+                "operationId": "ea7a28653ea93d7448f25fda16357906",
+                "parameters": [
+                    {
+                        "name": "favorite",
+                        "in": "path",
+                        "description": "Delete a single favorite by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single favorite by ID"
+                    }
+                }
+            }
+        },
+        "/api/genres": {
+            "get": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Get a list of all genres",
+                "operationId": "0662fb5073c00518ae8ace646fbcc4a9",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all genres",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenreResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Create genre",
+                "operationId": "434927b35628c29186ab2677eba478e8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GenreDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created genre",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenreResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/genres/{genre}": {
+            "get": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Get genre by ID",
+                "operationId": "ed8643160c178d38f22eba9c5009a352",
+                "parameters": [
+                    {
+                        "name": "genre",
+                        "in": "path",
+                        "description": "Get a single genre by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single genre by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenreResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Update genre by ID",
+                "operationId": "cb6b60f44b3a3fe956127905adf60254",
+                "parameters": [
+                    {
+                        "name": "genre",
+                        "in": "path",
+                        "description": "Update a single genre by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GenreDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single genre by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GenreResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Delete genre by ID",
+                "operationId": "1a11b58bdb4f71421a9bcc970ac4e300",
+                "parameters": [
+                    {
+                        "name": "genre",
+                        "in": "path",
+                        "description": "Delete a single genre by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single genre by ID"
+                    }
+                }
+            }
+        },
+        "/api/orderItems": {
+            "get": {
+                "tags": [
+                    "OrderItems"
+                ],
+                "summary": "Get a list of all orderItems",
+                "operationId": "9f6b9dd46d74c58b1472715257c54f8c",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all orderItems",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "OrderItems"
+                ],
+                "summary": "Create orderItem",
+                "operationId": "d5a89764cb7ba673be057954a3838895",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderItemDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created orderItem",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/orderItems/{orderItem}": {
+            "get": {
+                "tags": [
+                    "OrderItems"
+                ],
+                "summary": "Get orderItem by ID",
+                "operationId": "e004f4798f170ea7b3f5d89199d5e52f",
+                "parameters": [
+                    {
+                        "name": "orderItem",
+                        "in": "path",
+                        "description": "Get a single orderItem by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single orderItem by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "OrderItems"
+                ],
+                "summary": "Update orderItem by ID",
+                "operationId": "39271f5e7f9a1326575405d23a6599d4",
+                "parameters": [
+                    {
+                        "name": "orderItem",
+                        "in": "path",
+                        "description": "Update a single orderItem by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderItemDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single orderItem by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderItemResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "OrderItems"
+                ],
+                "summary": "Delete orderItem by ID",
+                "operationId": "d42c041241ab4fccd2d35a021bfc2c99",
+                "parameters": [
+                    {
+                        "name": "orderItem",
+                        "in": "path",
+                        "description": "Delete a single orderItem by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single orderItem by ID"
+                    }
+                }
+            }
+        },
+        "/api/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get a list of all orders",
+                "operationId": "932a42372f14f2e9846f885532b3b98f",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all orders",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create order",
+                "operationId": "546daee96d8a245eb81473b8e9e64568",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created order",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/orders/{order}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get order by ID",
+                "operationId": "edb75f91dd8f15ee330ffe4af89b8e84",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "Get a single order by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single order by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Update order by ID",
+                "operationId": "da4ae2d486b31b26740ba0daf91272ba",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "Update a single order by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single order by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Delete order by ID",
+                "operationId": "81837d9f4f4864a83f73d1fdea7326a9",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "Delete a single order by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single order by ID"
+                    }
+                }
+            }
+        },
+        "/api/reviews": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get a list of all reviews",
+                "operationId": "72e247e5e41762b044ded73f18f10012",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReviewResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Create review",
+                "operationId": "20658dbb2c9b5e48d4f2a148443ead13",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReviewDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created review",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReviewResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reviews/{review}": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Get review by ID",
+                "operationId": "458a7113e27c15dd001b903a6a58e775",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "Get a single review by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single review by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReviewResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Update review by ID",
+                "operationId": "fae5c8896cd8d29e7fe5deb66cb56ac4",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "Update a single review by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReviewDataRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a single review by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReviewResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Delete review by ID",
+                "operationId": "3b3d603a1e4772b9ebf8451081b5472f",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "description": "Delete a single review by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete a single review by ID"
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
             "AuthorDataRequest": {
-                "required": [],
                 "properties": {
                     "name": {
                         "type": "string",
                         "example": "Author name"
+                    }
+                },
+                "type": "object"
+            },
+            "BookDataRequest": {
+                "required": [
+                    "title",
+                    "slug",
+                    "authorId",
+                    "description",
+                    "price",
+                    "stock",
+                    "status"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Book title"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "book-slug"
+                    },
+                    "authorId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Book description"
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 16.99
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "publishYear": {
+                        "type": "integer",
+                        "example": 2012
+                    },
+                    "coverImage": {
+                        "type": "string",
+                        "example": "Book image"
+                    },
+                    "averageRating": {
+                        "type": "number",
+                        "example": 4.6
+                    },
+                    "ratingsCount": {
+                        "type": "integer",
+                        "example": 18
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "archived"
+                    }
+                },
+                "type": "object"
+            },
+            "CartItemDataRequest": {
+                "required": [
+                    "userId",
+                    "bookId",
+                    "quantity"
+                ],
+                "properties": {
+                    "userId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "bookId": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 13
+                    }
+                },
+                "type": "object"
+            },
+            "FavoriteDataRequest": {
+                "required": [
+                    "userId",
+                    "bookId"
+                ],
+                "properties": {
+                    "userId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "bookId": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "GenreDataRequest": {
+                "required": [
+                    "name",
+                    "slug",
+                    "description"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Genre name"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "genre-slug"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Genre description"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderDataRequest": {
+                "required": [
+                    "userId",
+                    "total",
+                    "status",
+                    "shippingAddress"
+                ],
+                "properties": {
+                    "userId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "total": {
+                        "type": "numeric",
+                        "example": 196.54
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "delivered"
+                    },
+                    "shippingAddress": {
+                        "type": "string",
+                        "example": "Pushkina 19"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "example": "cash"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderItemDataRequest": {
+                "required": [
+                    "orderId",
+                    "bookId",
+                    "quantity",
+                    "priceAtPurchase"
+                ],
+                "properties": {
+                    "orderId": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "bookId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "priceAtPurchase": {
+                        "type": "numeric",
+                        "example": 16.99
+                    }
+                },
+                "type": "object"
+            },
+            "ReviewDataRequest": {
+                "required": [
+                    "userId",
+                    "bookId",
+                    "rating"
+                ],
+                "properties": {
+                    "userId": {
+                        "type": "string",
+                        "example": 3
+                    },
+                    "bookId": {
+                        "type": "string",
+                        "example": 4
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "example": 4.9
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Good comment"
                     }
                 },
                 "type": "object"
@@ -177,6 +1412,169 @@
                     }
                 },
                 "type": "object"
+            },
+            "BookResource": {
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Book title"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "book-slug"
+                    },
+                    "authorId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Book description"
+                    },
+                    "price": {
+                        "type": "numeric",
+                        "example": 16.99
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "publishYear": {
+                        "type": "integer",
+                        "example": 2012
+                    },
+                    "coverImage": {
+                        "type": "string",
+                        "example": "Book image"
+                    },
+                    "averageRating": {
+                        "type": "numeric",
+                        "example": 4.6
+                    },
+                    "ratingsCount": {
+                        "type": "integer",
+                        "example": 18
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "archived"
+                    }
+                },
+                "type": "object"
+            },
+            "CartItemResource": {
+                "properties": {
+                    "userId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "bookId": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 13
+                    }
+                },
+                "type": "object"
+            },
+            "FavoriteResource": {
+                "properties": {
+                    "userId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "bookId": {
+                        "type": "integer",
+                        "example": 4
+                    }
+                },
+                "type": "object"
+            },
+            "GenreResource": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Genre name"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "genre-slug"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Genre description"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderResource": {
+                "properties": {
+                    "userId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "total": {
+                        "type": "numeric",
+                        "example": 196.54
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "delivered"
+                    },
+                    "shippingAddress": {
+                        "type": "string",
+                        "example": "Pushkina 19"
+                    },
+                    "paymentMethod": {
+                        "type": "string",
+                        "example": "cash"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderItemResource": {
+                "properties": {
+                    "orderId": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "bookId": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "priceAtPurchase": {
+                        "type": "numeric",
+                        "example": 16.99
+                    }
+                },
+                "type": "object"
+            },
+            "ReviewResource": {
+                "properties": {
+                    "userId": {
+                        "type": "string",
+                        "example": 3
+                    },
+                    "bookId": {
+                        "type": "string",
+                        "example": 4
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "example": 4.9
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "Good comment"
+                    }
+                },
+                "type": "object"
             }
         }
     },
@@ -184,6 +1582,34 @@
         {
             "name": "Authors",
             "description": "Authors"
+        },
+        {
+            "name": "Books",
+            "description": "Books"
+        },
+        {
+            "name": "CartItems",
+            "description": "CartItems"
+        },
+        {
+            "name": "Favorites",
+            "description": "Favorites"
+        },
+        {
+            "name": "Genres",
+            "description": "Genres"
+        },
+        {
+            "name": "OrderItems",
+            "description": "OrderItems"
+        },
+        {
+            "name": "Orders",
+            "description": "Orders"
+        },
+        {
+            "name": "Reviews",
+            "description": "Reviews"
         }
     ]
 }

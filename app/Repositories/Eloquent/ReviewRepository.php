@@ -64,6 +64,6 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return Review::findOrFail($id)->delete();
+        return (bool) Review::findOrFail($id)->delete();
     }
 }

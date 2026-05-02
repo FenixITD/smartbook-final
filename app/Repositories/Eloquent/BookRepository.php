@@ -119,7 +119,7 @@ final class BookRepository implements BookRepositoryInterface
 
         return (float) Book::whereIn('id', $ids)
             ->get(['id', 'price'])
-            ->sum(fn (Book $book) => $book->price * $quantitiesByBookId[$book->id]);
+            ->sum(static fn (Book $book) => $book->price * $quantitiesByBookId[$book->id]);
     }
 
     public function findByIdWithRelations(int $id): BookResponseDto
@@ -130,7 +130,7 @@ final class BookRepository implements BookRepositoryInterface
     }
 
     /** @param array<int> $ids
-     *  @return array<BookResponseDto>
+     * @return array<BookResponseDto>
      */
     public function findByIdsWithAuthor(array $ids): array
     {
@@ -187,7 +187,7 @@ final class BookRepository implements BookRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return Book::findOrFail($id)->delete();
+        return (bool) Book::findOrFail($id)->delete();
     }
 
     /** @param array<int> $ids */

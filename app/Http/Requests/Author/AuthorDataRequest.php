@@ -10,7 +10,6 @@ use OpenApi\Attributes as OA;
 
 #[OA\Schema(
     schema: 'AuthorDataRequest',
-    required: [],
     properties: [
         new OA\Property(property: 'name', type: 'string', example: 'Author name'),
     ],

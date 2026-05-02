@@ -6,7 +6,19 @@ namespace App\Http\Requests\Review;
 
 use App\Dto\Review\ReviewDto;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'ReviewDataRequest',
+    required: ['userId', 'bookId', 'rating'],
+    properties: [
+        new OA\Property(property: 'userId', type: 'integer', example: 3),
+        new OA\Property(property: 'bookId', type: 'integer', example: 4),
+        new OA\Property(property: 'rating', type: 'number', example: 4.9),
+        new OA\Property(property: 'comment', type: 'string', example: 'Good comment'),
+    ],
+    type: 'object',
+)]
 class ReviewDataRequest extends FormRequest
 {
     public function authorize(): bool

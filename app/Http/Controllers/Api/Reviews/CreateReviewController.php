@@ -8,7 +8,28 @@ use App\Http\Requests\Review\ReviewDataRequest;
 use App\Http\Resources\Review\ReviewResource;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
+#[OA\Post(
+    path: '/api/reviews',
+    summary: 'Create review',
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            ref: '#/components/schemas/ReviewDataRequest'
+        ),
+    ),
+    tags: ['Reviews'],
+    responses: [
+        new OA\Response(
+            response: 201,
+            description: 'Get created review',
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/ReviewResource'
+            )
+        ),
+    ]
+)]
 readonly class CreateReviewController
 {
     public function __construct(

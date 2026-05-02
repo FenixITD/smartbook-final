@@ -9,15 +9,6 @@ use App\Models\CartItem;
 
 final readonly class CartItemWithBookResponseDto
 {
-    public function __construct(
-        public int|null $id,
-        public int|null $userId,
-        public int $bookId,
-        public int $quantity,
-        public BookResponseDto|null $book,
-    ) {
-    }
-
     public static function fromModel(CartItem $cartItem): self
     {
         return new self(
@@ -40,5 +31,14 @@ final readonly class CartItemWithBookResponseDto
             quantity: $quantity,
             book: $book,
         );
+    }
+
+    public function __construct(
+        public int|null $id,
+        public int|null $userId,
+        public int $bookId,
+        public int $quantity,
+        public BookResponseDto|null $book,
+    ) {
     }
 }

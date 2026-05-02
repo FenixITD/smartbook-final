@@ -53,6 +53,6 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return OrderItem::findOrFail($id)->delete();
+        return (bool) OrderItem::findOrFail($id)->delete();
     }
 }

@@ -11,6 +11,20 @@ use App\Services\Book\SearchBookService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
+#[OA\Get(
+    path: '/api/books',
+    summary: 'Get a list of all books',
+    tags: ['Books'],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'Get a list of all books',
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/BookResource'
+            )
+        ),
+    ]
+)]
 final class GetListBookController extends Controller
 {
     public function __construct(
@@ -18,20 +32,6 @@ final class GetListBookController extends Controller
     ) {
     }
 
-    #[OA\Get(
-        path: '/api/books',
-        summary: 'Get a list of all books',
-        tags: ['Books'],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Get a list of all books',
-                content: new OA\JsonContent(
-                    ref: '#/components/schemas/BookResource'
-                )
-            ),
-        ]
-    )]
     public function __invoke(BookListRequest $request): JsonResponse
     {
         $filters = $request->toDto();

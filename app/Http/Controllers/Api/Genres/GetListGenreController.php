@@ -8,7 +8,22 @@ use App\Http\Requests\Genre\GenreListRequest;
 use App\Http\Resources\Genre\GenreResource;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
+#[OA\Get(
+    path: '/api/genres',
+    summary: 'Get a list of all genres',
+    tags: ['Genres'],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'Get a list of all genres',
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/GenreResource'
+            )
+        ),
+    ]
+)]
 final readonly class GetListGenreController
 {
     public function __construct(

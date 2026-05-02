@@ -18,7 +18,7 @@ final readonly class SearchBookForDashboardService
     public function search(DashboardFiltersDto $filters): array
     {
         $response = $this->client->search([
-            'index' => config('elasticsearch.books_index'),
+            'index' => (string) config('elasticsearch.books_index'),
             'body' => [
                 'query' => $this->buildQuery($filters),
                 'sort' => $this->buildSort($filters->sort),
@@ -27,9 +27,12 @@ final readonly class SearchBookForDashboardService
             ],
         ]);
 
+        /** @var array<int, array<string, mixed>> $hits */
+        $hits = $response->asArray()['hits']['hits'];
+
         return array_map(
             static fn (array $hit): int => (int) $hit['_id'],
-            $response['hits']['hits'],
+            $hits,
         );
     }
 

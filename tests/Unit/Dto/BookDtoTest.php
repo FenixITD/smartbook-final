@@ -117,7 +117,7 @@ final class BookDtoTest extends TestCase
         $book->cover_image = 'covers/pragmatic.jpg';
         $book->average_rating = 4.7;
         $book->ratings_count = 200;
-        $book->status = 'published';
+        $book->status = 'active';
         $book->created_at = now()->setDateTimeFrom('2024-01-01 10:00:00');
         $book->updated_at = now()->setDateTimeFrom('2024-06-01 12:00:00');
 

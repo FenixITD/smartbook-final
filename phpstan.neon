@@ -50,26 +50,42 @@ parameters:
 
         # ── Elasticsearch SDK — third-party typing gaps ───────────────────────
         -
-            path: app/Services/Elasticsearch/*
+            path: app/Services/Book/*
             message: '#Call to an undefined method Elastic\\Elasticsearch\\Response\\Elasticsearch#'
         -
-            path: app/Services/Elasticsearch/*
+            path: app/Services/Book/*
             message: '#Parameter \#1 \$params of method Elastic\\Elasticsearch#'
         -
-            path: app/Services/Elasticsearch/*
+            path: app/Services/Book/*
             message: '#Parameter \#1 \$callback of function array_map#'
         -
-            path: app/Services/Elasticsearch/*
+            path: app/Services/Book/*
             message: '#Parameter \#2 \$array of function array_map#'
         -
-            path: app/Services/Elasticsearch/*
+            path: app/Services/Book/*
             message: '#Cannot cast mixed to int#'
         -
-            path: app/Services/Elasticsearch/*
+            path: app/Services/Book/*
             message: '#Cannot access offset#'
         -
-            path: app/Services/Elasticsearch/*
-            message: '#Method App\\Services\\Elasticsearch\\BookIndexService::search\(\) should return#'
+            path: app/Services/Book/*
+            message: '#Cannot cast mixed to string#'
+        -
+            path: app/Services/Book/*
+            message: '#Method App\\Services\\Book\\BookIndexService::search\(\) should return#'
+
+        # ── BookRepository — paginator setCollection invariance ───────────────
+        -
+            path: app/Repositories/Eloquent/BookRepository.php
+            message: '#Parameter \#1 \$collection of method Illuminate\\Pagination\\AbstractPaginator#'
+        -
+            path: app/Repositories/Eloquent/BookRepository.php
+            message: '#Casting to float something that''s already float#'
+
+        # ── SearchSuggestService — array_map over mixed items ─────────────────
+        -
+            path: app/Services/Book/SearchSuggestService.php
+            message: '#Parameter \#1 \$callback of function array_map#'
 
         # ── FortifyServiceProvider — classes exist at runtime via Composer ────
         -

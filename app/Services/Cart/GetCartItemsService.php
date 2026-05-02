@@ -10,7 +10,8 @@ final readonly class GetCartItemsService
 {
     public function __construct(
         private CartResolverService $cartResolverService,
-    ) {}
+    ) {
+    }
 
     /** @return array<CartItemWithBookResponseDto> */
     public function execute(): array

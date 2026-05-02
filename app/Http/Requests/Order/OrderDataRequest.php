@@ -6,7 +6,20 @@ namespace App\Http\Requests\Order;
 
 use App\Dto\Order\OrderDto;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'OrderDataRequest',
+    required: ['userId', 'total', 'status', 'shippingAddress'],
+    properties: [
+        new OA\Property(property: 'userId', type: 'integer', example: 3),
+        new OA\Property(property: 'total', type: 'number', example: 196.54),
+        new OA\Property(property: 'status', type: 'string', example: 'delivered'),
+        new OA\Property(property: 'shippingAddress', type: 'string', example: 'Pushkina 19'),
+        new OA\Property(property: 'paymentMethod', type: 'string', example: 'cash'),
+    ],
+    type: 'object',
+)]
 final class OrderDataRequest extends FormRequest
 {
     public function authorize(): bool

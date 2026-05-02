@@ -6,7 +6,18 @@ namespace App\Http\Requests\Genre;
 
 use App\Dto\Genre\GenreDto;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'GenreDataRequest',
+    required: ['name', 'slug', 'description'],
+    properties: [
+        new OA\Property(property: 'name', type: 'string', example: 'Genre name'),
+        new OA\Property(property: 'slug', type: 'string', example: 'genre-slug'),
+        new OA\Property(property: 'description', type: 'string', example: 'Genre description'),
+    ],
+    type: 'object',
+)]
 final class GenreDataRequest extends FormRequest
 {
     public function authorize(): bool

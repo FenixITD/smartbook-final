@@ -28,7 +28,7 @@ final readonly class SearchSuggestService
 
         $paginated = $this->repository->getOrderedByIds($ids, perPage: 5);
 
-        return array_map(
+        return array_values(array_map(
             static fn (BookResponseDto $book): array => [
                 'id' => $book->id,
                 'title' => $book->title,
@@ -38,6 +38,6 @@ final readonly class SearchSuggestService
                 'url' => route('dashboard', ['search' => $book->title]),
             ],
             $paginated->items,
-        );
+        ));
     }
 }
