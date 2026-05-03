@@ -35,10 +35,15 @@ final class GenreRepository implements GenreRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @return array<mixed> */
+    /** @return GenreResponseDto[] */
     public function getAll(): array
     {
-        return Genre::orderBy('name')->lazy(15)->toArray();
+        return Genre::orderBy('name')
+            ->select(['id', 'name', 'slug', 'description'])
+            ->limit(200)
+            ->get()
+            ->map(fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+            ->all();
     }
 
     public function getById(int $id): GenreResponseDto|null

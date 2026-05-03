@@ -10,16 +10,16 @@
                         <flux:text class="mt-1 text-zinc-500">Book details</flux:text>
                     </div>
                 </div>
-                <flux:button href="{{ route('books.edit', $book) }}" variant="primary" icon="pencil">Edit</flux:button>
+                <flux:button href="{{ route('books.edit', $book->id) }}" variant="primary" icon="pencil">Edit</flux:button>
             </div>
 
             <div class="max-w-2xl">
                 <div class="rounded-xl border border-zinc-200 bg-white overflow-hidden dark:border-zinc-700 dark:bg-zinc-900">
 
                     {{-- Cover --}}
-                    @if ($book->cover_image)
+                    @if ($book->coverImage)
                         <div class="h-56 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                            <img src="{{ Storage::url($book->cover_image) }}" alt="{{ $book->title }}"
+                            <img src="{{ Storage::url($book->coverImage) }}" alt="{{ $book->title }}"
                                  class="w-full h-full object-cover">
                         </div>
                     @endif
@@ -50,9 +50,9 @@
                         </div>
                         <div class="px-6 py-4 flex justify-between">
                             <flux:text class="text-zinc-500 text-sm">Rating</flux:text>
-                            <flux:text class="text-sm font-medium">{{ $book->average_rating }} ({{ $book->ratings_count }} reviews)</flux:text>
+                            <flux:text class="text-sm font-medium">{{ $book->averageRating }} ({{ $book->ratingsCount }} reviews)</flux:text>
                         </div>
-                        @if ($book->genres->isNotEmpty())
+                        @if (!empty($book->genres))
                             <div class="px-6 py-4 flex justify-between items-start">
                                 <flux:text class="text-zinc-500 text-sm">Genres</flux:text>
                                 <div class="flex flex-wrap gap-1 justify-end">

@@ -12,7 +12,7 @@
 
             <div class="max-w-2xl">
                 <div class="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
-                    <form method="POST" action="{{ route('books.update', $book) }}" enctype="multipart/form-data" class="flex flex-col gap-5">
+                    <form method="POST" action="{{ route('books.update', $book->id) }}" enctype="multipart/form-data" class="flex flex-col gap-5">
                         @csrf
                         @method('PUT')
 
@@ -33,7 +33,7 @@
                                 <flux:label for="authorId">Author</flux:label>
                                 <flux:select id="authorId" name="authorId">
                                     @foreach ($authors as $author)
-                                        <flux:select.option value="{{ $author->id }}" :selected="old('authorId', $book->author_id) == $author->id">
+                                        <flux:select.option value="{{ $author->id }}" :selected="old('authorId', $book->authorId) == $author->id">
                                             {{ $author->name }}
                                         </flux:select.option>
                                     @endforeach
@@ -63,14 +63,14 @@
 
                             <flux:field>
                                 <flux:label for="publishYear">Publish year</flux:label>
-                                <flux:input id="publishYear" name="publishYear" type="number" value="{{ old('publishYear', $book->publish_year) }}" />
+                                <flux:input id="publishYear" name="publishYear" type="number" value="{{ old('publishYear', $book->publishYear) }}" />
                             </flux:field>
 
                             <flux:field>
                                 <flux:label for="cover_image">Cover image</flux:label>
-                                @if ($book->cover_image)
+                                @if ($book->coverImage)
                                     <div class="mb-2 flex items-center gap-3">
-                                        <img src="{{ Storage::url($book->cover_image) }}" alt="Current cover"
+                                        <img src="{{ Storage::url($book->coverImage) }}" alt="Current cover"
                                              class="w-12 h-16 object-cover rounded-lg border border-zinc-200">
                                         <span class="text-xs text-zinc-400">Current cover</span>
                                     </div>
@@ -90,7 +90,7 @@
                             <flux:field class="col-span-2">
                                 <flux:label>Genres</flux:label>
                                 <div class="flex flex-wrap gap-2 mt-1">
-                                    @php $selectedGenres = old('genres', $book->genres->pluck('id')->toArray()); @endphp
+                                    @php $selectedGenres = old('genres', array_column(array_map(fn($g) => ['id' => $g->id], $book->genres), 'id')); @endphp
                                     @foreach ($genres as $genre)
                                         <label class="flex items-center gap-2 cursor-pointer px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                                             <input type="checkbox" name="genres[]" value="{{ $genre->id }}"
@@ -105,7 +105,7 @@
 
                         <div class="flex gap-3 pt-2">
                             <flux:button type="submit" variant="primary">Save changes</flux:button>
-                            <flux:button href="{{ route('books.show', $book) }}" variant="ghost">Cancel</flux:button>
+                            <flux:button href="{{ route('books.show', $book->id) }}" variant="ghost">Cancel</flux:button>
                         </div>
                     </form>
                 </div>
@@ -117,7 +117,7 @@
                     <flux:heading size="sm" class="text-red-700 dark:text-red-400">Danger zone</flux:heading>
                     <flux:text class="mt-1 text-red-600 dark:text-red-400 text-sm">Deleting a book is irreversible.</flux:text>
                     <div class="mt-4">
-                        <form action="{{ route('books.destroy', $book) }}" method="POST"
+                        <form action="{{ route('books.destroy', $book->id) }}" method="POST"
                               onsubmit="return confirm('Delete book \'{{ $book->title }}\'?')">
                             @csrf
                             @method('DELETE')

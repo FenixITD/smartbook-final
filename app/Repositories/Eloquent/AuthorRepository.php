@@ -35,17 +35,33 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @return array<mixed> */
+    /** @return AuthorResponseDto[] */
     public function getAll(): array
     {
-        return Author::orderBy('name')->lazy(15)->toArray();
+        return Author::orderBy('name')
+            ->select(['id', 'name'])
+            ->limit(200)
+            ->get()
+            ->map(fn (Author $author) => AuthorResponseDto::fromModel($author))
+            ->all();
     }
 
-    public function getById(int $id): AuthorResponseDto|null
+    public function getById(int $id): ?AuthorResponseDto
     {
         $authorId = Author::find($id);
 
         return $authorId !== null ? AuthorResponseDto::fromModel($authorId) : null;
+    }
+
+    public function suggest(string $query): array
+    {
+        return Author::orderBy('name')
+            ->where('name', 'like', "%{$query}%")
+            ->select(['id', 'name'])
+            ->limit(20)
+            ->get()
+            ->map(fn (Author $author) => AuthorResponseDto::fromModel($author))
+            ->all();
     }
 
     public function create(AuthorDto $data): AuthorResponseDto
@@ -56,7 +72,7 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return AuthorResponseDto::fromModel($author);
     }
 
-    public function update(int $id, AuthorDto $data): AuthorResponseDto|null
+    public function update(int $id, AuthorDto $data): ?AuthorResponseDto
     {
         $authorId = Author::findOrFail($id);
 

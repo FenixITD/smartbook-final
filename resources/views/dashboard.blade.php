@@ -11,9 +11,9 @@
                         <p class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-3">Genres</p>
                         <div class="flex flex-col gap-0.5">
                             @foreach ($genres as $genre)
-                                <a href="{{ request()->fullUrlWithQuery(['genre' => $genre['id']]) }}"
+                                <a href="{{ request()->fullUrlWithQuery(['genre' => $genre->id]) }}"
                                    class="text-sm px-2 py-1.5 rounded-lg transition-colors text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100">
-                                    {{ $genre['name'] }}
+                                    {{ $genre->name }}
                                 </a>
                             @endforeach
                         </div>
@@ -69,11 +69,11 @@
 
                 {{-- Active genre filter --}}
                 @if(request('genre'))
-                    @php $activeGenre = collect($genres)->firstWhere('id', request('genre')); @endphp
+                    @php $activeGenre = collect($genres)->firstWhere('id', (int) request('genre')); @endphp
                     @if($activeGenre)
                         <a href="{{ request()->fullUrlWithQuery(['genre' => null]) }}"
                            class="inline-flex items-center gap-1.5 text-sm bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 px-3 py-1.5 rounded-lg font-medium">
-                            {{ $activeGenre['name'] }}
+                            {{ $activeGenre->name }}
                             <flux:icon name="x-mark" class="w-3 h-3" />
                         </a>
                     @endif
@@ -120,55 +120,66 @@
                     @foreach ($paginated->items as $book)
                         <div class="group flex flex-col rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
 
-                            {{-- Cover --}}
-                            <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                                @if ($book->cover_image)
-                                    <img src="{{ Storage::url($book->cover_image) }}"
-                                         alt="{{ $book->title }}"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center bg-zinc-200 dark:bg-zinc-700">
-                                        <flux:icon name="book-open" class="w-10 h-10 text-zinc-400" />
-                                    </div>
-                                @endif
+                            {{-- Кликабельная часть: обложка + инфо --}}
+                            <a href="{{ route('catalog.show', $book->id) }}" class="flex flex-col flex-1">
 
-                                @if ($book->status === 'active' && $book->stock > 0)
-                                    <span class="absolute top-2 left-2 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-medium">
-                                        In stock
-                                    </span>
-                                @elseif ($book->stock === 0)
-                                    <span class="absolute top-2 left-2 text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-medium">
-                                        Out of stock
-                                    </span>
-                                @endif
-                            </div>
+                                {{-- Cover --}}
+                                <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                                    @if ($book->cover_image)
+                                        <img src="{{ Storage::url($book->cover_image) }}"
+                                             alt="{{ $book->title }}"
+                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-zinc-200 dark:bg-zinc-700">
+                                            <flux:icon name="book-open" class="w-10 h-10 text-zinc-400" />
+                                        </div>
+                                    @endif
 
-                            {{-- Info --}}
-                            <div class="p-3 flex flex-col gap-1 flex-1">
-                                <p class="text-xs text-zinc-400 dark:text-zinc-500 truncate">{{ $book->author?->name ?? '—' }}</p>
-                                <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 leading-tight line-clamp-2">{{ $book->title }}</p>
-
-                                @if ($book->average_rating > 0)
-                                    <div class="flex items-center gap-1 mt-auto pt-1">
-                                        <flux:icon name="star" class="w-3 h-3 text-yellow-400" />
-                                        <span class="text-xs text-zinc-500">{{ number_format($book->average_rating, 1) }} ({{ $book->ratings_count }})</span>
-                                    </div>
-                                @endif
-
-                                <div class="flex items-center justify-between mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                                    <span class="text-sm font-bold text-zinc-900 dark:text-zinc-100">${{ number_format($book->price, 2) }}</span>
-                                    <form action="{{ route('cart.store') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="book_id" value="{{ $book->id }}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        <button type="submit"
-                                                class="p-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-                                                title="Add to cart">
-                                            <flux:icon name="shopping-cart" class="w-3.5 h-3.5" />
-                                        </button>
-                                    </form>
+                                    @if ($book->status === 'active' && $book->stock > 0)
+                                        <span class="absolute top-2 left-2 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-medium">
+                                            In stock
+                                        </span>
+                                    @elseif ($book->stock === 0)
+                                        <span class="absolute top-2 left-2 text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-medium">
+                                            Out of stock
+                                        </span>
+                                    @endif
                                 </div>
+
+                                {{-- Info --}}
+                                <div class="p-3 flex flex-col gap-1 flex-1">
+                                    <p class="text-xs text-zinc-400 dark:text-zinc-500 truncate">{{ $book->author?->name ?? '—' }}</p>
+                                    <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 leading-tight line-clamp-2">{{ $book->title }}</p>
+
+                                    @if ($book->average_rating > 0)
+                                        <div class="flex items-center gap-1 mt-auto pt-1">
+                                            <flux:icon name="star" class="w-3 h-3 text-yellow-400" />
+                                            <span class="text-xs text-zinc-500">{{ number_format($book->average_rating, 1) }} ({{ $book->ratings_count }})</span>
+                                        </div>
+                                    @endif
+
+                                    <p class="text-sm font-bold text-zinc-900 dark:text-zinc-100 mt-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                                        ${{ number_format($book->price, 2) }}
+                                    </p>
+                                </div>
+
+                            </a>
+
+                            {{-- Кнопка корзины — отдельно от ссылки --}}
+                            <div class="px-3 pb-3">
+                                <form action="{{ route('cart.store') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="book_id" value="{{ $book->id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit"
+                                            class="w-full py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
+                                        {{ $book->stock === 0 ? 'disabled' : '' }}>
+                                        <flux:icon name="shopping-cart" class="w-3.5 h-3.5" />
+                                        Add to cart
+                                    </button>
+                                </form>
                             </div>
+
                         </div>
                     @endforeach
                 </div>

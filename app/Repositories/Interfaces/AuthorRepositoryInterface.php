@@ -21,6 +21,9 @@ interface AuthorRepositoryInterface
 
     public function getById(int $id): AuthorResponseDto|null;
 
+    /** @return AuthorResponseDto[] */
+    public function suggest(string $query): array;
+
     public function create(AuthorDto $data): AuthorResponseDto;
 
     public function update(int $id, AuthorDto $data): AuthorResponseDto|null;

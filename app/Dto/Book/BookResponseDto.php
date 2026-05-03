@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto\Book;
 
+use App\Dto\Genre\GenreResponseDto;
 use App\Models\Book;
 
 final readonly class BookResponseDto
@@ -26,6 +27,9 @@ final readonly class BookResponseDto
             status: $book->status,
             createdAt: $book->created_at?->toDateTimeString() ?? '',
             updatedAt: $book->updated_at?->toDateTimeString() ?? '',
+            genres: $book->relationLoaded('genres')
+                ? $book->genres->map(fn ($g) => GenreResponseDto::fromModel($g))->all()
+                : [],
         );
     }
 
@@ -45,6 +49,8 @@ final readonly class BookResponseDto
         public string $status,
         public string $createdAt,
         public string $updatedAt,
+        /** @var GenreResponseDto[] */
+        public array $genres = [],
     ) {
     }
 }
