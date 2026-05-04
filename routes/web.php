@@ -19,9 +19,9 @@ require __DIR__.'/web/webAuthors.php';
 require __DIR__.'/web/webBooks.php';
 require __DIR__.'/web/webGenres.php';
 require __DIR__.'/web/webOrders.php';
-require __DIR__.'/web/webOrders.php';
 require __DIR__.'/web/webReviews.php';
 require __DIR__.'/web/carts.php';
 require __DIR__.'/web/catalog.php';
+require __DIR__.'/web/webFavorites.php';
 
 require __DIR__.'/settings.php';

@@ -165,19 +165,39 @@
 
                             </a>
 
-                            {{-- Кнопка корзины — отдельно от ссылки --}}
-                            <div class="px-3 pb-3">
-                                <form action="{{ route('cart.store') }}" method="POST">
+                            {{-- Wishlist + Cart buttons --}}
+                            <div class="px-3 pb-3 flex gap-2">
+
+                                {{-- Favorite toggle --}}
+                                @auth
+                                    <form action="{{ route('favorites.toggle') }}" method="POST" class="shrink-0">
+                                        @csrf
+                                        <input type="hidden" name="book_id" value="{{ $book->id }}">
+                                        <button type="submit"
+                                                title="{{ in_array($book->id, $favoriteBookIds) ? 'Remove from favorites' : 'Add to favorites' }}"
+                                                class="p-1.5 rounded-lg border transition-colors
+                                                       {{ in_array($book->id, $favoriteBookIds)
+                                                          ? 'border-red-300 bg-red-50 text-red-500 hover:bg-red-100 dark:border-red-800 dark:bg-red-950 dark:text-red-400'
+                                                          : 'border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:text-red-500 hover:border-red-300 dark:hover:border-red-800' }}">
+                                            <flux:icon name="heart" class="w-3.5 h-3.5 {{ in_array($book->id, $favoriteBookIds) ? 'fill-current' : '' }}" />
+                                        </button>
+                                    </form>
+                                @endauth
+
+                                {{-- Add to cart --}}
+                                <form action="{{ route('cart.store') }}" method="POST" class="flex-1">
                                     @csrf
                                     <input type="hidden" name="book_id" value="{{ $book->id }}">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit"
-                                            class="w-full py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
-                                        {{ $book->stock === 0 ? 'disabled' : '' }}>
+                                            @disabled($book->stock === 0)
+                                            title="{{ $book->stock === 0 ? 'Out of stock' : 'Add to cart' }}"
+                                            class="w-full py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600">
                                         <flux:icon name="shopping-cart" class="w-3.5 h-3.5" />
                                         Add to cart
                                     </button>
                                 </form>
+
                             </div>
 
                         </div>

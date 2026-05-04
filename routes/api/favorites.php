@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('favorites')->name('api.favorites.')->group(function (): void {
     Route::get('/', GetListFavoriteController::class)->name('list');
-    Route::get('/{favorite}', GetFavoriteController::class)->name('show');
+    Route::get('/{favorite}', GetFavoriteController::class)->name('show')->whereNumber('favorite');
     Route::post('/', CreateFavoriteController::class)->name('create');
-    Route::put('/{favorite}', UpdateFavoriteController::class)->name('update');
-    Route::delete('/{favorite}', DeleteFavoriteController::class)->name('delete');
+    Route::put('/{favorite}', UpdateFavoriteController::class)->name('update')->whereNumber('favorite');
+    Route::delete('/{favorite}', DeleteFavoriteController::class)->name('delete')->whereNumber('favorite');
 });

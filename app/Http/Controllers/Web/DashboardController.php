@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Requests\Dashboard\DashboardListRequest;
 use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Illuminate\View\View;
 
@@ -14,6 +15,7 @@ final readonly class DashboardController
     public function __construct(
         private BookRepositoryInterface $bookRepository,
         private GenreRepositoryInterface $genreRepository,
+        private FavoriteRepositoryInterface $favoriteRepository,
     ) {
     }
 
@@ -21,7 +23,8 @@ final readonly class DashboardController
     {
         $paginated = $this->bookRepository->getDashboardList($request->toDto());
         $genres = $this->genreRepository->getAll();
+        $favoriteBookIds = auth()->check() ? $this->favoriteRepository->getBookIdsByUser((int) auth()->id()) : [];
 
-        return view('dashboard', compact('paginated', 'genres'));
+        return view('dashboard', compact('paginated', 'genres', 'favoriteBookIds'));
     }
 }

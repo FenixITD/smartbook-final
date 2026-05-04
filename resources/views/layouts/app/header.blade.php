@@ -169,6 +169,25 @@
         </flux:tooltip>
     </flux:navbar>
 
+    {{-- Favorites --}}
+    @auth
+        <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
+            <flux:tooltip content="Favorites" position="bottom">
+                <div class="relative">
+                    <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="heart" href="{{ route('favorites.index') }}" />
+                    @php
+                        $favoriteCount = auth()->user()->favorites()->count();
+                    @endphp
+                    @if ($favoriteCount > 0)
+                        <span class="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold pointer-events-none">
+                            {{ $favoriteCount > 9 ? '9+' : $favoriteCount }}
+                        </span>
+                    @endif
+                </div>
+            </flux:tooltip>
+        </flux:navbar>
+    @endauth
+
     {{-- Profile / Login --}}
     @auth
         <x-desktop-user-menu />

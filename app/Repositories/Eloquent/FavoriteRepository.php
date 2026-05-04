@@ -55,4 +55,46 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
     {
         return (bool) Favorite::findOrFail($id)->delete();
     }
+
+    public function toggle(int $userId, int $bookId): bool
+    {
+        $existing = Favorite::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->first();
+
+        if ($existing !== null) {
+            $existing->delete();
+
+            return false;
+        }
+
+        Favorite::create([
+            'user_id' => $userId,
+            'book_id' => $bookId,
+        ]);
+
+        return true;
+    }
+
+    /** @return array<int> */
+    public function getBookIdsByUser(int $userId): array
+    {
+        return Favorite::where('user_id', $userId)
+            ->orderByDesc('created_at')
+            ->limit(100)
+            ->pluck('book_id')
+            ->all();
+    }
+
+    public function countByUser(int $userId): int
+    {
+        return Favorite::where('user_id', $userId)->count();
+    }
+
+    public function existsForUser(int $userId, int $bookId): bool
+    {
+        return Favorite::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->exists();
+    }
 }

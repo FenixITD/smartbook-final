@@ -20,4 +20,13 @@ interface FavoriteRepositoryInterface
     public function update(int $id, FavoriteDto $data): FavoriteResponseDto|null;
 
     public function delete(int $id): bool;
+
+    public function toggle(int $userId, int $bookId): bool;
+
+    /** @return array<int> */
+    public function getBookIdsByUser(int $userId): array;
+
+    public function countByUser(int $userId): int;
+
+    public function existsForUser(int $userId, int $bookId): bool;
 }
