@@ -47,7 +47,7 @@ class BookDataRequest extends FormRequest
             'coverImage' => ['nullable', 'string', 'max:255'],
             'averageRating' => ['nullable', 'numeric', 'between:0,5'],
             'ratingsCount' => ['nullable', 'integer', 'min:0'],
-            'status' => ['required', 'string', 'in:draft,published,archived'],
+            'status' => ['required', 'string', 'in:draft,active,archived'],
         ];
     }
 

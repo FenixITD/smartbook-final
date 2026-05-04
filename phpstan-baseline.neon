@@ -2962,7 +2962,7 @@ parameters:
 			path: tests/Unit/Dto/BookDtoTest.php
 
 		-
-			message: '#^Property App\\Models\\Book\:\:\$status \(''archived''\|''draft''\|''published''\) does not accept ''active''\.$#'
+			message: '#^Property App\\Models\\Book\:\:\$status \(''archived''\|''draft''\|''active''\) does not accept ''active''\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: tests/Unit/Dto/BookDtoTest.php

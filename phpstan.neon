@@ -8,10 +8,10 @@ parameters:
 
     paths:
         - app
-        - tests
 
     excludePaths:
         - routes
+        - tests
 
     parallel:
         maximumNumberOfProcesses: 1
@@ -92,40 +92,3 @@ parameters:
             path: app/Providers/FortifyServiceProvider.php
             message: '#Class App\\Actions\\Fortify\\(CreateNewUser|ResetUserPassword) not found#'
 
-        # ── Tests: general ────────────────────────────────────────────────────
-        -
-            message: '#has an uninitialized property#'
-            path: tests/*
-        -
-            message: '#(will always evaluate to true|assertIsArray|assertContainsOnlyInstancesOf|assertIsInt|assertIsFloat|assertIsString)#'
-            path: tests/*
-        -
-            message: '#Cannot access offset#'
-            path: tests/*
-        -
-            message: '#Parameter \#2 \$haystack#'
-            path: tests/*
-        -
-            message: '#Parameter \#1 \$attributes of method Illuminate\\Database\\Eloquent\\Factories\\Factory#'
-            path: tests/*
-        -
-            message: '#Property Tests[a-zA-Z\\]+.*does not accept#'
-            path: tests/*
-        -
-            message: '#Property Tests[a-zA-Z\\]+.*cannot#'
-            path: tests/*
-        -
-            message: '#Part \$[a-zA-Z]+->id .* of encapsed string#'
-            path: tests/*
-        -
-            message: '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model#'
-            path: tests/*
-        -
-            message: '#Cannot cast mixed to (string|int|float)#'
-            path: tests/*
-        -
-            message: '#Method Illuminate\\Testing\\TestResponse.*assertStatus\(\) invoked with 2 parameters#'
-            path: tests/*
-        -
-            message: '#Class App\\Repositories\\Eloquent\\BookRepository constructor invoked with 0 parameters#'
-            path: tests/*

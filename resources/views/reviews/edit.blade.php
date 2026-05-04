@@ -1,4 +1,4 @@
-<x-layouts::app.sidebar title="Edit Review">
+<x-layouts::app.header title="Edit Review">
     <div class="flex h-full w-full flex-1 flex-col gap-6 p-6">
 
         <div class="flex items-center gap-4">
@@ -66,4 +66,4 @@
         </div>
 
     </div>
-</x-layouts::app.sidebar>
+</x-layouts::app.header>

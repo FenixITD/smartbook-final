@@ -28,7 +28,7 @@ class BookListRequest extends FormRequest
     public function toDto(): BookFiltersDto
     {
         return new BookFiltersDto(
-            search: $this->has('search') ? (string) $this->string('search') : null,
+            search: $this->filled('search') ? (string) $this->string('search') : null,
             perPage: $this->integer('perPage', 15),
             sortBy: (string) $this->string('sortBy', 'id'),
             sortDirection: (string) $this->string('sortDirection', 'asc'),

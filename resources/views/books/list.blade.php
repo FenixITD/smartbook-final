@@ -88,7 +88,7 @@
                             <td class="px-6 py-4">
                                 @php
                                     $statusClass = match($book->status) {
-                                        'published' => 'bg-green-100 text-green-700',
+                                        'active' => 'bg-green-100 text-green-700',
                                         'draft'     => 'bg-yellow-100 text-yellow-700',
                                         default     => 'bg-zinc-100 text-zinc-600',
                                     };

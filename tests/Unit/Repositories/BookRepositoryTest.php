@@ -151,7 +151,7 @@ final class BookRepositoryTest extends TestCase
             'price' => 59.99,
             'stock' => 5,
             'publishYear' => 1996,
-            'status' => 'published',
+            'status' => 'active',
         ]);
 
         $result = $this->repository->create($dto);
@@ -160,7 +160,7 @@ final class BookRepositoryTest extends TestCase
         self::assertSame(59.99, $result->price);
         self::assertSame(5, $result->stock);
         self::assertSame(1996, $result->publishYear);
-        self::assertSame('published', $result->status);
+        self::assertSame('active', $result->status);
     }
 
     // -----------------------------------------------------------------------
@@ -240,7 +240,7 @@ final class BookRepositoryTest extends TestCase
             coverImage: isset($overrides['coverImage']) ? (string) $overrides['coverImage'] : null,
             averageRating: (float) ($overrides['averageRating'] ?? 0.0),
             ratingsCount: (int) ($overrides['ratingsCount'] ?? 0),
-            status: (string) ($overrides['status'] ?? 'published'),
+            status: (string) ($overrides['status'] ?? 'active'),
         );
     }
 }

@@ -1,4 +1,4 @@
-<x-layouts::app.sidebar title="Edit Author">
+<x-layouts::app.header title="Edit Author">
     <div class="flex h-full w-full flex-1 flex-col gap-6 p-6">
 
         {{-- Header --}}
@@ -66,4 +66,4 @@
         </div>
 
     </div>
-</x-layouts::app.sidebar>
+</x-layouts::app.header>

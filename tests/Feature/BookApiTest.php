@@ -339,7 +339,7 @@ final class BookApiTest extends TestCase
             'coverImage' => null,
             'averageRating' => null,
             'ratingsCount' => null,
-            'status' => 'published',
+            'status' => 'active',
         ], $overrides);
     }
 }
