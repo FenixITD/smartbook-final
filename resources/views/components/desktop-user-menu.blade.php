@@ -1,8 +1,7 @@
-<div class="relative" x-data="{ open: false }" style="z-index: 100;">
+<div class="relative" x-data="{ open: false }" @click.outside="open = false" style="z-index: 100;">
     <button
         type="button"
         @click="open = !open"
-        @click.outside="open = false"
         class="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
     >
         <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold select-none">
@@ -16,6 +15,7 @@
         </svg>
     </button>
 
+    <div x-show="open" @click="open = false" class="fixed inset-0" style="z-index: 9998;"></div>
     <div
         x-show="open"
         x-transition:enter="transition ease-out duration-100"
@@ -24,8 +24,8 @@
         x-transition:leave="transition ease-in duration-75"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-lg" style="z-index: 9999;"
-        style="display: none;"
+        class="absolute right-0 mt-2 w-56 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 shadow-lg"
+        style="z-index: 9999;"
     >
         {{-- User info --}}
         <div class="flex items-center gap-3 px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">

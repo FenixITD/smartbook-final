@@ -1,22 +1,3 @@
-{{--
-    Виджет чата на странице книги.
-    Подключается в catalog/show.blade.php как @include('chat.widget', ['book' => $book])
-
-    Alpine.js управляет состоянием:
-    - open      — открыт ли чат
-    - loading   — идёт ли загрузка
-    - messages  — массив сообщений
-    - body      — текст в поле ввода
-    - conversationId — id диалога (получаем с сервера)
-
-    x-data    — объявляет Alpine-компонент и его данные
-    x-show    — показывает/скрывает элемент (display:none)
-    @click    — обработчик клика
-    x-model   — двусторонняя привязка данных (как v-model в Vue)
-    x-for     — цикл
-    x-ref     — ссылка на DOM-элемент (как ref в Vue)
---}}
-
 @auth
     <div
         x-data="{
@@ -103,7 +84,7 @@
             });
         },
     }"
-        class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
+        class="fixed z-50 flex flex-col items-end gap-3" style="bottom: 1.5rem; right: 1.5rem;"
     >
         {{-- Окно чата --}}
         <div
@@ -155,7 +136,7 @@
                             <p x-show="msg.user_id !== {{ auth()->id() }}"
                                class="text-xs font-semibold mb-1 text-blue-600 dark:text-blue-400"
                                x-text="msg.sender_name"></p>
-                            <p x-text="msg.body" class="break-words"></p>
+                            <p x-text="msg.body" class="wrap-break-word"></p>
                         </div>
                     </div>
                 </template>
