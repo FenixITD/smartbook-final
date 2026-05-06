@@ -11,7 +11,8 @@ final readonly class GetPublicBookController
 {
     public function __construct(
         private BookRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $book): View
     {

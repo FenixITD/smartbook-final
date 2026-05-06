@@ -12,7 +12,8 @@ final readonly class SearchSuggestController
 {
     public function __construct(
         private AuthorRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(SearchSuggestRequest $request): JsonResponse
     {

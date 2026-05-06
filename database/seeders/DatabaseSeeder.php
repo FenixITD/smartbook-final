@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         Author::factory()->count(10)->create();
         Genre::factory()->count(15)->create();
 
-        Book::factory()->count(50)->create()->each(static function ($book): void {
+        Book::factory()->count(50)->create()->each(function ($book): void {
             $genres = Genre::inRandomOrder()->limit(random_int(1, 4))->pluck('id');
             $book->genres()->attach($genres);
         });
@@ -39,7 +39,7 @@ class DatabaseSeeder extends Seeder
         Favorite::factory()->count(20)->create();
         CartItem::factory()->count(10)->create();
 
-        Order::factory()->count(30)->create()->each(static function ($order): void {
+        Order::factory()->count(30)->create()->each(function ($order): void {
             OrderItem::factory()->count(random_int(1, 6))->create([
                 'order_id' => $order->id,
             ]);

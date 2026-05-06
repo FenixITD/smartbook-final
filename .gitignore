@@ -24,7 +24,6 @@ yarn-error.log
 *.dockerignore
 vendor
 node_modules
-.env.*
 .php-cs-fixer.cache
 coverage/
 npm-debug.log*

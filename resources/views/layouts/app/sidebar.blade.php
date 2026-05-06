@@ -18,6 +18,11 @@
             <flux:sidebar.item icon="users" :href="route('authors.index')" :current="request()->routeIs('authors.*')" wire:navigate>
                 {{ __('Authors') }}
             </flux:sidebar.item>
+            @if(auth()->user()?->role === 'admin')
+                <flux:sidebar.item icon="chat-bubble-left-right" :href="route('chat.admin')" :current="request()->routeIs('chat.admin')" wire:navigate>
+                    {{ __('Dialogues') }}
+                </flux:sidebar.item>
+            @endif
         </flux:sidebar.group>
     </flux:sidebar.nav>
 

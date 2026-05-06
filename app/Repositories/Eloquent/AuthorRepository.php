@@ -42,11 +42,11 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->select(['id', 'name'])
             ->limit(200)
             ->get()
-            ->map(fn (Author $author) => AuthorResponseDto::fromModel($author))
+            ->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))
             ->all();
     }
 
-    public function getById(int $id): ?AuthorResponseDto
+    public function getById(int $id): AuthorResponseDto|null
     {
         $authorId = Author::find($id);
 
@@ -60,7 +60,7 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->select(['id', 'name'])
             ->limit(20)
             ->get()
-            ->map(fn (Author $author) => AuthorResponseDto::fromModel($author))
+            ->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))
             ->all();
     }
 
@@ -72,7 +72,7 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return AuthorResponseDto::fromModel($author);
     }
 
-    public function update(int $id, AuthorDto $data): ?AuthorResponseDto
+    public function update(int $id, AuthorDto $data): AuthorResponseDto|null
     {
         $authorId = Author::findOrFail($id);
 

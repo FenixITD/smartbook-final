@@ -28,7 +28,7 @@ final readonly class BookResponseDto
             createdAt: $book->created_at?->toDateTimeString() ?? '',
             updatedAt: $book->updated_at?->toDateTimeString() ?? '',
             genres: $book->relationLoaded('genres')
-                ? $book->genres->map(fn ($g) => GenreResponseDto::fromModel($g))->all()
+                ? $book->genres->map(static fn ($g) => GenreResponseDto::fromModel($g))->all()
                 : [],
         );
     }

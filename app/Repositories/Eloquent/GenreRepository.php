@@ -42,7 +42,7 @@ final class GenreRepository implements GenreRepositoryInterface
             ->select(['id', 'name', 'slug', 'description'])
             ->limit(200)
             ->get()
-            ->map(fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+            ->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
             ->all();
     }
 

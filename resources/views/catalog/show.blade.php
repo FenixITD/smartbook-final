@@ -45,16 +45,16 @@
                     @if ($book->coverImage)
                         <img src="{{ Storage::url($book->coverImage) }}"
                              alt="{{ $book->title }}"
-                             style="width: 100%; border-radius: 1rem; box-shadow: 0 4px 24px rgba(0,0,0,0.12); object-fit: cover;">
+                             style="width: 100%; height: 480px; border-radius: 1rem; box-shadow: 0 4px 24px rgba(0,0,0,0.12); object-fit: cover; display: block; background-color: #f4f4f5; text-align: center; line-height: 480px; color: #a1a1aa;">
                     @else
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 480" width="320" height="480">
-                            <rect width="320" height="480" rx="16" fill="#d4d4d8"/>
-                            <rect x="40" y="40" width="240" height="8" rx="4" fill="#a1a1aa"/>
-                            <rect x="40" y="60" width="180" height="8" rx="4" fill="#a1a1aa"/>
-                            <rect x="40" y="80" width="200" height="8" rx="4" fill="#a1a1aa"/>
-                            <path d="M130 200 Q160 160 190 200 Q220 240 160 280 Q100 240 130 200Z" fill="#a1a1aa" opacity="0.5"/>
-                            <text x="160" y="360" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="500" fill="#71717a">{{ $book->title }}</text>
-                        </svg>
+                        <div class="book-cover-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: #a1a1aa;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            <span style="color: #71717a; font-weight: 500; font-size: 14px; text-align: center; padding: 0 16px;">
+                {{ $book->title }}
+            </span>
+                        </div>
                     @endif
                 </div>
 
@@ -150,4 +150,7 @@
 
         </div>
     </div>
+
+    @include('chat.widget', ['book' => $book])
+
 </x-layouts::app.header>

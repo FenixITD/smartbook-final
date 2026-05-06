@@ -16,6 +16,7 @@
         "elasticsearch/elasticsearch": "^8.11",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
+        "laravel/reverb": "^1.10",
         "laravel/sanctum": "*",
         "laravel/scout": "*",
         "laravel/tinker": "^2.10.1",

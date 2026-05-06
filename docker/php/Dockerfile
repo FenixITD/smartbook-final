@@ -12,7 +12,8 @@ RUN install-php-extensions \
     zip \
     bcmath \
     redis \
-    gd
+    gd \
+    pcntl
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -24,7 +25,8 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 
 COPY ../.. .
 
-RUN chown -R www-data:www-data /var/www/html \
+RUN mkdir -p bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 9000

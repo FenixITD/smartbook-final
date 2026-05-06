@@ -12,6 +12,7 @@ use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
 use App\Repositories\Eloquent\FavoriteRepository;
 use App\Repositories\Eloquent\GenreRepository;
+use App\Repositories\Eloquent\MessageRepository;
 use App\Repositories\Eloquent\OrderItemRepository;
 use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\ReviewRepository;
@@ -20,6 +21,7 @@ use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Repositories\Interfaces\MessageRepositoryInterface;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
@@ -83,6 +85,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TransactionManagerInterface::class,
             EloquentTransactionManager::class,
+        );
+
+        $this->app->bind(
+            MessageRepositoryInterface::class,
+            MessageRepository::class,
         );
 
         $this->app->singleton(Client::class, static fn () => ClientBuilder::create()

@@ -84,6 +84,24 @@ services:
       timeout: 10s
       retries: 3
 
+  reverb:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    ports:
+      - "8080:8080"
+    environment:
+      APP_ENV: local
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env
+    networks:
+      - smartbook-net
+    depends_on:
+      - db
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     container_name: smartbook_elasticsearch
