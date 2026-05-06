@@ -24,8 +24,6 @@ final class AdminConversationController extends Controller
             ->orderByDesc('updated_at')
             ->get();
 
-        // mapWithKeys — создаёт массив вида [conversation_id => count]
-        // чтобы в шаблоне делать $unreadCounts[$conversation->id]
         $unreadCounts = $conversations->mapWithKeys(
             fn ($c) => [$c->id => $this->messageRepository->countUnread($c->id)]
         );
