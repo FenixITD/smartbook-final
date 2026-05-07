@@ -20,7 +20,7 @@
             <div class="rounded-xl border border-zinc-200 bg-white overflow-hidden dark:border-zinc-700 dark:bg-zinc-900">
 
                 {{-- Avatar header --}}
-                <div class="bg-gradient-to-br from-blue-50 to-zinc-100 dark:from-blue-950 dark:to-zinc-800 px-6 py-8 flex items-center gap-4">
+                <div class="bg-linear-to-br from-blue-50 to-zinc-100 dark:from-blue-950 dark:to-zinc-800 px-6 py-8 flex items-center gap-4">
                     <div class="flex h-16 w-16 items-center justify-center rounded-full bg-blue-600 text-white text-2xl font-bold shadow-md">
                         {{ mb_strtoupper(mb_substr($author->name, 0, 1)) }}
                     </div>

@@ -8,18 +8,16 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-// Middleware — это "страж" перед контроллером.
-// Если пользователь не администратор — он получит 403 (Forbidden).
 class EnsureUserIsAdmin
 {
-    // handle() вызывается для каждого запроса, который проходит через этот middleware.
-    // $next — это следующий обработчик в цепочке (в конце — сам контроллер).
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user() || $request->user()->role !== 'admin') {
-            abort(403, 'Доступ запрещён.');
+        if ($request->user() === null || $request->user()->role !== 'admin') {
+            abort(403, 'Access denied.');
         }
 
-        return $next($request);
+        /** @var Response $response */
+        $response = $next($request);
+        return $response;
     }
 }

@@ -14,9 +14,9 @@ final readonly class GetPublicBookController
     ) {
     }
 
-    public function __invoke(int $book): View
+    public function __invoke(int $bookId): View
     {
-        $book = $this->repository->findByIdWithRelations($book);
+        $book = $this->repository->findByIdWithRelations($bookId);
 
         return view('catalog.show', compact('book'));
     }

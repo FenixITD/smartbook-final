@@ -4,34 +4,33 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\Chat;
 
+use App\Dto\Chat\GetConversationMessagesDto;
+use App\Dto\Chat\MessageDto;
 use App\Http\Controllers\Controller;
-use App\Models\Conversation;
+use App\Services\Chat\ChatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
-// Отдаёт историю сообщений конкретного диалога в JSON.
-// Используется модальным окном администратора при открытии диалога.
 final class GetMessageController extends Controller
 {
-    public function __invoke(Conversation $conversation): JsonResponse
+    public function __construct(
+        private ChatService $chatService,
+    ) {
+    }
+
+    public function __invoke(int $conversationId): JsonResponse
     {
         $user = Auth::user();
+        assert($user !== null);
 
-        // Проверяем права так же, как в SendMessageController
-        if ($user->role !== 'admin' && $conversation->user_id !== $user->id) {
-            abort(403);
-        }
+        $dto = GetConversationMessagesDto::fromUser($conversationId, $user);
 
-        $conversation->load('messages.user');
+        $messages = $this->chatService->getConversationMessages($dto);
 
         return response()->json([
-            'messages' => $conversation->messages->map(static fn ($msg) => [
-                'id' => $msg->id,
-                'body' => $msg->body,
-                'user_id' => $msg->user_id,
-                'sender_name' => $msg->user->name,
-                'created_at' => $msg->created_at?->toIso8601String(),
-            ]),
+            'messages' => array_map(static fn (MessageDto $msg): array => $msg->toArray(),
+                $messages,
+            ),
         ]);
     }
 }

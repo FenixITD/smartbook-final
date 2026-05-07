@@ -10,6 +10,7 @@ use App\Listeners\MergeCartOnLogin;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
+use App\Repositories\Eloquent\ConversationRepository;
 use App\Repositories\Eloquent\FavoriteRepository;
 use App\Repositories\Eloquent\GenreRepository;
 use App\Repositories\Eloquent\MessageRepository;
@@ -19,6 +20,7 @@ use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use App\Repositories\Interfaces\MessageRepositoryInterface;
@@ -85,6 +87,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             TransactionManagerInterface::class,
             EloquentTransactionManager::class,
+        );
+
+        $this->app->bind(
+            ConversationRepositoryInterface::class,
+            ConversationRepository::class,
         );
 
         $this->app->bind(

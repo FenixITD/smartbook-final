@@ -8,10 +8,10 @@
         body: '',
         conversationId: null,
 
-        {{-- Открываем чат: запрашиваем/создаём диалог, загружаем историю --}}
+        {{-- Open a chat: request/create a dialogue, load history --}}
         async openChat() {
             this.open = true;
-            if (this.conversationId) return; {{-- Уже загружен --}}
+            if (this.conversationId) return; {{-- Already loaded --}}
             this.loading = true;
             try {
                 const res = await fetch('{{ route('chat.open', $book->id) }}', {
@@ -26,57 +26,74 @@
                 this.conversationId = data.conversation_id;
                 this.messages = data.messages;
                 this.scrollToBottom();
-                this.subscribeToChannel(); {{-- Подписываемся на Reverb --}}
+                this.subscribeToChannel(); {{-- Subscribe to Reverb --}}
             } finally {
                 this.loading = false;
             }
         },
 
-        {{-- Отправляем сообщение --}}
+        {{-- Sending a message --}}
         async send() {
-            if (!this.body.trim() || this.sending) return;
-            this.sending = true;
-            const text = this.body;
-            this.body = '';
-            try {
-                const res = await fetch(`/chat/conversation/${this.conversationId}/messages`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ body: text }),
-                });
-                {{-- Optimistic UI: добавляем сообщение сразу, не дожидаясь Reverb --}}
-                const msg = await res.json();
-                this.messages.push(msg);
-                this.scrollToBottom();
-            } finally {
-                this.sending = false;
-            }
-        },
+                if (!this.body.trim() || this.sending) return;
 
-        {{-- Подписка на WebSocket-канал через Laravel Echo + Reverb --}}
+                this.sending = true;
+                const text = this.body;
+                this.body = '';
+
+                try {
+                    const res = await fetch(`/chat/conversation/${this.conversationId}/messages`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ body: text }),
+                    });
+
+                    if (!res.ok) {
+                        console.error('Ошибка при отправке сообщения:', await res.text());
+                        return;
+                    }
+
+                    const msg = await res.json();
+
+                    const exists = this.messages.some(m => String(m.id) === String(msg.id));
+
+                    if (!exists) {
+                        this.messages.push(msg);
+                        this.scrollToBottom();
+                    }
+                } catch (error) {
+                    console.error('Сетевая ошибка:', error);
+                } finally {
+                    this.sending = false;
+                }
+            },
+
+        {{-- Subscribe to a WebSocket channel via Laravel Echo + Reverb --}}
         subscribeToChannel() {
-            {{--
-                window.Echo — глобальный объект Laravel Echo.
-                private() — подписка на приватный канал (авторизация через channels.php).
-                .listen('.MessageSent', ...) — слушаем событие MessageSent.
-                Точка перед именем события важна — она отключает namespace.
-            --}}
             window.Echo.private(`conversation.${this.conversationId}`)
                 .listen('.MessageSent', (event) => {
-                    {{-- Не добавляем дубликаты (мы уже добавили своё сообщение выше) --}}
-                    const exists = this.messages.some(m => m.id === event.id);
+                    console.log('WS Payload:', event); // Оставьте для отладки, если что-то пойдет не так
+
+                    // Laravel может прислать данные напрямую (event.id) или обернуть в свойство (event.message.id)
+                    const incomingMsg = event.id ? event : (event.message || event);
+
+                    // Если ID всё равно нет, игнорируем, чтобы не сломать UI
+                    if (!incomingMsg || !incomingMsg.id) return;
+
+                    // Сравниваем ID безопасно (превращая оба в строки), чтобы 1 не конфликтовало с '1'
+                    const exists = this.messages.some(m => String(m.id) === String(incomingMsg.id));
+
                     if (!exists) {
-                        this.messages.push(event);
-                        this.scrollToBottom();
+                    this.messages.push(incomingMsg);
+                    this.scrollToBottom();
                     }
                 });
         },
 
-        {{-- Прокручиваем окно чата вниз --}}
+        {{-- Scroll down the chat window --}}
         scrollToBottom() {
             this.$nextTick(() => {
                 const el = this.$refs.messageList;
@@ -86,17 +103,17 @@
     }"
         class="fixed z-50 flex flex-col items-end gap-3" style="bottom: 1.5rem; right: 1.5rem;"
     >
-        {{-- Окно чата --}}
+        {{-- Chat window--}}
         <div
             x-show="open"
             x-transition
             class="w-80 sm:w-96 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-700 flex flex-col overflow-hidden"
             style="max-height: 480px; display: none;"
         >
-            {{-- Заголовок --}}
+            {{-- Title --}}
             <div class="flex items-center justify-between px-4 py-3 bg-blue-600 text-white">
                 <div>
-                    <p class="font-semibold text-sm">Чат с администратором</p>
+                    <p class="font-semibold text-sm">Chat with the administrator</p>
                     <p class="text-xs opacity-75 truncate">{{ $book->title }}</p>
                 </div>
                 <button @click="open = false" class="hover:opacity-75 transition">
@@ -106,10 +123,10 @@
                 </button>
             </div>
 
-            {{-- Список сообщений --}}
+            {{-- List of messages --}}
             <div x-ref="messageList" class="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-50 dark:bg-zinc-950">
 
-                {{-- Спиннер загрузки --}}
+                {{-- Loading spinner --}}
                 <div x-show="loading" class="flex justify-center py-6">
                     <svg class="animate-spin h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
@@ -117,22 +134,21 @@
                     </svg>
                 </div>
 
-                {{-- Пустой чат --}}
+                {{-- Empty chat --}}
                 <template x-if="!loading && messages.length === 0">
-                    <p class="text-center text-zinc-400 text-sm py-4">Задайте ваш вопрос об этой книге!</p>
+                    <p class="text-center text-zinc-400 text-sm py-4">Ask your question about this book</p>
                 </template>
 
-                {{-- Сообщения --}}
-                {{-- x-for требует :key для оптимального обновления DOM --}}
-                <template x-for="msg in messages" :key="msg.id">
+                {{-- Messages --}}
+                <template x-for="msg in messages" :key="'msg-' + msg.id">
                     <div :class="msg.user_id === {{ auth()->id() }} ? 'flex justify-end' : 'flex justify-start'">
                         <div
                             :class="msg.user_id === {{ auth()->id() }}
                             ? 'bg-blue-600 text-white rounded-2xl rounded-br-sm'
                             : 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-2xl rounded-bl-sm'"
-                            class="max-w-[75%] px-3 py-2 text-sm shadow-sm"
+                            class="max-w-75% px-3 py-2 text-sm shadow-sm"
                         >
-                            {{-- Имя отправителя (только для чужих сообщений) --}}
+                            {{-- Sender's name (for other people's messages only) --}}
                             <p x-show="msg.user_id !== {{ auth()->id() }}"
                                class="text-xs font-semibold mb-1 text-blue-600 dark:text-blue-400"
                                x-text="msg.sender_name"></p>
@@ -142,13 +158,13 @@
                 </template>
             </div>
 
-            {{-- Поле ввода --}}
+            {{-- Input field --}}
             <div class="px-3 py-3 border-t border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
                 <div class="flex gap-2">
                     <input
                         x-model="body"
                         @keydown.enter.prevent="send()"
-                        placeholder="Напишите сообщение..."
+                        placeholder="Write a message..."
                         class="flex-1 rounded-xl border border-zinc-300 dark:border-zinc-600 px-3 py-2 text-sm dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         :disabled="sending || loading"
                     />
@@ -165,11 +181,11 @@
             </div>
         </div>
 
-        {{-- Кнопка открытия чата --}}
+        {{-- Open chat button --}}
         <button
             @click="openChat()"
             class="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-105"
-            title="Чат с администратором"
+            title="Chat with the administrator"
         >
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -1,12 +1,12 @@
-<x-layouts::app.header title="Чат">
+<x-layouts::app.header title="Chat">
     <div class="flex min-h-screen flex-col">
         <div class="flex-1 flex flex-col gap-6 p-6">
 
             {{-- Header --}}
             <div class="flex items-center justify-between">
                 <div>
-                    <flux:heading size="xl">Диалоги</flux:heading>
-                    <flux:text class="mt-1 text-zinc-500">Вопросы пользователей по книгам</flux:text>
+                    <flux:heading size="xl">Dialogues</flux:heading>
+                    <flux:text class="mt-1 text-zinc-500">User questions about books</flux:text>
                 </div>
             </div>
 
@@ -16,7 +16,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                     </svg>
-                    <p class="text-zinc-400 text-sm">Пока нет ни одного диалога</p>
+                    <p class="text-zinc-400 text-sm">There is no dialogues yet</p>
                 </div>
             @else
 
@@ -28,20 +28,20 @@
                             <thead class="bg-zinc-50 dark:bg-zinc-800">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider w-12">#</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Пользователь</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Книга</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Последнее сообщение</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Статус</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Обновлён</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Действия</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Book</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Last message</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Updated</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
                             </tr>
                             </thead>
 
                             <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
                             @foreach ($conversations as $conversation)
                                 @php
-                                    $unread = $unreadCounts[$conversation->id] ?? 0;
-                                    $lastMessage = $conversation->messages->first();
+                                    $unread = $conversation->unreadCount;
+                                    $lastMessage = $conversation->lastMessageBody;
                                 @endphp
                                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
 
@@ -69,16 +69,16 @@
                                     </td>
 
                                     {{-- Book --}}
-                                    <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400 max-w-[180px] truncate">
+                                    <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400 max-w-45 truncate">
                                         {{ $conversation->book->title }}
                                     </td>
 
                                     {{-- Preview of the last message --}}
-                                    <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400 max-w-[220px]">
+                                    <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400 max-w-55">
                                         @if ($lastMessage)
-                                            <p class="truncate">{{ $lastMessage->body }}</p>
+                                            <p class="truncate">{{ $lastMessage }}</p>
                                         @else
-                                            <span class="text-zinc-300 dark:text-zinc-600 italic">Нет сообщений</span>
+                                            <span class="text-zinc-300 dark:text-zinc-600 italic">No messages</span>
                                         @endif
                                     </td>
 
@@ -86,11 +86,11 @@
                                     <td class="px-6 py-4">
                                         @if ($conversation->status === 'open')
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400">
-                                                Открыт
+                                                Opened
                                             </span>
                                         @else
                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                                                Закрыт
+                                                Closed
                                             </span>
                                         @endif
                                     </td>
@@ -102,12 +102,6 @@
 
                                     {{-- Actions --}}
                                     <td class="px-6 py-4 text-right">
-                                        {{--
-                                            Кнопка открывает модальное окно с чатом.
-                                            x-data и @click — Alpine.js.
-                                            Данные о диалоге передаём через data-атрибуты,
-                                            чтобы не делать отдельный запрос при открытии.
-                                        --}}
                                         <flux:button
                                             size="sm"
                                             variant="ghost"
@@ -119,7 +113,7 @@
                                                 bookTitle: '{{ addslashes($conversation->book->title) }}'
                                             })"
                                         >
-                                            Открыть
+                                            Open
                                         </flux:button>
                                     </td>
 
@@ -136,13 +130,7 @@
         </div>
     </div>
 
-    {{--
-        Модальное окно чата для администратора.
-        Слушает событие 'open-admin-chat', которое диспатчится кнопкой выше.
-
-        $dispatch / $on — способ общения между Alpine-компонентами
-        без глобальных переменных. Это встроенный механизм Alpine.js.
-    --}}
+    {{-- Modal chat window for the administrator --}}
     <div
         x-data="{
             open: false,
@@ -155,7 +143,7 @@
             body: '',
 
             init() {
-                // Слушаем событие от кнопки в таблице
+                // Listening to an event from a button in a table
                 this.$on('open-admin-chat', (data) => {
                     this.conversationId = data.conversationId;
                     this.userName       = data.userName;
@@ -184,9 +172,11 @@
 
             async send() {
                 if (!this.body.trim() || this.sending) return;
+
                 this.sending = true;
                 const text = this.body;
                 this.body = '';
+
                 try {
                     const res = await fetch(`/chat/conversation/${this.conversationId}/messages`, {
                         method: 'POST',
@@ -197,24 +187,47 @@
                         },
                         body: JSON.stringify({ body: text }),
                     });
+
+                    if (!res.ok) {
+                        console.error('Ошибка при отправке сообщения:', await res.text());
+                        return;
+                    }
+
                     const msg = await res.json();
-                    this.messages.push(msg);
-                    this.scrollToBottom();
+
+                    const exists = this.messages.some(m => String(m.id) === String(msg.id));
+
+                    if (!exists) {
+                        this.messages.push(msg);
+                        this.scrollToBottom();
+                    }
+                } catch (error) {
+                    console.error('Сетевая ошибка:', error);
                 } finally {
                     this.sending = false;
                 }
             },
 
-            subscribeToChannel() {
-                window.Echo.private(`conversation.${this.conversationId}`)
-                    .listen('.MessageSent', (event) => {
-                        const exists = this.messages.some(m => m.id === event.id);
-                        if (!exists) {
-                            this.messages.push(event);
-                            this.scrollToBottom();
-                        }
-                    });
-            },
+        subscribeToChannel() {
+            window.Echo.private(`conversation.${this.conversationId}`)
+                .listen('.MessageSent', (event) => {
+                    console.log('WS Payload:', event); // Оставьте для отладки, если что-то пойдет не так
+
+                    // Laravel может прислать данные напрямую (event.id) или обернуть в свойство (event.message.id)
+                    const incomingMsg = event.id ? event : (event.message || event);
+
+                    // Если ID всё равно нет, игнорируем, чтобы не сломать UI
+                    if (!incomingMsg || !incomingMsg.id) return;
+
+                    // Сравниваем ID безопасно (превращая оба в строки), чтобы 1 не конфликтовало с '1'
+                    const exists = this.messages.some(m => String(m.id) === String(incomingMsg.id));
+
+                    if (!exists) {
+                    this.messages.push(incomingMsg);
+                    this.scrollToBottom();
+                    }
+                });
+        },
 
             scrollToBottom() {
                 this.$nextTick(() => {
@@ -225,7 +238,7 @@
 
             close() {
                 this.open = false;
-                // Отписываемся от канала, чтобы не копить слушателей
+                // Unsubscribe from the channel to avoid accumulating listeners
                 if (this.conversationId) {
                     window.Echo.leave(`conversation.${this.conversationId}`);
                 }
@@ -239,7 +252,7 @@
     >
         <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-700 flex flex-col w-full max-w-lg" style="height: 560px;">
 
-            {{-- Заголовок модального окна --}}
+            {{-- Modal window title --}}
             <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-200 dark:border-zinc-700">
                 <div>
                     <p class="font-semibold text-zinc-900 dark:text-zinc-100" x-text="userName"></p>
@@ -252,7 +265,7 @@
                 </button>
             </div>
 
-            {{-- Список сообщений --}}
+            {{-- List of messages --}}
             <div x-ref="adminMessageList" class="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-50 dark:bg-zinc-950">
 
                 <div x-show="loading" class="flex justify-center py-6">
@@ -263,31 +276,31 @@
                 </div>
 
                 <template x-if="!loading && messages.length === 0">
-                    <p class="text-center text-zinc-400 text-sm py-4">Сообщений пока нет</p>
+                    <p class="text-center text-zinc-400 text-sm py-4">There are no messages yet</p>
                 </template>
 
-                <template x-for="msg in messages" :key="msg.id">
+                <template x-for="msg in messages" :key="'msg-' + msg.id">
                     <div :class="msg.user_id === {{ auth()->id() }} ? 'flex justify-end' : 'flex justify-start'">
                         <div
                             :class="msg.user_id === {{ auth()->id() }}
                                 ? 'bg-blue-600 text-white rounded-2xl rounded-br-sm'
                                 : 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-2xl rounded-bl-sm'"
-                            class="max-w-[75%] px-3 py-2 text-sm shadow-sm"
+                            class="max-w-75% px-3 py-2 text-sm shadow-sm"
                         >
                             <p class="text-xs font-semibold mb-1 opacity-60" x-text="msg.sender_name"></p>
-                            <p x-text="msg.body" class="break-words"></p>
+                            <p x-text="msg.body" class="wrap-break-word"></p>
                         </div>
                     </div>
                 </template>
             </div>
 
-            {{-- Поле ввода --}}
+            {{-- Input field --}}
             <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
                 <div class="flex gap-2">
                     <input
                         x-model="body"
                         @keydown.enter.prevent="send()"
-                        placeholder="Ответить пользователю..."
+                        placeholder="Reply to user..."
                         class="flex-1 rounded-xl border border-zinc-300 dark:border-zinc-600 px-3 py-2 text-sm dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         :disabled="sending || loading"
                     />
