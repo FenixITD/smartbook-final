@@ -40,8 +40,8 @@
                             <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
                             @foreach ($conversations as $conversation)
                                 @php
-                                    $unread = $unreadCounts[$conversation->id] ?? 0;
-                                    $lastMessage = $conversation->messages->first();
+                                    $unread = $conversation->unreadCount;
+                                    $lastMessage = $conversation->lastMessageBody;
                                 @endphp
                                 <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
 
@@ -76,7 +76,7 @@
                                     {{-- Preview of the last message --}}
                                     <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400 max-w-55">
                                         @if ($lastMessage)
-                                            <p class="truncate">{{ $lastMessage->body }}</p>
+                                            <p class="truncate">{{ $lastMessage }}</p>
                                         @else
                                             <span class="text-zinc-300 dark:text-zinc-600 italic">No messages</span>
                                         @endif
@@ -172,9 +172,11 @@
 
             async send() {
                 if (!this.body.trim() || this.sending) return;
+
                 this.sending = true;
                 const text = this.body;
                 this.body = '';
+
                 try {
                     const res = await fetch(`/chat/conversation/${this.conversationId}/messages`, {
                         method: 'POST',
@@ -185,24 +187,47 @@
                         },
                         body: JSON.stringify({ body: text }),
                     });
+
+                    if (!res.ok) {
+                        console.error('Ошибка при отправке сообщения:', await res.text());
+                        return;
+                    }
+
                     const msg = await res.json();
-                    this.messages.push(msg);
-                    this.scrollToBottom();
+
+                    const exists = this.messages.some(m => String(m.id) === String(msg.id));
+
+                    if (!exists) {
+                        this.messages.push(msg);
+                        this.scrollToBottom();
+                    }
+                } catch (error) {
+                    console.error('Сетевая ошибка:', error);
                 } finally {
                     this.sending = false;
                 }
             },
 
-            subscribeToChannel() {
-                window.Echo.private(`conversation.${this.conversationId}`)
-                    .listen('.MessageSent', (event) => {
-                        const exists = this.messages.some(m => m.id === event.id);
-                        if (!exists) {
-                            this.messages.push(event);
-                            this.scrollToBottom();
-                        }
-                    });
-            },
+        subscribeToChannel() {
+            window.Echo.private(`conversation.${this.conversationId}`)
+                .listen('.MessageSent', (event) => {
+                    console.log('WS Payload:', event); // Оставьте для отладки, если что-то пойдет не так
+
+                    // Laravel может прислать данные напрямую (event.id) или обернуть в свойство (event.message.id)
+                    const incomingMsg = event.id ? event : (event.message || event);
+
+                    // Если ID всё равно нет, игнорируем, чтобы не сломать UI
+                    if (!incomingMsg || !incomingMsg.id) return;
+
+                    // Сравниваем ID безопасно (превращая оба в строки), чтобы 1 не конфликтовало с '1'
+                    const exists = this.messages.some(m => String(m.id) === String(incomingMsg.id));
+
+                    if (!exists) {
+                    this.messages.push(incomingMsg);
+                    this.scrollToBottom();
+                    }
+                });
+        },
 
             scrollToBottom() {
                 this.$nextTick(() => {
@@ -254,13 +279,13 @@
                     <p class="text-center text-zinc-400 text-sm py-4">There are no messages yet</p>
                 </template>
 
-                <template x-for="msg in messages" :key="msg.id">
+                <template x-for="msg in messages" :key="'msg-' + msg.id">
                     <div :class="msg.user_id === {{ auth()->id() }} ? 'flex justify-end' : 'flex justify-start'">
                         <div
                             :class="msg.user_id === {{ auth()->id() }}
                                 ? 'bg-blue-600 text-white rounded-2xl rounded-br-sm'
                                 : 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded-2xl rounded-bl-sm'"
-                            class="max-w-[75%] px-3 py-2 text-sm shadow-sm"
+                            class="max-w-75% px-3 py-2 text-sm shadow-sm"
                         >
                             <p class="text-xs font-semibold mb-1 opacity-60" x-text="msg.sender_name"></p>
                             <p x-text="msg.body" class="wrap-break-word"></p>

@@ -14,8 +14,10 @@ services:
       - APP_ENV=local
       - APP_DEBUG=true
     depends_on:
-      - minio
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
+      minio:
+        condition: service_started
 
   nginx:
     image: nginx:alpine

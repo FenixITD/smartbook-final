@@ -23,7 +23,7 @@
                             <a href="{{ route('catalog.show', $book->id) }}" class="flex flex-col flex-1">
 
                                 {{-- Cover --}}
-                                <div class="relative aspect-2/3 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                                <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                                     @if ($book->cover_image)
                                         <img src="{{ Storage::url($book->cover_image) }}"
                                              alt="{{ $book->title }}"
