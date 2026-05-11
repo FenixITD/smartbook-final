@@ -23,4 +23,6 @@ interface ReviewRepositoryInterface
     public function update(int $id, ReviewDto $data): ReviewResponseDto|null;
 
     public function delete(int $id): bool;
+
+    public function getByBookId(int $bookId, int $perPage = 10): PaginatedResponseDto;
 }

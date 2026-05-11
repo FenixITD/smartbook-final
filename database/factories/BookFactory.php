@@ -25,8 +25,8 @@ class BookFactory extends Factory
             'stock' => fake()->numberBetween(0, 50),
             'publish_year' => fake()->year(),
             'cover_image' => fake()->imageUrl,
-            'average_rating' => fake()->randomFloat(2, 0, 5),
-            'ratings_count' => fake()->numberBetween(0, 500),
+            'average_rating' => 0,
+            'ratings_count' => 0,
             'status' => fake()->randomElement(['active', 'draft', 'archived']),
         ];
     }

@@ -31,7 +31,7 @@ class UserFactory extends Factory
 
     public function admin()
     {
-        return $this->state(static fn (array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'role' => 'admin',
         ]);
     }

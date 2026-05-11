@@ -35,13 +35,20 @@ class DatabaseSeeder extends Seeder
             $book->genres()->attach($genres);
         });
 
-        Review::factory()->count(20)->create();
+        Review::factory()->count(80)->create();
         Favorite::factory()->count(20)->create();
         CartItem::factory()->count(10)->create();
 
         Order::factory()->count(30)->create()->each(static function ($order): void {
             OrderItem::factory()->count(random_int(1, 6))->create([
                 'order_id' => $order->id,
+            ]);
+        });
+
+        Book::each(function (Book $book) {
+            $book->update([
+                'ratings_count' => $book->reviews()->count(),
+                'average_rating' => $book->reviews()->avg('rating') ?? 0,
             ]);
         });
 

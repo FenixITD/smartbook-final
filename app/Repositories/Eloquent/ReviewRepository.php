@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\PaginatedResponseDto;
+use App\Dto\Review\BookReviewResponseDto;
 use App\Dto\Review\ReviewDto;
 use App\Dto\Review\ReviewFiltersDto;
 use App\Dto\Review\ReviewResponseDto;
@@ -65,5 +66,25 @@ final class ReviewRepository implements ReviewRepositoryInterface
     public function delete(int $id): bool
     {
         return (bool) Review::findOrFail($id)->delete();
+    }
+
+    public function getByBookId(int $bookId, int $perPage = 10): PaginatedResponseDto
+    {
+        $paginator = Review::with('user')
+            ->where('book_id', $bookId)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return new PaginatedResponseDto(
+            items: $paginator->getCollection()
+                ->map(static fn (Review $review) => BookReviewResponseDto::fromModel($review))
+                ->all(),
+            total: $paginator->total(),
+            perPage: $paginator->perPage(),
+            currentPage: $paginator->currentPage(),
+            lastPage: $paginator->lastPage(),
+            links: $paginator->links()->toHtml(),
+        );
+
     }
 }

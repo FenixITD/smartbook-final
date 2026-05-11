@@ -5,19 +5,22 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Catalog;
 
 use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\View\View;
 
 final readonly class GetPublicBookController
 {
     public function __construct(
-        private BookRepositoryInterface $repository,
+        private BookRepositoryInterface $bookRepository,
+        private ReviewRepositoryInterface $reviewRepository,
     ) {
     }
 
     public function __invoke(int $bookId): View
     {
-        $book = $this->repository->findByIdWithRelations($bookId);
+        $book = $this->bookRepository->findByIdWithRelations($bookId);
+        $reviews = $this->reviewRepository->getByBookId($bookId);
 
-        return view('catalog.show', compact('book'));
+        return view('catalog.show', compact('book', 'reviews'));
     }
 }

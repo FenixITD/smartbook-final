@@ -124,7 +124,10 @@ final class BookRepository implements BookRepositoryInterface
 
     public function findByIdWithRelations(int $id): BookResponseDto
     {
-        $bookId = Book::with(['author', 'genres'])->findOrFail($id);
+        $bookId = Book::with(['author', 'genres'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->findOrFail($id);
 
         return BookResponseDto::fromModel($bookId);
     }
