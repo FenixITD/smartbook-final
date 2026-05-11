@@ -35,7 +35,7 @@ final readonly class SearchSuggestService
                 'author' => $book->authorName,
                 'cover_image' => $book->coverImage,
                 'price' => $book->price,
-                'url' => route('dashboard', ['search' => $book->title]),
+                'url' => route('catalog.show', $book->id),
             ],
             $paginated->items,
         ));

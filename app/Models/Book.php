@@ -57,7 +57,7 @@ class Book extends Model
             'genre_ids' => $this->genres->pluck('id')->all(),
             'price' => $this->price,
             'stock' => $this->stock,
-            'publish_year' => $this->publish_year,
+            'publish_year' => (int) $this->publish_year,
             'cover_image' => $this->cover_image,
             'average_rating' => $this->average_rating,
             'ratings_count' => $this->ratings_count,
