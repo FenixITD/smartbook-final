@@ -28,7 +28,7 @@ final class LoginController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        if (! $this->authService->login($request->toDto())) {
+        if (!$this->authService->login($request->toDto())) {
             return back()
                 ->withErrors(['email' => __('auth.failed')])
                 ->onlyInput('email');

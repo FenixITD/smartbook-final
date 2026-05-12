@@ -29,7 +29,7 @@ final class LoginRequest extends FormRequest
         return new LoginDto(
             email: (string) $this->string('email'),
             password: (string) $this->string('password'),
-            remember: (bool) $this->boolean('remember'),
+            remember: $this->boolean('remember'),
         );
     }
 }

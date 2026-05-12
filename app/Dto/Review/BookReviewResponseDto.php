@@ -12,8 +12,8 @@ final readonly class BookReviewResponseDto
     {
         return new self(
             id: $review->id,
-            userName: $review->user?->name ?? 'Unknown',
-            rating: (float) $review->rating,
+            userName: $review->user->name ?? 'Unknown',
+            rating: $review->rating,
             comment: $review->comment ?? '',
             createdAt: $review->created_at?->toDateTimeString() ?? '',
         );

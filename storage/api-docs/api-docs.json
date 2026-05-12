@@ -1218,7 +1218,7 @@
                     },
                     "slug": {
                         "type": "string",
-                        "example": "book-slug"
+                        "example": "book-title"
                     },
                     "authorId": {
                         "type": "integer",
@@ -1311,7 +1311,7 @@
                     },
                     "slug": {
                         "type": "string",
-                        "example": "genre-slug"
+                        "example": "genre-name"
                     },
                     "description": {
                         "type": "string",
@@ -1333,7 +1333,7 @@
                         "example": 3
                     },
                     "total": {
-                        "type": "numeric",
+                        "type": "number",
                         "example": 196.54
                     },
                     "status": {
@@ -1372,7 +1372,7 @@
                         "example": 2
                     },
                     "priceAtPurchase": {
-                        "type": "numeric",
+                        "type": "number",
                         "example": 16.99
                     }
                 },
@@ -1386,15 +1386,15 @@
                 ],
                 "properties": {
                     "userId": {
-                        "type": "string",
+                        "type": "integer",
                         "example": 3
                     },
                     "bookId": {
-                        "type": "string",
+                        "type": "integer",
                         "example": 4
                     },
                     "rating": {
-                        "type": "integer",
+                        "type": "number",
                         "example": 4.9
                     },
                     "comment": {
@@ -1432,7 +1432,7 @@
                         "example": "Book description"
                     },
                     "price": {
-                        "type": "numeric",
+                        "type": "number",
                         "example": 16.99
                     },
                     "stock": {
@@ -1448,7 +1448,7 @@
                         "example": "Book image"
                     },
                     "averageRating": {
-                        "type": "numeric",
+                        "type": "number",
                         "example": 4.6
                     },
                     "ratingsCount": {
@@ -1516,7 +1516,7 @@
                         "example": 3
                     },
                     "total": {
-                        "type": "numeric",
+                        "type": "number",
                         "example": 196.54
                     },
                     "status": {
@@ -1549,7 +1549,7 @@
                         "example": 2
                     },
                     "priceAtPurchase": {
-                        "type": "numeric",
+                        "type": "number",
                         "example": 16.99
                     }
                 },
@@ -1558,15 +1558,15 @@
             "ReviewResource": {
                 "properties": {
                     "userId": {
-                        "type": "string",
+                        "type": "integer",
                         "example": 3
                     },
                     "bookId": {
-                        "type": "string",
+                        "type": "integer",
                         "example": 4
                     },
                     "rating": {
-                        "type": "integer",
+                        "type": "number",
                         "example": 4.9
                     },
                     "comment": {

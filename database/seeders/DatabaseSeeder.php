@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             ]);
         });
 
-        Book::each(function (Book $book) {
+        Book::each(function (Book $book): void {
             $book->update([
                 'ratings_count' => $book->reviews()->count(),
                 'average_rating' => $book->reviews()->avg('rating') ?? 0,

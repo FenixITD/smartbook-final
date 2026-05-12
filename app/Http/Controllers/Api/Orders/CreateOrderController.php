@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Orders;
 
+use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Requests\Order\OrderDataRequest;
 use App\Http\Resources\Order\OrderResource;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
@@ -32,6 +33,8 @@ use OpenApi\Attributes as OA;
 )]
 readonly class CreateOrderController
 {
+    use LogsApiActivity;
+
     public function __construct(
         private OrderRepositoryInterface $repository,
     ) {
@@ -40,6 +43,8 @@ readonly class CreateOrderController
     public function __invoke(OrderDataRequest $request): JsonResponse
     {
         $order = $this->repository->create($request->toDto());
+
+        $this->logActivity('created', 'orders', $order->id, $request->validated());
 
         return (new OrderResource($order))->response()->setStatusCode(201);
     }

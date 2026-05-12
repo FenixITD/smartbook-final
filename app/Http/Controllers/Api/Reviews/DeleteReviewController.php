@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Reviews;
 
+use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -34,6 +35,8 @@ use OpenApi\Attributes as OA;
 )]
 final readonly class DeleteReviewController
 {
+    use LogsApiActivity;
+
     public function __construct(
         private ReviewRepositoryInterface $repository,
     ) {
@@ -42,6 +45,8 @@ final readonly class DeleteReviewController
     public function __invoke(int $reviewId): JsonResponse
     {
         $this->repository->delete($reviewId);
+
+        $this->logActivity('deleted', 'review', $reviewId);
 
         return response()->json([
             'message' => 'Review deleted successfully',

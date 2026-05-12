@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\CartItems;
 
+use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -34,6 +35,8 @@ use OpenApi\Attributes as OA;
 )]
 final readonly class DeleteCartItemController
 {
+    use LogsApiActivity;
+
     public function __construct(
         private CartItemRepositoryInterface $repository,
     ) {
@@ -42,6 +45,8 @@ final readonly class DeleteCartItemController
     public function __invoke(int $cartItemId): JsonResponse
     {
         $this->repository->delete($cartItemId);
+
+        $this->logActivity('deleted', 'cartItems', $cartItemId);
 
         return response()->json([
             'message' => 'CartItem deleted successfully',

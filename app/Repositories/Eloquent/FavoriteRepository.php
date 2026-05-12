@@ -79,14 +79,14 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
     /** @return array<int> */
     public function getBookIdsByUser(int $userId): array
     {
-        /** @var array<int> $result */
-        $result = Favorite::where('user_id', $userId)
+        /** @var array<int> $bookIds */
+        $bookIds = Favorite::where('user_id', $userId)
             ->orderByDesc('created_at')
             ->limit(100)
             ->pluck('book_id')
             ->all();
 
-        return $result;
+        return $bookIds;
     }
 
     public function countByUser(int $userId): int

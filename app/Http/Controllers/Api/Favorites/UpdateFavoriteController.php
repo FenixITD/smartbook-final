@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Favorites;
 
+use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Requests\Favorite\FavoriteDataRequest;
 use App\Http\Resources\Favorite\FavoriteResource;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
@@ -44,6 +45,8 @@ use OpenApi\Attributes as OA;
 )]
 readonly class UpdateFavoriteController
 {
+    use LogsApiActivity;
+
     public function __construct(
         private FavoriteRepositoryInterface $repository,
     ) {
@@ -52,6 +55,8 @@ readonly class UpdateFavoriteController
     public function __invoke(FavoriteDataRequest $request, int $favoriteId): JsonResponse
     {
         $updatedFavorite = $this->repository->update($favoriteId, $request->toDto());
+
+        $this->logActivity('updated', 'favorites', $favoriteId, $request->validated());
 
         return (new FavoriteResource($updatedFavorite))->response();
     }

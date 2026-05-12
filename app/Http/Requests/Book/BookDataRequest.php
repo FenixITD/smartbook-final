@@ -13,7 +13,7 @@ use OpenApi\Attributes as OA;
     required: ['title', 'slug', 'authorId', 'description', 'price', 'stock', 'status'],
     properties: [
         new OA\Property(property: 'title', type: 'string', example: 'Book title'),
-        new OA\Property(property: 'slug', type: 'string', example: 'book-slug'),
+        new OA\Property(property: 'slug', type: 'string', example: 'book-title'),
         new OA\Property(property: 'authorId', type: 'integer', example: 3),
         new OA\Property(property: 'description', type: 'string', example: 'Book description'),
         new OA\Property(property: 'price', type: 'number', example: 16.99),

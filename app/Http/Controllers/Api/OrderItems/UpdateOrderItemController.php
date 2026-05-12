@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\OrderItems;
 
+use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Requests\OrderItem\OrderItemDataRequest;
 use App\Http\Resources\OrderItem\OrderItemResource;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
@@ -44,6 +45,8 @@ use OpenApi\Attributes as OA;
 )]
 readonly class UpdateOrderItemController
 {
+    use LogsApiActivity;
+
     public function __construct(
         private OrderItemRepositoryInterface $repository,
     ) {
@@ -52,6 +55,8 @@ readonly class UpdateOrderItemController
     public function __invoke(OrderItemDataRequest $request, int $orderItemId): JsonResponse
     {
         $updatedOrderItem = $this->repository->update($orderItemId, $request->toDto());
+
+        $this->logActivity('updated', 'order_items', $orderItemId, $request->validated());
 
         return (new OrderItemResource($updatedOrderItem))->response();
     }

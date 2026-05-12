@@ -75,16 +75,17 @@ final class ReviewRepository implements ReviewRepositoryInterface
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 
+        $items = $paginator->getCollection()
+            ->map(static fn (Review $review) => BookReviewResponseDto::fromModel($review))
+            ->all();
+
         return new PaginatedResponseDto(
-            items: $paginator->getCollection()
-                ->map(static fn (Review $review) => BookReviewResponseDto::fromModel($review))
-                ->all(),
+            items: $items,
             total: $paginator->total(),
             perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
             lastPage: $paginator->lastPage(),
             links: $paginator->links()->toHtml(),
         );
-
     }
 }
