@@ -13,7 +13,8 @@ RUN install-php-extensions \
     bcmath \
     redis \
     gd \
-    pcntl
+    pcntl \
+    sockets
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
