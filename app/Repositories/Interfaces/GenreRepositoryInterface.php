@@ -21,6 +21,9 @@ interface GenreRepositoryInterface
 
     public function getById(int $id): GenreResponseDto|null;
 
+    /** @return array<GenreResponseDto> */
+    public function suggest(string $query): array;
+
     public function create(GenreDto $data): GenreResponseDto;
 
     public function update(int $id, GenreDto $data): GenreResponseDto|null;

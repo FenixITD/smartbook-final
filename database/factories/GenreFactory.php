@@ -12,11 +12,8 @@ use Illuminate\Support\Str;
 class GenreFactory extends Factory
 {
     private const GENRES = [
-        'Action', 'Adventure', 'Fantasy', 'Science Fiction', 'Cyberpunk', 'Post-Apocalyptic', 'Space Opera',
-        'Mystery', 'Horror', 'Thriller', 'Psychological Thriller', 'Crime Novel', 'Detective', 'Historical Novel',
-        'Romance', 'Romantic Comedy', 'Erotica', 'Family Saga', 'Social Drama', 'Coming-of-Age', 'Middle Grade',
-        'Poetry', 'Drama/Play', 'Comedy', 'Travelogue', 'Self-Help', 'Psychology', 'Popular Science', 'Philosophy',
-        'Cookbook', 'Home & Garden', 'Art & Design', 'Novella', 'Experimental Fiction', 'Music Biography',
+        'Action', 'Adventure', 'Fantasy', 'Science Fiction', 'Cyberpunk', 'Post-Apocalyptic', 'Mystery',
+        'Horror', 'Thriller', 'Detective', 'Romance', 'Comedy', 'Psychology', 'Philosophy', 'Novella',
     ];
 
     public function definition(): array

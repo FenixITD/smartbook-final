@@ -4,16 +4,18 @@
     <title></title>@include('partials.head')
 </head>
 <body class="min-h-screen bg-white dark:bg-zinc-800">
-<flux:header container class="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+<flux:header container class="sticky top-0 z-50 border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
     <flux:sidebar.toggle class="lg:hidden mr-2" icon="bars-2" inset="left" />
 
     <flux:navbar class="-mb-px max-lg:hidden">
         <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
             {{ __('Dashboard') }}
         </flux:navbar.item>
-        <flux:navbar.item icon="cog-6-tooth" :href="route('books.index')" :current="request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*')" wire:navigate>
-            {{ __('Admin panel') }}
-        </flux:navbar.item>
+        @if(auth()->user()?->role === 'admin')
+            <flux:navbar.item icon="cog-6-tooth" :href="route('books.index')" ...>
+                {{ __('Admin panel') }}
+            </flux:navbar.item>
+        @endif
     </flux:navbar>
 
     <flux:spacer />
@@ -119,7 +121,7 @@
                     this.loading = true;
 
                     try {
-                        const res = await fetch('/api/books/suggest?q=' + encodeURIComponent(q), {
+                        const res = await fetch('{{ route('api.books.catalog.suggest') }}?q=' + encodeURIComponent(q), {
                             signal: this._abort.signal,
                             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
                         });
@@ -200,15 +202,15 @@
     @endauth
 </flux:header>
 
-@if (request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*'))
+@if (request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*') && auth()->user()?->role === 'admin')
     <div class="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden">
         <div class="flex items-center gap-1 px-4 py-2">
             @foreach ([
-                'Authors'    => 'authors.index',
-                'Books'      => 'books.index',
-                'Genres'     => 'genres.index',
-                'Orders'     => 'orders.index',
-                'Reviews'    => 'reviews.index',
+                'Authors' => 'authors.index',
+                'Books' => 'books.index',
+                'Genres' => 'genres.index',
+                'Orders' => 'orders.index',
+                'Reviews' => 'reviews.index',
             ] as $label => $routeName)
                 <a href="{{ route($routeName) }}"
                    class="text-sm px-3 py-1.5 rounded-lg transition-colors

@@ -55,12 +55,28 @@
                     Deleting a review is irreversible.
                 </flux:text>
                 <div class="mt-4">
-                    <form action="{{ route('reviews.destroy', $review) }}" method="POST"
-                          onsubmit="return confirm('Delete review #{{ $review->id }}? This action cannot be undone.')">
-                        @csrf
-                        @method('DELETE')
-                        <flux:button type="submit" variant="danger" icon="trash">Delete review</flux:button>
-                    </form>
+                    <div>
+                        <flux:modal.trigger name="delete-review-{{ $review->id }}">
+                            <flux:button variant="danger" icon="trash">Delete review</flux:button>
+                        </flux:modal.trigger>
+
+                        <flux:modal name="delete-review-{{ $review->id }}" class="min-w-[22rem]">
+                            <flux:heading size="lg">Delete review?</flux:heading>
+                            <flux:subheading>Are you sure you want to delete review #{{ $review->id }}? This action cannot be undone.</flux:subheading>
+
+                            <div class="flex gap-2 mt-6 justify-end">
+                                <flux:modal.close>
+                                    <flux:button variant="ghost">Cancel</flux:button>
+                                </flux:modal.close>
+
+                                <form action="{{ route('reviews.destroy', $review) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <flux:button type="submit" variant="danger">Delete review</flux:button>
+                                </form>
+                            </div>
+                        </flux:modal>
+                    </div>
                 </div>
             </div>
         </div>

@@ -7,7 +7,7 @@ namespace App\Services\Book;
 use App\Dto\Book\BookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-final readonly class SearchSuggestService
+final readonly class SearchSuggestBookService
 {
     public function __construct(
         private BookRepositoryInterface $repository,
@@ -16,7 +16,7 @@ final readonly class SearchSuggestService
     }
 
     /**
-     * @return array<int, array{id: int, title: string, author: string|null, cover_image: string|null, price: float, url: string}>
+     * @return array<int, array{id: int, title: string, author: string|null, url: string}>
      */
     public function execute(string $query): array
     {
@@ -33,9 +33,7 @@ final readonly class SearchSuggestService
                 'id' => $book->id,
                 'title' => $book->title,
                 'author' => $book->authorName,
-                'cover_image' => $book->coverImage,
-                'price' => $book->price,
-                'url' => route('catalog.show', $book->id),
+                'url' => route('books.show', $book->id),
             ],
             $paginated->items,
         ));

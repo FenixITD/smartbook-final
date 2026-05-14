@@ -22,13 +22,42 @@
             {{-- Filters --}}
             <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
                 <form method="GET" action="{{ route('authors.index') }}" class="flex flex-wrap gap-3 items-end">
-                    <div class="flex-1 min-w-48">
+                    <div class="flex-1 min-w-48 relative" x-data="authorSuggest()" x-ref="wrapper">
                         <flux:input
                             name="search"
+                            x-model="query"
+                            x-on:input.debounce.300ms="fetchSuggestions"
+                            x-on:keydown.escape="close"
+                            x-on:focus="query.trim().length >= 2 && fetchSuggestions()"
                             value="{{ request('search') }}"
                             placeholder="Search by name..."
                             icon="magnifying-glass"
+                            autocomplete="off"
                         />
+
+                        <template x-teleport="body">
+                            <div
+                                x-show="open || loading"
+                                :style="'position:fixed;z-index:9999;top:'+dropY+'px;left:'+dropX+'px;width:'+dropW+'px'"
+                                class="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden"
+                            >
+                                <div x-show="loading" class="px-4 py-3 text-sm text-zinc-400 text-center">Searching...</div>
+
+                                <ul x-show="!loading && open">
+                                    <template x-for="author in results" :key="author.id">
+                                        <li>
+                                            <a :href="author.url"
+                                               class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+                                                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-700 text-xs font-bold dark:bg-blue-900 dark:text-blue-300"
+                                                     x-text="author.name.charAt(0).toUpperCase()">
+                                                </div>
+                                                <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100" x-text="author.name"></span>
+                                            </a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
                     </div>
                     <div class="w-40">
                         <flux:select name="sortBy">
@@ -85,12 +114,28 @@
                                     <div class="flex justify-end gap-2">
                                         <flux:button href="{{ route('authors.show', $author) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
                                         <flux:button href="{{ route('authors.edit', $author) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
-                                        <form action="{{ route('authors.destroy', $author) }}" method="POST" class="inline"
-                                              onsubmit="return confirm('Delete author \'{{ $author->name }}\'?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <flux:button type="submit" variant="ghost" size="sm" icon="trash">Delete</flux:button>
-                                        </form>
+                                        <div>
+                                            <flux:modal.trigger name="delete-author-{{ $author->id }}">
+                                                <flux:button variant="ghost" size="sm" icon="trash">Delete</flux:button>
+                                            </flux:modal.trigger>
+
+                                            <flux:modal name="delete-author-{{ $author->id }}" class="min-w-[22rem] text-left">
+                                                <flux:heading size="lg">Delete author?</flux:heading>
+                                                <flux:subheading>Are you sure you want to delete "{{ $author->name }}"?</flux:subheading>
+
+                                                <div class="flex gap-2 mt-6 justify-end">
+                                                    <flux:modal.close>
+                                                        <flux:button variant="ghost">Cancel</flux:button>
+                                                    </flux:modal.close>
+
+                                                    <form action="{{ route('authors.destroy', $author) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <flux:button type="submit" variant="danger">Delete</flux:button>
+                                                    </form>
+                                                </div>
+                                            </flux:modal>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -166,4 +211,61 @@
         </footer>
 
     </div>
+
+    <script>
+        function authorSuggest() {
+            return {
+                query: '{{ addslashes(request('search', '')) }}',
+                results: [],
+                open: false,
+                loading: false,
+                dropX: 0, dropY: 0, dropW: 300,
+                _abort: null,
+
+                init() {
+                    document.addEventListener('click', (e) => {
+                        if (!this.$refs.wrapper.contains(e.target)) this.close();
+                    });
+                    window.addEventListener('scroll', () => this.close(), { passive: true });
+                    window.addEventListener('resize', () => this.close(), { passive: true });
+                },
+
+                updatePosition() {
+                    const rect = this.$refs.wrapper.getBoundingClientRect();
+                    this.dropX = rect.left;
+                    this.dropY = rect.bottom + 6;
+                    this.dropW = rect.width;
+                },
+
+                async fetchSuggestions() {
+                    const q = this.query.trim();
+                    if (q.length < 2) { this.close(); return; }
+
+                    this.updatePosition();
+                    if (this._abort) this._abort.abort();
+                    this._abort = new AbortController();
+                    this.open = false;
+                    this.loading = true;
+
+                    try {
+                        const res = await fetch('{{ route('api.authors.suggest') }}?q=' + encodeURIComponent(q), {
+                            signal: this._abort.signal,
+                            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                        });
+                        if (!res.ok) { this.close(); return; }
+                        const data = await res.json();
+                        this.results = Array.isArray(data) ? data : [];
+                        this.open = this.results.length > 0;
+                    } catch (e) {
+                        if (e.name !== 'AbortError') this.close();
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                close() { this.open = false; this.loading = false; },
+            };
+        }
+    </script>
+
 </x-layouts::app.header>

@@ -13,6 +13,7 @@ final readonly class OrderResponseDto
         return new self(
             id: $order->id,
             userId: $order->user_id,
+            userName: $order->user?->name ?? '',
             total: $order->total,
             status: $order->status,
             shippingAddress: $order->shipping_address ?? '',
@@ -25,6 +26,7 @@ final readonly class OrderResponseDto
     public function __construct(
         public int $id,
         public int $userId,
+        public string $userName,
         public float $total,
         public string $status,
         public string $shippingAddress,

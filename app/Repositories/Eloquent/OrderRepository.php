@@ -10,9 +10,14 @@ use App\Dto\Order\OrderResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Services\Order\SearchOrderService;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
+    public function __construct(private readonly SearchOrderService $searchService)
+    {
+    }
+
     /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array
     {
@@ -27,10 +32,17 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto
     {
+        $ids = $this->searchService->search($filters);
+
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
+        }
+
         $paginator = Order::query()
-            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id))
+            ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
+            ->paginate($filters->perPage)
+            ->withQueryString();
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }
@@ -40,6 +52,26 @@ final class OrderRepository implements OrderRepositoryInterface
         $orderId = Order::find($id);
 
         return $orderId !== null ? OrderResponseDto::fromModel($orderId) : null;
+    }
+
+    public function suggest(string $query): array
+    {
+        return Order::where('id', 'like', "%{$query}%")
+            ->orWhere('status', 'like', "%{$query}%")
+            ->orderByDesc('id')
+            ->limit(20)
+            ->get()
+            ->map(static fn (Order $order) => OrderResponseDto::fromModel($order))
+            ->all();
+    }
+
+    public function getByIds(array $ids): array
+    {
+        return Order::with('user')
+            ->whereIn('id', $ids)
+            ->get()
+            ->map(static fn (Order $order) => OrderResponseDto::fromModel($order))
+            ->all();
     }
 
     public function create(OrderDto $data): OrderResponseDto

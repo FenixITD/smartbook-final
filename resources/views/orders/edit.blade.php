@@ -67,12 +67,28 @@
                     Deleting an order is irreversible.
                 </flux:text>
                 <div class="mt-4">
-                    <form action="{{ route('orders.destroy', $order) }}" method="POST"
-                          onsubmit="return confirm('Delete order #{{ $order->id }}? This action cannot be undone.')">
-                        @csrf
-                        @method('DELETE')
-                        <flux:button type="submit" variant="danger" icon="trash">Delete order</flux:button>
-                    </form>
+                    <div>
+                        <flux:modal.trigger name="delete-order-{{ $order->id }}">
+                            <flux:button variant="danger" icon="trash">Delete order</flux:button>
+                        </flux:modal.trigger>
+
+                        <flux:modal name="delete-order-{{ $order->id }}" class="min-w-[22rem]">
+                            <flux:heading size="lg">Delete order?</flux:heading>
+                            <flux:subheading>Are you sure you want to delete order #{{ $order->id }}? This action cannot be undone.</flux:subheading>
+
+                            <div class="flex gap-2 mt-6 justify-end">
+                                <flux:modal.close>
+                                    <flux:button variant="ghost">Cancel</flux:button>
+                                </flux:modal.close>
+
+                                <form action="{{ route('orders.destroy', $order) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <flux:button type="submit" variant="danger">Delete order</flux:button>
+                                </form>
+                            </div>
+                        </flux:modal>
+                    </div>
                 </div>
             </div>
         </div>

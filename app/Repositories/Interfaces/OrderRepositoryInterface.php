@@ -18,6 +18,13 @@ interface OrderRepositoryInterface
 
     public function getById(int $id): OrderResponseDto|null;
 
+    /** @return array<OrderResponseDto> */
+    public function suggest(string $query): array;
+
+    /** @param array<int> $ids
+     *  @return array<OrderResponseDto> */
+    public function getByIds(array $ids): array;
+
     public function create(OrderDto $data): OrderResponseDto;
 
     public function update(int $id, OrderDto $data): OrderResponseDto|null;

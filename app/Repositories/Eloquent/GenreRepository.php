@@ -10,9 +10,14 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Services\Genre\SearchGenreService;
 
 final class GenreRepository implements GenreRepositoryInterface
 {
+    public function __construct(private readonly SearchGenreService $searchService)
+    {
+    }
+
     /** @return array<GenreResponseDto> */
     public function getList(GenreFiltersDto $filters): array
     {
@@ -27,10 +32,17 @@ final class GenreRepository implements GenreRepositoryInterface
 
     public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto
     {
+        $ids = $this->searchService->search($filters);
+
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
+        }
+
         $paginator = Genre::query()
-            ->when($filters->search !== null, static fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
+            ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
+            ->paginate($filters->perPage)
+            ->withQueryString();
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }
@@ -51,6 +63,17 @@ final class GenreRepository implements GenreRepositoryInterface
         $genreId = Genre::find($id);
 
         return $genreId !== null ? GenreResponseDto::fromModel($genreId) : null;
+    }
+
+    public function suggest(string $query): array
+    {
+        return Genre::where('name', 'like', "%{$query}%")
+            ->orderBy('name')
+            ->select(['id', 'name', 'slug'])
+            ->limit(20)
+            ->get()
+            ->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+            ->all();
     }
 
     public function create(GenreDto $data): GenreResponseDto

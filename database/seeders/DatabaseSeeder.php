@@ -23,8 +23,13 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(10)->create();
         User::factory()->admin()->create([
             'name' => 'Admin User',
-            'email' => 'admin@smartbook.ru',
+            'email' => 'admin@smartbook.com',
             'password' => bcrypt('admin123'),
+        ]);
+        User::factory()->user()->create([
+            'name' => 'User',
+            'email' => 'user@smartbook.com',
+            'password' => bcrypt('user123'),
         ]);
 
         Author::factory()->count(10)->create();
@@ -54,5 +59,9 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('Reindexing Elasticsearch...');
         Artisan::call('scout:import', ['model' => 'App\Models\Book']);
+        Artisan::call('scout:import', ['model' => 'App\Models\Author']);
+        Artisan::call('scout:import', ['model' => 'App\Models\Genre']);
+        Artisan::call('scout:import', ['model' => 'App\Models\Order']);
+        Artisan::call('scout:import', ['model' => 'App\Models\Review']);
     }
 }

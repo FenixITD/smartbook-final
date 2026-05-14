@@ -11,9 +11,14 @@ use App\Dto\Review\ReviewFiltersDto;
 use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use App\Services\Review\SearchReviewService;
 
 final class ReviewRepository implements ReviewRepositoryInterface
 {
+    public function __construct(private readonly SearchReviewService $searchService)
+    {
+    }
+
     /** @return array<ReviewResponseDto> */
     public function getList(ReviewFiltersDto $filters): array
     {
@@ -28,10 +33,17 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto
     {
+        $ids = $this->searchService->search($filters);
+
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
+        }
+
         $paginator = Review::query()
-            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id))
+            ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage);
+            ->paginate($filters->perPage)
+            ->withQueryString();
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }
@@ -41,6 +53,25 @@ final class ReviewRepository implements ReviewRepositoryInterface
         $reviewId = Review::find($id);
 
         return $reviewId !== null ? ReviewResponseDto::fromModel($reviewId) : null;
+    }
+
+    public function suggest(string $query): array
+    {
+        return Review::where('content', 'like', "%{$query}%")
+            ->orderByDesc('id')
+            ->limit(20)
+            ->get()
+            ->map(static fn (Review $review) => ReviewResponseDto::fromModel($review))
+            ->all();
+    }
+
+    public function getByIds(array $ids): array
+    {
+        return Review::with('user')
+            ->whereIn('id', $ids)
+            ->get()
+            ->map(static fn (Review $review) => ReviewResponseDto::fromModel($review))
+            ->all();
     }
 
     public function create(ReviewDto $data): ReviewResponseDto

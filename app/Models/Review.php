@@ -8,11 +8,14 @@ use Database\Factories\ReviewFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class Review extends Model
 {
     /** @use HasFactory<ReviewFactory> */
     use HasFactory;
+
+    use Searchable;
 
     protected $fillable = [
         'user_id',
@@ -20,6 +23,14 @@ class Review extends Model
         'rating',
         'comment',
     ];
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'user_name' => $this->user?->name,
+            'comment' => $this->comment,
+        ];
+    }
 
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo

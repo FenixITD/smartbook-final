@@ -9,18 +9,36 @@
                         <p class="text-sm text-zinc-500 mt-0.5">{{ count($cartItems) }} {{ Str::plural('item', count($cartItems)) }}</p>
                     </div>
                     @if (count($cartItems) > 0)
-                        <form action="{{ route('cart.clear') }}" method="POST"
-                              onsubmit="return confirm('Remove all items from cart?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    class="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 px-3 py-1.5 rounded-lg transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                Remove all
-                            </button>
-                        </form>
+                        <div>
+
+                            <flux:modal.trigger name="clear-cart">
+                                <button type="button"
+                                        class="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 px-3 py-1.5 rounded-lg transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Remove all
+                                </button>
+                            </flux:modal.trigger>
+
+                            <flux:modal name="clear-cart" class="min-w-[22rem]">
+                                <flux:heading size="lg">Clear cart?</flux:heading>
+                                <flux:subheading>Are you sure you want to remove all items from your cart? This action cannot be undone.</flux:subheading>
+
+                                <div class="flex gap-2 mt-6 justify-end">
+                                    <flux:modal.close>
+                                        <flux:button variant="ghost">Cancel</flux:button>
+                                    </flux:modal.close>
+
+                                    <form action="{{ route('cart.clear') }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <flux:button type="submit" variant="danger">Remove all</flux:button>
+                                    </form>
+                                </div>
+                            </flux:modal>
+
+                        </div>
                     @endif
                 </div>
 
@@ -88,15 +106,33 @@
                                     </div>
 
                                     {{-- Remove --}}
-                                    <form action="{{ route('cart.destroy', $item->bookId) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                                class="p-1.5 text-zinc-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-950"
-                                                onclick="return confirm('Remove this item?')">
-                                            <flux:icon name="trash" class="w-4 h-4" />
-                                        </button>
-                                    </form>
+                                    <div class="flex items-center">
+
+                                        <flux:modal.trigger name="delete-cart-item-{{ $item->bookId }}">
+                                            <button type="button"
+                                                    class="p-1.5 text-zinc-400 hover:text-red-500 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-950">
+                                                <flux:icon name="trash" class="w-4 h-4" />
+                                            </button>
+                                        </flux:modal.trigger>
+
+                                        <flux:modal name="delete-cart-item-{{ $item->bookId }}" class="min-w-[22rem]">
+                                            <flux:heading size="lg">Remove item?</flux:heading>
+                                            <flux:subheading>Are you sure you want to remove "{{ $item->book->title }}" from your cart?</flux:subheading>
+
+                                            <div class="flex gap-2 mt-6 justify-end">
+                                                <flux:modal.close>
+                                                    <flux:button variant="ghost">Cancel</flux:button>
+                                                </flux:modal.close>
+
+                                                <form action="{{ route('cart.destroy', $item->bookId) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <flux:button type="submit" variant="danger">Remove</flux:button>
+                                                </form>
+                                            </div>
+                                        </flux:modal>
+
+                                    </div>
                                 </div>
                             @endforeach
                         </div>

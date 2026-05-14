@@ -78,14 +78,28 @@
                     Deleting a genre is irreversible. All related data will be lost.
                 </flux:text>
                 <div class="mt-4">
-                    <form action="{{ route('genres.destroy', $genre) }}" method="POST"
-                          onsubmit="return confirm('Delete genre \'{{ $genre->name }}\'? This action cannot be undone.')">
-                        @csrf
-                        @method('DELETE')
-                        <flux:button type="submit" variant="danger" icon="trash">
-                            Delete genre
-                        </flux:button>
-                    </form>
+                    <div>
+                        <flux:modal.trigger name="delete-genre-{{ $genre->id }}">
+                            <flux:button variant="danger" icon="trash">Delete genre</flux:button>
+                        </flux:modal.trigger>
+
+                        <flux:modal name="delete-genre-{{ $genre->id }}" class="min-w-[22rem]">
+                            <flux:heading size="lg">Delete genre?</flux:heading>
+                            <flux:subheading>Are you sure you want to delete "{{ $genre->name }}"? This action cannot be undone and all related data will be lost.</flux:subheading>
+
+                            <div class="flex gap-2 mt-6 justify-end">
+                                <flux:modal.close>
+                                    <flux:button variant="ghost">Cancel</flux:button>
+                                </flux:modal.close>
+
+                                <form action="{{ route('genres.destroy', $genre) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <flux:button type="submit" variant="danger">Delete genre</flux:button>
+                                </form>
+                            </div>
+                        </flux:modal>
+                    </div>
                 </div>
             </div>
         </div>

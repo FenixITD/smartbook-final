@@ -5,9 +5,10 @@ use App\Http\Controllers\Web\Authors\DeleteAuthorController;
 use App\Http\Controllers\Web\Authors\GetAuthorController;
 use App\Http\Controllers\Web\Authors\GetListAuthorController;
 use App\Http\Controllers\Web\Authors\UpdateAuthorController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->prefix('authors')->name('authors.')->group(function (): void {
+Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('authors')->name('authors.')->group(function (): void {
     Route::get('/', GetListAuthorController::class)->name('index');
     Route::get('/create', [CreateAuthorController::class, 'create'])->name('create');
     Route::post('/', [CreateAuthorController::class, 'store'])->name('store');

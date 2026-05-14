@@ -5,9 +5,10 @@ use App\Http\Controllers\Web\Books\DeleteBookController;
 use App\Http\Controllers\Web\Books\GetByIdBookController;
 use App\Http\Controllers\Web\Books\GetListBookController;
 use App\Http\Controllers\Web\Books\UpdateBookController;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->prefix('books')->name('books.')->group(function (): void {
+Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('books')->name('books.')->group(function (): void {
     Route::get('/', GetListBookController::class)->name('index');
     Route::get('/create', [CreateBookController::class, 'create'])->name('create');
     Route::post('/', [CreateBookController::class, 'store'])->name('store');

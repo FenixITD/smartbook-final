@@ -117,12 +117,28 @@
                     <flux:heading size="sm" class="text-red-700 dark:text-red-400">Danger zone</flux:heading>
                     <flux:text class="mt-1 text-red-600 dark:text-red-400 text-sm">Deleting a book is irreversible.</flux:text>
                     <div class="mt-4">
-                        <form action="{{ route('books.destroy', $book->id) }}" method="POST"
-                              onsubmit="return confirm('Delete book \'{{ $book->title }}\'?')">
-                            @csrf
-                            @method('DELETE')
-                            <flux:button type="submit" variant="danger" icon="trash">Delete book</flux:button>
-                        </form>
+                        <div>
+                            <flux:modal.trigger name="delete-book-{{ $book->id }}">
+                                <flux:button variant="danger" icon="trash">Delete book</flux:button>
+                            </flux:modal.trigger>
+
+                            <flux:modal name="delete-book-{{ $book->id }}" class="min-w-[22rem]">
+                                <flux:heading size="lg">Delete book?</flux:heading>
+                                <flux:subheading>Are you sure you want to delete "{{ $book->title }}"? This action cannot be undone.</flux:subheading>
+
+                                <div class="flex gap-2 mt-6 justify-end">
+                                    <flux:modal.close>
+                                        <flux:button variant="ghost">Cancel</flux:button>
+                                    </flux:modal.close>
+
+                                    <form action="{{ route('books.destroy', $book->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <flux:button type="submit" variant="danger">Delete book</flux:button>
+                                    </form>
+                                </div>
+                            </flux:modal>
+                        </div>
                     </div>
                 </div>
             </div>

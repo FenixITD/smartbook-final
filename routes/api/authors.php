@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\Authors\SearchSuggestController;
 use App\Http\Controllers\Api\Authors\UpdateAuthorController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/authors/suggest', SearchSuggestController::class)->name('api.authors.suggest');
+
 Route::prefix('authors')->name('api.authors.')->group(function (): void {
     Route::get('/suggest', SearchSuggestController::class)->name('suggest');
     Route::get('/', GetListAuthorController::class)->name('index');

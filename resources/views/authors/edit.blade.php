@@ -53,14 +53,30 @@
                     Deleting an author is irreversible. All related data will be lost.
                 </flux:text>
                 <div class="mt-4">
-                    <form action="{{ route('authors.destroy', $author) }}" method="POST"
-                          onsubmit="return confirm('Delete author \'{{ $author->name }}\'? This action cannot be undone.')">
-                        @csrf
-                        @method('DELETE')
-                        <flux:button type="submit" variant="danger" icon="trash">
-                            Delete author
-                        </flux:button>
-                    </form>
+                    <div>
+                        <flux:modal.trigger name="delete-author-{{ $author->id }}">
+                            <flux:button variant="danger" icon="trash">
+                                Delete author
+                            </flux:button>
+                        </flux:modal.trigger>
+
+                        <flux:modal name="delete-author-{{ $author->id }}" class="min-w-[22rem]">
+                            <flux:heading size="lg">Delete author?</flux:heading>
+                            <flux:subheading>Are you sure you want to delete "{{ $author->name }}"? This action cannot be undone and all related data will be lost.</flux:subheading>
+
+                            <div class="flex gap-2 mt-6 justify-end">
+                                <flux:modal.close>
+                                    <flux:button variant="ghost">Cancel</flux:button>
+                                </flux:modal.close>
+
+                                <form action="{{ route('authors.destroy', $author) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <flux:button type="submit" variant="danger">Delete author</flux:button>
+                                </form>
+                            </div>
+                        </flux:modal>
+                    </div>
                 </div>
             </div>
         </div>

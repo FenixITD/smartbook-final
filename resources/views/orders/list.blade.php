@@ -22,19 +22,46 @@
             {{-- Filters --}}
             <div class="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900">
                 <form method="GET" action="{{ route('orders.index') }}" class="flex flex-wrap gap-3 items-end">
-                    <div class="flex-1 min-w-48">
+                    <div class="flex-1 min-w-48 relative" x-data="orderSuggest()" x-ref="wrapper">
                         <flux:input
                             name="search"
+                            x-model="query"
+                            x-on:input.debounce.300ms="fetchSuggestions"
+                            x-on:keydown.escape="close"
+                            x-on:focus="query.trim().length >= 2 && fetchSuggestions()"
                             value="{{ request('search') }}"
-                            placeholder="Search by user ID..."
+                            placeholder="Search by name..."
                             icon="magnifying-glass"
+                            autocomplete="off"
                         />
+
+                        <template x-teleport="body">
+                            <div
+                                x-show="open || loading"
+                                :style="'position:fixed;z-index:9999;top:'+dropY+'px;left:'+dropX+'px;width:'+dropW+'px'"
+                                class="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-700 overflow-hidden"
+                            >
+                                <div x-show="loading" class="px-4 py-3 text-sm text-zinc-400 text-center">Searching...</div>
+
+                                <ul x-show="!loading && open">
+                                    <template x-for="item in results" :key="item.id">
+                                        <li>
+                                            <a :href="item.url"
+                                               class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
+                                                <span class="text-xs font-bold text-zinc-400" x-text="'#' + item.id"></span>
+                                                <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100" x-text="item.user_name"></span>
+                                                <span class="text-xs text-zinc-400" x-text="item.status"></span>
+                                            </a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
                     </div>
                     <div class="w-40">
                         <flux:select name="sortBy">
                             <flux:select.option value="id" :selected="request('sortBy') === 'id'">By ID</flux:select.option>
-                            <flux:select.option value="total" :selected="request('sortBy') === 'total'">By total</flux:select.option>
-                            <flux:select.option value="status" :selected="request('sortBy') === 'status'">By status</flux:select.option>
+                            <flux:select.option value="name" :selected="request('sortBy') === 'name'">By name</flux:select.option>
                             <flux:select.option value="created_at" :selected="request('sortBy') === 'created_at'">By date</flux:select.option>
                         </flux:select>
                     </div>
@@ -100,12 +127,28 @@
                                     <div class="flex justify-end gap-2">
                                         <flux:button href="{{ route('orders.show', $order) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
                                         <flux:button href="{{ route('orders.edit', $order) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
-                                        <form action="{{ route('orders.destroy', $order) }}" method="POST" class="inline"
-                                              onsubmit="return confirm('Delete order #{{ $order->id }}?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <flux:button type="submit" variant="ghost" size="sm" icon="trash">Delete</flux:button>
-                                        </form>
+                                        <div>
+                                            <flux:modal.trigger name="delete-order-{{ $order->id }}">
+                                                <flux:button variant="ghost" size="sm" icon="trash">Delete</flux:button>
+                                            </flux:modal.trigger>
+
+                                            <flux:modal name="delete-order-{{ $order->id }}" class="min-w-[22rem] text-left">
+                                                <flux:heading size="lg">Delete order?</flux:heading>
+                                                <flux:subheading>Are you sure you want to delete order #{{ $order->id }}?</flux:subheading>
+
+                                                <div class="flex gap-2 mt-6 justify-end">
+                                                    <flux:modal.close>
+                                                        <flux:button variant="ghost">Cancel</flux:button>
+                                                    </flux:modal.close>
+
+                                                    <form action="{{ route('orders.destroy', $order) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <flux:button type="submit" variant="danger">Delete</flux:button>
+                                                    </form>
+                                                </div>
+                                            </flux:modal>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -152,11 +195,66 @@
                     </div>
                 @endif
             </div>
-
             <flux:text class="text-zinc-400 text-sm">
                 Total orders: {{ $paginated->total }}
             </flux:text>
-
         </div>
     </div>
+
+    <script>
+        function orderSuggest() {
+            return {
+                query: '{{ addslashes(request('search', '')) }}',
+                results: [],
+                open: false,
+                loading: false,
+                dropX: 0, dropY: 0, dropW: 300,
+                _abort: null,
+
+                init() {
+                    document.addEventListener('click', (e) => {
+                        if (!this.$refs.wrapper.contains(e.target)) this.close();
+                    });
+                    window.addEventListener('scroll', () => this.close(), { passive: true });
+                    window.addEventListener('resize', () => this.close(), { passive: true });
+                },
+
+                updatePosition() {
+                    const rect = this.$refs.wrapper.getBoundingClientRect();
+                    this.dropX = rect.left;
+                    this.dropY = rect.bottom + 6;
+                    this.dropW = rect.width;
+                },
+
+                async fetchSuggestions() {
+                    const q = this.query.trim();
+                    if (q.length < 2) { this.close(); return; }
+
+                    this.updatePosition();
+                    if (this._abort) this._abort.abort();
+                    this._abort = new AbortController();
+                    this.open = false;
+                    this.loading = true;
+
+                    try {
+                        const res = await fetch('{{ route('api.orders.suggest') }}?q=' + encodeURIComponent(q), {
+                            signal: this._abort.signal,
+                            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                        });
+                        if (!res.ok) { this.close(); return; }
+                        const data = await res.json();
+                        this.results = Array.isArray(data) ? data : [];
+                        this.open = this.results.length > 0;
+                    } catch (e) {
+                        if (e.name !== 'AbortError') this.close();
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                close() { this.open = false; this.loading = false; },
+            };
+        }
+    </script>
+
 </x-layouts::app.header>

@@ -18,6 +18,13 @@ interface ReviewRepositoryInterface
 
     public function getById(int $id): ReviewResponseDto|null;
 
+    /** @return array<ReviewResponseDto> */
+    public function suggest(string $query): array;
+
+    /** @param array<int> $ids
+     *  @return array<ReviewResponseDto> */
+    public function getByIds(array $ids): array;
+
     public function create(ReviewDto $data): ReviewResponseDto;
 
     public function update(int $id, ReviewDto $data): ReviewResponseDto|null;
