@@ -20,7 +20,6 @@ class Genre extends Model
     protected $fillable = [
         'name',
         'slug',
-        'description',
     ];
 
     public function toSearchableArray(): array

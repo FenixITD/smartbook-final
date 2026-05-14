@@ -10,11 +10,10 @@ use OpenApi\Attributes as OA;
 
 #[OA\Schema(
     schema: 'GenreDataRequest',
-    required: ['name', 'slug', 'description'],
+    required: ['name', 'slug'],
     properties: [
         new OA\Property(property: 'name', type: 'string', example: 'Genre name'),
         new OA\Property(property: 'slug', type: 'string', example: 'genre-name'),
-        new OA\Property(property: 'description', type: 'string', example: 'Genre description'),
     ],
     type: 'object',
 )]
@@ -31,7 +30,6 @@ final class GenreDataRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/'],
-            'description' => ['required', 'string'],
         ];
     }
 
@@ -40,7 +38,6 @@ final class GenreDataRequest extends FormRequest
         return new GenreDto(
             name: (string) $this->string('name'),
             slug: (string) $this->string('slug'),
-            description: (string) $this->string('description'),
         );
     }
 }

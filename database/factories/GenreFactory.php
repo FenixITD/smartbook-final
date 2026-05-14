@@ -23,7 +23,6 @@ class GenreFactory extends Factory
         return [
             'name' => $name,
             'slug' => Str::slug($name),
-            'description' => fake()->paragraph(2),
         ];
     }
 }

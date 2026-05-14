@@ -45,19 +45,6 @@
                         @enderror
                     </flux:field>
 
-                    <flux:field>
-                        <flux:label for="description">Description</flux:label>
-                        <flux:textarea
-                            id="description"
-                            name="description"
-                            rows="3"
-                            :invalid="$errors->has('description')">{{ old('description') }}
-                        </flux:textarea>
-                        @error('description')
-                        <flux:error>{{ $message }}</flux:error>
-                        @enderror
-                    </flux:field>
-
                     <div class="flex gap-3 pt-2">
                         <flux:button type="submit" variant="primary">
                             Create genre

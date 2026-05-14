@@ -9,7 +9,6 @@ final readonly class GenreDto
     public function __construct(
         public string $name,
         public string $slug,
-        public string $description,
     ) {
     }
 
@@ -19,7 +18,6 @@ final readonly class GenreDto
         return [
             'name' => $this->name,
             'slug' => $this->slug,
-            'description' => $this->description,
         ];
     }
 }

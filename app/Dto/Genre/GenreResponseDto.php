@@ -14,7 +14,6 @@ final readonly class GenreResponseDto
             id: $genre->id,
             name: $genre->name,
             slug: $genre->slug,
-            description: $genre->description ?? '',
             createdAt: $genre->created_at?->toDateTimeString() ?? '',
             updatedAt: $genre->updated_at?->toDateTimeString() ?? '',
         );
@@ -24,7 +23,6 @@ final readonly class GenreResponseDto
         public int $id,
         public string $name,
         public string $slug,
-        public string $description,
         public string $createdAt,
         public string $updatedAt,
     ) {

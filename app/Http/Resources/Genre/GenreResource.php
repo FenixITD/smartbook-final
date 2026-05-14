@@ -14,7 +14,6 @@ use OpenApi\Attributes as OA;
     properties: [
         new OA\Property(property: 'name', type: 'string', example: 'Genre name'),
         new OA\Property(property: 'slug', type: 'string', example: 'genre-slug'),
-        new OA\Property(property: 'description', type: 'string', example: 'Genre description'),
     ],
     type: 'object',
 )]
@@ -32,7 +31,6 @@ final class GenreResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'description' => $this->description,
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
         ];

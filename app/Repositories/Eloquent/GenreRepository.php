@@ -51,7 +51,7 @@ final class GenreRepository implements GenreRepositoryInterface
     public function getAll(): array
     {
         return Genre::orderBy('name')
-            ->select(['id', 'name', 'slug', 'description'])
+            ->select(['id', 'name', 'slug'])
             ->limit(200)
             ->get()
             ->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
