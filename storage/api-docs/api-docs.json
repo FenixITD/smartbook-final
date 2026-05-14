@@ -1301,8 +1301,7 @@
             "GenreDataRequest": {
                 "required": [
                     "name",
-                    "slug",
-                    "description"
+                    "slug"
                 ],
                 "properties": {
                     "name": {
@@ -1312,10 +1311,6 @@
                     "slug": {
                         "type": "string",
                         "example": "genre-name"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Genre description"
                     }
                 },
                 "type": "object"
@@ -1501,10 +1496,6 @@
                     "slug": {
                         "type": "string",
                         "example": "genre-slug"
-                    },
-                    "description": {
-                        "type": "string",
-                        "example": "Genre description"
                     }
                 },
                 "type": "object"

@@ -38,5 +38,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Эта настройка говорит Laravel: "Если запрос идет на /api/*, забудь про редиректы и HTML, отдавай только JSON"
+        $exceptions->shouldRenderJsonWhen(function ($request, $e) {
+            if ($request->is('api/*')) {
+                return true;
+            }
+            return $request->expectsJson();
+        });
     })->create();
