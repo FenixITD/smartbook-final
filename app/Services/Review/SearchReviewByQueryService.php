@@ -12,7 +12,13 @@ final readonly class SearchReviewByQueryService
     {
     }
 
-    /** @return array<int> */
+    /**
+     * @param string $query
+     * @param int $limit
+     * @return array<int>
+     *
+     * Performs a full-text search for reviews in Elasticsearch by user name and comment content, returning an array of matched review IDs.
+     */
     public function search(string $query, int $limit = 5): array
     {
         $response = $this->client->search([

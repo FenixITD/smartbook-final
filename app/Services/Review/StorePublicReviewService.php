@@ -14,6 +14,12 @@ final class StorePublicReviewService
     ) {
     }
 
+    /**
+     * @param ReviewDto $dto
+     * @return void
+     *
+     * Stores a newly submitted public review in the database.
+     */
     public function store(ReviewDto $dto): void
     {
         $this->reviewRepository->create($dto);

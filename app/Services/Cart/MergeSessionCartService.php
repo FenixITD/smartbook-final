@@ -15,6 +15,11 @@ final readonly class MergeSessionCartService
     ) {
     }
 
+    /**
+     * @return void
+     *
+     * Merges items from the guest session cart into the authenticated user's database cart upon login, then clears the session.
+     */
     public function execute(): void
     {
         $cart = $this->guestCartService->getAll();

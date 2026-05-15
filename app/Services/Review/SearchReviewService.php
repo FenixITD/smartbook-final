@@ -14,7 +14,12 @@ final readonly class SearchReviewService
     {
     }
 
-    /** @return array<int> */
+    /**
+     * @param ReviewFiltersDto $filters
+     * @return array<int>
+     *
+     * Searches and filters reviews in Elasticsearch based on provided criteria, returning an array of review IDs.
+     */
     public function search(ReviewFiltersDto $filters): array
     {
         $response = $this->client->search([
@@ -35,7 +40,12 @@ final readonly class SearchReviewService
         );
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @param ReviewFiltersDto $filters
+     * @return array<string, mixed>
+     *
+     * Builds the Elasticsearch query array based on the provided review filters.
+     */
     private function buildQuery(ReviewFiltersDto $filters): array
     {
         $must = [];

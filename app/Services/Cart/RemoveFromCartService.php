@@ -11,6 +11,12 @@ final readonly class RemoveFromCartService
     ) {
     }
 
+    /**
+     * @param int $bookId
+     * @return void
+     *
+     * Removes a specific book entirely from the current active cart.
+     */
     public function execute(int $bookId): void
     {
         $this->cartResolverService->resolve()->remove($bookId);

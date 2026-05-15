@@ -16,6 +16,12 @@ final readonly class DeleteBookService
     ) {
     }
 
+    /**
+     * @param int $bookId
+     * @return void
+     *
+     * Deletes a book and removes its associated cover image from the storage within a transaction.
+     */
     public function execute(int $bookId): void
     {
         $this->transactionManager->transaction(function () use ($bookId): void {

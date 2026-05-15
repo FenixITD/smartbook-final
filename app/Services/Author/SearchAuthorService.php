@@ -10,7 +10,12 @@ final readonly class SearchAuthorService
 {
     public function __construct(private Client $client) {}
 
-    /** @return array<int> */
+    /**
+     * @param AuthorFiltersDto $filters
+     * @return array<int>
+     *
+     * Searches and filters authors in Elasticsearch based on provided criteria, returning an array of author IDs.
+     */
     public function search(AuthorFiltersDto $filters): array
     {
         $response = $this->client->search([
@@ -28,7 +33,12 @@ final readonly class SearchAuthorService
         return array_map(static fn (array $hit): int => (int) $hit['_id'], $hits);
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @param AuthorFiltersDto $filters
+     * @return array<string, mixed>
+     *
+     * Builds the Elasticsearch query array based on the provided author filters.
+     */
     private function buildQuery(AuthorFiltersDto $filters): array
     {
         if ($filters->search === null || $filters->search === '') {

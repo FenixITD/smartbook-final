@@ -13,6 +13,11 @@ final readonly class GetCartItemsService
     ) {
     }
 
+    /**
+     * @return array<CartItemWithBookResponseDto>
+     *
+     * Retrieves all items from the current active cart along with their associated detailed book data.
+     */
     /** @return array<CartItemWithBookResponseDto> */
     public function execute(): array
     {

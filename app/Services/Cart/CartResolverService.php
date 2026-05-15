@@ -15,6 +15,11 @@ final readonly class CartResolverService
     ) {
     }
 
+    /**
+     * @return CartServiceInterface
+     *
+     * Resolves and returns the appropriate cart service implementation based on the user's authentication status.
+     */
     public function resolve(): CartServiceInterface
     {
         return Auth::check()

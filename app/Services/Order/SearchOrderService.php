@@ -14,7 +14,12 @@ final readonly class SearchOrderService
     {
     }
 
-    /** @return array<int> */
+    /**
+     * @param OrderFiltersDto $filters
+     * @return array<int>
+     *
+     * Searches and filters orders in Elasticsearch based on provided criteria (like ID or status), returning an array of order IDs.
+     */
     public function search(OrderFiltersDto $filters): array
     {
         $response = $this->client->search([
@@ -35,7 +40,12 @@ final readonly class SearchOrderService
         );
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @param OrderFiltersDto $filters
+     * @return array<string, mixed>
+     *
+     * Builds the Elasticsearch query array based on the provided order filters.
+     */
     private function buildQuery(OrderFiltersDto $filters): array
     {
         $must = [];

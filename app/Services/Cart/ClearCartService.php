@@ -11,6 +11,11 @@ final readonly class ClearCartService
     ) {
     }
 
+    /**
+     * @return void
+     *
+     * Empties the current active cart completely.
+     */
     public function execute(): void
     {
         $this->cartResolverService->resolve()->clear();

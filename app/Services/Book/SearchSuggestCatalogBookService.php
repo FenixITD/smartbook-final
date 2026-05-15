@@ -14,6 +14,12 @@ final readonly class SearchSuggestCatalogBookService
         private SearchBookByQueryService $searchService,
     ) {}
 
+    /**
+     * @param string $query
+     * @return array<int, array{id: int, title: string, author: string|null, cover_image: string|null, price: float, url: string}>
+     *
+     * Fetches up to 5 book suggestions specifically for the public catalog search, including cover image and price.
+     */
     public function execute(string $query): array
     {
         $ids = $this->searchService->search($query, limit: 5);

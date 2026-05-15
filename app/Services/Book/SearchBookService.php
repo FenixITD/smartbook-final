@@ -17,7 +17,13 @@ final readonly class SearchBookService
     ) {
     }
 
-    /** @return array<BookResponseDto> */
+    /**
+     * @param BookFiltersDto $filters
+     * @return array<BookResponseDto>
+     *
+     * Retrieves an unpaginated list of books. Uses Elasticsearch if a search query is provided,
+     * otherwise queries the repository directly.
+     */
     public function getList(BookFiltersDto $filters): array
     {
         if ($filters->search === null) {
@@ -33,6 +39,12 @@ final readonly class SearchBookService
         return $this->repository->getListByIds($ids, $filters);
     }
 
+    /**
+     * @param BookFiltersDto $filters
+     * @return PaginatedResponseDto
+     *
+     * Retrieves a paginated list of books for the web interface, integrating with Elasticsearch for text search.
+     */
     public function getWebList(BookFiltersDto $filters): PaginatedResponseDto
     {
         if ($filters->search === null) {

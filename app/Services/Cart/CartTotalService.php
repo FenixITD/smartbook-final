@@ -11,6 +11,11 @@ final readonly class CartTotalService
     ) {
     }
 
+    /**
+     * @return float
+     *
+     * Calculates and returns the total price of all items in the current active cart.
+     */
     public function execute(): float
     {
         return $this->cartResolverService->resolve()->getTotal();

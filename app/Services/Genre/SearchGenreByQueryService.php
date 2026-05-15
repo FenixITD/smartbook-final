@@ -12,7 +12,13 @@ final readonly class SearchGenreByQueryService
     {
     }
 
-    /** @return array<int> */
+    /**
+     * @param string $query
+     * @param int $limit
+     * @return array<int>
+     *
+     * Performs a full-text search for genres in Elasticsearch by name, returning an array of matched genre IDs.
+     */
     public function search(string $query, int $limit = 5): array
     {
         $response = $this->client->search([

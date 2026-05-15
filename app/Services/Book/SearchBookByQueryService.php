@@ -12,7 +12,13 @@ final readonly class SearchBookByQueryService
     {
     }
 
-    /** @return array<int> */
+    /**
+     * @param string $query
+     * @param int $limit
+     * @return array<int>
+     *
+     * Performs a full-text search for books in Elasticsearch by title and description, returning an array of matched book IDs.
+     */
     public function search(string $query, int $limit = 10000): array
     {
         $response = $this->client->search([

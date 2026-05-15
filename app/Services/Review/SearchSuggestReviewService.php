@@ -16,7 +16,10 @@ final readonly class SearchSuggestReviewService
     }
 
     /**
-     * @return array<int, array{id: int, content: string, url: string}>
+     * @param string $query
+     * @return array<int, array{id: int, user_name: string, content: string, url: string}>
+     *
+     * Fetches up to 5 review suggestions for autocomplete search, returning the author's name, a truncated comment, and the URL.
      */
     public function execute(string $query): array
     {

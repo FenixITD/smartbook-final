@@ -10,7 +10,12 @@ final readonly class SearchGenreService
 {
     public function __construct(private Client $client) {}
 
-    /** @return array<int> */
+    /**
+     * @param GenreFiltersDto $filters
+     * @return array<int>
+     *
+     * Searches and filters genres in Elasticsearch based on provided criteria, returning an array of genre IDs.
+     */
     public function search(GenreFiltersDto $filters): array
     {
         $response = $this->client->search([
@@ -28,7 +33,12 @@ final readonly class SearchGenreService
         return array_map(static fn (array $hit): int => (int) $hit['_id'], $hits);
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @param GenreFiltersDto $filters
+     * @return array<string, mixed>
+     *
+     * Builds the Elasticsearch query array based on the provided genre filters.
+     */
     private function buildQuery(GenreFiltersDto $filters): array
     {
         if ($filters->search === null || $filters->search === '') {

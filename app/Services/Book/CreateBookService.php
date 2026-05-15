@@ -16,7 +16,13 @@ final readonly class CreateBookService
     ) {
     }
 
-    /** @param array<int> $genreIds */
+    /**
+     * @param BookDto $dto
+     * @param array<int> $genreIds
+     * @return void
+     *
+     * Creates a new book and synchronizes its genres within a database transaction.
+     */
     public function execute(BookDto $dto, array $genreIds): void
     {
         $this->transactionManager->transaction(function () use ($dto, $genreIds): void {

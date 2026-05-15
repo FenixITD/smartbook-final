@@ -23,12 +23,21 @@ final class ChatService
 
     /**
      * @return ConversationSummaryDto[]
+     *
+     * Retrieves all conversations along with their unread message counts for the admin panel.
      */
     public function getAdminConversations(): array
     {
         return $this->conversationRepository->getAllWithUnreadCounts();
     }
 
+    /**
+     * @param int $userId
+     * @param int $bookId
+     * @return ConversationMessageDto
+     *
+     * Finds an existing conversation or creates a new one between a user and admin regarding a specific book, returning the conversation details and its messages.
+     */
     public function openConversation(int $userId, int $bookId): ConversationMessageDto
     {
         $conversationId = $this->conversationRepository->findOrCreateByUserAndBook($userId, $bookId);
@@ -41,7 +50,10 @@ final class ChatService
     }
 
     /**
+     * @param GetConversationMessagesDto $dto
      * @return MessageDto[]
+     *
+     * Retrieves messages for a specific conversation. Validates ownership for non-admin users and marks messages as read if viewed by an admin.
      */
     public function getConversationMessages(GetConversationMessagesDto $dto): array
     {
@@ -56,6 +68,12 @@ final class ChatService
         return $this->conversationRepository->getMessages($dto->conversationId);
     }
 
+    /**
+     * @param SendMessageDto $dto
+     * @return MessageDto
+     *
+     * Dispatches a new message in a conversation, validates ownership for regular users, and triggers a message sent event.
+     */
     public function sendMessage(SendMessageDto $dto): MessageDto
     {
         if (!$dto->isAdmin) {
@@ -69,6 +87,13 @@ final class ChatService
         return $messageDto;
     }
 
+    /**
+     * @param int $conversationId
+     * @param int $userId
+     * @return void
+     *
+     * Ensures that the specified user is the owner of the given conversation, aborting with a 403 error if not.
+     */
     private function assertOwnership(int $conversationId, int $userId): void
     {
         $ownerId = $this->conversationRepository->getOwnerId($conversationId);

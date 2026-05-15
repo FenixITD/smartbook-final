@@ -11,6 +11,13 @@ final readonly class UpdateCartService
     ) {
     }
 
+    /**
+     * @param int $bookId
+     * @param int $quantity
+     * @return void
+     *
+     * Updates the exact quantity of a specific book in the current active cart.
+     */
     public function execute(int $bookId, int $quantity): void
     {
         $this->cartResolverService->resolve()->update($bookId, $quantity);

@@ -12,7 +12,13 @@ final readonly class SearchOrderByQueryService
     {
     }
 
-    /** @return array<int> */
+    /**
+     * @param string $query
+     * @param int $limit
+     * @return array<int>
+     *
+     * Performs a full-text search for orders in Elasticsearch by the user's name, returning an array of matched order IDs.
+     */
     public function search(string $query, int $limit = 5): array
     {
         $response = $this->client->search([

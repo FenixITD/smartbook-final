@@ -59,6 +59,12 @@ final readonly class AuthService
         return true;
     }
 
+    /**
+     * @param RegisterDto $dto
+     * @return void
+     *
+     * Registers a new user in the system and automatically authenticates them.
+     */
     public function register(RegisterDto $dto): void
     {
         $user = $this->userRepository->create($dto);
@@ -66,6 +72,11 @@ final readonly class AuthService
         Auth::loginUsingId($user->id);
     }
 
+    /**
+     * @return void
+     *
+     * Logs out the currently authenticated user.
+     */
     public function logout(): void
     {
         Auth::logout();
