@@ -22,4 +22,6 @@ interface ConversationRepositoryInterface
      * @return MessageDto[]
      */
     public function getMessages(int $conversationId): array;
+
+    public function getTotalUnreadCount(): int;
 }

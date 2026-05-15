@@ -1,3 +1,11 @@
+@php
+    $adminUnreadChatsCount = 0;
+    if (auth()->check() && auth()->user()?->role === 'admin') {
+        $adminUnreadChatsCount = app(\App\Repositories\Interfaces\ConversationRepositoryInterface::class)
+            ->getTotalUnreadCount();
+    }
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -202,22 +210,33 @@
     @endauth
 </flux:header>
 
-@if (request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*') && auth()->user()?->role === 'admin')
-    <div class="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden">
+@if (request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*', 'chat.*') && auth()->user()?->role === 'admin')
+    <div
+        x-data
+        x-init="$el.style.top = (document.querySelector('header')?.offsetHeight ?? 64) + 'px'"
+        class="sticky z-40 border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden"
+    >
         <div class="flex items-center gap-1 px-4 py-2">
             @foreach ([
                 'Authors' => 'authors.index',
-                'Books' => 'books.index',
-                'Genres' => 'genres.index',
-                'Orders' => 'orders.index',
+                'Books'   => 'books.index',
+                'Genres'  => 'genres.index',
+                'Orders'  => 'orders.index',
                 'Reviews' => 'reviews.index',
+                'Chat'   => 'chat.admin',
             ] as $label => $routeName)
                 <a href="{{ route($routeName) }}"
-                   class="text-sm px-3 py-1.5 rounded-lg transition-colors
-                          {{ request()->routeIs(strtolower($label).'.*')
-                             ? 'bg-zinc-100 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100'
-                             : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                   class="relative text-sm px-3 py-1.5 rounded-lg transition-colors
+              {{ request()->routeIs(strtolower($label).'.*')
+                 ? 'bg-zinc-100 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100'
+                 : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
                     {{ $label }}
+                    {{-- Badge только для Chats --}}
+                    @if ($label === 'Chats' && ($adminUnreadChatsCount ?? 0) > 0)
+                        <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none">
+                {{ $adminUnreadChatsCount > 9 ? '9+' : $adminUnreadChatsCount }}
+            </span>
+                    @endif
                 </a>
             @endforeach
         </div>

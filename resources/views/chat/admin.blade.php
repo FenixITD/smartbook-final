@@ -11,7 +11,7 @@
             </div>
 
             {{-- Empty state --}}
-            @if ($conversations->isEmpty())
+            @if (empty($conversations))
                 <div class="flex flex-col items-center justify-center rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 py-20 gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -43,7 +43,11 @@
                                     $unread = $conversation->unreadCount;
                                     $lastMessage = $conversation->lastMessageBody;
                                 @endphp
-                                <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                                <tr
+                                    x-data="{ unread: {{ $conversation->unreadCount }} }"
+                                    @unread-cleared.window="if ($event.detail.conversationId === {{ $conversation->id }}) unread = 0"
+                                    class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                                    >
 
                                     {{-- ID --}}
                                     <td class="px-6 py-4 text-sm text-zinc-400 dark:text-zinc-500">
@@ -54,23 +58,23 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-2">
                                             <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                                                {{ $conversation->user->name }}
+                                                {{ $conversation->userName }}
                                             </span>
                                             {{-- Badge with the number of unread --}}
-                                            @if ($unread > 0)
-                                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold">
-                                                    {{ $unread }}
-                                                </span>
-                                            @endif
+                                            <span
+                                                x-show="unread > 0"
+                                                x-text="unread"
+                                                class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold"
+                                            ></span>
                                         </div>
                                         <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
-                                            {{ $conversation->user->email }}
+                                            {{ $conversation->userEmail }}
                                         </p>
                                     </td>
 
                                     {{-- Book --}}
                                     <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400 max-w-45 truncate">
-                                        {{ $conversation->book->title }}
+                                        {{ $conversation->bookTitle }}
                                     </td>
 
                                     {{-- Preview of the last message --}}
@@ -97,7 +101,7 @@
 
                                     {{-- Date --}}
                                     <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                                        {{ $conversation->updated_at->format('d.m.Y H:i') }}
+                                        {{ $conversation->updatedAt }}
                                     </td>
 
                                     {{-- Actions --}}
@@ -109,8 +113,8 @@
                                             x-data=""
                                             @click="$dispatch('open-admin-chat', {
                                                 conversationId: {{ $conversation->id }},
-                                                userName: '{{ addslashes($conversation->user->name) }}',
-                                                bookTitle: '{{ addslashes($conversation->book->title) }}'
+                                                userName: '{{ addslashes($conversation->userName) }}',
+                                                bookTitle: '{{ addslashes($conversation->bookTitle) }}'
                                             })"
                                         >
                                             Open
@@ -143,8 +147,8 @@
             body: '',
 
             init() {
-                // Listening to an event from a button in a table
-                this.$on('open-admin-chat', (data) => {
+                window.addEventListener('open-admin-chat', (e) => {
+                    const data = e.detail;
                     this.conversationId = data.conversationId;
                     this.userName       = data.userName;
                     this.bookTitle      = data.bookTitle;
@@ -165,6 +169,7 @@
                     this.messages = data.messages;
                     this.scrollToBottom();
                     this.subscribeToChannel();
+                    this.$dispatch('unread-cleared', { conversationId: this.conversationId });
                 } finally {
                     this.loading = false;
                 }

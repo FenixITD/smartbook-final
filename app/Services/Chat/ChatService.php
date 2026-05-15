@@ -49,6 +49,10 @@ final class ChatService
             $this->assertOwnership($dto->conversationId, $dto->userId);
         }
 
+        if ($dto->isAdmin) {
+            $this->messageRepository->markUserMessagesAsRead($dto->conversationId);
+        }
+
         return $this->conversationRepository->getMessages($dto->conversationId);
     }
 

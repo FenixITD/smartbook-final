@@ -18,7 +18,7 @@ final class ConversationRepository implements ConversationRepositoryInterface
         return Conversation::with([
             'user:id,name',
             'book:id,title',
-            'messages' => static function (Builder $q): void {
+            'messages' => static function ($q): void {
                 $q->latest()->limit(1);
             },
         ])
@@ -58,5 +58,17 @@ final class ConversationRepository implements ConversationRepositoryInterface
             ->get()
             ->map(static fn (Message $message) => MessageDto::fromModel($message))
             ->all();
+    }
+
+    public function getTotalUnreadCount(): int
+    {
+        return (int) Message::whereNull('read_at')
+            ->whereExists(static function (\Illuminate\Database\Query\Builder $q): void {
+                $q->selectRaw('1')
+                    ->from('conversations')
+                    ->whereColumn('conversations.id', 'messages.conversation_id')
+                    ->whereColumn('conversations.user_id', 'messages.user_id');
+            })
+            ->count();
     }
 }

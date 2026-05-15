@@ -11,4 +11,6 @@ interface MessageRepositoryInterface
     public function countUnread(int $conversationId): int;
 
     public function create(int $conversationId, int $userId, string $body): MessageDto;
+
+    public function markUserMessagesAsRead(int $conversationId): void;
 }
