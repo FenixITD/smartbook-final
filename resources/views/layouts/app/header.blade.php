@@ -216,30 +216,50 @@
         x-init="$el.style.top = (document.querySelector('header')?.offsetHeight ?? 64) + 'px'"
         class="sticky z-40 border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden"
     >
-        <div class="flex items-center gap-1 px-4 py-2">
-            @foreach ([
-                'Authors' => 'authors.index',
-                'Books'   => 'books.index',
-                'Genres'  => 'genres.index',
-                'Orders'  => 'orders.index',
-                'Reviews' => 'reviews.index',
-                'Chat'   => 'chat.admin',
-                'Activity Logs' => 'activity-logs.index',
-            ] as $label => $routeName)
-                <a href="{{ route($routeName) }}"
-                   class="relative text-sm px-3 py-1.5 rounded-lg transition-colors
-              {{ request()->routeIs(\Illuminate\Support\Str::slug($label).'.*')
-                 ? 'bg-zinc-100 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100'
-                 : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
-                    {{ $label }}
-                    {{-- Badge только для Chats --}}
-                    @if ($label === 'Chats' && ($adminUnreadChatsCount ?? 0) > 0)
-                        <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none">
-                {{ $adminUnreadChatsCount > 9 ? '9+' : $adminUnreadChatsCount }}
-            </span>
-                    @endif
-                </a>
-            @endforeach
+        <div class="flex items-center justify-between px-4 py-2">
+
+            {{-- Left side of the menu --}}
+            <div class="flex items-center gap-1">
+                @foreach ([
+                    'Authors' => 'authors.index',
+                    'Books'   => 'books.index',
+                    'Genres'  => 'genres.index',
+                    'Orders'  => 'orders.index',
+                    'Reviews' => 'reviews.index',
+                ] as $label => $routeName)
+                    <a href="{{ route($routeName) }}"
+                       class="relative text-sm px-3 py-1.5 rounded-lg transition-colors
+                  {{ request()->routeIs(\Illuminate\Support\Str::slug($label).'.*')
+                     ? 'bg-zinc-100 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100'
+                     : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                        {{ $label }}
+                    </a>
+                @endforeach
+            </div>
+
+            {{-- Right side of the menu --}}
+            <div class="flex items-center gap-1">
+                @foreach ([
+                    'Chat'          => 'chat.admin',
+                    'Activity Logs' => 'activity-logs.index',
+                ] as $label => $routeName)
+                    <a href="{{ route($routeName) }}"
+                       class="relative text-sm px-3 py-1.5 rounded-lg transition-colors
+                  {{ request()->routeIs(\Illuminate\Support\Str::slug($label).'.*')
+                     ? 'bg-zinc-100 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100'
+                     : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
+                        {{ $label }}
+
+                        {{-- Badge only for Chat --}}
+                        @if ($label === 'Chat' && ($adminUnreadChatsCount ?? 0) > 0)
+                            <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none">
+                                {{ $adminUnreadChatsCount > 9 ? '9+' : $adminUnreadChatsCount }}
+                            </span>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+
         </div>
     </div>
 @endif
