@@ -6,7 +6,7 @@ namespace App\Providers;
 
 use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Infrastructure\Persistence\EloquentTransactionManager;
-use App\Listeners\MergeCartOnLogin;
+use App\Listeners\MergeCartOnLoginListener;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
@@ -36,7 +36,6 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -121,7 +120,7 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(
             Login::class,
-            MergeCartOnLogin::class,
+            MergeCartOnLoginListener::class,
         );
     }
 

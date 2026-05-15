@@ -9,7 +9,7 @@ use App\Dto\Chat\ConversationSummaryDto;
 use App\Dto\Chat\GetConversationMessagesDto;
 use App\Dto\Chat\MessageDto;
 use App\Dto\Chat\SendMessageDto;
-use App\Events\MessageSent;
+use App\Events\MessageSentEvent;
 use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use App\Repositories\Interfaces\MessageRepositoryInterface;
 
@@ -64,7 +64,7 @@ final class ChatService
 
         $messageDto = $this->messageRepository->create($dto->conversationId, $dto->userId, $dto->body);
 
-        MessageSent::dispatch($messageDto, $dto->conversationId);
+        MessageSentEvent::dispatch($messageDto, $dto->conversationId);
 
         return $messageDto;
     }

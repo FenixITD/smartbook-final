@@ -7,7 +7,7 @@ namespace App\Listeners;
 use App\Services\Cart\MergeSessionCartService;
 use Illuminate\Auth\Events\Login;
 
-final readonly class MergeCartOnLogin
+final readonly class MergeCartOnLoginListener
 {
     public function __construct(
         private MergeSessionCartService $mergeSessionCartService,
