@@ -1495,7 +1495,7 @@
                     },
                     "slug": {
                         "type": "string",
-                        "example": "genre-slug"
+                        "example": "genre-name"
                     }
                 },
                 "type": "object"

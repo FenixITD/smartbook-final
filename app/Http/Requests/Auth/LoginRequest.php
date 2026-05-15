@@ -30,6 +30,7 @@ final class LoginRequest extends FormRequest
             email: (string) $this->string('email'),
             password: (string) $this->string('password'),
             remember: $this->boolean('remember'),
+            ip: $this->ip(),
         );
     }
 }
