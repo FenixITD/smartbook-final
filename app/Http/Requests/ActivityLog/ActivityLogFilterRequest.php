@@ -7,7 +7,9 @@ namespace App\Http\Requests\ActivityLog;
 use App\Dto\ActivityLog\ActivityLogFiltersDto;
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\CartItem;
 use App\Models\Conversation;
+use App\Models\Favorite;
 use App\Models\Genre;
 use App\Models\Message;
 use App\Models\Order;
@@ -25,6 +27,8 @@ final class ActivityLogFilterRequest extends FormRequest
         'Review' => Review::class,
         'Conversation' => Conversation::class,
         'Message' => Message::class,
+        'Favorite' => Favorite::class,
+        'CartItem' => CartItem::class,
     ];
 
     public function authorize(): bool

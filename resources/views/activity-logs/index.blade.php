@@ -78,8 +78,8 @@
                                 'deleted' => 'bg-red-100 text-red-700',
                                 default   => 'bg-zinc-100 text-zinc-600',
                             };
-                            $attributes = $log->properties['attributes'] ?? [];
-                            $old        = $log->properties['old'] ?? [];
+                            $attributes = $log->properties['attributes'] ?? array_diff_key($log->properties, array_flip(['old', 'attributes']));
+                            $old = $log->properties['old'] ?? [];
                         @endphp
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors align-top">
                             <td class="px-4 py-3 text-sm text-zinc-400">{{ $log->id }}</td>

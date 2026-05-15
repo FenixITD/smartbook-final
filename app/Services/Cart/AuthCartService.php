@@ -61,6 +61,10 @@ final readonly class AuthCartService implements CartServiceInterface
             bookId: $bookId,
             quantity: $quantity,
         ));
+
+        activity('CartItem')
+            ->withProperties(['user_id' => Auth::id(), 'book_id' => $bookId, 'quantity' => $quantity])
+            ->log('added');
     }
 
     /**
@@ -84,6 +88,10 @@ final readonly class AuthCartService implements CartServiceInterface
     public function remove(int $bookId): void
     {
         $this->repository->deleteByUserAndBook((int) Auth::id(), $bookId);
+
+        activity('CartItem')
+            ->withProperties(['user_id' => Auth::id(), 'book_id' => $bookId])
+            ->log('deleted');
     }
 
     /**
