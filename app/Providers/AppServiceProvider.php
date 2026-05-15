@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Infrastructure\Persistence\EloquentTransactionManager;
 use App\Listeners\MergeCartOnLoginListener;
+use App\Repositories\Eloquent\ActivityLogRepository;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
 use App\Repositories\Eloquent\CartItemRepository;
@@ -18,6 +19,7 @@ use App\Repositories\Eloquent\OrderItemRepository;
 use App\Repositories\Eloquent\OrderRepository;
 use App\Repositories\Eloquent\ReviewRepository;
 use App\Repositories\Eloquent\UserRepository;
+use App\Repositories\Interfaces\ActivityLogRepositoryInterface;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
@@ -104,6 +106,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             MessageRepositoryInterface::class,
             MessageRepository::class,
+        );
+
+        $this->app->bind(
+            ActivityLogRepositoryInterface::class,
+            ActivityLogRepository::class,
         );
 
         $this->app->singleton(Client::class, static fn () => ClientBuilder::create()

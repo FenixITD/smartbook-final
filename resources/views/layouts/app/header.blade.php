@@ -210,7 +210,7 @@
     @endauth
 </flux:header>
 
-@if (request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*', 'chat.*') && auth()->user()?->role === 'admin')
+@if (request()->routeIs('books.*', 'authors.*', 'genres.*', 'orders.*', 'reviews.*', 'chat.*', 'activity-logs.*') && auth()->user()?->role === 'admin')
     <div
         x-data
         x-init="$el.style.top = (document.querySelector('header')?.offsetHeight ?? 64) + 'px'"
@@ -224,10 +224,11 @@
                 'Orders'  => 'orders.index',
                 'Reviews' => 'reviews.index',
                 'Chat'   => 'chat.admin',
+                'Activity Logs' => 'activity-logs.index',
             ] as $label => $routeName)
                 <a href="{{ route($routeName) }}"
                    class="relative text-sm px-3 py-1.5 rounded-lg transition-colors
-              {{ request()->routeIs(strtolower($label).'.*')
+              {{ request()->routeIs(\Illuminate\Support\Str::slug($label).'.*')
                  ? 'bg-zinc-100 dark:bg-zinc-800 font-medium text-zinc-900 dark:text-zinc-100'
                  : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800' }}">
                     {{ $label }}

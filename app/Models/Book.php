@@ -11,13 +11,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Scout\Searchable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Book extends Model
 {
     /** @use HasFactory<BookFactory> */
     use HasFactory;
 
-    use Searchable;
+    use LogsActivity, Searchable;
 
     protected $casts = [
         'price' => 'float',
@@ -65,6 +67,15 @@ class Book extends Model
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];
+    }
+
+    public function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName(class_basename($this));
     }
 
     /** @return BelongsTo<Author, $this> */
