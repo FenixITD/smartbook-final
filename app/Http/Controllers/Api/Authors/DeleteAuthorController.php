@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Authors;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -36,8 +35,6 @@ use OpenApi\Attributes as OA;
 )]
 final class DeleteAuthorController extends Controller
 {
-    use LogsApiActivity;
-
     public function __construct(
         private AuthorRepositoryInterface $repository,
     ) {
@@ -46,8 +43,6 @@ final class DeleteAuthorController extends Controller
     public function __invoke(int $authorId): JsonResponse
     {
         $this->repository->delete($authorId);
-
-        $this->logActivity('deleted', 'authors', $authorId);
 
         return response()->json([
             'message' => 'Author deleted successfully',

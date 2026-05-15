@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Genres;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Requests\Genre\GenreDataRequest;
 use App\Http\Resources\Genre\GenreResource;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
@@ -33,8 +32,6 @@ use OpenApi\Attributes as OA;
 )]
 readonly class CreateGenreController
 {
-    use LogsApiActivity;
-
     public function __construct(
         private GenreRepositoryInterface $repository,
     ) {
@@ -43,8 +40,6 @@ readonly class CreateGenreController
     public function __invoke(GenreDataRequest $request): JsonResponse
     {
         $genre = $this->repository->create($request->toDto());
-
-        $this->logActivity('created', 'genres', $genre->id, $request->validated());
 
         return (new GenreResource($genre))->response()->setStatusCode(201);
     }

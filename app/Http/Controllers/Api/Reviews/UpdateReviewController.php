@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Reviews;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Requests\Review\ReviewDataRequest;
 use App\Http\Resources\Review\ReviewResource;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
@@ -45,8 +44,6 @@ use OpenApi\Attributes as OA;
 )]
 readonly class UpdateReviewController
 {
-    use LogsApiActivity;
-
     public function __construct(
         private ReviewRepositoryInterface $repository,
     ) {
@@ -55,8 +52,6 @@ readonly class UpdateReviewController
     public function __invoke(ReviewDataRequest $request, int $reviewId): JsonResponse
     {
         $updatedReview = $this->repository->update($reviewId, $request->toDto());
-
-        $this->logActivity('updated', 'reviews', $reviewId, $request->validated());
 
         return (new ReviewResource($updatedReview))->response();
     }

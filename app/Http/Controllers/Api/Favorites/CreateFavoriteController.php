@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Favorites;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Requests\Favorite\FavoriteDataRequest;
 use App\Http\Resources\Favorite\FavoriteResource;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
@@ -33,8 +32,6 @@ use OpenApi\Attributes as OA;
 )]
 readonly class CreateFavoriteController
 {
-    use LogsApiActivity;
-
     public function __construct(
         private FavoriteRepositoryInterface $repository,
     ) {
@@ -43,8 +40,6 @@ readonly class CreateFavoriteController
     public function __invoke(FavoriteDataRequest $request): JsonResponse
     {
         $favorite = $this->repository->create($request->toDto());
-
-        $this->logActivity('created', 'favorites', $favorite->id, $request->validated());
 
         return (new FavoriteResource($favorite))->response()->setStatusCode(201);
     }

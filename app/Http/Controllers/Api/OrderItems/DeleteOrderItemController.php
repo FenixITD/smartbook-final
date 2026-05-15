@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\OrderItems;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -35,8 +34,6 @@ use OpenApi\Attributes as OA;
 )]
 final readonly class DeleteOrderItemController
 {
-    use LogsApiActivity;
-
     public function __construct(
         private OrderItemRepositoryInterface $repository,
     ) {
@@ -45,8 +42,6 @@ final readonly class DeleteOrderItemController
     public function __invoke(int $orderItemId): JsonResponse
     {
         $this->repository->delete($orderItemId);
-
-        $this->logActivity('deleted', 'orderItem', $orderItemId);
 
         return response()->json([
             'message' => 'OrderItem deleted successfully',

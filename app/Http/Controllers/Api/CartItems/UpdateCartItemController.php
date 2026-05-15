@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\CartItems;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Requests\CartItem\CartItemDataRequest;
 use App\Http\Resources\CartItem\CartItemResource;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
@@ -45,8 +44,6 @@ use OpenApi\Attributes as OA;
 )]
 readonly class UpdateCartItemController
 {
-    use LogsApiActivity;
-
     public function __construct(
         private CartItemRepositoryInterface $repository,
     ) {
@@ -55,8 +52,6 @@ readonly class UpdateCartItemController
     public function __invoke(CartItemDataRequest $request, int $cartItemId): JsonResponse
     {
         $updatedCartItem = $this->repository->update($cartItemId, $request->toDto());
-
-        $this->logActivity('updated', 'cartItems', $cartItemId, $request->validated());
 
         return (new CartItemResource($updatedCartItem))->response();
     }

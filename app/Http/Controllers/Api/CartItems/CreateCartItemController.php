@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\CartItems;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CartItem\CartItemDataRequest;
 use App\Http\Resources\CartItem\CartItemResource;
@@ -34,8 +33,6 @@ use OpenApi\Attributes as OA;
 )]
 final class CreateCartItemController extends Controller
 {
-    use LogsApiActivity;
-
     public function __construct(
         private CartItemRepositoryInterface $repository,
     ) {
@@ -44,8 +41,6 @@ final class CreateCartItemController extends Controller
     public function __invoke(CartItemDataRequest $request): JsonResponse
     {
         $cartItem = $this->repository->create($request->toDto());
-
-        $this->logActivity('created', 'cartItems', $cartItem->id, $request->validated());
 
         return (new CartItemResource($cartItem))->response()->setStatusCode(201);
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Books;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Book\BookDataRequest;
 use App\Http\Resources\Book\BookResource;
@@ -46,8 +45,6 @@ use OpenApi\Attributes as OA;
 )]
 final class UpdateBookController extends Controller
 {
-    use LogsApiActivity;
-
     public function __construct(
         private BookRepositoryInterface $repository,
     ) {
@@ -56,8 +53,6 @@ final class UpdateBookController extends Controller
     public function __invoke(BookDataRequest $request, int $bookId): JsonResponse
     {
         $updatedBook = $this->repository->update($bookId, $request->toDto());
-
-        $this->logActivity('updated', 'books', $bookId, $request->validated());
 
         return (new BookResource($updatedBook))->response();
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Authors;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Author\AuthorDataRequest;
 use App\Http\Resources\Author\AuthorResource;
@@ -46,8 +45,6 @@ use OpenApi\Attributes as OA;
 )]
 final class UpdateAuthorController extends Controller
 {
-    use LogsApiActivity;
-
     public function __construct(
         private AuthorRepositoryInterface $repository,
     ) {
@@ -56,8 +53,6 @@ final class UpdateAuthorController extends Controller
     public function __invoke(AuthorDataRequest $request, int $authorId): JsonResponse
     {
         $updatedAuthor = $this->repository->update($authorId, $request->toDto());
-
-        $this->logActivity('updated', 'authors', $authorId, $request->validated());
 
         return (new AuthorResource($updatedAuthor))->response();
     }

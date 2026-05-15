@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Favorites;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -35,8 +34,6 @@ use OpenApi\Attributes as OA;
 )]
 final readonly class DeleteFavoriteController
 {
-    use LogsApiActivity;
-
     public function __construct(
         private FavoriteRepositoryInterface $repository,
     ) {
@@ -45,8 +42,6 @@ final readonly class DeleteFavoriteController
     public function __invoke(int $favoriteId): JsonResponse
     {
         $this->repository->delete($favoriteId);
-
-        $this->logActivity('deleted', 'favorites', $favoriteId);
 
         return response()->json([
             'message' => 'Favorite deleted successfully',

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Books;
 
-use App\Http\Controllers\Api\Traits\LogsApiActivity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Book\BookDataRequest;
 use App\Http\Resources\Book\BookResource;
@@ -34,8 +33,6 @@ use OpenApi\Attributes as OA;
 )]
 final class CreateBookController extends Controller
 {
-    use LogsApiActivity;
-
     public function __construct(
         private BookRepositoryInterface $repository,
     ) {
@@ -44,8 +41,6 @@ final class CreateBookController extends Controller
     public function __invoke(BookDataRequest $request): JsonResponse
     {
         $book = $this->repository->create($request->toDto());
-
-        $this->logActivity('created', 'books', $book->id, $request->validated());
 
         return (new BookResource($book))->response()->setStatusCode(201);
     }
