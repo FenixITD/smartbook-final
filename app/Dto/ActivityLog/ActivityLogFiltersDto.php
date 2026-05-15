@@ -10,6 +10,8 @@ final readonly class ActivityLogFiltersDto
         public int $perPage = 20,
         public string|null $logName = null,
         public string|null $subjectType = null,
+        public int|null $causerId = null,
+        public array $logNames = [],
     ) {
     }
 }

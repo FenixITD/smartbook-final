@@ -21,6 +21,6 @@ final readonly class GetActivityLogController
 
         $subjectTypes = array_keys(ActivityLogFilterRequest::SUBJECT_TYPE_MAP);
 
-        return view('activity-logs.index', compact('logs', 'subjectTypes'));
+        return view('activity-logs.admin', compact('logs', 'subjectTypes'));
     }
 }

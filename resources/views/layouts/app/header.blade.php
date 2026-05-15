@@ -19,6 +19,7 @@
         <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
             {{ __('Dashboard') }}
         </flux:navbar.item>
+
         @if(auth()->user()?->role === 'admin')
             <flux:navbar.item icon="cog-6-tooth" :href="route('books.index')" ...>
                 {{ __('Admin panel') }}

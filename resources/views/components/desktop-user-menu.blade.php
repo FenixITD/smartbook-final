@@ -54,6 +54,17 @@
                 </svg>
                 Favorites
             </a>
+
+            @if(auth()->user()?->role !== 'admin')
+                <a href="{{ route('user-activity.index') }}"
+                   class="flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
+                    <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Recent Activities
+                </a>
+            @endif
+
         </div>
 
         <div class="border-t border-zinc-100 dark:border-zinc-800 py-1">

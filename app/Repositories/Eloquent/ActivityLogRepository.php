@@ -20,6 +20,14 @@ final class ActivityLogRepository implements ActivityLogRepositoryInterface
             $query->where('log_name', $filters->logName);
         }
 
+        if ($filters->causerId !== null) {
+            $query->where('causer_id', $filters->causerId);
+        }
+
+        if ($filters->logNames !== []) {
+            $query->whereIn('log_name', $filters->logNames);
+        }
+
         if ($filters->subjectType !== null) {
             $query->where('subject_type', $filters->subjectType);
         }
