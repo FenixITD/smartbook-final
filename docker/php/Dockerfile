@@ -14,7 +14,8 @@ RUN install-php-extensions \
     redis \
     gd \
     pcntl \
-    sockets
+    sockets \
+    amqp
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

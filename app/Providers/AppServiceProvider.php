@@ -7,6 +7,16 @@ namespace App\Providers;
 use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Infrastructure\Persistence\EloquentTransactionManager;
 use App\Listeners\MergeCartOnLoginListener;
+use App\Models\Author;
+use App\Models\Book;
+use App\Models\Genre;
+use App\Models\Order;
+use App\Models\Review;
+use App\Observers\AuthorObserver;
+use App\Observers\BookObserver;
+use App\Observers\GenreObserver;
+use App\Observers\OrderObserver;
+use App\Observers\ReviewObserver;
 use App\Repositories\Eloquent\ActivityLogRepository;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
@@ -129,6 +139,13 @@ class AppServiceProvider extends ServiceProvider
             Login::class,
             MergeCartOnLoginListener::class,
         );
+
+        // ── RabbitMQ Notification Observers
+        Author::observe(AuthorObserver::class);
+        Book::observe(BookObserver::class);
+        Genre::observe(GenreObserver::class);
+        Order::observe(OrderObserver::class);
+        Review::observe(ReviewObserver::class);
     }
 
     /**
