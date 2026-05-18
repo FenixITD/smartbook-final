@@ -31,6 +31,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'orderItems/*',
             'reviews',
             'reviews/*',
+            'docs*',
+            'api/documentation*',
         ]);
 
         $middleware->alias([
