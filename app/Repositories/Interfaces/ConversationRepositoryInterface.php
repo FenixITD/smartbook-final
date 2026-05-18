@@ -24,4 +24,6 @@ interface ConversationRepositoryInterface
     public function getMessages(int $conversationId): array;
 
     public function getTotalUnreadCount(): int;
+
+    public function close(int $conversationId): void;
 }

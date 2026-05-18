@@ -252,10 +252,14 @@
                         {{ $label }}
 
                         {{-- Badge only for Chat --}}
-                        @if ($label === 'Chat' && ($adminUnreadChatsCount ?? 0) > 0)
-                            <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none">
-                                {{ $adminUnreadChatsCount > 9 ? '9+' : $adminUnreadChatsCount }}
-                            </span>
+                        @if ($label === 'Chat' && ($adminUnreadChatsCount ?? 0) >= 0)
+                            <span
+                                x-data="{ count: {{ $adminUnreadChatsCount ?? 0 }} }"
+                                @admin-unread-decreased.window="count = Math.max(0, count - $event.detail.by)"
+                                x-show="count > 0"
+                                x-text="count > 9 ? '9+' : count"
+                                class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none"
+                            ></span>
                         @endif
                     </a>
                 @endforeach

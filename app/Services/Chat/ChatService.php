@@ -102,4 +102,15 @@ final class ChatService
             abort(403, 'Access denied.');
         }
     }
+
+    /**
+     * @param int $conversationId
+     * @return void
+     *
+     * Sets the chat status with the user to "closed"
+     */
+    public function closeConversation(int $conversationId): void
+    {
+        $this->conversationRepository->close($conversationId);
+    }
 }
