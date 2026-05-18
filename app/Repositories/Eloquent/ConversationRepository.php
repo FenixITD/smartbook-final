@@ -28,6 +28,7 @@ final class ConversationRepository implements ConversationRepositoryInterface
                         ->whereColumn('messages.user_id', 'conversations.user_id');
                 },
             ])
+            ->whereHas('messages')
             ->orderByDesc('updated_at')
             ->get()
             ->map(static fn (Conversation $conversation) => ConversationSummaryDto::fromModel($conversation))
@@ -70,5 +71,10 @@ final class ConversationRepository implements ConversationRepositoryInterface
                     ->whereColumn('conversations.user_id', 'messages.user_id');
             })
             ->count();
+    }
+
+    public function close(int $conversationId): void
+    {
+        Conversation::where('id', $conversationId)->update(['status' => 'closed']);
     }
 }

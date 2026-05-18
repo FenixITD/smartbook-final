@@ -39,16 +39,20 @@
 
                             <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
                             @foreach ($conversations as $conversation)
-                                @php
-                                    $unread = $conversation->unreadCount;
-                                    $lastMessage = $conversation->lastMessageBody;
-                                @endphp
+                                @php $lastMessage = $conversation->lastMessageBody; @endphp
                                 <tr
-                                    x-data="{ unread: {{ $conversation->unreadCount }} }"
-                                    @unread-cleared.window="if ($event.detail.conversationId === {{ $conversation->id }}) unread = 0"
+                                    x-data="{ unread: {{ $conversation->unreadCount }}, status: '{{ $conversation->status }}' }"
+                                    @unread-cleared.window="
+                                        if ($event.detail.conversationId === {{ $conversation->id }} && unread > 0) {
+                                            $dispatch('admin-unread-decreased', { by: unread });
+                                            unread = 0;
+                                        }
+                                    "
+                                    @conversation-closed.window="
+                                        if ($event.detail.conversationId === {{ $conversation->id }}) status = 'closed'
+                                    "
                                     class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
-                                    >
-
+                                >
                                     {{-- ID --}}
                                     <td class="px-6 py-4 text-sm text-zinc-400 dark:text-zinc-500">
                                         {{ $conversation->id }}
@@ -60,16 +64,17 @@
                                             <span class="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                                 {{ $conversation->userName }}
                                             </span>
-                                            {{-- Badge with the number of unread --}}
                                             <span
                                                 x-show="unread > 0"
                                                 x-text="unread"
                                                 class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold"
                                             ></span>
                                         </div>
-                                        <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
-                                            {{ $conversation->userEmail }}
-                                        </p>
+                                        @if ($conversation->userEmail)
+                                            <p class="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
+                                                {{ $conversation->userEmail }}
+                                            </p>
+                                        @endif
                                     </td>
 
                                     {{-- Book --}}
@@ -88,15 +93,14 @@
 
                                     {{-- Status --}}
                                     <td class="px-6 py-4">
-                                        @if ($conversation->status === 'open')
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400">
-                                                Opened
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                                                Closed
-                                            </span>
-                                        @endif
+                                        <span
+                                            x-show="status === 'open'"
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400"
+                                        >Opened</span>
+                                        <span
+                                            x-show="status !== 'open'"
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-red-600 dark:bg-zinc-800 dark:text-red-300"
+                                        >Closed</span>
                                     </td>
 
                                     {{-- Date --}}
@@ -147,6 +151,10 @@
             body: '',
 
             init() {
+                this.$watch('open', (value) => {
+                    document.body.style.overflow = value ? 'hidden' : '';
+                });
+
                 window.addEventListener('open-admin-chat', (e) => {
                     const data = e.detail;
                     this.conversationId = data.conversationId;
@@ -194,45 +202,47 @@
                     });
 
                     if (!res.ok) {
-                        console.error('Ошибка при отправке сообщения:', await res.text());
+                        console.error('Error sending message:', await res.text());
                         return;
                     }
 
                     const msg = await res.json();
-
                     const exists = this.messages.some(m => String(m.id) === String(msg.id));
-
                     if (!exists) {
                         this.messages.push(msg);
                         this.scrollToBottom();
                     }
                 } catch (error) {
-                    console.error('Сетевая ошибка:', error);
+                    console.error('Network error:', error);
                 } finally {
                     this.sending = false;
                 }
             },
 
-        subscribeToChannel() {
-            window.Echo.private(`conversation.${this.conversationId}`)
-                .listen('.MessageSent', (event) => {
-                    console.log('WS Payload:', event); // Оставьте для отладки, если что-то пойдет не так
-
-                    // Laravel может прислать данные напрямую (event.id) или обернуть в свойство (event.message.id)
-                    const incomingMsg = event.id ? event : (event.message || event);
-
-                    // Если ID всё равно нет, игнорируем, чтобы не сломать UI
-                    if (!incomingMsg || !incomingMsg.id) return;
-
-                    // Сравниваем ID безопасно (превращая оба в строки), чтобы 1 не конфликтовало с '1'
-                    const exists = this.messages.some(m => String(m.id) === String(incomingMsg.id));
-
-                    if (!exists) {
-                    this.messages.push(incomingMsg);
-                    this.scrollToBottom();
-                    }
+            async closeConversation() {
+                await fetch(`/chat/conversation/${this.conversationId}/close`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
                 });
-        },
+                this.$dispatch('conversation-closed', { conversationId: this.conversationId });
+                this.close();
+            },
+
+            subscribeToChannel() {
+                window.Echo.private(`conversation.${this.conversationId}`)
+                    .listen('.MessageSent', (event) => {
+                        const incomingMsg = event.id ? event : (event.message || event);
+                        if (!incomingMsg || !incomingMsg.id) return;
+                        const exists = this.messages.some(m => String(m.id) === String(incomingMsg.id));
+                        if (!exists) {
+                            this.messages.push(incomingMsg);
+                            this.scrollToBottom();
+                        }
+                    });
+            },
 
             scrollToBottom() {
                 this.$nextTick(() => {
@@ -243,7 +253,6 @@
 
             close() {
                 this.open = false;
-                // Unsubscribe from the channel to avoid accumulating listeners
                 if (this.conversationId) {
                     window.Echo.leave(`conversation.${this.conversationId}`);
                 }
@@ -263,11 +272,22 @@
                     <p class="font-semibold text-zinc-900 dark:text-zinc-100" x-text="userName"></p>
                     <p class="text-xs text-zinc-400 truncate max-w-xs" x-text="bookTitle"></p>
                 </div>
-                <button @click="close()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
+                <div class="flex items-center gap-2">
+                    {{-- Close conversation button --}}
+                    <button
+                        @click="closeConversation()"
+                        class="text-xs text-zinc-400 hover:text-red-500 border border-zinc-200 dark:border-zinc-600 rounded-lg px-2 py-1 transition"
+                        title="Close conversation"
+                    >
+                        Close
+                    </button>
+                    {{-- Dismiss modal button --}}
+                    <button @click="close()" class="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             {{-- List of messages --}}
