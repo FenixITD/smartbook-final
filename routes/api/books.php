@@ -14,7 +14,6 @@ Route::get('/books/catalog-suggest', SearchSuggestCatalogBookController::class)-
 
 Route::prefix('books')->name('api.books.')->middleware(['auth:sanctum', 'admin'])->group(function (): void {
         Route::get('/', GetListBookController::class)->name('list');
-        Route::get('/', GetListBookController::class)->name('list');
         Route::get('/{book}', GetBookController::class)->name('show');
         Route::post('/', CreateBookController::class)->name('create');
         Route::put('/{book}', UpdateBookController::class)->name('update');
