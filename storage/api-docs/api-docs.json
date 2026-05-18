@@ -4,6 +4,12 @@
         "title": "swagger",
         "version": "1.0"
     },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local server"
+        }
+    ],
     "paths": {
         "/api/authors": {
             "get": {
@@ -52,7 +58,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/authors/{author}": {
@@ -1416,7 +1427,7 @@
                     },
                     "slug": {
                         "type": "string",
-                        "example": "book-slug"
+                        "example": "book-title"
                     },
                     "authorId": {
                         "type": "integer",
@@ -1566,6 +1577,28 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Enter token in format (Bearer <token>)"
+            },
+            "passport": {
+                "type": "oauth2",
+                "description": "Laravel passport oauth2 security.",
+                "in": "header",
+                "scheme": "https",
+                "flows": {
+                    "password": {
+                        "authorizationUrl": "http://localhost:8000/oauth/authorize",
+                        "tokenUrl": "http://localhost:8000/oauth/token",
+                        "refreshUrl": "http://localhost:8000/token/refresh",
+                        "scopes": []
+                    }
+                }
             }
         }
     },

@@ -10,22 +10,17 @@ use OpenApi\Attributes as OA;
     version: '1.0',
     title: 'swagger',
 )]
-/**
- * @OA\Info(
- * version="1.0.0",
- * title="My API Documentation",
- * description="Документация для API моего проекта"
- * )
- *
- * @OA\SecurityScheme(
- * securityScheme="bearerAuth",
- * in="header",
- * name="Authorization",
- * type="http",
- * scheme="bearer",
- * bearerFormat="Sanctum"
- * )
- */
+#[OA\SecurityScheme(
+    securityScheme: 'sanctum',
+    type: 'http',
+    description: 'Enter token from /api/login',
+    bearerFormat: 'JWT',
+    scheme: 'bearer',
+)]
+#[OA\Server(
+    url: 'http://localhost:8000',
+    description: 'Local server',
+)]
 abstract class Controller
 {
 }

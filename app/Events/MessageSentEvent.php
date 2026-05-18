@@ -12,15 +12,15 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSentEvent implements ShouldBroadcast
+final class MessageSentEvent implements ShouldBroadcast
 {
     use Dispatchable;
     use InteractsWithSockets;
     use SerializesModels;
 
     public function __construct(
-        public readonly MessageDto $message,
-        public readonly int $conversationId,
+        public MessageDto $message,
+        public int $conversationId,
     ) {
     }
 
