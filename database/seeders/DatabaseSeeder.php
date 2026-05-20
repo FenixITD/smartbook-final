@@ -50,6 +50,9 @@ class DatabaseSeeder extends Seeder
             ]);
         });
 
+        /**
+         * Assigning real ratings to books and their quantity.
+         */
         Book::each(function (Book $book): void {
             $book->update([
                 'ratings_count' => $book->reviews()->count(),

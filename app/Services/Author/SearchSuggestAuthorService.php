@@ -7,7 +7,7 @@ namespace App\Services\Author;
 use App\Dto\Author\AuthorResponseDto;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
-final readonly class SearchSuggestAuthorService
+class SearchSuggestAuthorService
 {
     public function __construct(
         private AuthorRepositoryInterface $repository,
