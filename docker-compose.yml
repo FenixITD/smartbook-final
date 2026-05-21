@@ -1,19 +1,19 @@
 services:
   app:
-    build:
-      context: .
+    build: # Говорит Docker, что  образ нужно собрать самому.
+      context: . # Контекст сборки. Точка означает текущую папку. Docker отправит все файлы из этой папки сборщику.
       dockerfile: docker/php/Dockerfile
     container_name: app2
-    restart: unless-stopped
+    restart: unless-stopped # Если внутри контейнера произойдет сбой, Docker автоматически поднимет этот контейнер снова. Исключение — остановка вручную.
     working_dir: /var/www/html
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html # Это Bind mount. Оно связывает текущую папку на компьютере (.) с папкой /var/www/html внутри контейнера. Благодаря этому, когда меняется код в редакторе, изменения мгновенно появляются в контейнере без его пересборки.
     networks:
       - smartbook-net
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
-    depends_on:
+    depends_on: # Контейнер app не начнет подниматься, пока не будут выполнены следующие условия:
       elasticsearch:
         condition: service_healthy
       minio:

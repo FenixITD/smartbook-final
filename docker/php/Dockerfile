@@ -8,6 +8,7 @@ FROM php:8.5-fpm-alpine
 # здесь скачивается популярный скрипт от mlocati. Он сам знает, какие системные пакеты нужны для каждого расширения PHP,
 # устанавливает их, а после установки удаляет мусор, экономя место.
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+# Команда делает файл исполняемым.
 RUN chmod +x /usr/local/bin/install-php-extensions
 
 # pdo_pgsql, pgsql: Для работы с базой данных PostgreSQL.
@@ -34,7 +35,7 @@ RUN install-php-extensions \
 # бинарник Composer'а из другого официального образа и копирует его к тебе. Быстро и чисто.
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Это трюк для скорости сборки! Сначала копируются только файлы composer.json и composer.lock, и сразу запускается
+# Это трюк для скорости сборки. Сначала копируются только файлы composer.json и composer.lock, и сразу запускается
 # установка зависимостей. То есть, если поменялся только код в контроллере, но пакеты не трогались, Docker возьмет этот
 # шаг из своего кэша. Сборка займет 2 секунды вместо минуты. Флаг --no-dev говорит не ставить пакеты для тестов
 # и локальной разработки, а --optimize-autoloader ускоряет загрузку классов в Laravel.
