@@ -1,30 +1,14 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Auth\LoginController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/login', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
-
-    $user = User::where('email', $request->email)->first();
-
-    if (! $user || ! Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Incorrect login or password'], 401);
-    }
-
-    return response()->json([
-        'token' => $user->createToken('api-token')->plainTextToken
-    ]);
-});
+Route::post('/login', LoginController::class);
 
 require __DIR__.'/api/authors.php';
 require __DIR__.'/api/books.php';
