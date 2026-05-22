@@ -14,7 +14,7 @@ interface OrderRepositoryInterface
     /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array;
 
-    public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto;
+    public function getWebListByIds(array $ids, OrderFiltersDto $filters): PaginatedResponseDto;
 
     public function getById(int $id): OrderResponseDto|null;
 

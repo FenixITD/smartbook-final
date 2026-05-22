@@ -10,14 +10,9 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
-use App\Services\Author\SearchAuthorService;
 
 final class AuthorRepository implements AuthorRepositoryInterface
 {
-    public function __construct(private readonly SearchAuthorService $searchService)
-    {
-    }
-
     /** @return array<AuthorResponseDto> */
     public function getList(AuthorFiltersDto $filters): array
     {
@@ -30,14 +25,9 @@ final class AuthorRepository implements AuthorRepositoryInterface
             ->all();
     }
 
-    public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto
+    /** @param array<int> $ids */
+    public function getWebListByIds(array $ids, AuthorFiltersDto $filters): PaginatedResponseDto
     {
-        $ids = $this->searchService->search($filters);
-
-        if ($ids === []) {
-            return PaginatedResponseDto::empty($filters->perPage);
-        }
-
         $paginator = Author::query()
             ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
