@@ -6,7 +6,7 @@ namespace App\Services\Book;
 
 use Elastic\Elasticsearch\Client;
 
-final readonly class SearchBookByQueryService
+class SearchBookByQueryService
 {
     public function __construct(private Client $client)
     {

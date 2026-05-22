@@ -8,7 +8,7 @@ use App\Dto\Dashboard\DashboardFiltersDto;
 use Elastic\Elasticsearch\Client;
 use stdClass;
 
-final readonly class SearchBookForDashboardService
+class SearchBookForDashboardService
 {
     public function __construct(private Client $client)
     {

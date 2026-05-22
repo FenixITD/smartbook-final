@@ -9,7 +9,7 @@ use App\Dto\Book\BookResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-final readonly class SearchBookService
+class SearchBookService
 {
     public function __construct(
         private BookRepositoryInterface $repository,

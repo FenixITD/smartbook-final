@@ -8,7 +8,7 @@ use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 
-final readonly class DeleteBookService
+class DeleteBookService
 {
     public function __construct(
         private BookRepositoryInterface $bookRepository,
