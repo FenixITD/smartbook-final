@@ -54,6 +54,14 @@ final class OrderRepository implements OrderRepositoryInterface
         return $orderId !== null ? OrderResponseDto::fromModel($orderId) : null;
     }
 
+    public function findByIdWithRelations(int $id): OrderResponseDto
+    {
+        $orderId = Order::with(['user', 'items'])
+            ->findOrFail($id);
+
+        return OrderResponseDto::fromModel($orderId);
+    }
+
     public function suggest(string $query): array
     {
         return Order::where('id', 'like', "%{$query}%")

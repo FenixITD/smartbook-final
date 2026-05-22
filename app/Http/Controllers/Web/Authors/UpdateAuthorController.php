@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Authors;
 
 use App\Http\Requests\Author\AuthorDataRequest;
-use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -17,8 +16,10 @@ final readonly class UpdateAuthorController
     ) {
     }
 
-    public function edit(Author $author): View
+    public function edit(int $authorId): View
     {
+        $author = $this->repository->findByIdWithRelations($authorId);
+
         return view('authors.edit', compact('author'));
     }
 

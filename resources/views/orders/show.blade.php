@@ -9,7 +9,7 @@
                     <flux:text class="mt-1 text-zinc-500">Order details</flux:text>
                 </div>
             </div>
-            <flux:button href="{{ route('orders.edit', $order) }}" variant="primary" icon="pencil">Edit</flux:button>
+            <flux:button href="{{ route('orders.edit', $order->id) }}" variant="primary" icon="pencil">Edit</flux:button>
         </div>
 
         <div class="max-w-xl">
@@ -22,13 +22,13 @@
                     </div>
                     <div>
                         <div class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                            {{ $order->user?->name ?? 'User #'.$order->user_id }}
+                            {{ $order->user?->name ?? 'User #'.$order->userId }}
                         </div>
                         @php
                             $statusColors = [
-                                'pending'   => 'bg-yellow-100 text-yellow-700',
-                                'paid'      => 'bg-blue-100 text-blue-700',
-                                'shipped'   => 'bg-purple-100 text-purple-700',
+                                'pending' => 'bg-yellow-100 text-yellow-700',
+                                'paid' => 'bg-blue-100 text-blue-700',
+                                'shipped' => 'bg-purple-100 text-purple-700',
                                 'delivered' => 'bg-green-100 text-green-700',
                                 'cancelled' => 'bg-red-100 text-red-700',
                             ];
@@ -46,19 +46,19 @@
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Shipping address</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $order->shipping_address }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $order->shippingAddress }}</flux:text>
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Payment method</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $order->payment_method ?? '—' }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $order->paymentMethod ?? '—' }}</flux:text>
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Created at</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $order->created_at->format('d.m.Y H:i') }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $order->createdAt }}</flux:text>
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Updated at</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $order->updated_at->format('d.m.Y H:i') }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $order->updatedAt }}</flux:text>
                     </div>
                 </div>
             </div>

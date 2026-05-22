@@ -55,6 +55,14 @@ final class ReviewRepository implements ReviewRepositoryInterface
         return $reviewId !== null ? ReviewResponseDto::fromModel($reviewId) : null;
     }
 
+    public function findByIdWithRelations(int $id): ReviewResponseDto
+    {
+        $reviewId = Review::with(['user', 'book'])
+            ->findOrFail($id);
+
+        return ReviewResponseDto::fromModel($reviewId);
+    }
+
     public function suggest(string $query): array
     {
         return Review::where('content', 'like', "%{$query}%")

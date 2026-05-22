@@ -13,7 +13,7 @@
         {{-- Form --}}
         <div class="max-w-xl">
             <div class="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
-                <form method="POST" action="{{ route('genres.update', $genre) }}" class="flex flex-col gap-5">
+                <form method="POST" action="{{ route('genres.update', $genre->id) }}" class="flex flex-col gap-5">
                     @csrf
                     @method('PUT')
 
@@ -49,7 +49,7 @@
                         <flux:button type="submit" variant="primary">
                             Save changes
                         </flux:button>
-                        <flux:button href="{{ route('genres.show', $genre) }}" variant="ghost">
+                        <flux:button href="{{ route('genres.show', $genre->id) }}" variant="ghost">
                             Cancel
                         </flux:button>
                     </div>
@@ -79,7 +79,7 @@
                                     <flux:button variant="ghost">Cancel</flux:button>
                                 </flux:modal.close>
 
-                                <form action="{{ route('genres.destroy', $genre) }}" method="POST">
+                                <form action="{{ route('genres.destroy', $genre->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <flux:button type="submit" variant="danger">Delete genre</flux:button>

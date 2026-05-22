@@ -10,7 +10,7 @@
                     <flux:text class="mt-1 text-zinc-500">Genre details</flux:text>
                 </div>
             </div>
-            <flux:button href="{{ route('genres.edit', $genre) }}" variant="primary" icon="pencil">
+            <flux:button href="{{ route('genres.edit', $genre->id) }}" variant="primary" icon="pencil">
                 Edit
             </flux:button>
         </div>
@@ -34,13 +34,13 @@
                 <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Created at</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $genre->created_at->format('d.m.Y H:i') }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $genre->createdAt }}</flux:text>
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Updated at</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $genre->updated_at->format('d.m.Y H:i') }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $genre->updatedAt }}</flux:text>
                     </div>
-                    @if ($genre->books_count ?? $genre->books?->count())
+                    @if ($genre->booksCount)
                         <div class="px-6 py-4 flex justify-between items-center">
                             <flux:text class="text-zinc-500 text-sm">Books count</flux:text>
                             <flux:badge variant="solid">{{ $genre->books_count ?? $genre->books->count() }}</flux:badge>

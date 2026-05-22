@@ -18,6 +18,8 @@ interface OrderRepositoryInterface
 
     public function getById(int $id): OrderResponseDto|null;
 
+    public function findByIdWithRelations(int $id): OrderResponseDto;
+
     /** @return array<OrderResponseDto> */
     public function suggest(string $query): array;
 

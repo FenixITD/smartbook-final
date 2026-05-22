@@ -65,6 +65,15 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return $authorId !== null ? AuthorResponseDto::fromModel($authorId) : null;
     }
 
+    public function findByIdWithRelations(int $id): AuthorResponseDto
+    {
+        $authorId = Author::with(['books'])
+            ->withCount('books')
+            ->findOrFail($id);
+
+        return AuthorResponseDto::fromModel($authorId);
+    }
+
     public function suggest(string $query): array
     {
         return Author::orderBy('name')

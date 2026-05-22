@@ -65,6 +65,15 @@ final class GenreRepository implements GenreRepositoryInterface
         return $genreId !== null ? GenreResponseDto::fromModel($genreId) : null;
     }
 
+    public function findByIdWithRelations(int $id): GenreResponseDto
+    {
+        $genreId = Genre::with(['books'])
+            ->withCount('books')
+            ->findOrFail($id);
+
+        return GenreResponseDto::fromModel($genreId);
+    }
+
     public function suggest(string $query): array
     {
         return Genre::where('name', 'like', "%{$query}%")

@@ -17,8 +17,10 @@ final readonly class UpdateReviewController
     ) {
     }
 
-    public function edit(Review $review): View
+    public function edit(int $reviewId): View
     {
+        $review = $this->repository->findByIdWithRelations($reviewId);
+
         return view('reviews.edit', compact('review'));
     }
 

@@ -16,6 +16,7 @@ final readonly class GenreResponseDto
             slug: $genre->slug,
             createdAt: $genre->created_at?->toDateTimeString() ?? '',
             updatedAt: $genre->updated_at?->toDateTimeString() ?? '',
+            booksCount: $author->books_count ?? 0,
         );
     }
 
@@ -25,6 +26,7 @@ final readonly class GenreResponseDto
         public string $slug,
         public string $createdAt,
         public string $updatedAt,
+        public int $booksCount = 0,
     ) {
     }
 }

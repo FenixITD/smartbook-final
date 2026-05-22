@@ -11,19 +11,19 @@
 
         <div class="max-w-xl">
             <div class="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
-                <form method="POST" action="{{ route('reviews.update', $review) }}" class="flex flex-col gap-5">
+                <form method="POST" action="{{ route('reviews.update', $review->id) }}" class="flex flex-col gap-5">
                     @csrf
                     @method('PUT')
 
                     <flux:field>
                         <flux:label for="userId">User ID</flux:label>
-                        <flux:input id="userId" name="userId" type="number" min="1" value="{{ old('userId', $review->user_id) }}" :invalid="$errors->has('userId')" />
+                        <flux:input id="userId" name="userId" type="number" min="1" value="{{ old('userId', $review->userId) }}" :invalid="$errors->has('userId')" />
                         @error('userId') <flux:error>{{ $message }}</flux:error> @enderror
                     </flux:field>
 
                     <flux:field>
                         <flux:label for="bookId">Book ID</flux:label>
-                        <flux:input id="bookId" name="bookId" type="number" min="1" value="{{ old('bookId', $review->book_id) }}" :invalid="$errors->has('bookId')" />
+                        <flux:input id="bookId" name="bookId" type="number" min="1" value="{{ old('bookId', $review->bookId) }}" :invalid="$errors->has('bookId')" />
                         @error('bookId') <flux:error>{{ $message }}</flux:error> @enderror
                     </flux:field>
 
@@ -41,7 +41,7 @@
 
                     <div class="flex gap-3 pt-2">
                         <flux:button type="submit" variant="primary">Save changes</flux:button>
-                        <flux:button href="{{ route('reviews.show', $review) }}" variant="ghost">Cancel</flux:button>
+                        <flux:button href="{{ route('reviews.show', $review->id) }}" variant="ghost">Cancel</flux:button>
                     </div>
                 </form>
             </div>
@@ -69,7 +69,7 @@
                                     <flux:button variant="ghost">Cancel</flux:button>
                                 </flux:modal.close>
 
-                                <form action="{{ route('reviews.destroy', $review) }}" method="POST">
+                                <form action="{{ route('reviews.destroy', $review->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <flux:button type="submit" variant="danger">Delete review</flux:button>

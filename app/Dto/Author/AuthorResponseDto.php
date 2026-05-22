@@ -15,6 +15,7 @@ final readonly class AuthorResponseDto
             name: $author->name,
             createdAt: $author->created_at?->toDateTimeString() ?? '',
             updatedAt: $author->updated_at?->toDateTimeString() ?? '',
+            booksCount: $author->books_count ?? 0,
         );
     }
 
@@ -23,6 +24,7 @@ final readonly class AuthorResponseDto
         public string $name,
         public string $createdAt,
         public string $updatedAt,
+        public int $booksCount = 0,
     ) {
     }
 }
