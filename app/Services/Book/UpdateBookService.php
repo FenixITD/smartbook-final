@@ -8,7 +8,7 @@ use App\Dto\Book\BookDto;
 use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-final readonly class UpdateBookService
+class UpdateBookService
 {
     public function __construct(
         private BookRepositoryInterface $repository,

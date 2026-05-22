@@ -7,7 +7,7 @@ namespace App\Services\Book;
 use App\Dto\Book\BookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-final readonly class SearchSuggestBookService
+class SearchSuggestBookService
 {
     public function __construct(
         private BookRepositoryInterface $repository,
