@@ -7,7 +7,7 @@ namespace App\Services\Order;
 use App\Dto\Order\OrderResponseDto;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 
-final readonly class SearchSuggestOrderService
+class SearchSuggestOrderService
 {
     public function __construct(
         private OrderRepositoryInterface $repository,

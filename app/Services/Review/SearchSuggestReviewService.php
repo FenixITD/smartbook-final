@@ -7,7 +7,7 @@ namespace App\Services\Review;
 use App\Dto\Review\ReviewResponseDto;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 
-final readonly class SearchSuggestReviewService
+class SearchSuggestReviewService
 {
     public function __construct(
         private ReviewRepositoryInterface $repository,
