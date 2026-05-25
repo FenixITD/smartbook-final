@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
-final readonly class AuthService
+class AuthService
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,

@@ -6,7 +6,7 @@ namespace App\Dto;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 
-final readonly class PaginatedResponseDto
+class PaginatedResponseDto
 {
     /**
      * @template TModel
