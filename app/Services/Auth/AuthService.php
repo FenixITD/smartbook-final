@@ -6,7 +6,6 @@ namespace App\Services\Auth;
 
 use App\Dto\Auth\ApiLoginDto;
 use App\Dto\Auth\LoginDto;
-use App\Dto\Auth\RegisterDto;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -93,28 +92,5 @@ class AuthService
         RateLimiter::clear($throttleKey);
 
         return $this->userRepository->createToken($credentials->id, 'api-token');
-    }
-
-    /**
-     * @param RegisterDto $dto
-     * @return void
-     *
-     * Registers a new user in the system and automatically authenticates them.
-     */
-    public function register(RegisterDto $dto): void
-    {
-        $user = $this->userRepository->create($dto);
-
-        Auth::loginUsingId($user->id);
-    }
-
-    /**
-     * @return void
-     *
-     * Logs out the currently authenticated user.
-     */
-    public function logout(): void
-    {
-        Auth::logout();
     }
 }
