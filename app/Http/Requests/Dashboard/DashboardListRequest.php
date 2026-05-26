@@ -9,9 +9,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 final class DashboardListRequest extends FormRequest
 {
-    private const PER_PAGE = 18;
-    private const DEFAULT_SORT = 'rating';
-
     public function authorize(): bool
     {
         return true;
