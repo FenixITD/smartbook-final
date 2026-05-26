@@ -6,8 +6,20 @@ namespace App\Dto\Review;
 
 use App\Models\Review;
 
-final readonly class ReviewResponseDto
+class ReviewResponseDto
 {
+    public function __construct(
+        public int $id,
+        public int $userId,
+        public int $bookId,
+        public string $userName,
+        public float $rating,
+        public string $comment,
+        public string $createdAt,
+        public string $updatedAt,
+    ) {
+    }
+
     public static function fromModel(Review $review): self
     {
         return new self(
@@ -20,17 +32,5 @@ final readonly class ReviewResponseDto
             createdAt: $review->created_at?->toDateTimeString() ?? '',
             updatedAt: $review->updated_at?->toDateTimeString() ?? '',
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public int $userId,
-        public int $bookId,
-        public string $userName,
-        public float $rating,
-        public string $comment,
-        public string $createdAt,
-        public string $updatedAt,
-    ) {
     }
 }

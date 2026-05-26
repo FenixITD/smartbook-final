@@ -61,6 +61,12 @@ class AuthService
         return true;
     }
 
+    /**
+     * @param ApiLoginDto $dto
+     * @return string|null
+     *
+     * Api gogin with a request limit added to protect against password attacks.
+     */
     public function apiLogin(ApiLoginDto $dto): string|null
     {
         $throttleKey = Str::transliterate(Str::lower($dto->email).'|'.$dto->ip);

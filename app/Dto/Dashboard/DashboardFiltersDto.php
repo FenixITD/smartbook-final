@@ -6,9 +6,6 @@ namespace App\Dto\Dashboard;
 
 final readonly class DashboardFiltersDto
 {
-    public const DEFAULT_SORT = 'rating';
-    public const DEFAULT_PER_PAGE = 18;
-
     public function __construct(
         public ?string $search = null,
         public ?int $genre = null,
@@ -18,4 +15,7 @@ final readonly class DashboardFiltersDto
         public string $sort = self::DEFAULT_SORT,
         public int $perPage = self::DEFAULT_PER_PAGE,
     ) {}
+
+    public const DEFAULT_SORT = 'rating';
+    public const DEFAULT_PER_PAGE = 18;
 }

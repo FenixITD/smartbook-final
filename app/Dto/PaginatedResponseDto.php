@@ -9,6 +9,19 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class PaginatedResponseDto
 {
     /**
+     * @param array<mixed> $items
+     */
+    public function __construct(
+        public array $items,
+        public int $total,
+        public int $perPage,
+        public int $currentPage,
+        public int $lastPage,
+        public string $links = '',
+    ) {
+    }
+
+    /**
      * @template TModel
      *
      * @param LengthAwarePaginator<int, TModel> $paginator
@@ -34,18 +47,5 @@ class PaginatedResponseDto
             currentPage: 1,
             lastPage: 1,
         );
-    }
-
-    /**
-     * @param array<mixed> $items
-     */
-    public function __construct(
-        public array $items,
-        public int $total,
-        public int $perPage,
-        public int $currentPage,
-        public int $lastPage,
-        public string $links = '',
-    ) {
     }
 }

@@ -6,8 +6,17 @@ namespace App\Dto\Favorite;
 
 use App\Models\Favorite;
 
-final readonly class FavoriteResponseDto
+class FavoriteResponseDto
 {
+    public function __construct(
+        public int $id,
+        public int $userId,
+        public int $bookId,
+        public string $createdAt,
+        public string $updatedAt,
+    ) {
+    }
+
     public static function fromModel(Favorite $favorite): self
     {
         return new self(
@@ -17,14 +26,5 @@ final readonly class FavoriteResponseDto
             createdAt: $favorite->created_at?->toDateTimeString() ?? '',
             updatedAt: $favorite->updated_at?->toDateTimeString() ?? '',
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public int $userId,
-        public int $bookId,
-        public string $createdAt,
-        public string $updatedAt,
-    ) {
     }
 }

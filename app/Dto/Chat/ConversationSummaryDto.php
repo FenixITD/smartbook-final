@@ -10,6 +10,20 @@ use App\Models\User;
 
 final readonly class ConversationSummaryDto
 {
+    public function __construct(
+        public int $id,
+        public int $userId,
+        public string $userName,
+        public string|null $userEmail,
+        public int $bookId,
+        public string $bookTitle,
+        public string $status,
+        public string|null $lastMessageBody,
+        public string $updatedAt,
+        public int $unreadCount,
+    ) {
+    }
+
     public static function fromModel(Conversation $conversation): self
     {
         /** @var int $unreadCount */
@@ -33,19 +47,5 @@ final readonly class ConversationSummaryDto
             updatedAt: $conversation->updated_at?->format('d.m.Y H:i') ?? '',
             unreadCount: $unreadCount,
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public int $userId,
-        public string $userName,
-        public string|null $userEmail,
-        public int $bookId,
-        public string $bookTitle,
-        public string $status,
-        public string|null $lastMessageBody,
-        public string $updatedAt,
-        public int $unreadCount,
-    ) {
     }
 }

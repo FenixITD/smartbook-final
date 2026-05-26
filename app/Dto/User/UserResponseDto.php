@@ -6,8 +6,18 @@ namespace App\Dto\User;
 
 use App\Models\User;
 
-final readonly class UserResponseDto
+class UserResponseDto
 {
+    public function __construct(
+        public int $id,
+        public string $name,
+        public string $email,
+        public string $role,
+        public string $createdAt,
+        public string $updatedAt,
+    ) {
+    }
+
     public static function fromModel(User $user): self
     {
         return new self(
@@ -18,15 +28,5 @@ final readonly class UserResponseDto
             createdAt: $user->created_at?->toDateTimeString() ?? '',
             updatedAt: $user->updated_at?->toDateTimeString() ?? '',
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public string $name,
-        public string $email,
-        public string $role,
-        public string $createdAt,
-        public string $updatedAt,
-    ) {
     }
 }

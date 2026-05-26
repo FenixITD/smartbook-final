@@ -8,6 +8,13 @@ use App\Models\User;
 
 final readonly class GetConversationMessagesDto
 {
+    public function __construct(
+        public int $conversationId,
+        public int $userId,
+        public bool $isAdmin,
+    ) {
+    }
+
     public static function fromUser(int $conversationId, User $user): self
     {
         return new self(
@@ -15,12 +22,5 @@ final readonly class GetConversationMessagesDto
             userId: $user->id,
             isAdmin: $user->role === 'admin',
         );
-    }
-
-    public function __construct(
-        public int $conversationId,
-        public int $userId,
-        public bool $isAdmin,
-    ) {
     }
 }

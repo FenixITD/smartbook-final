@@ -6,8 +6,18 @@ namespace App\Dto\Genre;
 
 use App\Models\Genre;
 
-final readonly class GenreResponseDto
+class GenreResponseDto
 {
+    public function __construct(
+        public int $id,
+        public string $name,
+        public string $slug,
+        public string $createdAt,
+        public string $updatedAt,
+        public int $booksCount = 0,
+    ) {
+    }
+
     public static function fromModel(Genre $genre): self
     {
         return new self(
@@ -18,15 +28,5 @@ final readonly class GenreResponseDto
             updatedAt: $genre->updated_at?->toDateTimeString() ?? '',
             booksCount: $author->books_count ?? 0,
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public string $name,
-        public string $slug,
-        public string $createdAt,
-        public string $updatedAt,
-        public int $booksCount = 0,
-    ) {
     }
 }

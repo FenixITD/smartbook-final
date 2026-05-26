@@ -38,7 +38,7 @@ final class DashboardListRequest extends FormRequest
             author: $this->filled('author') ? $this->integer('author') : null,
             year: $this->filled('year') ? $this->integer('year') : null,
             status: $this->filled('status') ? $this->str('status')->toString() : null,
-            sort:    $this->str('sort', DashboardFiltersDto::DEFAULT_SORT)->toString(),
+            sort: $this->str('sort', DashboardFiltersDto::DEFAULT_SORT)->toString(),
             perPage: DashboardFiltersDto::DEFAULT_PER_PAGE,
         );
     }

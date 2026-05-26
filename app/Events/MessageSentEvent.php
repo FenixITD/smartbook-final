@@ -26,7 +26,7 @@ final class MessageSentEvent implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        return new PrivateChannel('conversation.'.$this->conversationId);
+        return new PrivateChannel('conversation.' . $this->conversationId);
     }
 
     /** @return array<string, mixed> */
