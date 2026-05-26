@@ -7,7 +7,7 @@ namespace Tests\Unit\Http\Controllers\Web\Auth;
 use App\Dto\Auth\LoginDto;
 use App\Http\Controllers\Web\Auth\LoginController;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Services\Auth\AuthService;
+use App\Services\Auth\LoginService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
@@ -19,15 +19,15 @@ use Tests\TestCase;
 
 final class LoginControllerTest extends TestCase
 {
-    private MockInterface&AuthService $authService;
+    private MockInterface&LoginService $authService;
     private LoginController $controller;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->authService = Mockery::mock(AuthService::class);
-        $this->app->instance(AuthService::class, $this->authService);
+        $this->authService = Mockery::mock(LoginService::class);
+        $this->app->instance(LoginService::class, $this->authService);
         $this->controller = $this->app->make(LoginController::class);
     }
 

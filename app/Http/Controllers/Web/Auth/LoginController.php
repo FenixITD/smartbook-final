@@ -6,14 +6,14 @@ namespace App\Http\Controllers\Web\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Services\Auth\AuthService;
+use App\Services\Auth\LoginService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 final class LoginController extends Controller
 {
     public function __construct(
-        private readonly AuthService $authService,
+        private readonly LoginService $authService,
     ) {
     }
 

@@ -7,7 +7,7 @@ namespace Tests\Unit\Http\Controllers\Api\Auth;
 use App\Dto\Auth\ApiLoginDto;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Requests\Auth\ApiLoginRequest;
-use App\Services\Auth\AuthService;
+use App\Services\Auth\LoginService;
 use Illuminate\Http\Request;
 use Mockery;
 use Mockery\MockInterface;
@@ -22,8 +22,8 @@ final class LoginControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = Mockery::mock(AuthService::class);
-        $this->app->instance(AuthService::class, $this->service);
+        $this->service = Mockery::mock(LoginService::class);
+        $this->app->instance(LoginService::class, $this->service);
         $this->controller = $this->app->make(LoginController::class);
     }
 
