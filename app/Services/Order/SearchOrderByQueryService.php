@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Order;
 
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 
 final readonly class SearchOrderByQueryService
 {
@@ -15,7 +17,9 @@ final readonly class SearchOrderByQueryService
     /**
      * @param string $query
      * @param int $limit
-     * @return array<int>
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      *
      * Performs a full-text search for orders in Elasticsearch by the user's name, returning an array of matched order IDs.
      */

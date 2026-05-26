@@ -11,8 +11,8 @@ use App\Repositories\Interfaces\AuthorRepositoryInterface;
 class GetWebListAuthorService
 {
     public function __construct(
-        private readonly SearchAuthorService $searchService,
-        private readonly AuthorRepositoryInterface $repository,
+        private SearchAuthorService $searchService,
+        private AuthorRepositoryInterface $repository,
     ) {}
 
     public function get(AuthorFiltersDto $filters): PaginatedResponseDto

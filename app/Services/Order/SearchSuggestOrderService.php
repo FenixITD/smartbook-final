@@ -11,7 +11,7 @@ class SearchSuggestOrderService
 {
     public function __construct(
         private OrderRepositoryInterface $repository,
-        private SearchOrderByQueryService $searchService,
+        private SearchOrderByQueryService $service,
     ) {
     }
 
@@ -23,7 +23,7 @@ class SearchSuggestOrderService
      */
     public function execute(string $query): array
     {
-        $ids = $this->searchService->search($query, limit: 5);
+        $ids = $this->service->search($query, limit: 5);
 
         if ($ids === []) {
             return [];

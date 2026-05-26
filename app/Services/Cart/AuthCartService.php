@@ -18,16 +18,6 @@ final readonly class AuthCartService implements CartServiceInterface
     }
 
     /**
-     * @return array<int, array{book_id: int, quantity: int}>
-     *
-     * Retrieves all raw cart items for the authenticated user from the database.
-     */
-    public function getAll(): array
-    {
-        return [];
-    }
-
-    /**
      * @return array<CartItemWithBookResponseDto>
      *
      * Retrieves detailed cart items including associated book data for the authenticated user.

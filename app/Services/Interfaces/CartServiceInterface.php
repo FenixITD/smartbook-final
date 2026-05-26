@@ -9,13 +9,6 @@ use App\Dto\CartItem\CartItemWithBookResponseDto;
 interface CartServiceInterface
 {
     /**
-     * @return array<int, array{book_id: int, quantity: int}>
-     *
-     * Retrieves all raw cart items currently in the active cart.
-     */
-    public function getAll(): array;
-
-    /**
      * @return array<CartItemWithBookResponseDto>
      *
      * Retrieves detailed cart items including associated book data.

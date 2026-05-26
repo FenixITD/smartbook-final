@@ -6,6 +6,8 @@ namespace App\Services\Order;
 
 use App\Dto\Order\OrderFiltersDto;
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use stdClass;
 
 final readonly class SearchOrderService
@@ -16,7 +18,9 @@ final readonly class SearchOrderService
 
     /**
      * @param OrderFiltersDto $filters
-     * @return array<int>
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      *
      * Searches and filters orders in Elasticsearch based on provided criteria (like ID or status), returning an array of order IDs.
      */

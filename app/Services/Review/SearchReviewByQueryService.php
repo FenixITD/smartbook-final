@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Review;
 
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 
 final readonly class SearchReviewByQueryService
 {
@@ -15,7 +17,9 @@ final readonly class SearchReviewByQueryService
     /**
      * @param string $query
      * @param int $limit
-     * @return array<int>
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      *
      * Performs a full-text search for reviews in Elasticsearch by user name and comment content, returning an array of matched review IDs.
      */

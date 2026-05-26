@@ -24,6 +24,10 @@ final class GetMessageController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        if (!$user instanceof User) {
+            abort(401);
+        }
+
         $dto = GetConversationMessagesDto::fromUser($conversationId, $user);
 
         $messages = $this->chatService->getConversationMessages($dto);

@@ -4,6 +4,8 @@ namespace App\Services\Genre;
 
 use App\Dto\Genre\GenreFiltersDto;
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use stdClass;
 
 final readonly class SearchGenreService
@@ -12,7 +14,9 @@ final readonly class SearchGenreService
 
     /**
      * @param GenreFiltersDto $filters
-     * @return array<int>
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      *
      * Searches and filters genres in Elasticsearch based on provided criteria, returning an array of genre IDs.
      */
