@@ -23,13 +23,4 @@ final class AddToCartWebRequest extends FormRequest
             'quantity' => ['required', 'integer', 'min:1', 'max:99'],
         ];
     }
-
-    public function toDto(): CartItemDto
-    {
-        return new CartItemDto(
-            userId: (int) Auth::id(),
-            bookId: $this->integer('book_id'),
-            quantity: $this->integer('quantity', 1),
-        );
-    }
 }
