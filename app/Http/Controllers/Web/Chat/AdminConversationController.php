@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Chat;
 
 use App\Http\Controllers\Controller;
-use App\Services\Chat\ChatService;
+use App\Repositories\Eloquent\ConversationRepository;
+use App\Services\Chat\GetConversationMessagesService;
 use Illuminate\View\View;
 
 final class AdminConversationController extends Controller
 {
     public function __construct(
-        private ChatService $chatService,
+        private ConversationRepository $repository,
     ) {
     }
 
     public function __invoke(): View
     {
-        $conversations = $this->chatService->getAdminConversations();
+        $conversations = $this->repository->getAllWithUnreadCounts();
 
         return view('chat.admin', compact('conversations'));
     }

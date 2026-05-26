@@ -8,14 +8,14 @@ use App\Dto\Chat\GetConversationMessagesDto;
 use App\Dto\Chat\MessageDto;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\Chat\ChatService;
+use App\Services\Chat\GetConversationMessagesService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 final class GetMessageController extends Controller
 {
     public function __construct(
-        private ChatService $chatService,
+        private GetConversationMessagesService $chatService,
     ) {
     }
 

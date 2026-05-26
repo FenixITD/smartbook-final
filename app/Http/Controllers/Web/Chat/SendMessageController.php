@@ -8,14 +8,14 @@ use App\Dto\Chat\SendMessageDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Chat\SendMessageRequest;
 use App\Models\User;
-use App\Services\Chat\ChatService;
+use App\Services\Chat\SendMessageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 final class SendMessageController extends Controller
 {
     public function __construct(
-        private ChatService $chatService,
+        private SendMessageService $sendMessageService,
     ) {
     }
 
@@ -26,7 +26,7 @@ final class SendMessageController extends Controller
 
         $dto = SendMessageDto::fromRequest($request, $conversationId, $user);
 
-        $messageDto = $this->chatService->sendMessage($dto);
+        $messageDto = $this->sendMessageService->sendMessage($dto);
 
         return response()->json($messageDto->toArray(), 201);
     }
