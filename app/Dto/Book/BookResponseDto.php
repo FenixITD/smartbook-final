@@ -7,8 +7,29 @@ namespace App\Dto\Book;
 use App\Dto\Genre\GenreResponseDto;
 use App\Models\Book;
 
-final readonly class BookResponseDto
+class BookResponseDto
 {
+    public function __construct(
+        public int $id,
+        public string $title,
+        public string $slug,
+        public int $authorId,
+        public string|null $authorName,
+        public string $description,
+        public float $price,
+        public int $stock,
+        public int|null $publishYear,
+        public string|null $coverImage,
+        public float|null $averageRating,
+        public int|null $ratingsCount,
+        public string $status,
+        public string $createdAt,
+        public string $updatedAt,
+        /** @var GenreResponseDto[] */
+        public array $genres = [],
+    ) {
+    }
+
     public static function fromModel(Book $book): self
     {
         return new self(
@@ -31,26 +52,5 @@ final readonly class BookResponseDto
                 ? $book->genres->map(static fn ($g) => GenreResponseDto::fromModel($g))->all()
                 : [],
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public string $title,
-        public string $slug,
-        public int $authorId,
-        public string|null $authorName,
-        public string $description,
-        public float $price,
-        public int $stock,
-        public int|null $publishYear,
-        public string|null $coverImage,
-        public float|null $averageRating,
-        public int|null $ratingsCount,
-        public string $status,
-        public string $createdAt,
-        public string $updatedAt,
-        /** @var GenreResponseDto[] */
-        public array $genres = [],
-    ) {
     }
 }

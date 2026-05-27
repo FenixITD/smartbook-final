@@ -6,8 +6,10 @@ namespace App\Services\Review;
 
 use App\Dto\Review\ReviewResponseDto;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 
-final readonly class SearchSuggestReviewService
+class SearchSuggestReviewService
 {
     public function __construct(
         private ReviewRepositoryInterface $repository,
@@ -17,7 +19,9 @@ final readonly class SearchSuggestReviewService
 
     /**
      * @param string $query
-     * @return array<int, array{id: int, user_name: string, content: string, url: string}>
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      *
      * Fetches up to 5 review suggestions for autocomplete search, returning the author's name, a truncated comment, and the URL.
      */

@@ -53,9 +53,7 @@ final class ActivityLogFilterRequest extends FormRequest
         return new ActivityLogFiltersDto(
             perPage: $this->integer('perPage', 20),
             logName: $this->filled('logName') ? $this->string('logName')->toString() : null,
-            subjectType: $subjectKey !== null
-                ? (self::SUBJECT_TYPE_MAP[$subjectKey] ?? null)
-                : null,
+            subjectType: $subjectKey !== null ? (self::SUBJECT_TYPE_MAP[$subjectKey] ?? null) : null,
         );
     }
 }

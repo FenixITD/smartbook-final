@@ -10,14 +10,9 @@ use App\Dto\Order\OrderResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Order;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
-use App\Services\Order\SearchOrderService;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
-    public function __construct(private readonly SearchOrderService $searchService)
-    {
-    }
-
     /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array
     {
@@ -30,14 +25,9 @@ final class OrderRepository implements OrderRepositoryInterface
             ->all();
     }
 
-    public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto
+    /** @param array<int> $ids */
+    public function getWebListByIds(array $ids, OrderFiltersDto $filters): PaginatedResponseDto
     {
-        $ids = $this->searchService->search($filters);
-
-        if ($ids === []) {
-            return PaginatedResponseDto::empty($filters->perPage);
-        }
-
         $paginator = Order::query()
             ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
@@ -52,6 +42,14 @@ final class OrderRepository implements OrderRepositoryInterface
         $orderId = Order::find($id);
 
         return $orderId !== null ? OrderResponseDto::fromModel($orderId) : null;
+    }
+
+    public function findByIdWithRelations(int $id): OrderResponseDto
+    {
+        $orderId = Order::with(['user', 'items'])
+            ->findOrFail($id);
+
+        return OrderResponseDto::fromModel($orderId);
     }
 
     public function suggest(string $query): array

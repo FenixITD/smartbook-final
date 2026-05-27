@@ -17,8 +17,10 @@ final readonly class UpdateGenreController
     ) {
     }
 
-    public function edit(Genre $genre): View
+    public function edit(int $genreId): View
     {
+        $genre = $this->repository->findByIdWithRelations($genreId);
+
         return view('genres.edit', compact('genre'));
     }
 

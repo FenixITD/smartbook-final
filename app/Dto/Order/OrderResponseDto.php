@@ -6,8 +6,21 @@ namespace App\Dto\Order;
 
 use App\Models\Order;
 
-final readonly class OrderResponseDto
+class OrderResponseDto
 {
+    public function __construct(
+        public int $id,
+        public int $userId,
+        public string $userName,
+        public float $total,
+        public string $status,
+        public string $shippingAddress,
+        public string $paymentMethod,
+        public string $createdAt,
+        public string $updatedAt,
+    ) {
+    }
+
     public static function fromModel(Order $order): self
     {
         return new self(
@@ -21,18 +34,5 @@ final readonly class OrderResponseDto
             createdAt: $order->created_at?->toDateTimeString() ?? '',
             updatedAt: $order->updated_at?->toDateTimeString() ?? '',
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public int $userId,
-        public string $userName,
-        public float $total,
-        public string $status,
-        public string $shippingAddress,
-        public string $paymentMethod,
-        public string $createdAt,
-        public string $updatedAt,
-    ) {
     }
 }

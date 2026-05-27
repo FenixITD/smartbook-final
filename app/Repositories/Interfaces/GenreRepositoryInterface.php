@@ -14,12 +14,14 @@ interface GenreRepositoryInterface
     /** @return array<GenreResponseDto> */
     public function getList(GenreFiltersDto $filters): array;
 
-    public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto;
+    public function getWebListByIds(array $ids, GenreFiltersDto $filters): PaginatedResponseDto;
 
     /** @return array<mixed> */
     public function getAll(): array;
 
     public function getById(int $id): GenreResponseDto|null;
+
+    public function findByIdWithRelations(int $id): GenreResponseDto;
 
     /** @return array<GenreResponseDto> */
     public function suggest(string $query): array;

@@ -6,18 +6,18 @@ namespace App\Http\Controllers\Web\Genres;
 
 use App\Http\Requests\Genre\GenreListRequest;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Services\Genre\GetWebListGenreService;
 use Illuminate\View\View;
 
 final readonly class GetListGenreController
 {
     public function __construct(
-        private GenreRepositoryInterface $repository,
-    ) {
-    }
+        private GetWebListGenreService $getWebListGenreService,
+    ) {}
 
     public function __invoke(GenreListRequest $request): View
     {
-        $paginated = $this->repository->getWebList($request->toDto());
+        $paginated = $this->getWebListGenreService->get($request->toDto());
 
         return view('genres.list', compact('paginated'));
     }

@@ -7,11 +7,10 @@ namespace App\Services\Cart;
 use App\Dto\Book\BookResponseDto;
 use App\Dto\CartItem\CartItemWithBookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
-use App\Services\Interfaces\CartServiceInterface;
 
 use function is_array;
 
-final readonly class GuestCartService implements CartServiceInterface
+final readonly class GuestCartService
 {
     private const SESSION_KEY = 'guest_cart';
 

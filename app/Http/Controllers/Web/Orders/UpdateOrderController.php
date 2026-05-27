@@ -17,8 +17,10 @@ final readonly class UpdateOrderController
     ) {
     }
 
-    public function edit(Order $order): View
+    public function edit(int $orderId): View
     {
+        $order = $this->repository->findByIdWithRelations($orderId);
+
         return view('orders.edit', compact('order'));
     }
 

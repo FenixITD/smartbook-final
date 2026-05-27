@@ -7,7 +7,7 @@ namespace App\Services\Cart;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
-final readonly class MergeSessionCartService
+class MergeSessionCartService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,

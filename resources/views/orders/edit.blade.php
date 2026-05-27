@@ -11,13 +11,13 @@
 
         <div class="max-w-xl">
             <div class="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
-                <form method="POST" action="{{ route('orders.update', $order) }}" class="flex flex-col gap-5">
+                <form method="POST" action="{{ route('orders.update', $order->id) }}" class="flex flex-col gap-5">
                     @csrf
                     @method('PUT')
 
                     <flux:field>
                         <flux:label for="userId">User ID</flux:label>
-                        <flux:input id="userId" name="userId" type="number" min="1" value="{{ old('userId', $order->user_id) }}" :invalid="$errors->has('userId')" />
+                        <flux:input id="userId" name="userId" type="number" min="1" value="{{ old('userId', $order->userId) }}" :invalid="$errors->has('userId')" />
                         @error('userId') <flux:error>{{ $message }}</flux:error> @enderror
                     </flux:field>
 
@@ -41,19 +41,19 @@
 
                     <flux:field>
                         <flux:label for="shippingAddress">Shipping address</flux:label>
-                        <flux:input id="shippingAddress" name="shippingAddress" value="{{ old('shippingAddress', $order->shipping_address) }}" :invalid="$errors->has('shippingAddress')" />
+                        <flux:input id="shippingAddress" name="shippingAddress" value="{{ old('shippingAddress', $order->shippingAddress) }}" :invalid="$errors->has('shippingAddress')" />
                         @error('shippingAddress') <flux:error>{{ $message }}</flux:error> @enderror
                     </flux:field>
 
                     <flux:field>
                         <flux:label for="paymentMethod">Payment method</flux:label>
-                        <flux:input id="paymentMethod" name="paymentMethod" value="{{ old('paymentMethod', $order->payment_method) }}" />
+                        <flux:input id="paymentMethod" name="paymentMethod" value="{{ old('paymentMethod', $order->paymentMethod) }}" />
                         @error('paymentMethod') <flux:error>{{ $message }}</flux:error> @enderror
                     </flux:field>
 
                     <div class="flex gap-3 pt-2">
                         <flux:button type="submit" variant="primary">Save changes</flux:button>
-                        <flux:button href="{{ route('orders.show', $order) }}" variant="ghost">Cancel</flux:button>
+                        <flux:button href="{{ route('orders.show', $order->id) }}" variant="ghost">Cancel</flux:button>
                     </div>
                 </form>
             </div>
@@ -81,7 +81,7 @@
                                     <flux:button variant="ghost">Cancel</flux:button>
                                 </flux:modal.close>
 
-                                <form action="{{ route('orders.destroy', $order) }}" method="POST">
+                                <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <flux:button type="submit" variant="danger">Delete order</flux:button>

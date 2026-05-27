@@ -9,7 +9,7 @@
                     <flux:text class="mt-1 text-zinc-500">Review details</flux:text>
                 </div>
             </div>
-            <flux:button href="{{ route('reviews.edit', $review) }}" variant="primary" icon="pencil">Edit</flux:button>
+            <flux:button href="{{ route('reviews.edit', $review->id) }}" variant="primary" icon="pencil">Edit</flux:button>
         </div>
 
         <div class="max-w-xl">
@@ -27,7 +27,7 @@
                             @endfor
                         </div>
                         <div class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                            {{ $review->user?->name ?? 'User #'.$review->user_id }}
+                            {{ $review->user?->name ?? 'User #'.$review->userId }}
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                 <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Book</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $review->book?->title ?? 'Book #'.$review->book_id }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $review->book?->title ?? 'Book #'.$review->bookId }}</flux:text>
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Rating</flux:text>
@@ -47,11 +47,11 @@
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Created at</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $review->created_at->format('d.m.Y H:i') }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $review->createdAt }}</flux:text>
                     </div>
                     <div class="px-6 py-4 flex justify-between items-center">
                         <flux:text class="text-zinc-500 text-sm">Updated at</flux:text>
-                        <flux:text class="text-sm font-medium">{{ $review->updated_at->format('d.m.Y H:i') }}</flux:text>
+                        <flux:text class="text-sm font-medium">{{ $review->updatedAt }}</flux:text>
                     </div>
                 </div>
             </div>

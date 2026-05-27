@@ -7,7 +7,7 @@ namespace App\Services\Genre;
 use App\Dto\Genre\GenreResponseDto;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 
-final readonly class SearchSuggestGenreService
+class SearchSuggestGenreService
 {
     public function __construct(
         private GenreRepositoryInterface $repository,

@@ -8,6 +8,15 @@ use App\Models\Review;
 
 final readonly class BookReviewResponseDto
 {
+    public function __construct(
+        public int $id,
+        public string $userName,
+        public float $rating,
+        public string $comment,
+        public string $createdAt,
+    ) {
+    }
+
     public static function fromModel(Review $review): self
     {
         return new self(
@@ -17,14 +26,5 @@ final readonly class BookReviewResponseDto
             comment: $review->comment ?? '',
             createdAt: $review->created_at?->toDateTimeString() ?? '',
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public string $userName,
-        public float $rating,
-        public string $comment,
-        public string $createdAt,
-    ) {
     }
 }

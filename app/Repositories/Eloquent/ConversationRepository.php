@@ -10,6 +10,7 @@ use App\Models\Conversation;
 use App\Models\Message;
 use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 final class ConversationRepository implements ConversationRepositoryInterface
 {
@@ -64,7 +65,7 @@ final class ConversationRepository implements ConversationRepositoryInterface
     public function getTotalUnreadCount(): int
     {
         return (int) Message::whereNull('read_at')
-            ->whereExists(static function (\Illuminate\Database\Query\Builder $q): void {
+            ->whereExists(static function (QueryBuilder $q): void {
                 $q->selectRaw('1')
                     ->from('conversations')
                     ->whereColumn('conversations.id', 'messages.conversation_id')

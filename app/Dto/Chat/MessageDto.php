@@ -9,6 +9,16 @@ use App\Models\User;
 
 final readonly class MessageDto
 {
+    public function __construct(
+        public int $id,
+        public int $conversationId,
+        public string $body,
+        public int $userId,
+        public string $senderName,
+        public string|null $createdAt,
+    ) {
+    }
+
     public static function fromModel(Message $message): self
     {
         /** @var User $user */
@@ -22,16 +32,6 @@ final readonly class MessageDto
             senderName: $user->name,
             createdAt: $message->created_at?->toIso8601String(),
         );
-    }
-
-    public function __construct(
-        public int $id,
-        public int $conversationId,
-        public string $body,
-        public int $userId,
-        public string $senderName,
-        public string|null $createdAt,
-    ) {
     }
 
     /** @return array<string, mixed> */

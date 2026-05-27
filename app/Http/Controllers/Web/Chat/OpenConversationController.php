@@ -6,20 +6,21 @@ namespace App\Http\Controllers\Web\Chat;
 
 use App\Dto\Chat\MessageDto;
 use App\Http\Controllers\Controller;
-use App\Services\Chat\ChatService;
+use App\Services\Chat\GetConversationMessagesService;
+use App\Services\Chat\OpenConversationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 final class OpenConversationController extends Controller
 {
     public function __construct(
-        private ChatService $chatService,
+        private OpenConversationService $openConversationService,
     ) {
     }
 
     public function __invoke(int $bookId): JsonResponse
     {
-        $result = $this->chatService->openConversation(
+        $result = $this->openConversationService->openConversation(
             userId: (int) Auth::id(),
             bookId: $bookId,
         );

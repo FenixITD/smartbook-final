@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Genre;
 
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 
 final readonly class SearchGenreByQueryService
 {
@@ -15,7 +17,9 @@ final readonly class SearchGenreByQueryService
     /**
      * @param string $query
      * @param int $limit
-     * @return array<int>
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      *
      * Performs a full-text search for genres in Elasticsearch by name, returning an array of matched genre IDs.
      */

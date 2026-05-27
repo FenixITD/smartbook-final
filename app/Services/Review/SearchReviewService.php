@@ -6,6 +6,8 @@ namespace App\Services\Review;
 
 use App\Dto\Review\ReviewFiltersDto;
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Elastic\Elasticsearch\Exception\ServerResponseException;
 use stdClass;
 
 final readonly class SearchReviewService
@@ -16,7 +18,9 @@ final readonly class SearchReviewService
 
     /**
      * @param ReviewFiltersDto $filters
-     * @return array<int>
+     * @return array
+     * @throws ClientResponseException
+     * @throws ServerResponseException
      *
      * Searches and filters reviews in Elasticsearch based on provided criteria, returning an array of review IDs.
      */

@@ -26,7 +26,7 @@ final class SendEntityNotificationJob implements ShouldQueue
     public function __construct(
         private readonly string $entityType,
         private readonly string $action,
-        private readonly array  $entityData,
+        private readonly array $entityData,
         private readonly string $performedAt,
     ) {
         $this->onQueue('notifications');

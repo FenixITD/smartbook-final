@@ -4,19 +4,25 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\CartItems;
 
-use App\Services\Cart\ClearCartService;
+use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use App\Services\Cart\GuestCartService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 final readonly class ClearCartController
 {
     public function __construct(
-        private ClearCartService $clearCartService,
-    ) {
-    }
+        private CartItemRepositoryInterface $repository,
+        private GuestCartService $guestCartService,
+    ) {}
 
     public function __invoke(): RedirectResponse
     {
-        $this->clearCartService->execute();
+        if (Auth::check()) {
+            $this->repository->deleteByUserId((int) Auth::id());
+        } else {
+            $this->guestCartService->clear();
+        }
 
         return back()->with('success', 'Cart cleared.');
     }

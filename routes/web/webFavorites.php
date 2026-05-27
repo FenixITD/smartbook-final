@@ -7,6 +7,6 @@ use App\Http\Controllers\Web\Favorites\ToggleFavoriteController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->prefix('favorites')->name('favorites.')->group(function (): void {
-    Route::get('/favorites', ShowFavoritesController::class)->name('index');
-    Route::post('/favorites/toggle', ToggleFavoriteController::class)->name('toggle');
+    Route::get('/', ShowFavoritesController::class)->name('index');
+    Route::post('/toggle', ToggleFavoriteController::class)->name('toggle');
 });

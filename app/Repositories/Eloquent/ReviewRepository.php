@@ -11,14 +11,9 @@ use App\Dto\Review\ReviewFiltersDto;
 use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
-use App\Services\Review\SearchReviewService;
 
 final class ReviewRepository implements ReviewRepositoryInterface
 {
-    public function __construct(private readonly SearchReviewService $searchService)
-    {
-    }
-
     /** @return array<ReviewResponseDto> */
     public function getList(ReviewFiltersDto $filters): array
     {
@@ -31,14 +26,9 @@ final class ReviewRepository implements ReviewRepositoryInterface
             ->all();
     }
 
-    public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto
+    /** @param array<int> $ids */
+    public function getWebListByIds(array $ids, ReviewFiltersDto $filters): PaginatedResponseDto
     {
-        $ids = $this->searchService->search($filters);
-
-        if ($ids === []) {
-            return PaginatedResponseDto::empty($filters->perPage);
-        }
-
         $paginator = Review::query()
             ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
@@ -53,6 +43,14 @@ final class ReviewRepository implements ReviewRepositoryInterface
         $reviewId = Review::find($id);
 
         return $reviewId !== null ? ReviewResponseDto::fromModel($reviewId) : null;
+    }
+
+    public function findByIdWithRelations(int $id): ReviewResponseDto
+    {
+        $reviewId = Review::with(['user', 'book'])
+            ->findOrFail($id);
+
+        return ReviewResponseDto::fromModel($reviewId);
     }
 
     public function suggest(string $query): array

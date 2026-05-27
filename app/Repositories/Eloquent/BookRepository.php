@@ -11,16 +11,11 @@ use App\Dto\Dashboard\DashboardFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
-use App\Services\Book\SearchBookForDashboardService;
 
 use function count;
 
 final class BookRepository implements BookRepositoryInterface
 {
-    public function __construct(private readonly SearchBookForDashboardService $searchService)
-    {
-    }
-
     /** @return array<BookResponseDto> */
     public function getList(BookFiltersDto $filters): array
     {
@@ -82,14 +77,9 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    public function getDashboardList(DashboardFiltersDto $filters): PaginatedResponseDto
+    /** @param array<int> $ids */
+    public function getDashboardListByIds(array $ids, DashboardFiltersDto $filters): PaginatedResponseDto
     {
-        $ids = $this->searchService->search($filters);
-
-        if ($ids === []) {
-            return PaginatedResponseDto::empty($filters->perPage);
-        }
-
         [$column, $direction] = match ($filters->sort) {
             'price_asc' => ['price', 'asc'],
             'price_desc' => ['price', 'desc'],

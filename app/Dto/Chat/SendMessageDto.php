@@ -9,6 +9,14 @@ use App\Models\User;
 
 final readonly class SendMessageDto
 {
+    public function __construct(
+        public int $conversationId,
+        public int $userId,
+        public bool $isAdmin,
+        public string $body,
+    ) {
+    }
+
     public static function fromRequest(SendMessageRequest $request, int $conversationId, User $user): self
     {
         /** @var string $body */
@@ -20,13 +28,5 @@ final readonly class SendMessageDto
             isAdmin: $user->role === 'admin',
             body: $body,
         );
-    }
-
-    public function __construct(
-        public int $conversationId,
-        public int $userId,
-        public bool $isAdmin,
-        public string $body,
-    ) {
     }
 }

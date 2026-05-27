@@ -7,25 +7,26 @@ namespace App\Http\Controllers\Web\Chat;
 use App\Dto\Chat\SendMessageDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Chat\SendMessageRequest;
-use App\Services\Chat\ChatService;
+use App\Models\User;
+use App\Services\Chat\SendMessageService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 final class SendMessageController extends Controller
 {
     public function __construct(
-        private ChatService $chatService,
+        private SendMessageService $sendMessageService,
     ) {
     }
 
     public function __invoke(SendMessageRequest $request, int $conversationId): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::user();
-        assert($user !== null);
 
         $dto = SendMessageDto::fromRequest($request, $conversationId, $user);
 
-        $messageDto = $this->chatService->sendMessage($dto);
+        $messageDto = $this->sendMessageService->sendMessage($dto);
 
         return response()->json($messageDto->toArray(), 201);
     }
