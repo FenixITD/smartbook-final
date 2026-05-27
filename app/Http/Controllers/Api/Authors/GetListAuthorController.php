@@ -14,6 +14,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/authors',
     summary: 'Get a list of all authors',
+    security: [['bearerAuth' => []]],
     tags: ['Authors'],
     responses: [
         new OA\Response(

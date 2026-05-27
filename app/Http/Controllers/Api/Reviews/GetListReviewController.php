@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/reviews',
     summary: 'Get a list of all reviews',
+    security: [['bearerAuth' => []]],
     tags: ['Reviews'],
     responses: [
         new OA\Response(

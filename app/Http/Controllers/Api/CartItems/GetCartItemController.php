@@ -12,6 +12,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/cartItems/{cartItem}',
     summary: 'Get cartItem by ID',
+    security: [['bearerAuth' => []]],
     tags: ['CartItems'],
     parameters: [
         new OA\Parameter(

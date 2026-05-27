@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/books/{book}',
     summary: 'Get book by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Books'],
     parameters: [
         new OA\Parameter(

@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/authors/{author}',
     summary: 'Get author by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Authors'],
     parameters: [
         new OA\Parameter(

@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Post(
     path: '/api/reviews',
     summary: 'Create review',
+    security: [['bearerAuth' => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(

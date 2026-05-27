@@ -12,6 +12,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/books/catalog-search-suggest',
     summary: 'Book search suggestions for public catalog',
+    security: [['bearerAuth' => []]],
     tags: ['Books'],
     parameters: [
         new OA\Parameter(

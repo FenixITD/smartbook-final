@@ -12,6 +12,7 @@ use OpenApi\Attributes as OA;
 #[OA\Delete(
     path: '/api/books/{book}',
     summary: 'Delete book by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Books'],
     parameters: [
         new OA\Parameter(

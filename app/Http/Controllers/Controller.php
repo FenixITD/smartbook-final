@@ -8,18 +8,16 @@ use OpenApi\Attributes as OA;
 
 #[OA\Info(
     version: '1.0',
-    title: 'swagger',
-)]
-#[OA\SecurityScheme(
-    securityScheme: 'sanctum',
-    type: 'http',
-    description: 'Enter token from /api/login',
-    bearerFormat: 'JWT',
-    scheme: 'bearer',
+    title: 'SmartBook API',
 )]
 #[OA\Server(
     url: 'http://localhost:8000',
     description: 'Local server',
+)]
+#[OA\SecurityScheme(
+    securityScheme: 'bearerAuth',
+    type: 'http',
+    scheme: 'bearer'
 )]
 abstract class Controller
 {

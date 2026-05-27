@@ -14,6 +14,7 @@ use OpenApi\Attributes as OA;
 #[OA\Put(
     path: '/api/authors/{author}',
     summary: 'Update author by ID',
+    security: [['bearerAuth' => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(

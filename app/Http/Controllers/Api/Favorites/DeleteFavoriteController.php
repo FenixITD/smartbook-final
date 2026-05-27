@@ -11,6 +11,7 @@ use OpenApi\Attributes as OA;
 #[OA\Delete(
     path: '/api/favorites/{favorite}',
     summary: 'Delete favorite by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Favorites'],
     parameters: [
         new OA\Parameter(

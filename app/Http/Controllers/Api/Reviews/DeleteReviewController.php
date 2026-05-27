@@ -11,6 +11,7 @@ use OpenApi\Attributes as OA;
 #[OA\Delete(
     path: '/api/reviews/{review}',
     summary: 'Delete review by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Reviews'],
     parameters: [
         new OA\Parameter(

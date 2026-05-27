@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/favorites',
     summary: 'Get a list of all favorites',
+    security: [['bearerAuth' => []]],
     tags: ['Favorites'],
     responses: [
         new OA\Response(

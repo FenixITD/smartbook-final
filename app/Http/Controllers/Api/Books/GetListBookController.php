@@ -14,6 +14,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/books',
     summary: 'Get a list of all books',
+    security: [['bearerAuth' => []]],
     tags: ['Books'],
     responses: [
         new OA\Response(

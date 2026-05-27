@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Post(
     path: '/api/orders',
     summary: 'Create order',
+    security: [['bearerAuth' => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(

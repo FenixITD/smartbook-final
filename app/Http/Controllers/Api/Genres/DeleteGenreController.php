@@ -11,6 +11,7 @@ use OpenApi\Attributes as OA;
 #[OA\Delete(
     path: '/api/genres/{genre}',
     summary: 'Delete genre by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Genres'],
     parameters: [
         new OA\Parameter(
