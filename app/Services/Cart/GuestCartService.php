@@ -156,7 +156,7 @@ final readonly class GuestCartService
     public function count(): int
     {
         return array_sum(array_column($this->cart(), 'quantity'));
-    }
+    }   
 
     /**
      * @return array<int, array{book_id: int, quantity: int}>

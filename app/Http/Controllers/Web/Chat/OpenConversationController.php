@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Web\Chat;
 
 use App\Dto\Chat\MessageDto;
 use App\Http\Controllers\Controller;
-use App\Services\Chat\GetConversationMessagesService;
 use App\Services\Chat\OpenConversationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;

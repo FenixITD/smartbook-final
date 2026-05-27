@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\UserActivity;
+namespace App\Services\User;
 
 use App\Dto\ActivityLog\ActivityLogFiltersDto;
 use App\Dto\Book\BookResponseDto;

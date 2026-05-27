@@ -25,8 +25,4 @@ interface FavoriteRepositoryInterface
 
     /** @return array<int> */
     public function getBookIdsByUser(int $userId): array;
-
-    public function countByUser(int $userId): int;
-
-    public function existsForUser(int $userId, int $bookId): bool;
 }

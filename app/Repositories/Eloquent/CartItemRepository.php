@@ -42,15 +42,6 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->sum(DB::raw('books.price * cart_items.quantity'));
     }
 
-    public function findByUserAndBook(int $userId, int $bookId): CartItemResponseDto|null
-    {
-        $cartItem = CartItem::where('user_id', $userId)
-            ->where('book_id', $bookId)
-            ->first();
-
-        return $cartItem !== null ? CartItemResponseDto::fromModel($cartItem) : null;
-    }
-
     public function getByUserId(int $userId, int $perPage): PaginatedResponseDto
     {
         $paginator = CartItem::with('book.author')
@@ -68,11 +59,6 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->get()
             ->map(static fn (CartItem $item) => CartItemWithBookResponseDto::fromModel($item))
             ->all();
-    }
-
-    public function countByUserId(int $userId): int
-    {
-        return CartItem::where('user_id', $userId)->count();
     }
 
     public function deleteByUserId(int $userId): void
@@ -116,11 +102,6 @@ final class CartItemRepository implements CartItemRepositoryInterface
             uniqueBy: ['user_id', 'book_id'],
             update: ['quantity'],
         );
-    }
-
-    public function updateQuantity(int $id, int $quantity): void
-    {
-        CartItem::findOrFail($id)->update(['quantity' => $quantity]);
     }
 
     public function create(CartItemDto $data): CartItemResponseDto

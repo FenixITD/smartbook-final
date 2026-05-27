@@ -19,14 +19,10 @@ interface CartItemRepositoryInterface
 
     public function getTotalByUserId(int $userId): float;
 
-    public function findByUserAndBook(int $userId, int $bookId): CartItemResponseDto|null;
-
     /** @return array<CartItemWithBookResponseDto> */
     public function getAllByUserId(int $userId): array;
 
     public function getByUserId(int $userId, int $perPage): PaginatedResponseDto;
-
-    public function countByUserId(int $userId): int;
 
     public function deleteByUserId(int $userId): void;
 
@@ -34,8 +30,6 @@ interface CartItemRepositoryInterface
 
     /** @param array<int, array{book_id: int, quantity: int}> $items */
     public function bulkAddOrIncrement(int $userId, array $items): void;
-
-    public function updateQuantity(int $id, int $quantity): void;
 
     public function create(CartItemDto $data): CartItemResponseDto;
 

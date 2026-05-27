@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\User;
+
+final class FormatNameService
+{
+    public static function initials(?string $name): string
+    {
+        if (empty($name)) {
+            return '';
+        }
+
+        $parts = explode(' ', trim($name));
+        $initials = [];
+
+        foreach ($parts as $part) {
+            if ($part !== '') {
+                $initials[] = mb_strtoupper(mb_substr($part, 0, 1)) . '.';
+            }
+        }
+
+        return implode(' ', $initials);
+    }
+}

@@ -59,22 +59,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(CartItem::class);
     }
-
-    public function initials(): string
-    {
-        if ($this->name === '') {
-            return '';
-        }
-
-        $parts = explode(' ', trim($this->name));
-        $initials = [];
-
-        foreach ($parts as $part) {
-            if ($part !== '') {
-                $initials[] = mb_strtoupper(mb_substr($part, 0, 1)).'.';
-            }
-        }
-
-        return implode(' ', $initials);
-    }
 }

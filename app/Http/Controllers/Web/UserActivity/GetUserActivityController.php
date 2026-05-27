@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Web\UserActivity;
 
 use App\Dto\ActivityLog\ActivityLogFiltersDto;
 use App\Http\Requests\UserActivity\UserActivityFilterRequest;
-use App\Services\UserActivity\UserActivityService;
+use App\Services\User\UserActivityService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 

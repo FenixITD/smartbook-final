@@ -1,3 +1,5 @@
+@php use App\Services\User\FormatNameService; @endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 <head>
@@ -61,7 +63,7 @@
 
     <flux:dropdown position="top" align="end">
         <flux:profile
-            :initials="auth()->user()->initials()"
+            :initials="FormatNameService::initials(auth()->user()->name)"
             icon-trailing="chevron-down"
         />
 
@@ -71,7 +73,7 @@
                     <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                         <flux:avatar
                             :name="auth()->user()->name"
-                            :initials="auth()->user()->initials()"
+                            :initials="FormatNameService::initials(auth()->user()->name)"
                         />
                         <div class="grid flex-1 text-start text-sm leading-tight">
                             <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>

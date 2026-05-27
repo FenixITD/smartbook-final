@@ -88,16 +88,4 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
 
         return $bookIds;
     }
-
-    public function countByUser(int $userId): int
-    {
-        return Favorite::where('user_id', $userId)->count();
-    }
-
-    public function existsForUser(int $userId, int $bookId): bool
-    {
-        return Favorite::where('user_id', $userId)
-            ->where('book_id', $bookId)
-            ->exists();
-    }
 }
