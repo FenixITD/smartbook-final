@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Put(
     path: '/api/orders/{order}',
     summary: 'Update order by ID',
+    security: [['bearerAuth' => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(

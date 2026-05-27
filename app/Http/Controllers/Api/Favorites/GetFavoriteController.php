@@ -12,6 +12,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/favorites/{favorite}',
     summary: 'Get favorite by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Favorites'],
     parameters: [
         new OA\Parameter(

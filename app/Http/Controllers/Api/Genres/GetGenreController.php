@@ -12,6 +12,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/genres/{genre}',
     summary: 'Get genre by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Genres'],
     parameters: [
         new OA\Parameter(

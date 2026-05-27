@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/orderItems',
     summary: 'Get a list of all orderItems',
+    security: [['bearerAuth' => []]],
     tags: ['OrderItems'],
     responses: [
         new OA\Response(

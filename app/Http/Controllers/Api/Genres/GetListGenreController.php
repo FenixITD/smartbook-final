@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/genres',
     summary: 'Get a list of all genres',
+    security: [['bearerAuth' => []]],
     tags: ['Genres'],
     responses: [
         new OA\Response(

@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
 #[OA\Post(
     path: '/api/authors',
     summary: 'Create author',
-    security: [['sanctum' => []]],
+    security: [['bearerAuth' => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(

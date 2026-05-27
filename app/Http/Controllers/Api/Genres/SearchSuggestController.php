@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
 #[OA\Get(
     path: '/api/genres/search-suggest',
     summary: 'Genre search suggestions',
-    security: [['sanctum' => []]],
+    security: [['bearerAuth' => []]],
     tags: ['Genres'],
     parameters: [
         new OA\Parameter(

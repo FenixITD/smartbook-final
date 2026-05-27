@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/books/suggest', SearchSuggestController::class)->name('api.books.suggest');
 Route::get('/books/catalog-suggest', SearchSuggestCatalogBookController::class)->name('api.books.catalog.suggest');
 
-Route::prefix('books')->name('api.books.')->middleware(['auth:sanctum', 'admin'])->group(function (): void {
+Route::prefix('books')->name('api.books.')->group(function (): void {
         Route::get('/', GetListBookController::class)->name('list');
         Route::get('/{book}', GetBookController::class)->name('show');
         Route::post('/', CreateBookController::class)->name('create');

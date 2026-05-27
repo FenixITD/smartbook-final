@@ -14,6 +14,7 @@ use OpenApi\Attributes as OA;
 #[OA\Put(
     path: '/api/books/{book}',
     summary: 'Update book by ID',
+    security: [['bearerAuth' => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(

@@ -13,6 +13,7 @@ use OpenApi\Attributes as OA;
 #[OA\Put(
     path: '/api/cartItems/{cartItem}',
     summary: 'Update cartItem by ID',
+    security: [['bearerAuth' => []]],
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(

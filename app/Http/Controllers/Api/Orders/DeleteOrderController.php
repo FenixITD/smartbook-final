@@ -11,6 +11,7 @@ use OpenApi\Attributes as OA;
 #[OA\Delete(
     path: '/api/orders/{order}',
     summary: 'Delete order by ID',
+    security: [['bearerAuth' => []]],
     tags: ['Orders'],
     parameters: [
         new OA\Parameter(
