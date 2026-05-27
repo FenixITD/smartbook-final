@@ -5,19 +5,29 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\CartItems;
 
 use App\Http\Requests\CartItem\UpdateCartWebRequest;
-use App\Services\Cart\CartResolverService;
+use App\Repositories\Interfaces\CartItemRepositoryInterface;
+use App\Services\Cart\GuestCartService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 final readonly class UpdateCartItemController
 {
     public function __construct(
-        private CartResolverService $cartResolverService,
-    ) {
-    }
+        private CartItemRepositoryInterface $repository,
+        private GuestCartService $guestCartService,
+    ) {}
 
     public function __invoke(UpdateCartWebRequest $request, int $bookId): RedirectResponse
     {
-        $this->cartResolverService->resolve()->update($bookId, $request->integer('quantity'));
+        if (Auth::check()) {
+            $this->repository->updateByUserAndBook(
+                (int) Auth::id(),
+                $bookId,
+                $request->integer('quantity')
+            );
+        } else {
+            $this->guestCartService->update($bookId, $request->integer('quantity'));
+        }
 
         return back()->with('success', 'Cart updated.');
     }
