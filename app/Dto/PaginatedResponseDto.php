@@ -18,8 +18,7 @@ class PaginatedResponseDto
         public int $currentPage,
         public int $lastPage,
         public string $links = '',
-    ) {
-    }
+    ) {}
 
     /**
      * @template TModel
@@ -35,6 +34,37 @@ class PaginatedResponseDto
             currentPage: $paginator->currentPage(),
             lastPage: $paginator->lastPage(),
             links: $paginator->links()->toHtml(),
+        );
+    }
+
+    /**
+     * Build from raw data for non-Eloquent sources (e.g. ClickHouse).
+     * Generates pagination HTML links the same way Eloquent would.
+     *
+     * @param array<mixed> $items
+     */
+    public static function create(
+        array $items,
+        int $total,
+        int $perPage,
+        int $currentPage,
+    ): self {
+        $lastPage = (int) max(1, ceil($total / $perPage));
+
+        $paginator = new LengthAwarePaginator(
+            items: $items,
+            total: $total,
+            perPage: $perPage,
+            currentPage: $currentPage,
+        );
+
+        return new self(
+            items: $items,
+            total: $total,
+            perPage: $perPage,
+            currentPage: $currentPage,
+            lastPage: $lastPage,
+            links: $paginator->withQueryString()->links()->toHtml(),
         );
     }
 

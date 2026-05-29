@@ -38,16 +38,16 @@
 
     <div class="body">
         <span class="badge {{ $action }}">
-            @if($action === 'created') СОЗДАН
-            @elseif($action === 'updated') ОБНОВЛЁН
-            @else УДАЛЁН
+            @if($action === 'created') CREATED
+            @elseif($action === 'updated') UPDATED
+            @else DELETED
             @endif
         </span>
 
         <table>
             <tr>
-                <th>Поле</th>
-                <th>Значение</th>
+                <th>Field</th>
+                <th>Value</th>
             </tr>
             @foreach($entityData as $field => $value)
                 <tr>
@@ -56,7 +56,7 @@
                         @if(is_array($value))
                             {{ implode(', ', $value) }}
                         @elseif(is_bool($value))
-                            {{ $value ? 'Да' : 'Нет' }}
+                            {{ $value ? 'Yes' : 'No' }}
                         @elseif(is_null($value))
                             <span style="color:#9ca3af">—</span>
                         @else
@@ -69,7 +69,7 @@
     </div>
 
     <div class="footer">
-        SmartBook · Автоматическое уведомление · Не отвечайте на это письмо
+        SmartBook · Automatic notification · Please do not reply to this email
     </div>
 </div>
 </body>

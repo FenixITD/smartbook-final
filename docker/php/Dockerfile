@@ -28,7 +28,8 @@ RUN install-php-extensions \
     gd \
     pcntl \
     sockets \
-    amqp
+    amqp \
+    curl
 
 # Composer
 # Это "multi-stage build". Вместо того чтобы скачивать установщик и ставить Composer вручную, Docker просто берет готовый
@@ -50,7 +51,7 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
 # иначе Laravel выдаст ошибку "Permission denied" при попытке записать лог или кэш шаблона.
 COPY ../.. .
 
-RUN mkdir -p bootstrap/cache \
+RUN mkdir -p bootstrap/cache storage/api-docs \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
 

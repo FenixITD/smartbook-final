@@ -27,7 +27,8 @@
         "spatie/laravel-activitylog": "^4.12",
         "symfony/filesystem": "^7.0",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.5",
-        "zircote/swagger-php": "^5.7"
+        "zircote/swagger-php": "^5.7",
+        "smi2/phpclickhouse": "^1.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

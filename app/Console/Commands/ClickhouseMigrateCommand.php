@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Console\Commands;
+
+use App\Services\Clickhouse\ClickhouseManager;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+
+final class ClickhouseMigrateCommand extends Command
+{
+    protected $signature = 'clickhouse:migrate';
+
+    protected $description = 'Run all ClickHouse SQL migrations from database/clickhouse/';
+
+    public function handle(ClickhouseManager $ch): int
+    {
+        if (!$ch->ping()) {
+            $this->error('Cannot connect to ClickHouse. Check CLICKHOUSE_* env variables.');
+            return self::FAILURE;
+        }
+
+        $files = File::glob(database_path('clickhouse/*.sql'));
+
+        if (empty($files)) {
+            $this->info('No migration files found in database/clickhouse/');
+            return self::SUCCESS;
+        }
+
+        sort($files);
+
+        foreach ($files as $file) {
+            $name = basename($file);
+            $this->info("Running: {$name}");
+
+            $sql = File::get($file);
+
+            foreach (array_filter(array_map('trim', explode(';', $sql))) as $statement) {
+                $ch->execute($statement);
+            }
+
+            $this->line("  <fg=green>Done</>");
+        }
+
+        $this->info('ClickHouse migrations finished.');
+
+        return self::SUCCESS;
+    }
+}
