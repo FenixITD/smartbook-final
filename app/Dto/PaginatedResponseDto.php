@@ -58,6 +58,8 @@ class PaginatedResponseDto
             currentPage: $currentPage,
         );
 
+        $paginator->setPath(request()->url());
+
         return new self(
             items: $items,
             total: $total,

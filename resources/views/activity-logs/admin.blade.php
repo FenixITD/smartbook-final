@@ -70,6 +70,7 @@
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                    @php $rowNumber = $logs->total - ($logs->currentPage - 1) * $logs->perPage; @endphp
                     @forelse ($logs->items as $item)
                         @php
                             // Универсальное приведение к массиву для безопасного извлечения данных
@@ -106,7 +107,7 @@
                             $old = $props['old'] ?? [];
                         @endphp
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors align-top">
-                            <td class="px-4 py-3 text-sm text-zinc-400">{{ $id }}</td>
+                            <td class="px-4 py-3 text-sm text-zinc-400">{{ $rowNumber-- }}</td>
 
                             <td class="px-4 py-3">
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $eventColor }}">
