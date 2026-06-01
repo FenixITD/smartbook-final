@@ -7,6 +7,7 @@ namespace App\Services\Genre;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 
 final readonly class SearchGenreByQueryService
 {
@@ -15,18 +16,19 @@ final readonly class SearchGenreByQueryService
     }
 
     /**
-     * @param string $query
-     * @param int $limit
-     * @return array
+     * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
      *
-     * Performs a full-text search for genres in Elasticsearch by name, returning an array of matched genre IDs.
+     * Performs a full-text search for genres in Elasticsearch by name, returning an array of matched genre IDs
      */
     public function search(string $query, int $limit = 5): array
     {
+        $index = config('elasticsearch.genres_index');
+
+        /** @var Elasticsearch $response */
         $response = $this->client->search([
-            'index' => (string) config('elasticsearch.genres_index'),
+            'index' => is_scalar($index) ? (string) $index : '',
             'body' => [
                 'query' => [
                     'bool' => [
@@ -54,8 +56,10 @@ final readonly class SearchGenreByQueryService
             ],
         ]);
 
-        /** @var array<int, array<string, mixed>> $hits */
-        $hits = $response->asArray()['hits']['hits'];
+        /** @var array{hits: array{hits: array<int, array{_id: int|string}>}} $body */
+        $body = $response->asArray();
+
+        $hits = $body['hits']['hits'];
 
         return array_map(static fn (array $hit): int => (int) $hit['_id'], $hits);
     }

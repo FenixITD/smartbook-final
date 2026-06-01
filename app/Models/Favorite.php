@@ -18,9 +18,11 @@ class Favorite extends Pivot
 
     use LogsActivity;
 
-    protected $table = 'favorites';
-    protected $primaryKey = 'id';
     public $incrementing = true;
+
+    protected $table = 'favorites';
+
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'user_id',

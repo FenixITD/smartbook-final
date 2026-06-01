@@ -19,9 +19,14 @@ final class ClickhouseManager
             'password' => config('clickhouse.password'),
         ]);
 
-        $this->client->database(config('clickhouse.database'));
-        $this->client->setTimeout(config('clickhouse.timeout'));
-        $this->client->setConnectTimeOut(config('clickhouse.connect_timeout'));
+        $db = config('clickhouse.database');
+        $this->client->database(is_scalar($db) ? (string) $db : '');
+
+        $timeout = config('clickhouse.timeout');
+        $this->client->setTimeout(is_numeric($timeout) ? (int) $timeout : 1);
+
+        $connectTimeout = config('clickhouse.connect_timeout');
+        $this->client->setConnectTimeOut(is_numeric($connectTimeout) ? (float) $connectTimeout : 1.0);
     }
 
     /**
@@ -41,11 +46,15 @@ final class ClickhouseManager
      * Run a SELECT and return all rows.
      *
      * @param array<string, mixed> $bindings Named bindings, referenced as {name:Type} in SQL
-     * @return array<array<string, mixed>>
+     *
+     * @return array<int, array<string, mixed>>
      */
     public function select(string $sql, array $bindings = []): array
     {
-        return $this->client->select($sql, $bindings)->rows();
+        /** @var array<int, array<string, mixed>> $rows */
+        $rows = $this->client->select($sql, $bindings)->rows();
+
+        return $rows;
     }
 
     /**
@@ -55,13 +64,17 @@ final class ClickhouseManager
      */
     public function count(string $sql, array $bindings = []): int
     {
-        $rows = $this->client->select($sql, $bindings)->rows();
+        $rows = $this->select($sql, $bindings);
 
-        return (int) ($rows[0]['count'] ?? 0);
+        if (isset($rows[0]['count']) && is_scalar($rows[0]['count'])) {
+            return (int) $rows[0]['count'];
+        }
+
+        return 0;
     }
 
     /**
-     * Execute a DDL statement (CREATE TABLE, CREATE DATABASE, etc.)
+     * Execute a DDL statement (CREATE TABLE, CREATE DATABASE, etc.).
      */
     public function execute(string $sql): void
     {

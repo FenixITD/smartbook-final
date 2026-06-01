@@ -8,11 +8,17 @@ use App\Models\ClickhouseActivity;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
+use const JSON_THROW_ON_ERROR;
+use const JSON_UNESCAPED_UNICODE;
+
 final readonly class ClickhouseActivityService
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function buildRow(ClickhouseActivity $activity): array
     {
-        $id  = $this->generateId();
+        $id = $this->generateId();
         $now = now()->toDateTimeString();
 
         return [
@@ -20,9 +26,9 @@ final readonly class ClickhouseActivityService
             'log_name' => $activity->log_name ?? 'default',
             'description' => $activity->description ?? '',
             'subject_type' => $activity->subject_type ?? '',
-            'subject_id' => $activity->subject_id ? (int) $activity->subject_id : null,
+            'subject_id' => $activity->subject_id !== null ? $activity->subject_id : null,
             'causer_type' => $activity->causer_type ?? '',
-            'causer_id' => $activity->causer_id ? (int) $activity->causer_id : null,
+            'causer_id' => $activity->causer_id !== null ? $activity->causer_id : null,
             'causer_name' => $this->resolveCauserName($activity),
             'properties' => $this->serializeProperties($activity),
             'created_at' => $now,
@@ -38,25 +44,26 @@ final readonly class ClickhouseActivityService
     private function resolveCauserName(ClickhouseActivity $activity): string
     {
         if ($activity->relationLoaded('causer')) {
-            return $activity->causer?->name ?? '';
+            /** @var User|null $causer */
+            $causer = $activity->causer;
+            return $causer->name ?? '';
         }
 
         if ($activity->causer_id === null) {
             return '';
         }
 
-        return User::find($activity->causer_id)?->name ?? '';
+        /** @var User|null $user */
+        $user = User::find($activity->causer_id);
+
+        return $user->name ?? '';
     }
 
     private function serializeProperties(ClickhouseActivity $activity): string
     {
         $props = $activity->properties;
 
-        $array = match (true) {
-            $props instanceof Collection => $props->toArray(),
-            is_array($props)            => $props,
-            default                     => [],
-        };
+        $array = $props instanceof Collection ? $props->toArray() : [];
 
         return json_encode($array, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
     }

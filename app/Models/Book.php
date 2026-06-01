@@ -19,7 +19,8 @@ class Book extends Model
     /** @use HasFactory<BookFactory> */
     use HasFactory;
 
-    use LogsActivity, Searchable;
+    use LogsActivity;
+    use Searchable;
 
     protected $casts = [
         'price' => 'float',

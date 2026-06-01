@@ -18,7 +18,8 @@ class Order extends Model
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
-    use LogsActivity, Searchable;
+    use LogsActivity;
+    use Searchable;
 
     protected $casts = [
         'total' => 'float',
@@ -32,6 +33,9 @@ class Order extends Model
         'payment_method',
     ];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toSearchableArray(): array
     {
         return [

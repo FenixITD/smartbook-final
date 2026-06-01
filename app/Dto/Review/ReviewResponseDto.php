@@ -26,11 +26,11 @@ class ReviewResponseDto
             id: $review->id,
             userId: $review->user_id,
             bookId: $review->book_id,
-            userName: $review->user?->name ?? '',
+            userName: $review->user !== null ? $review->user->name : '',
             rating: $review->rating,
             comment: $review->comment ?? '',
-            createdAt: $review->created_at?->toDateTimeString() ?? '',
-            updatedAt: $review->updated_at?->toDateTimeString() ?? '',
+            createdAt: $review->created_at !== null ? $review->created_at->toDateTimeString() : '',
+            updatedAt: $review->updated_at !== null ? $review->updated_at->toDateTimeString() : '',
         );
     }
 }

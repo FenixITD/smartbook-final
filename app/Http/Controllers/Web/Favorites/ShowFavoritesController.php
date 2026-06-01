@@ -8,6 +8,7 @@ use App\Dto\Favorite\FavoriteFiltersDto;
 use App\Services\Favorite\FavoriteService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\User;
 
 final readonly class ShowFavoritesController
 {
@@ -18,8 +19,11 @@ final readonly class ShowFavoritesController
 
     public function __invoke(Request $request): View
     {
+        /** @var User $user */
+        $user = $request->user();
+
         $books = $this->favoriteService->getBooksByUser(
-            userId: (int) $request->user()->id,
+            userId: $user->id,
             filters: new FavoriteFiltersDto(perPage: 18),
         );
 

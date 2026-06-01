@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class ActivityLog extends Model
 {
-    protected $table = 'activity_log';
-
     public $timestamps = false; // ClickHouse управляет created_at сам
+
+    protected $table = 'activity_log';
 
     protected $fillable = [
         'id', 'log_name', 'description',

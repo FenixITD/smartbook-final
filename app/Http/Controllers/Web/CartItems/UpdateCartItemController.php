@@ -15,7 +15,8 @@ final readonly class UpdateCartItemController
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $guestCartService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(UpdateCartWebRequest $request, int $bookId): RedirectResponse
     {

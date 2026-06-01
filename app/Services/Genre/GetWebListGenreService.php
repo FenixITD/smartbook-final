@@ -13,7 +13,8 @@ final class GetWebListGenreService
     public function __construct(
         private readonly SearchGenreService $searchService,
         private readonly GenreRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function get(GenreFiltersDto $filters): PaginatedResponseDto
     {

@@ -45,7 +45,8 @@ final readonly class SearchSuggestCatalogBookController
 {
     public function __construct(
         private SearchSuggestCatalogBookService $service,
-    ) {}
+    ) {
+    }
 
     public function __invoke(SearchSuggestRequest $request): JsonResponse
     {

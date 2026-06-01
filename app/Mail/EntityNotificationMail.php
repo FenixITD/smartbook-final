@@ -10,12 +10,16 @@ use Illuminate\Mail\Mailables\Envelope;
 
 final class EntityNotificationMail extends Mailable
 {
+    /**
+     * @param array<string, mixed> $entityData
+     */
     public function __construct(
         public readonly string $entityType,
         public readonly string $action,
-        public readonly array  $entityData,
+        public readonly array $entityData,
         public readonly string $performedAt,
-    ) {}
+    ) {
+    }
 
     public function envelope(): Envelope
     {

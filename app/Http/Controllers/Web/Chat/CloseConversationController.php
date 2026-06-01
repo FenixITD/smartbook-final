@@ -12,7 +12,8 @@ final class CloseConversationController extends Controller
 {
     public function __construct(
         private ConversationRepository $repository,
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $conversationId): JsonResponse
     {

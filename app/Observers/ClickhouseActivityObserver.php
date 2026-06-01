@@ -13,7 +13,8 @@ final readonly class ClickhouseActivityObserver
     public function __construct(
         private ClickhouseActivityService $service,
         private ClickhouseManager $ch,
-    ) {}
+    ) {
+    }
 
     public function saving(ClickhouseActivity $activity): bool
     {
@@ -21,7 +22,10 @@ final readonly class ClickhouseActivityObserver
 
         $this->ch->insert('activity_log', $row);
 
-        $activity->id = $row['id'];
+        /** @var int $id */
+        $id = $row['id'];
+
+        $activity->id = $id;
         $activity->exists = true;
         $activity->wasRecentlyCreated = true;
 

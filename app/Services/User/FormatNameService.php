@@ -6,9 +6,9 @@ namespace App\Services\User;
 
 final class FormatNameService
 {
-    public static function initials(?string $name): string
+    public static function initials(string|null $name): string
     {
-        if (empty($name)) {
+        if ($name === null || trim($name) === '') {
             return '';
         }
 
@@ -17,7 +17,7 @@ final class FormatNameService
 
         foreach ($parts as $part) {
             if ($part !== '') {
-                $initials[] = mb_strtoupper(mb_substr($part, 0, 1)) . '.';
+                $initials[] = mb_strtoupper(mb_substr($part, 0, 1)).'.';
             }
         }
 

@@ -18,13 +18,16 @@ final class ClickhouseMigrateCommand extends Command
     {
         if (!$ch->ping()) {
             $this->error('Cannot connect to ClickHouse. Check CLICKHOUSE_* env variables.');
+
             return self::FAILURE;
         }
 
+        /** @var array<int, string> $files */
         $files = File::glob(database_path('clickhouse/*.sql'));
 
-        if (empty($files)) {
+        if ($files === []) {
             $this->info('No migration files found in database/clickhouse/');
+
             return self::SUCCESS;
         }
 
@@ -36,11 +39,16 @@ final class ClickhouseMigrateCommand extends Command
 
             $sql = File::get($file);
 
-            foreach (array_filter(array_map('trim', explode(';', $sql))) as $statement) {
+            $statements = array_filter(
+                array_map('trim', explode(';', $sql)),
+                static fn (string $statement): bool => $statement !== ''
+            );
+
+            foreach ($statements as $statement) {
                 $ch->execute($statement);
             }
 
-            $this->line("  <fg=green>Done</>");
+            $this->line('  <fg=green>Done</>');
         }
 
         $this->info('ClickHouse migrations finished.');

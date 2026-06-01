@@ -1,7 +1,7 @@
 # Берется официальный образ PHP версии 8.5 с установленным FPM (FastCGI Process Manager).
 # Приставка alpine означает, что внутри используется минималистичный дистрибутив Linux (Alpine Linux).
 # Это делает итоговый контейнер очень легким (весит в разы меньше, чем на базе Ubuntu/Debian) и быстрым.
-FROM php:8.5-fpm-alpine
+FROM php:8.2-fpm-alpine
 
 # Автоматический установщик расширений
 # Вместо того чтобы вручную искать и ставить системные библиотеки через apk add (что часто превращается в ад с зависимостями),
@@ -42,14 +42,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # и локальной разработки, а --optimize-autoloader ускоряет загрузку классов в Laravel.
 WORKDIR /var/www/html
 
-COPY ../../composer.json composer.lock* ./
+COPY composer.json composer.lock* ./
 RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interaction
 
 # Только теперь копируется весь остальной код. Затем настраиваются права:
 # Владельцем всех файлов назначается пользователь www-data (от имени этого пользователя работает PHP-FPM).
 # Папкам storage (где лежат логи, кэш, загруженные файлы) и bootstrap/cache даются права на запись (775),
 # иначе Laravel выдаст ошибку "Permission denied" при попытке записать лог или кэш шаблона.
-COPY ../.. .
+COPY . .
 
 RUN mkdir -p bootstrap/cache storage/api-docs \
     && chown -R www-data:www-data /var/www/html \

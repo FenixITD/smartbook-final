@@ -22,7 +22,7 @@ final readonly class GuestCartService
     /**
      * @return array<int, array{book_id: int, quantity: int}>
      *
-     * Retrieves all raw cart items currently stored in the guest session.
+     * Retrieves all raw cart items currently stored in the guest session
      */
     public function getAll(): array
     {
@@ -32,7 +32,7 @@ final readonly class GuestCartService
     /**
      * @return array<CartItemWithBookResponseDto>
      *
-     * Retrieves detailed cart items including associated book data for the guest session.
+     * Retrieves detailed cart items including associated book data for the guest session
      */
     public function getItems(): array
     {
@@ -71,7 +71,7 @@ final readonly class GuestCartService
     /**
      * @return float
      *
-     * Calculates the total price of all items currently in the guest session cart.
+     * Calculates the total price of all items currently in the guest session cart
      */
     public function getTotal(): float
     {
@@ -86,13 +86,6 @@ final readonly class GuestCartService
         return $this->repository->getTotalByIdsAndQuantities($quantitiesByBookId);
     }
 
-    /**
-     * @param int $bookId
-     * @param int $quantity
-     * @return void
-     *
-     * Adds a new book or increments its quantity in the guest session cart.
-     */
     public function add(int $bookId, int $quantity): void
     {
         $cart = $this->cart();
@@ -106,13 +99,6 @@ final readonly class GuestCartService
         session([self::SESSION_KEY => $cart]);
     }
 
-    /**
-     * @param int $bookId
-     * @param int $quantity
-     * @return void
-     *
-     * Updates the exact quantity of a specific book in the guest session cart.
-     */
     public function update(int $bookId, int $quantity): void
     {
         $cart = $this->cart();
@@ -125,12 +111,6 @@ final readonly class GuestCartService
         session([self::SESSION_KEY => $cart]);
     }
 
-    /**
-     * @param int $bookId
-     * @return void
-     *
-     * Removes a specific book entirely from the guest session cart.
-     */
     public function remove(int $bookId): void
     {
         $cart = $this->cart();
@@ -138,11 +118,6 @@ final readonly class GuestCartService
         session([self::SESSION_KEY => $cart]);
     }
 
-    /**
-     * @return void
-     *
-     * Empties all items from the guest session cart.
-     */
     public function clear(): void
     {
         session()->forget(self::SESSION_KEY);
@@ -151,17 +126,17 @@ final readonly class GuestCartService
     /**
      * @return int
      *
-     * Returns the total number of individual items currently in the guest session cart.
+     * Returns the total number of individual items currently in the guest session cart
      */
     public function count(): int
     {
         return array_sum(array_column($this->cart(), 'quantity'));
-    }   
+    }
 
     /**
      * @return array<int, array{book_id: int, quantity: int}>
      *
-     * Retrieves the raw cart array directly from the session.
+     * Retrieves the raw cart array directly from the session
      */
     private function cart(): array
     {

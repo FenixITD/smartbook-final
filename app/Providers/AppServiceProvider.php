@@ -137,7 +137,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         /**
-         * Registering a client to work with the Elasticsearch search engine
+         * Registering a client to work with the Elasticsearch search engine.
          */
         $this->app->singleton(Client::class, static fn () => ClientBuilder::create()
             ->setHosts([config('elasticsearch.host')])

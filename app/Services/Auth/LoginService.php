@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\Services\Auth;
 
 use App\Dto\Auth\LoginDto;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class LoginService
 {
     /**
-     * @param LoginDto $dto
      * @return bool
      *
-     * Login with a request limit added to protect against password attacks.
+     * Login with a request limit added to protect against password attacks
      */
     public function login(LoginDto $dto): bool
     {
@@ -25,12 +24,7 @@ class LoginService
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
 
-            throw ValidationException::withMessages([
-                'email' => __('auth.throttle', [
-                    'seconds' => $seconds,
-                    'minutes' => ceil($seconds / 60),
-                ]),
-            ]);
+            throw ValidationException::withMessages(['email' => __('auth.throttle', ['seconds' => $seconds, 'minutes' => ceil($seconds / 60)])]);
         }
 
         $attempt = Auth::attempt(

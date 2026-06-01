@@ -13,7 +13,8 @@ class GetWebListAuthorService
     public function __construct(
         private SearchAuthorService $searchService,
         private AuthorRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function get(AuthorFiltersDto $filters): PaginatedResponseDto
     {

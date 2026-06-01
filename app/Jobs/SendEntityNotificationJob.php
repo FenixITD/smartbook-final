@@ -13,16 +13,13 @@ final class SendEntityNotificationJob implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Number of attempts on failure.
-     */
     public int $tries = 3;
 
-    /**
-     * Task execution timeout (seconds).
-     */
     public int $timeout = 30;
 
+    /**
+     * @param array<string, mixed> $entityData
+     */
     public function __construct(
         private readonly string $entityType,
         private readonly string $action,
@@ -36,7 +33,7 @@ final class SendEntityNotificationJob implements ShouldQueue
     {
         $recipient = config('mail.notification_recipient');
 
-        if (empty($recipient)) {
+        if ($recipient === null || $recipient === '') {
             return;
         }
 

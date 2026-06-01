@@ -8,5 +8,4 @@ use Spatie\Activitylog\Models\Activity;
 
 final class ClickhouseActivity extends Activity
 {
-    //
 }

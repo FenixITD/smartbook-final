@@ -18,7 +18,6 @@ class SearchBookService
     }
 
     /**
-     * @param BookFiltersDto $filters
      * @return array<BookResponseDto>
      *
      * Retrieves an unpaginated list of books. Uses Elasticsearch if a search query is provided,
@@ -40,10 +39,9 @@ class SearchBookService
     }
 
     /**
-     * @param BookFiltersDto $filters
      * @return PaginatedResponseDto
      *
-     * Retrieves a paginated list of books for the web interface, integrating with Elasticsearch for text search.
+     * Retrieves a paginated list of books for the web interface, integrating with Elasticsearch for text search
      */
     public function getWebList(BookFiltersDto $filters): PaginatedResponseDto
     {

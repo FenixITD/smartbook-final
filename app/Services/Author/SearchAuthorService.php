@@ -1,25 +1,32 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Services\Author;
 
 use App\Dto\Author\AuthorFiltersDto;
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 use stdClass;
 
 final readonly class SearchAuthorService
 {
-    public function __construct(private Client $client) {}
+    public function __construct(private Client $client)
+    {
+    }
 
     /**
-     * @param AuthorFiltersDto $filters
      * @return array<int>
      *
-     * Searches and filters authors in Elasticsearch based on provided criteria, returning an array of author IDs.
+     * Searches and filters authors in Elasticsearch based on provided criteria, returning an array of author IDs
      */
     public function search(AuthorFiltersDto $filters): array
     {
+        $index = config('elasticsearch.authors_index');
+
+        /** @var Elasticsearch $response */
         $response = $this->client->search([
-            'index' => (string) config('elasticsearch.authors_index'),
+            'index' => is_scalar($index) ? (string) $index : '',
             'body' => [
                 'query' => $this->buildQuery($filters),
                 'size' => 10000,
@@ -27,17 +34,18 @@ final readonly class SearchAuthorService
             ],
         ]);
 
-        /** @var array<int, array<string, mixed>> $hits */
-        $hits = $response->asArray()['hits']['hits'];
+        /** @var array{hits: array{hits: array<int, array{_id: int|string}>}} $body */
+        $body = $response->asArray();
+
+        $hits = $body['hits']['hits'];
 
         return array_map(static fn (array $hit): int => (int) $hit['_id'], $hits);
     }
 
     /**
-     * @param AuthorFiltersDto $filters
      * @return array<string, mixed>
      *
-     * Builds the Elasticsearch query array based on the provided author filters.
+     * Builds the Elasticsearch query array based on the provided author filters
      */
     private function buildQuery(AuthorFiltersDto $filters): array
     {

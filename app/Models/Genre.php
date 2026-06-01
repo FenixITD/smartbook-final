@@ -17,13 +17,17 @@ class Genre extends Model
     /** @use HasFactory<GenreFactory> */
     use HasFactory;
 
-    use LogsActivity, Searchable;
+    use LogsActivity;
+    use Searchable;
 
     protected $fillable = [
         'name',
         'slug',
     ];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toSearchableArray(): array
     {
         return [

@@ -13,7 +13,8 @@ final class GetWebListOrderService
     public function __construct(
         private readonly SearchOrderService $searchService,
         private readonly OrderRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function get(OrderFiltersDto $filters): PaginatedResponseDto
     {

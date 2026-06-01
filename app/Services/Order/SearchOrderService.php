@@ -8,6 +8,7 @@ use App\Dto\Order\OrderFiltersDto;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 use stdClass;
 
 final readonly class SearchOrderService
@@ -17,17 +18,19 @@ final readonly class SearchOrderService
     }
 
     /**
-     * @param OrderFiltersDto $filters
-     * @return array
+     * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
      *
-     * Searches and filters orders in Elasticsearch based on provided criteria (like ID or status), returning an array of order IDs.
+     * Searches and filters orders in Elasticsearch based on provided criteria (like ID or status), returning an array of order IDs
      */
     public function search(OrderFiltersDto $filters): array
     {
+        $index = config('elasticsearch.orders_index');
+
+        /** @var Elasticsearch $response */
         $response = $this->client->search([
-            'index' => (string) config('elasticsearch.orders_index'),
+            'index' => is_scalar($index) ? (string) $index : '',
             'body' => [
                 'query' => $this->buildQuery($filters),
                 'size' => 10000,
@@ -35,8 +38,10 @@ final readonly class SearchOrderService
             ],
         ]);
 
-        /** @var array<int, array<string, mixed>> $hits */
-        $hits = $response->asArray()['hits']['hits'];
+        /** @var array{hits: array{hits: array<int, array{_id: int|string}>}} $body */
+        $body = $response->asArray();
+
+        $hits = $body['hits']['hits'];
 
         return array_map(
             static fn (array $hit): int => (int) $hit['_id'],
@@ -45,10 +50,9 @@ final readonly class SearchOrderService
     }
 
     /**
-     * @param OrderFiltersDto $filters
      * @return array<string, mixed>
      *
-     * Builds the Elasticsearch query array based on the provided order filters.
+     * Builds the Elasticsearch query array based on the provided order filters
      */
     private function buildQuery(OrderFiltersDto $filters): array
     {

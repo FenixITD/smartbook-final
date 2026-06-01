@@ -18,12 +18,11 @@ class SearchSuggestReviewService
     }
 
     /**
-     * @param string $query
-     * @return array
      * @throws ClientResponseException
      * @throws ServerResponseException
      *
-     * Fetches up to 5 review suggestions for autocomplete search, returning the author's name, a truncated comment, and the URL.
+     * Fetches up to 5 review suggestions for autocomplete search, returning the author's name, a truncated comment, and the URL
+     * @return array<int, array<string, mixed>>
      */
     public function execute(string $query): array
     {
@@ -37,7 +36,7 @@ class SearchSuggestReviewService
             static fn (ReviewResponseDto $review): array => [
                 'id' => $review->id,
                 'user_name' => $review->userName,
-                'content' => mb_substr($review->comment, 0, 80) . '...',
+                'content' => mb_substr($review->comment, 0, 80).'...',
                 'url' => route('reviews.show', $review->id),
             ],
             $this->repository->getByIds($ids),

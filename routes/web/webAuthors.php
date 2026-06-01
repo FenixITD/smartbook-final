@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Web\Authors\CreateAuthorController;
 use App\Http\Controllers\Web\Authors\DeleteAuthorController;
 use App\Http\Controllers\Web\Authors\GetByIdAuthorController;

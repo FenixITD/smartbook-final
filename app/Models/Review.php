@@ -17,7 +17,8 @@ class Review extends Model
     /** @use HasFactory<ReviewFactory> */
     use HasFactory;
 
-    use LogsActivity, Searchable;
+    use LogsActivity;
+    use Searchable;
 
     protected $fillable = [
         'user_id',
@@ -26,6 +27,13 @@ class Review extends Model
         'comment',
     ];
 
+    protected $casts = [
+        'rating' => 'float',
+    ];
+
+    /**
+     * @return array<string, mixed>
+     */
     public function toSearchableArray(): array
     {
         return [

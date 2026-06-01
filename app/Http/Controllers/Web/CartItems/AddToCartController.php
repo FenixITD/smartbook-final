@@ -15,7 +15,8 @@ final readonly class AddToCartController
     public function __construct(
         private AddCartItemService $authService,
         private GuestCartService $guestService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(AddToCartWebRequest $request): RedirectResponse
     {

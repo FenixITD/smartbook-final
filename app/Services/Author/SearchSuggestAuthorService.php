@@ -16,10 +16,9 @@ class SearchSuggestAuthorService
     }
 
     /**
-     * @param string $query
      * @return array<int, array{id: int, name: string, url: string}>
      *
-     * Fetches up to 5 author suggestions for autocomplete search, returning basic author details and their URL.
+     * Fetches up to 5 author suggestions for autocomplete search, returning basic author details and their URL
      */
     public function execute(string $query): array
     {

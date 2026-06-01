@@ -17,12 +17,7 @@ class UpdateBookService
     }
 
     /**
-     * @param int $bookId
-     * @param BookDto $dto
      * @param array<int> $genreIds
-     * @return void
-     *
-     * Updates existing book details and synchronizes its genres within a database transaction.
      */
     public function execute(int $bookId, BookDto $dto, array $genreIds): void
     {

@@ -16,10 +16,9 @@ class SearchSuggestGenreService
     }
 
     /**
-     * @param string $query
      * @return array<int, array{id: int, name: string, url: string}>
      *
-     * Fetches up to 5 genre suggestions for autocomplete search, returning basic genre details and their URL.
+     * Fetches up to 5 genre suggestions for autocomplete search, returning basic genre details and their URL
      */
     public function execute(string $query): array
     {

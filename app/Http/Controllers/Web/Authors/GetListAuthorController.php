@@ -12,7 +12,8 @@ final readonly class GetListAuthorController
 {
     public function __construct(
         private GetWebListAuthorService $getWebListAuthorService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(AuthorListRequest $request): View
     {

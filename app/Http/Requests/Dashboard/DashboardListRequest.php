@@ -21,7 +21,7 @@ final class DashboardListRequest extends FormRequest
             'search' => ['nullable', 'string', 'max:255'],
             'genre' => ['nullable', 'integer', 'exists:genres,id'],
             'author' => ['nullable', 'integer', 'exists:authors,id'],
-            'year' => ['nullable', 'integer', 'min:1900', 'max:' . date('Y')],
+            'year' => ['nullable', 'integer', 'min:1900', 'max:'.date('Y')],
             'status' => ['nullable', 'string', 'in:active,draft,archived'],
             'sort' => ['nullable', 'string', 'in:rating,newest,price_asc,price_desc'],
         ];

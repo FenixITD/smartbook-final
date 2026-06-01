@@ -26,13 +26,13 @@ class OrderResponseDto
         return new self(
             id: $order->id,
             userId: $order->user_id,
-            userName: $order->user?->name ?? '',
+            userName: $order->user !== null ? $order->user->name : '',
             total: $order->total,
             status: $order->status,
             shippingAddress: $order->shipping_address ?? '',
             paymentMethod: $order->payment_method ?? '',
-            createdAt: $order->created_at?->toDateTimeString() ?? '',
-            updatedAt: $order->updated_at?->toDateTimeString() ?? '',
+            createdAt: $order->created_at !== null ? $order->created_at->toDateTimeString() : '',
+            updatedAt: $order->updated_at !== null ? $order->updated_at->toDateTimeString() : '',
         );
     }
 }

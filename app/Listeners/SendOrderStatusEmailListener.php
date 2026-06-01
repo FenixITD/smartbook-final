@@ -25,7 +25,7 @@ final class SendOrderStatusEmailListener implements ShouldQueue, ShouldBeUnique
     // Уникальный ключ — один job на orderId в очереди
     public function uniqueId(OrderStatusChangedEvent $event): string
     {
-        return 'order_status_' . $event->dto->orderId;
+        return 'order_status_'.$event->dto->orderId;
     }
 
     // Держать блокировку 60 секунд

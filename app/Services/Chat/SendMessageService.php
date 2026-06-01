@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Chat;
 
 use App\Dto\Chat\MessageDto;
@@ -17,10 +19,9 @@ final class SendMessageService
     }
 
     /**
-     * @param SendMessageDto $dto
      * @return MessageDto
      *
-     * Dispatches a new message in a conversation, validates ownership for regular users, and triggers a message sent event.
+     * Dispatches a new message in a conversation, validates ownership for regular users, and triggers a message sent event
      */
     public function sendMessage(SendMessageDto $dto): MessageDto
     {

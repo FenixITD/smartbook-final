@@ -24,9 +24,9 @@ class GenreResponseDto
             id: $genre->id,
             name: $genre->name,
             slug: $genre->slug,
-            createdAt: $genre->created_at?->toDateTimeString() ?? '',
-            updatedAt: $genre->updated_at?->toDateTimeString() ?? '',
-            booksCount: $author->books_count ?? 0,
+            createdAt: $genre->created_at !== null ? $genre->created_at->toDateTimeString() : '',
+            updatedAt: $genre->updated_at !== null ? $genre->updated_at->toDateTimeString() : '',
+            booksCount: $genre->books_count ?? 0,
         );
     }
 }

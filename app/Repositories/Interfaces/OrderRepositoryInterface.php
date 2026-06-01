@@ -14,6 +14,7 @@ interface OrderRepositoryInterface
     /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array;
 
+    /** @param array<int> $ids */
     public function getWebListByIds(array $ids, OrderFiltersDto $filters): PaginatedResponseDto;
 
     public function getById(int $id): OrderResponseDto|null;
@@ -24,7 +25,7 @@ interface OrderRepositoryInterface
     public function suggest(string $query): array;
 
     /** @param array<int> $ids
-     *  @return array<OrderResponseDto> */
+     * @return array<OrderResponseDto> */
     public function getByIds(array $ids): array;
 
     public function create(OrderDto $data): OrderResponseDto;

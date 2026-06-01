@@ -14,7 +14,8 @@ final readonly class ClearCartController
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $guestCartService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(): RedirectResponse
     {

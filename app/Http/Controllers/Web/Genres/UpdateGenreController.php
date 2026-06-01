@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Genres;
 
 use App\Http\Requests\Genre\GenreDataRequest;
-use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;

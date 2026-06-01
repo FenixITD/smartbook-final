@@ -14,7 +14,8 @@ final readonly class RemoveFromCartController
     public function __construct(
         private RemoveCartItemService $authService,
         private GuestCartService $guestService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(int $bookId): RedirectResponse
     {

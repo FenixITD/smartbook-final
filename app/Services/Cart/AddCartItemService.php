@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Cart;
 
 use App\Dto\CartItem\CartItemDto;
@@ -10,7 +12,8 @@ class AddCartItemService
 {
     public function __construct(
         private CartItemRepositoryInterface $repository,
-    ) {}
+    ) {
+    }
 
     public function add(int $bookId, int $quantity): void
     {

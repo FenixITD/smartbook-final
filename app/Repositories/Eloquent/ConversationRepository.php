@@ -10,6 +10,7 @@ use App\Models\Conversation;
 use App\Models\Message;
 use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
 final class ConversationRepository implements ConversationRepositoryInterface
@@ -19,7 +20,7 @@ final class ConversationRepository implements ConversationRepositoryInterface
         return Conversation::with([
             'user:id,name',
             'book:id,title',
-            'messages' => static function ($q): void {
+            'messages' => static function (HasMany $q): void {
                 $q->latest()->limit(1);
             },
         ])
@@ -64,7 +65,7 @@ final class ConversationRepository implements ConversationRepositoryInterface
 
     public function getTotalUnreadCount(): int
     {
-        return (int) Message::whereNull('read_at')
+        return Message::whereNull('read_at')
             ->whereExists(static function (QueryBuilder $q): void {
                 $q->selectRaw('1')
                     ->from('conversations')

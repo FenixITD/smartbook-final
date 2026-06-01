@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 abstract class BaseEntityObserver
 {
     /**
-     * Fields that are not included in the notification.
+     * @var array<int, string>
      */
     protected array $hidden = ['password', 'remember_token'];
 
@@ -31,6 +31,7 @@ abstract class BaseEntityObserver
 
     private function dispatch(Model $model, string $action): void
     {
+        /** @var array<string, mixed> $data */
         $data = collect($model->getAttributes())
             ->except($this->hidden)
             ->toArray();

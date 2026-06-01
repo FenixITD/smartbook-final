@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Web\Genres\CreateGenreController;
 use App\Http\Controllers\Web\Genres\DeleteGenreController;
 use App\Http\Controllers\Web\Genres\GetByIdGenreController;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Api\OrderItems\CreateOrderItemController;
 use App\Http\Controllers\Api\OrderItems\DeleteOrderItemController;
 use App\Http\Controllers\Api\OrderItems\GetOrderItemController;

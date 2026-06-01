@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Chat;
 
 use App\Dto\Chat\ConversationMessageDto;
@@ -13,11 +15,9 @@ final class OpenConversationService
     }
 
     /**
-     * @param int $userId
-     * @param int $bookId
      * @return ConversationMessageDto
      *
-     * Finds an existing conversation or creates a new one between a user and admin regarding a specific book, returning the conversation details and its messages.
+     * Finds an existing conversation or creates a new one between a user and admin regarding a specific book, returning the conversation details and its messages
      */
     public function openConversation(int $userId, int $bookId): ConversationMessageDto
     {

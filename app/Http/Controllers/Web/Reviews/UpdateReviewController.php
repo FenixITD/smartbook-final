@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Reviews;
 
 use App\Http\Requests\Review\ReviewDataRequest;
-use App\Models\Review;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;

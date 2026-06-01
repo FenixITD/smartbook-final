@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Web\CartItems\AddToCartController;
 use App\Http\Controllers\Web\CartItems\ClearCartController;
 use App\Http\Controllers\Web\CartItems\RemoveFromCartController;

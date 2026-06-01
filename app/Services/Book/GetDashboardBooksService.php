@@ -13,7 +13,8 @@ final class GetDashboardBooksService
     public function __construct(
         private readonly SearchBookForDashboardService $searchService,
         private readonly BookRepositoryInterface $bookRepository,
-    ) {}
+    ) {
+    }
 
     public function get(DashboardFiltersDto $filters): PaginatedResponseDto
     {

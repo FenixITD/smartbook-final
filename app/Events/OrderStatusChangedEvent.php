@@ -10,9 +10,11 @@ use Illuminate\Queue\SerializesModels;
 
 final class OrderStatusChangedEvent
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public function __construct(
         public readonly OrderStatusChangedDto $dto,
-    ) {}
+    ) {
+    }
 }

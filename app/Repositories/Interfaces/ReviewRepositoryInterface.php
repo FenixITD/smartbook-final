@@ -14,6 +14,7 @@ interface ReviewRepositoryInterface
     /** @return array<ReviewResponseDto> */
     public function getList(ReviewFiltersDto $filters): array;
 
+    /** @param array<int> $ids */
     public function getWebListByIds(array $ids, ReviewFiltersDto $filters): PaginatedResponseDto;
 
     public function getById(int $id): ReviewResponseDto|null;
@@ -24,7 +25,7 @@ interface ReviewRepositoryInterface
     public function suggest(string $query): array;
 
     /** @param array<int> $ids
-     *  @return array<ReviewResponseDto> */
+     * @return array<ReviewResponseDto> */
     public function getByIds(array $ids): array;
 
     public function create(ReviewDto $data): ReviewResponseDto;

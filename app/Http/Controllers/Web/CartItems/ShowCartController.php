@@ -14,7 +14,8 @@ final readonly class ShowCartController
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private GuestCartService $guestCartService,
-    ) {}
+    ) {
+    }
 
     public function __invoke(): View
     {

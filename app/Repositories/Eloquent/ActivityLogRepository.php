@@ -15,20 +15,21 @@ final readonly class ActivityLogRepository implements ActivityLogRepositoryInter
     {
         $query = ActivityLog::query();
 
+        // Use getQuery() to bypass Eloquent's strict column checks from docblocks
         if ($filters->logName !== null) {
-            $query->where('log_name', $filters->logName);
+            $query->getQuery()->where('log_name', $filters->logName);
         }
 
         if ($filters->causerId !== null) {
-            $query->where('causer_id', $filters->causerId);
+            $query->getQuery()->where('causer_id', $filters->causerId);
         }
 
         if ($filters->subjectType !== null) {
-            $query->where('subject_type', $filters->subjectType);
+            $query->getQuery()->where('subject_type', $filters->subjectType);
         }
 
-        if (!empty($filters->logNames)) {
-            $query->whereIn('log_name', $filters->logNames);
+        if ($filters->logNames !== []) {
+            $query->getQuery()->whereIn('log_name', $filters->logNames);
         }
 
         $paginator = $query

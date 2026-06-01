@@ -7,6 +7,7 @@ namespace App\Services\Order;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 
 final readonly class SearchOrderByQueryService
 {
@@ -15,18 +16,19 @@ final readonly class SearchOrderByQueryService
     }
 
     /**
-     * @param string $query
-     * @param int $limit
-     * @return array
+     * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
      *
-     * Performs a full-text search for orders in Elasticsearch by the user's name, returning an array of matched order IDs.
+     * Performs a full-text search for orders in Elasticsearch by the user's name, returning an array of matched order IDs
      */
     public function search(string $query, int $limit = 5): array
     {
+        $index = config('elasticsearch.orders_index');
+
+        /** @var Elasticsearch $response */
         $response = $this->client->search([
-            'index' => (string) config('elasticsearch.orders_index'),
+            'index' => is_scalar($index) ? (string) $index : '',
             'body' => [
                 'query' => [
                     'bool' => [
@@ -54,8 +56,10 @@ final readonly class SearchOrderByQueryService
             ],
         ]);
 
-        /** @var array<int, array<string, mixed>> $hits */
-        $hits = $response->asArray()['hits']['hits'];
+        /** @var array{hits: array{hits: array<int, array{_id: int|string}>}} $body */
+        $body = $response->asArray();
+
+        $hits = $body['hits']['hits'];
 
         return array_map(static fn (array $hit): int => (int) $hit['_id'], $hits);
     }

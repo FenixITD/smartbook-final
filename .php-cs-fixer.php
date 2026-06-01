@@ -9,13 +9,12 @@ use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 $finder = Finder::create()
     ->in([
         __DIR__.'/app',
-        __DIR__.'/tests',
-        __DIR__.'/database',
     ])
     ->name('*.php')
     ->notName('*.blade.php')
     ->ignoreDotFiles(true)
-    ->ignoreVCS(true);
+    ->ignoreVCS(true)
+    ->exclude('Dto');
 
 return (new Config)
     ->setParallelConfig(ParallelConfigFactory::detect())

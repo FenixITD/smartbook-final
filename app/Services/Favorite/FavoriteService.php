@@ -17,8 +17,7 @@ final readonly class FavoriteService
     ) {
     }
 
-
-    public function getBooksByUser(int $userId, FavoriteFiltersDto $filters): ?PaginatedResponseDto
+    public function getBooksByUser(int $userId, FavoriteFiltersDto $filters): PaginatedResponseDto|null
     {
         $favoriteBookIds = $this->favoriteRepository->getBookIdsByUser($userId);
 

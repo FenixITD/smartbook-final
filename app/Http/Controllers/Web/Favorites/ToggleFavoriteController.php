@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Web\Favorites;
 use App\Http\Requests\Favorite\FavoriteToggleWebRequest;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
+use App\Models\User;
 
 final readonly class ToggleFavoriteController
 {
@@ -17,8 +18,11 @@ final readonly class ToggleFavoriteController
 
     public function __invoke(FavoriteToggleWebRequest $request): RedirectResponse
     {
+        /** @var User $user */
+        $user = $request->user();
+
         $this->favoriteRepository->toggle(
-            userId: (int) $request->user()->id,
+            userId: $user->id,
             bookId: $request->integer('book_id'),
         );
 

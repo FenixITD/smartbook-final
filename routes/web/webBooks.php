@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Web\Books\CreateBookController;
 use App\Http\Controllers\Web\Books\DeleteBookController;
 use App\Http\Controllers\Web\Books\GetByIdBookController;

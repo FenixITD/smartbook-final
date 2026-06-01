@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Api\Favorites\CreateFavoriteController;
 use App\Http\Controllers\Api\Favorites\DeleteFavoriteController;
 use App\Http\Controllers\Api\Favorites\GetFavoriteController;

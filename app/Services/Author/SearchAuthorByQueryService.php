@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Author;
 
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 
 final readonly class SearchAuthorByQueryService
 {
@@ -13,16 +14,17 @@ final readonly class SearchAuthorByQueryService
     }
 
     /**
-     * @param string $query
-     * @param int $limit
      * @return array<int>
      *
-     * Performs a full-text search for authors in Elasticsearch by name, returning an array of matched author IDs.
+     * Performs a full-text search for authors in Elasticsearch by name, returning an array of matched author IDs
      */
     public function search(string $query, int $limit = 5): array
     {
+        $index = config('elasticsearch.authors_index');
+
+        /** @var Elasticsearch $response */
         $response = $this->client->search([
-            'index' => (string) config('elasticsearch.authors_index'),
+            'index' => is_scalar($index) ? (string) $index : '',
             'body' => [
                 'query' => [
                     'bool' => [
@@ -50,8 +52,10 @@ final readonly class SearchAuthorByQueryService
             ],
         ]);
 
-        /** @var array<int, array<string, mixed>> $hits */
-        $hits = $response->asArray()['hits']['hits'];
+        /** @var array{hits: array{hits: array<int, array{_id: int|string}>}} $body */
+        $body = $response->asArray();
+
+        $hits = $body['hits']['hits'];
 
         return array_map(static fn (array $hit): int => (int) $hit['_id'], $hits);
     }

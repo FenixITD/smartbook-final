@@ -21,10 +21,10 @@ final class GetMessageController extends Controller
 
     public function __invoke(int $conversationId): JsonResponse
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = Auth::user();
 
-        if (!$user instanceof User) {
+        if ($user === null) {
             abort(401);
         }
 

@@ -17,12 +17,16 @@ class Author extends Model
     /** @use HasFactory<AuthorFactory> */
     use HasFactory;
 
-    use LogsActivity, Searchable;
+    use LogsActivity;
+    use Searchable;
 
     protected $fillable = [
         'name',
     ];
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toSearchableArray(): array
     {
         return [

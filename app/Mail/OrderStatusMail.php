@@ -14,11 +14,13 @@ use Illuminate\Queue\SerializesModels;
 
 final class OrderStatusMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public function __construct(
         private readonly OrderStatusChangedDto $dto,
-    ) {}
+    ) {
+    }
 
     public function envelope(): Envelope
     {

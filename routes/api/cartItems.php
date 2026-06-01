@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Api\CartItems\CreateCartItemController;
 use App\Http\Controllers\Api\CartItems\DeleteCartItemController;
 use App\Http\Controllers\Api\CartItems\GetCartItemController;

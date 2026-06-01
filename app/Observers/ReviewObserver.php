@@ -6,5 +6,4 @@ namespace App\Observers;
 
 final class ReviewObserver extends BaseEntityObserver
 {
-    //
 }

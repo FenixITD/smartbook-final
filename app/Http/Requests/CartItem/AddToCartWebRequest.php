@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\CartItem;
 
-use App\Dto\CartItem\CartItemDto;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 final class AddToCartWebRequest extends FormRequest
 {

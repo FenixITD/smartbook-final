@@ -23,22 +23,20 @@ final class OrderObserver extends BaseEntityObserver
 
         $user = $model->user;
 
-        OrderCreatedEvent::dispatch(
-            new OrderStatusChangedDto(
-                orderId: $model->id,
-                oldStatus: '',
-                newStatus: $model->status,
-                userEmail: $user->email,
-                userName: $user->name,
-                total: (float) $model->total,
-            ),
-        );
+        if ($user !== null) {
+            OrderCreatedEvent::dispatch(
+                new OrderStatusChangedDto(
+                    orderId: $model->id,
+                    oldStatus: '',
+                    newStatus: $model->status,
+                    userEmail: $user->email ?? '',
+                    userName: $user->name ?? '',
+                    total: $model->total,
+                ),
+            );
+        }
     }
 
-    /**
-     * Extends the base RabbitMQ notification with an order-status email.
-     * parent::updated() keeps the existing SendEntityNotificationJob dispatch.
-     */
     public function updated(Model $model): void
     {
         parent::updated($model);
@@ -57,21 +55,26 @@ final class OrderObserver extends BaseEntityObserver
 
         $newStatus = OrderStatusEnum::tryFrom($model->status);
 
-        if ($newStatus === null || !$newStatus->shouldNotify()) {
+        if (!$newStatus->shouldNotify()) {
             return;
         }
 
         $user = $model->user;
 
-        OrderStatusChangedEvent::dispatch(
-            new OrderStatusChangedDto(
-                orderId: $model->id,
-                oldStatus: $model->getOriginal('status') ?? '',
-                newStatus: $model->status,
-                userEmail: $user->email,
-                userName: $user->name,
-                total: (float) $model->total,
-            ),
-        );
+        /** @var string|null $originalStatus */
+        $originalStatus = $model->getOriginal('status');
+
+        if ($user !== null) {
+            OrderStatusChangedEvent::dispatch(
+                new OrderStatusChangedDto(
+                    orderId: $model->id,
+                    oldStatus: $originalStatus ?? '',
+                    newStatus: $model->status,
+                    userEmail: $user->email ?? '',
+                    userName: $user->name ?? '',
+                    total: $model->total,
+                ),
+            );
+        }
     }
 }

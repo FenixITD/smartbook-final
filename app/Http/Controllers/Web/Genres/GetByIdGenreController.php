@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\Genres;
 
-use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use Illuminate\View\View;
 

@@ -17,7 +17,9 @@ final class SendOrderCreatedEmailListener implements ShouldQueue, ShouldBeUnique
     use InteractsWithQueue;
 
     public string $queue = 'notifications';
+
     public int $tries = 3;
+
     public int $backoff = 60;
 
     public function handle(OrderCreatedEvent $event): void

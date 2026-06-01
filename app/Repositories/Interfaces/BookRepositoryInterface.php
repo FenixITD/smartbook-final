@@ -30,6 +30,7 @@ interface BookRepositoryInterface
     /** @param array<int> $ids */
     public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto;
 
+    /** @param array<int> $ids */
     public function getDashboardListByIds(array $ids, DashboardFiltersDto $filters): PaginatedResponseDto;
 
     public function getById(int $id): BookResponseDto|null;

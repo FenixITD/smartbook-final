@@ -55,7 +55,7 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function suggest(string $query): array
     {
-        return Review::where('content', 'like', "%{$query}%")
+        return Review::where('comment', 'like', "%{$query}%")
             ->orderByDesc('id')
             ->limit(20)
             ->get()
