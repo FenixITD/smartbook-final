@@ -26,7 +26,7 @@ class OrderResponseDto
         return new self(
             id: $order->id,
             userId: $order->user_id,
-            userName: $order->user !== null ? $order->user->name : '',
+            userName: $order->relationLoaded('user') && $order->user !== null ? $order->user->name : '',
             total: $order->total,
             status: $order->status,
             shippingAddress: $order->shipping_address ?? '',
