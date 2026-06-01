@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Chat;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Eloquent\ConversationRepository;
+use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
 final class CloseConversationController extends Controller
 {
     public function __construct(
-        private ConversationRepository $repository,
+        private ConversationRepositoryInterface $repository,
     ) {
     }
 

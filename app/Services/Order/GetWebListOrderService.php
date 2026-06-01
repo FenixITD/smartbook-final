@@ -8,7 +8,7 @@ use App\Dto\Order\OrderFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 
-final class GetWebListOrderService
+class GetWebListOrderService
 {
     public function __construct(
         private readonly SearchOrderService $searchService,

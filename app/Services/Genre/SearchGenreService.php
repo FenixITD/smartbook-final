@@ -11,7 +11,7 @@ use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use stdClass;
 
-final readonly class SearchGenreService
+class SearchGenreService
 {
     public function __construct(private Client $client)
     {

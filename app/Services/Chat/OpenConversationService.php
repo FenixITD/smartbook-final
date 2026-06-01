@@ -7,7 +7,7 @@ namespace App\Services\Chat;
 use App\Dto\Chat\ConversationMessageDto;
 use App\Repositories\Interfaces\ConversationRepositoryInterface;
 
-final class OpenConversationService
+class OpenConversationService
 {
     public function __construct(
         private ConversationRepositoryInterface $conversationRepository,

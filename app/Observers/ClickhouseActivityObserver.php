@@ -6,13 +6,13 @@ namespace App\Observers;
 
 use App\Models\ClickhouseActivity;
 use App\Services\Clickhouse\ClickhouseActivityService;
-use App\Services\Clickhouse\ClickhouseManager;
+use App\Services\Clickhouse\ClickhouseManagerService;
 
 final readonly class ClickhouseActivityObserver
 {
     public function __construct(
         private ClickhouseActivityService $service,
-        private ClickhouseManager $ch,
+        private ClickhouseManagerService  $ch,
     ) {
     }
 

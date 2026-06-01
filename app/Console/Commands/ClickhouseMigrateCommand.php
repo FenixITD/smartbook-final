@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Services\Clickhouse\ClickhouseManager;
+use App\Services\Clickhouse\ClickhouseManagerService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
@@ -14,7 +14,7 @@ final class ClickhouseMigrateCommand extends Command
 
     protected $description = 'Run all ClickHouse SQL migrations from database/clickhouse/';
 
-    public function handle(ClickhouseManager $ch): int
+    public function handle(ClickhouseManagerService $ch): int
     {
         if (!$ch->ping()) {
             $this->error('Cannot connect to ClickHouse. Check CLICKHOUSE_* env variables.');

@@ -47,8 +47,10 @@ use App\Repositories\Interfaces\OrderItemRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Services\Cart\GuestCartStorageInterface;
+use App\Services\Cart\SessionGuestCartStorage;
 use App\Services\Clickhouse\ClickhouseActivityService;
-use App\Services\Clickhouse\ClickhouseManager;
+use App\Services\Clickhouse\ClickhouseManagerService;
 use Carbon\CarbonImmutable;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
@@ -131,9 +133,14 @@ class AppServiceProvider extends ServiceProvider
             ActivityLogRepository::class,
         );
 
+        $this->app->bind(
+            GuestCartStorageInterface::class,
+            SessionGuestCartStorage::class,
+        );
+
         // Single HTTP connection to ClickHouse reused for the whole request lifetime
         $this->app->singleton(
-            ClickhouseManager::class
+            ClickhouseManagerService::class
         );
 
         /**

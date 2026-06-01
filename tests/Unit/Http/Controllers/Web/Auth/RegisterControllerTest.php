@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Tests\Unit\Http\Controllers\Web\Auth;
 
 use App\Dto\Auth\RegisterDto;
+use App\Dto\User\UserResponseDto;
 use App\Http\Controllers\Web\Auth\RegisterController;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Services\Auth\LoginService;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
@@ -19,15 +20,15 @@ use Tests\TestCase;
 
 final class RegisterControllerTest extends TestCase
 {
-    private MockInterface&LoginService $authService;
+    private MockInterface&UserRepositoryInterface $repository;
     private RegisterController $controller;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->authService = Mockery::mock(LoginService::class);
-        $this->app->instance(LoginService::class, $this->authService);
+        $this->repository = Mockery::mock(UserRepositoryInterface::class);
+        $this->app->instance(UserRepositoryInterface::class, $this->repository);
         $this->controller = $this->app->make(RegisterController::class);
     }
 
@@ -53,7 +54,8 @@ final class RegisterControllerTest extends TestCase
 
     public function test_store_redirects_to_dashboard_after_registration(): void
     {
-        $this->authService->shouldReceive('register')->once();
+        $this->repository->shouldReceive('create')->once()->andReturn($this->makeUserResponseDto(1));
+        Auth::shouldReceive('loginUsingId')->once()->with(1);
 
         $response = $this->controller->store($this->makeRequest([
             'name' => 'John Doe',
@@ -66,11 +68,10 @@ final class RegisterControllerTest extends TestCase
         $this->assertSame(route('dashboard'), $response->getTargetUrl());
     }
 
-    public function test_store_calls_register_on_service(): void
+    public function test_store_calls_create_on_repository(): void
     {
-        $this->authService
-            ->shouldReceive('register')
-            ->once();
+        $this->repository->shouldReceive('create')->once()->andReturn($this->makeUserResponseDto(2));
+        Auth::shouldReceive('loginUsingId')->once()->with(2);
 
         $this->controller->store($this->makeRequest([
             'name' => 'John Doe',
@@ -80,15 +81,18 @@ final class RegisterControllerTest extends TestCase
         ]));
     }
 
-    public function test_store_passes_dto_from_request_to_service(): void
+    public function test_store_passes_dto_from_request_to_repository(): void
     {
-        $this->authService
-            ->shouldReceive('register')
+        $this->repository
+            ->shouldReceive('create')
             ->once()
             ->with(Mockery::on(fn (RegisterDto $dto) =>
                 $dto->name === 'Jane Doe'
                 && $dto->email === 'jane@example.com'
-            ));
+            ))
+            ->andReturn($this->makeUserResponseDto(3));
+
+        Auth::shouldReceive('loginUsingId')->once()->with(3);
 
         $this->controller->store($this->makeRequest([
             'name' => 'Jane Doe',
@@ -109,5 +113,17 @@ final class RegisterControllerTest extends TestCase
         $request->setLaravelSession($session);
 
         return $request;
+    }
+
+    private function makeUserResponseDto(int $id): UserResponseDto
+    {
+        return new UserResponseDto(
+            id: $id,
+            name: 'Test',
+            email: 'test@example.com',
+            role: 'user',
+            createdAt: '2024-01-01 00:00:00',
+            updatedAt: '2024-01-01 00:00:00'
+        );
     }
 }

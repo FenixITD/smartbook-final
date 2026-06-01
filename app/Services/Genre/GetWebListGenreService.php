@@ -8,7 +8,7 @@ use App\Dto\Genre\GenreFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 
-final class GetWebListGenreService
+class GetWebListGenreService
 {
     public function __construct(
         private readonly SearchGenreService $searchService,

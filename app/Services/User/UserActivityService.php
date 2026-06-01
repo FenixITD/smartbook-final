@@ -11,7 +11,7 @@ use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\ActivityLogRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-final readonly class UserActivityService
+class UserActivityService
 {
     public function __construct(
         private ActivityLogRepositoryInterface $activityRepository,

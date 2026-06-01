@@ -10,7 +10,7 @@ use App\Events\MessageSentEvent;
 use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use App\Repositories\Interfaces\MessageRepositoryInterface;
 
-final class SendMessageService
+class SendMessageService
 {
     public function __construct(
         private ConversationRepositoryInterface $conversationRepository,

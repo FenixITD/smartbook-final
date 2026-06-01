@@ -9,7 +9,7 @@ use App\Dto\Chat\MessageDto;
 use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use App\Repositories\Interfaces\MessageRepositoryInterface;
 
-final class GetConversationMessagesService
+class GetConversationMessagesService
 {
     public function __construct(
         private ConversationRepositoryInterface $conversationRepository,

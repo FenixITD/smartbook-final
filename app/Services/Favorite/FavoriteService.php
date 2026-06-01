@@ -9,7 +9,7 @@ use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 
-final readonly class FavoriteService
+class FavoriteService
 {
     public function __construct(
         private FavoriteRepositoryInterface $favoriteRepository,

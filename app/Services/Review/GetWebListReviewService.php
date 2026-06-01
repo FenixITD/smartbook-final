@@ -8,7 +8,7 @@ use App\Dto\PaginatedResponseDto;
 use App\Dto\Review\ReviewFiltersDto;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 
-final class GetWebListReviewService
+class GetWebListReviewService
 {
     public function __construct(
         private readonly SearchReviewService $searchService,

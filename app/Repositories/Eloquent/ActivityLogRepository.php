@@ -6,39 +6,46 @@ namespace App\Repositories\Eloquent;
 
 use App\Dto\ActivityLog\ActivityLogFiltersDto;
 use App\Dto\PaginatedResponseDto;
-use App\Models\ActivityLog;
 use App\Repositories\Interfaces\ActivityLogRepositoryInterface;
+use App\Services\Clickhouse\ClickhouseManagerService;
 
 final readonly class ActivityLogRepository implements ActivityLogRepositoryInterface
 {
+    public function __construct(private ClickhouseManagerService $clickhouse) {}
+
     public function getPaginated(ActivityLogFiltersDto $filters): PaginatedResponseDto
     {
-        $query = ActivityLog::query();
+        $query = $this->clickhouse->table('activity_log');
 
-        // Use getQuery() to bypass Eloquent's strict column checks from docblocks
         if ($filters->logName !== null) {
-            $query->getQuery()->where('log_name', $filters->logName);
+            $query->where('log_name', $filters->logName);
         }
 
         if ($filters->causerId !== null) {
-            $query->getQuery()->where('causer_id', $filters->causerId);
+            $query->where('causer_id', $filters->causerId);
         }
 
         if ($filters->subjectType !== null) {
-            $query->getQuery()->where('subject_type', $filters->subjectType);
+            $query->where('subject_type', $filters->subjectType);
         }
 
         if ($filters->logNames !== []) {
-            $query->getQuery()->whereIn('log_name', $filters->logNames);
+            $query->whereIn('log_name', $filters->logNames);
         }
 
-        $paginator = $query
-            ->orderByDesc('created_at')
-            ->paginate(
-                perPage: $filters->perPage,
-                page: $filters->page,
-            );
+        $total = $query->count();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        $rows = $query
+            ->orderByDesc('created_at')
+            ->limit($filters->perPage)
+            ->offset(($filters->page - 1) * $filters->perPage)
+            ->get();
+
+        return PaginatedResponseDto::create(
+            items: $rows,
+            total: $total,
+            perPage: $filters->perPage,
+            currentPage: $filters->page,
+        );
     }
 }

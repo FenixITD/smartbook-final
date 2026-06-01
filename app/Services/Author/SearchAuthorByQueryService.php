@@ -7,7 +7,7 @@ namespace App\Services\Author;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 
-final readonly class SearchAuthorByQueryService
+class SearchAuthorByQueryService
 {
     public function __construct(private Client $client)
     {

@@ -12,6 +12,7 @@
         "php": "^8.2",
         "ext-gd": "*",
         "babenkoivan/elastic-scout-driver": "^4.0",
+        "cybercog/laravel-clickhouse": "^0.2.1",
         "darkaonline/l5-swagger": "^10.0",
         "elasticsearch/elasticsearch": "^8.11",
         "laravel/fortify": "^1.30",
@@ -24,11 +25,11 @@
         "livewire/flux": "^2.13",
         "livewire/livewire": "^4.2",
         "pusher/pusher-php-server": "^7.2",
+        "smi2/phpclickhouse": "^1.5",
         "spatie/laravel-activitylog": "^4.12",
         "symfony/filesystem": "^7.0",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.5",
-        "zircote/swagger-php": "^5.7",
-        "smi2/phpclickhouse": "^1.5"
+        "zircote/swagger-php": "^5.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_UNICODE;
 
-final readonly class ClickhouseActivityService
+class ClickhouseActivityService
 {
     /**
      * @return array<string, mixed>

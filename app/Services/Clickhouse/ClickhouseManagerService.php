@@ -6,7 +6,7 @@ namespace App\Services\Clickhouse;
 
 use ClickHouseDB\Client;
 
-final class ClickhouseManager
+class ClickhouseManagerService
 {
     private Client $client;
 
@@ -84,5 +84,10 @@ final class ClickhouseManager
     public function ping(): bool
     {
         return $this->client->ping();
+    }
+
+    public function table(string $table): ClickhouseQueryBuilderService
+    {
+        return new ClickhouseQueryBuilderService($this, $table);
     }
 }

@@ -8,7 +8,7 @@ use App\Dto\Dashboard\DashboardFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
-final class GetDashboardBooksService
+class GetDashboardBooksService
 {
     public function __construct(
         private readonly SearchBookForDashboardService $searchService,

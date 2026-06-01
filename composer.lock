@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62bdfd3201250a0867f90b01b8ad0758",
+    "content-hash": "383b6034e7a45618fc7cdd31e6cb82dd",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -681,6 +681,83 @@
                 }
             ],
             "time": "2025-01-03T16:18:33+00:00"
+        },
+        {
+            "name": "cybercog/laravel-clickhouse",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cybercog/laravel-clickhouse.git",
+                "reference": "d327cbbfbf56be002c4b0840db7a0c66299ad0dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cybercog/laravel-clickhouse/zipball/d327cbbfbf56be002c4b0840db7a0c66299ad0dd",
+                "reference": "d327cbbfbf56be002c4b0840db7a0c66299ad0dd",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^11.0|^12.0|^13.0",
+                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "illuminate/filesystem": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "php": "^8.2",
+                "smi2/phpclickhouse": "^1.5.3"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "phpunit/phpunit": "^11.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Cog\\Laravel\\Clickhouse\\ClickhouseServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cog\\Laravel\\Clickhouse\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anton Komarev",
+                    "email": "anton@komarev.com",
+                    "homepage": "https://komarev.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "ClickHouse migrations for Laravel",
+            "homepage": "https://komarev.com/sources/laravel-clickhouse",
+            "keywords": [
+                "clickhouse",
+                "cog",
+                "cybercog",
+                "database",
+                "db",
+                "laravel",
+                "migration"
+            ],
+            "support": {
+                "docs": "https://github.com/cybercog/laravel-clickhouse",
+                "email": "open@cybercog.su",
+                "issues": "https://github.com/cybercog/laravel-clickhouse/issues",
+                "source": "https://github.com/cybercog/laravel-clickhouse",
+                "wiki": "https://github.com/cybercog/laravel-clickhouse/wiki"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/antonkomarev",
+                    "type": "custom"
+                }
+            ],
+            "time": "2026-03-01T08:45:16+00:00"
         },
         {
             "name": "darkaonline/l5-swagger",

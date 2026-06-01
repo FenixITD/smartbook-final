@@ -70,35 +70,59 @@
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                    @forelse ($logs->items as $log)
+                    @forelse ($logs->items as $item)
                         @php
-                            $eventColor = match($log->description) {
+                            // Универсальное приведение к массиву для безопасного извлечения данных
+                            $log = is_object($item) ? (method_exists($item, 'toArray') ? $item->toArray() : (array) $item) : $item;
+
+                            // Извлекаем ключи с поддержкой как DTO (camelCase), так и сырых данных БД (snake_case)
+                            $id = $log['id'] ?? null;
+                            $description = $log['description'] ?? '';
+                            $logName = $log['logName'] ?? $log['log_name'] ?? null;
+                            $subjectType = $log['subjectType'] ?? $log['subject_type'] ?? null;
+                            $subjectId = $log['subjectId'] ?? $log['subject_id'] ?? null;
+                            $causerName = $log['causerName'] ?? $log['causer_name'] ?? null;
+                            $causerId = $log['causerId'] ?? $log['causer_id'] ?? null;
+                            $createdAt = $log['createdAt'] ?? $log['created_at'] ?? null;
+
+                            $eventColor = match($description) {
                                 'created' => 'bg-green-100 text-green-700',
                                 'updated' => 'bg-blue-100 text-blue-700',
                                 'deleted' => 'bg-red-100 text-red-700',
                                 default   => 'bg-zinc-100 text-zinc-600',
                             };
-                            $attributes = $log->properties['attributes'] ?? array_diff_key($log->properties, array_flip(['old', 'attributes']));
-                            $old = $log->properties['old'] ?? [];
+
+                            // ClickHouse может отдавать properties в виде JSON-строки
+                            $props = $log['properties'] ?? [];
+                            if (is_string($props)) {
+                                $props = json_decode($props, true) ?? [];
+                            } elseif (is_object($props) && method_exists($props, 'toArray')) {
+                                $props = $props->toArray();
+                            } else {
+                                $props = (array) $props;
+                            }
+
+                            $attributes = $props['attributes'] ?? array_diff_key($props, array_flip(['old', 'attributes']));
+                            $old = $props['old'] ?? [];
                         @endphp
                         <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors align-top">
-                            <td class="px-4 py-3 text-sm text-zinc-400">{{ $log->id }}</td>
+                            <td class="px-4 py-3 text-sm text-zinc-400">{{ $id }}</td>
 
                             <td class="px-4 py-3">
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $eventColor }}">
-                                        {{ ucfirst($log->description) }}
-                                    </span>
-                                @if ($log->logName)
-                                    <p class="text-xs text-zinc-400 mt-1">{{ $log->logName }}</p>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $eventColor }}">
+                                    {{ ucfirst($description) }}
+                                </span>
+                                @if ($logName)
+                                    <p class="text-xs text-zinc-400 mt-1">{{ $logName }}</p>
                                 @endif
                             </td>
 
                             <td class="px-4 py-3">
                                 <p class="text-sm font-medium text-zinc-800 dark:text-zinc-200">
-                                    {{ $log->subjectType ?? '—' }}
+                                    {{ $subjectType ?? '—' }}
                                 </p>
-                                @if ($log->subjectId)
-                                    <p class="text-xs text-zinc-400">ID: {{ $log->subjectId }}</p>
+                                @if ($subjectId)
+                                    <p class="text-xs text-zinc-400">ID: {{ $subjectId }}</p>
                                 @endif
                             </td>
 
@@ -110,15 +134,15 @@
                                                 <span class="font-medium text-zinc-600 dark:text-zinc-400">{{ $field }}:</span>
                                                 @if (isset($old[$field]) && $old[$field] !== $newValue)
                                                     <span class="line-through text-red-400 ml-1">
-                                                            {{ is_array($old[$field]) ? json_encode($old[$field]) : $old[$field] }}
-                                                        </span>
+                                                        {{ is_array($old[$field]) ? json_encode($old[$field]) : $old[$field] }}
+                                                    </span>
                                                     <span class="text-green-600 ml-1">
-                                                            {{ is_array($newValue) ? json_encode($newValue) : $newValue }}
-                                                        </span>
+                                                        {{ is_array($newValue) ? json_encode($newValue) : $newValue }}
+                                                    </span>
                                                 @else
                                                     <span class="text-zinc-700 dark:text-zinc-300 ml-1">
-                                                            {{ is_array($newValue) ? json_encode($newValue) : $newValue }}
-                                                        </span>
+                                                        {{ is_array($newValue) ? json_encode($newValue) : $newValue }}
+                                                    </span>
                                                 @endif
                                             </div>
                                         @endforeach
@@ -129,14 +153,14 @@
                             </td>
 
                             <td class="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
-                                {{ $log->causerName ?? 'System' }}
-                                @if ($log->causerId)
-                                    <p class="text-xs text-zinc-400">ID: {{ $log->causerId }}</p>
+                                {{ $causerName ?? 'System' }}
+                                @if ($causerId)
+                                    <p class="text-xs text-zinc-400">ID: {{ $causerId }}</p>
                                 @endif
                             </td>
 
                             <td class="px-4 py-3 text-sm text-zinc-500 whitespace-nowrap">
-                                {{ $log->createdAt }}
+                                {{ $createdAt }}
                             </td>
                         </tr>
                     @empty

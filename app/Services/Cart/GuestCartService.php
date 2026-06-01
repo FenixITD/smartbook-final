@@ -7,42 +7,36 @@ namespace App\Services\Cart;
 use App\Dto\Book\BookResponseDto;
 use App\Dto\CartItem\CartItemWithBookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
+use InvalidArgumentException;
 
-use function is_array;
-
-final readonly class GuestCartService
+class GuestCartService
 {
-    private const SESSION_KEY = 'guest_cart';
-
     public function __construct(
-        private BookRepositoryInterface $repository,
+        private BookRepositoryInterface $bookRepository,
+        private GuestCartStorageInterface $guestCartStorage,
     ) {
     }
 
     /**
      * @return array<int, array{book_id: int, quantity: int}>
-     *
-     * Retrieves all raw cart items currently stored in the guest session
      */
     public function getAll(): array
     {
-        return $this->cart();
+        return $this->guestCartStorage->getCart();
     }
 
     /**
      * @return array<CartItemWithBookResponseDto>
-     *
-     * Retrieves detailed cart items including associated book data for the guest session
      */
     public function getItems(): array
     {
-        $cart = $this->cart();
+        $cart = $this->guestCartStorage->getCart();
 
         if ($cart === []) {
             return [];
         }
 
-        $books = $this->repository->findByIdsWithAuthor(array_keys($cart));
+        $books = $this->bookRepository->findByIdsWithAuthor(array_keys($cart));
 
         /** @var array<int, BookResponseDto> $booksById */
         $booksById = collect($books)
@@ -68,14 +62,9 @@ final readonly class GuestCartService
         return $items;
     }
 
-    /**
-     * @return float
-     *
-     * Calculates the total price of all items currently in the guest session cart
-     */
     public function getTotal(): float
     {
-        $cart = $this->cart();
+        $cart = $this->guestCartStorage->getCart();
 
         if ($cart === []) {
             return 0.0;
@@ -83,70 +72,62 @@ final readonly class GuestCartService
 
         $quantitiesByBookId = array_column($cart, 'quantity', 'book_id');
 
-        return $this->repository->getTotalByIdsAndQuantities($quantitiesByBookId);
+        return $this->bookRepository->getTotalByIdsAndQuantities($quantitiesByBookId);
     }
 
     public function add(int $bookId, int $quantity): void
     {
-        $cart = $this->cart();
+        $this->validateQuantity($quantity);
 
-        if (isset($cart[$bookId])) {
-            $cart[$bookId]['quantity'] += $quantity;
-        } else {
-            $cart[$bookId] = ['book_id' => $bookId, 'quantity' => $quantity];
-        }
+        $cart = $this->guestCartStorage->getCart();
 
-        session([self::SESSION_KEY => $cart]);
+        $cart[$bookId]['quantity'] = ($cart[$bookId]['quantity'] ?? 0) + $quantity;
+        $cart[$bookId]['book_id'] = $bookId;
+
+        $this->guestCartStorage->saveCart($cart);
     }
 
     public function update(int $bookId, int $quantity): void
     {
-        $cart = $this->cart();
+        $this->validateQuantity($quantity);
+
+        $cart = $this->guestCartStorage->getCart();
 
         if (!isset($cart[$bookId])) {
             return;
         }
 
         $cart[$bookId]['quantity'] = $quantity;
-        session([self::SESSION_KEY => $cart]);
+        $this->guestCartStorage->saveCart($cart);
     }
 
     public function remove(int $bookId): void
     {
-        $cart = $this->cart();
-        unset($cart[$bookId]);
-        session([self::SESSION_KEY => $cart]);
+        $cart = $this->guestCartStorage->getCart();
+
+        if (isset($cart[$bookId])) {
+            unset($cart[$bookId]);
+            $this->guestCartStorage->saveCart($cart);
+        }
     }
 
     public function clear(): void
     {
-        session()->forget(self::SESSION_KEY);
+        $this->guestCartStorage->clear();
     }
 
-    /**
-     * @return int
-     *
-     * Returns the total number of individual items currently in the guest session cart
-     */
     public function count(): int
     {
-        return array_sum(array_column($this->cart(), 'quantity'));
+        return array_sum(array_column($this->guestCartStorage->getCart(), 'quantity'));
     }
 
     /**
-     * @return array<int, array{book_id: int, quantity: int}>
-     *
-     * Retrieves the raw cart array directly from the session
+     * @throws InvalidArgumentException
      */
-    private function cart(): array
+    private function validateQuantity(int $quantity): void
     {
-        $raw = session(self::SESSION_KEY, []);
-
-        if (!is_array($raw)) {
-            return [];
+        if ($quantity <= 0) {
+            throw new InvalidArgumentException('Quantity must be strictly positive.');
         }
-
-        /** @var array<int, array{book_id: int, quantity: int}> $raw */
-        return $raw;
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\User;
 
-final class FormatNameService
+class FormatNameService
 {
     public static function initials(string|null $name): string
     {

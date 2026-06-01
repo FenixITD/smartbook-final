@@ -82,21 +82,43 @@
                                     </div>
 
                                     {{-- Quantity --}}
-                                    <form action="{{ route('cart.update', $item->bookId) }}" method="POST" class="flex items-center gap-2">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" name="quantity" value="{{ max(1, $item->quantity - 1) }}"
-                                                class="w-7 h-7 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-sm font-medium">
-                                            −
-                                        </button>
+                                    <div class="flex items-center gap-2">
+                                        @if ($item->quantity > 1)
+                                            {{-- Reduce quantity --}}
+                                            <form action="{{ route('cart.update', $item->bookId) }}" method="POST" class="m-0 flex">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" name="quantity" value="{{ $item->quantity - 1 }}"
+                                                        class="w-7 h-7 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-sm font-medium">
+                                                    −
+                                                </button>
+                                            </form>
+                                        @else
+                                            {{-- Delete this item as quantity is 1 --}}
+                                            <form action="{{ route('cart.destroy', $item->bookId) }}" method="POST" class="m-0 flex">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="w-7 h-7 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950 dark:hover:text-red-500 transition-colors text-sm font-medium">
+                                                    −
+                                                </button>
+                                            </form>
+                                        @endif
+
                                         <span class="w-8 text-center text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                             {{ $item->quantity }}
                                         </span>
-                                        <button type="submit" name="quantity" value="{{ min(99, $item->quantity + 1) }}"
-                                                class="w-7 h-7 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-sm font-medium">
-                                            +
-                                        </button>
-                                    </form>
+
+                                        {{-- Increase quantity --}}
+                                        <form action="{{ route('cart.update', $item->bookId) }}" method="POST" class="m-0 flex">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" name="quantity" value="{{ min(99, $item->quantity + 1) }}"
+                                                    class="w-7 h-7 rounded-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-sm font-medium">
+                                                +
+                                            </button>
+                                        </form>
+                                    </div>
 
                                     {{-- Subtotal --}}
                                     <div class="w-20 text-right shrink-0">

@@ -9,7 +9,7 @@ use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 
-final readonly class SearchOrderByQueryService
+class SearchOrderByQueryService
 {
     public function __construct(private Client $client)
     {
