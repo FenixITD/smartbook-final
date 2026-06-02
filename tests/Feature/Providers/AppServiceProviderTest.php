@@ -14,8 +14,12 @@ use App\Providers\AppServiceProvider;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\Rules\Password;
+use ReflectionClass;
 use Tests\TestCase;
 
 final class AppServiceProviderTest extends TestCase
@@ -38,13 +42,16 @@ final class AppServiceProviderTest extends TestCase
         Event::assertListening(OrderStatusChangedEvent::class, SendOrderStatusEmailListener::class);
         Event::assertListening(OrderCreatedEvent::class, SendOrderCreatedEmailListener::class);
 
-        $date = \Illuminate\Support\Facades\Date::now();
-        $this->assertInstanceOf(\Carbon\CarbonImmutable::class, $date);
+        $date = Date::now();
+        $this->assertInstanceOf(CarbonImmutable::class, $date);
 
-        $rules = \Illuminate\Validation\Rules\Password::defaults();
-        $this->assertInstanceOf(\Illuminate\Validation\Rules\Password::class, $rules);
+        $rules = Password::defaults();
+        $this->assertInstanceOf(Password::class, $rules);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function test_it_applies_strict_security_rules_in_production_environment(): void
     {
         $this->app['env'] = 'production';
@@ -52,9 +59,9 @@ final class AppServiceProviderTest extends TestCase
         $provider = new AppServiceProvider($this->app);
         $provider->boot();
 
-        $passwordValidationRules = \Illuminate\Validation\Rules\Password::defaults();
+        $passwordValidationRules = Password::defaults();
 
-        $reflection = new \ReflectionClass($passwordValidationRules);
+        $reflection = new ReflectionClass($passwordValidationRules);
 
         $minProperty = $reflection->getProperty('min');
         $mixedCaseProperty = $reflection->getProperty('mixedCase');

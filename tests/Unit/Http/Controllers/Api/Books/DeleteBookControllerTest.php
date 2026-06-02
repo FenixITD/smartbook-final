@@ -11,10 +11,6 @@ use Tests\TestCase;
 
 final class DeleteBookControllerTest extends TestCase
 {
-    // -------------------------------------------------------------------------
-    // Happy path
-    // -------------------------------------------------------------------------
-
     public function test_returns_200_with_success_message(): void
     {
         /** @var BookRepositoryInterface&MockInterface $repository */
@@ -22,7 +18,7 @@ final class DeleteBookControllerTest extends TestCase
         $repository->shouldReceive('delete')->once()->with(1)->andReturn(true);
 
         $controller = new DeleteBookController($repository);
-        $response   = $controller->__invoke(1);
+        $response = $controller->__invoke(1);
 
         $this->assertSame(200, $response->getStatusCode());
 
@@ -41,10 +37,6 @@ final class DeleteBookControllerTest extends TestCase
 
         $this->assertArrayHasKey('message', $content);
     }
-
-    // -------------------------------------------------------------------------
-    // Different book IDs
-    // -------------------------------------------------------------------------
 
     public function test_passes_correct_book_id_to_repository(): void
     {
@@ -68,10 +60,6 @@ final class DeleteBookControllerTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
     }
-
-    // -------------------------------------------------------------------------
-    // Repository interaction
-    // -------------------------------------------------------------------------
 
     public function test_calls_repository_delete_exactly_once(): void
     {

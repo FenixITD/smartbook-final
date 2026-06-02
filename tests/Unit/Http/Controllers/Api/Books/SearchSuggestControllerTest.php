@@ -13,10 +13,6 @@ use Tests\TestCase;
 
 final class SearchSuggestControllerTest extends TestCase
 {
-    // -------------------------------------------------------------------------
-    // Happy path
-    // -------------------------------------------------------------------------
-
     public function test_returns_200_with_suggestions(): void
     {
         $suggestions = [
@@ -30,9 +26,9 @@ final class SearchSuggestControllerTest extends TestCase
             ->once()
             ->andReturn($suggestions);
 
-        $request    = $this->makeSearchSuggestRequest('Clean');
+        $request = $this->makeSearchSuggestRequest('Clean');
         $controller = new SearchSuggestController($service);
-        $response   = $controller->__invoke($request);
+        $response = $controller->__invoke($request);
 
         $this->assertSame(200, $response->getStatusCode());
 
@@ -48,7 +44,7 @@ final class SearchSuggestControllerTest extends TestCase
         $service = $this->mock(SearchSuggestBookService::class);
         $service->shouldReceive('execute')->once()->andReturn([]);
 
-        $request  = $this->makeSearchSuggestRequest('nonexistent');
+        $request = $this->makeSearchSuggestRequest('nonexistent');
         $response = (new SearchSuggestController($service))->__invoke($request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -56,10 +52,6 @@ final class SearchSuggestControllerTest extends TestCase
         $content = json_decode((string) $response->getContent(), true);
         $this->assertSame([], $content);
     }
-
-    // -------------------------------------------------------------------------
-    // Query passed to service
-    // -------------------------------------------------------------------------
 
     public function test_passes_search_query_from_request_to_service(): void
     {
@@ -100,10 +92,6 @@ final class SearchSuggestControllerTest extends TestCase
         (new SearchSuggestController($service))->__invoke($request);
     }
 
-    // -------------------------------------------------------------------------
-    // Service interaction
-    // -------------------------------------------------------------------------
-
     public function test_calls_service_suggest_exactly_once(): void
     {
         /** @var SearchSuggestBookService&MockInterface $service */
@@ -116,10 +104,6 @@ final class SearchSuggestControllerTest extends TestCase
             $this->makeSearchSuggestRequest('test')
         );
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private function makeSearchSuggestRequest(string $query): SearchSuggestRequest
     {

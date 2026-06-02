@@ -34,7 +34,7 @@ final class GetMessageControllerTest extends TestCase
         Auth::shouldReceive('user')->once()->andReturn(null);
 
         $this->expectException(HttpException::class);
-        $this->expectExceptionMessage(''); // abort(401) sets empty message
+        $this->expectExceptionMessage('');
 
         try {
             ($this->controller)(10);

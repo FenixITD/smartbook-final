@@ -13,10 +13,6 @@ final class GetBookControllerTest extends TestCase
 {
     use BookResponseDtoFactory;
 
-    // -------------------------------------------------------------------------
-    // Happy path
-    // -------------------------------------------------------------------------
-
     public function test_returns_200_with_book_data_when_book_exists(): void
     {
         $book = $this->makeBookResponseDto(id: 42, title: 'Clean Code');
@@ -29,7 +25,7 @@ final class GetBookControllerTest extends TestCase
             ->andReturn($book);
 
         $controller = new GetBookController($repository);
-        $response   = $controller->__invoke(42);
+        $response = $controller->__invoke(42);
 
         $this->assertSame(200, $response->getStatusCode());
 
@@ -53,7 +49,7 @@ final class GetBookControllerTest extends TestCase
         $repository->shouldReceive('getById')->andReturn($book);
 
         $controller = new GetBookController($repository);
-        $response   = $controller->__invoke(1);
+        $response = $controller->__invoke(1);
 
         $data = json_decode((string) $response->getContent(), true)['data'];
 
@@ -61,10 +57,6 @@ final class GetBookControllerTest extends TestCase
             $this->assertArrayHasKey($key, $data, "Key '{$key}' missing in response");
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Repository interaction
-    // -------------------------------------------------------------------------
 
     public function test_calls_repository_exactly_once_with_given_id(): void
     {

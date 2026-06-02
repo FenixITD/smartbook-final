@@ -44,8 +44,6 @@ final class UpdateBookControllerTest extends TestCase
         $this->controller = $this->app->make(UpdateBookController::class);
     }
 
-    // --- edit() ---
-
     public function test_edit_returns_view(): void
     {
         $this->mockEditRepositories();

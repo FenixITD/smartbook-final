@@ -16,10 +16,6 @@ final class GetListBookControllerTest extends TestCase
 {
     use BookResponseDtoFactory;
 
-    // -------------------------------------------------------------------------
-    // Happy path
-    // -------------------------------------------------------------------------
-
     public function test_returns_200_with_list_of_books(): void
     {
         $books = [
@@ -31,9 +27,9 @@ final class GetListBookControllerTest extends TestCase
         $service = $this->mock(SearchBookService::class);
         $service->shouldReceive('getList')->once()->andReturn($books);
 
-        $request    = BookListRequest::createFrom(Request::create('/api/books', 'GET'));
+        $request = BookListRequest::createFrom(Request::create('/api/books', 'GET'));
         $controller = new GetListBookController($service);
-        $response   = $controller->__invoke($request);
+        $response = $controller->__invoke($request);
 
         $this->assertSame(200, $response->getStatusCode());
 
@@ -52,19 +48,15 @@ final class GetListBookControllerTest extends TestCase
         $service = $this->mock(SearchBookService::class);
         $service->shouldReceive('getList')->once()->andReturn([]);
 
-        $request    = BookListRequest::createFrom(Request::create('/api/books', 'GET'));
+        $request = BookListRequest::createFrom(Request::create('/api/books', 'GET'));
         $controller = new GetListBookController($service);
-        $response   = $controller->__invoke($request);
+        $response = $controller->__invoke($request);
 
         $this->assertSame(200, $response->getStatusCode());
 
         $content = json_decode((string) $response->getContent(), true);
         $this->assertSame([], $content['data']);
     }
-
-    // -------------------------------------------------------------------------
-    // DTO mapping from request
-    // -------------------------------------------------------------------------
 
     public function test_passes_default_filters_when_no_query_params(): void
     {
@@ -116,8 +108,8 @@ final class GetListBookControllerTest extends TestCase
 
         $request = BookListRequest::createFrom(
             Request::create('/api/books', 'GET', [
-                'perPage'       => 30,
-                'sortBy'        => 'title',
+                'perPage' => 30,
+                'sortBy' => 'title',
                 'sortDirection' => 'desc',
             ])
         );
@@ -141,19 +133,15 @@ final class GetListBookControllerTest extends TestCase
 
         $request = BookListRequest::createFrom(
             Request::create('/api/books', 'GET', [
-                'search'        => 'PHP',
-                'perPage'       => 5,
-                'sortBy'        => 'price',
+                'search' => 'PHP',
+                'perPage' => 5,
+                'sortBy' => 'price',
                 'sortDirection' => 'asc',
             ])
         );
 
         (new GetListBookController($service))->__invoke($request);
     }
-
-    // -------------------------------------------------------------------------
-    // Response structure
-    // -------------------------------------------------------------------------
 
     public function test_each_book_item_contains_expected_keys(): void
     {

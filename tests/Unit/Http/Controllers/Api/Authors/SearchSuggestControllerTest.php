@@ -12,14 +12,6 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-/**
- * NOTE: SearchSuggestAuthorService is declared as `final readonly`.
- * Mockery cannot mock final classes by default.
- *
- * To make these tests work, choose one option:
- *   A) Extract SearchSuggestAuthorServiceInterface and type-hint it in the controller
- *   B) Remove the `final` modifier from SearchSuggestAuthorService
- */
 final class SearchSuggestControllerTest extends TestCase
 {
     private MockInterface $service;

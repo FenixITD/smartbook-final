@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Http\Controllers\Web\Books;
 
 use App\Dto\Book\BookFiltersDto;
+use App\Dto\PaginatedResponseDto;
 use App\Http\Controllers\Web\Books\GetListBookController;
 use App\Http\Requests\Book\BookListRequest;
 use App\Services\Book\SearchBookService;
@@ -32,7 +33,7 @@ final class GetListBookControllerTest extends TestCase
     {
         $this->searchService
             ->shouldReceive('getWebList')
-            ->andReturn(Mockery::mock(\App\Dto\PaginatedResponseDto::class));
+            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         $response = ($this->controller)($this->makeRequest());
 
@@ -43,7 +44,7 @@ final class GetListBookControllerTest extends TestCase
     {
         $this->searchService
             ->shouldReceive('getWebList')
-            ->andReturn(Mockery::mock(\App\Dto\PaginatedResponseDto::class));
+            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         $response = ($this->controller)($this->makeRequest());
 
@@ -54,7 +55,7 @@ final class GetListBookControllerTest extends TestCase
     {
         $this->searchService
             ->shouldReceive('getWebList')
-            ->andReturn(Mockery::mock(\App\Dto\PaginatedResponseDto::class));
+            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         $response = ($this->controller)($this->makeRequest());
 
@@ -63,7 +64,7 @@ final class GetListBookControllerTest extends TestCase
 
     public function test_view_contains_books_data_from_service(): void
     {
-        $books = Mockery::mock(\App\Dto\PaginatedResponseDto::class);
+        $books = Mockery::mock(PaginatedResponseDto::class);
 
         $this->searchService
             ->shouldReceive('getWebList')
@@ -79,7 +80,7 @@ final class GetListBookControllerTest extends TestCase
         $this->searchService
             ->shouldReceive('getWebList')
             ->once()
-            ->andReturn(Mockery::mock(\App\Dto\PaginatedResponseDto::class));
+            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         ($this->controller)($this->makeRequest());
     }
@@ -95,7 +96,7 @@ final class GetListBookControllerTest extends TestCase
                     && $dto->sortBy === 'title'
                     && $dto->sortDirection === 'desc';
             }))
-            ->andReturn(Mockery::mock(\App\Dto\PaginatedResponseDto::class));
+            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         ($this->controller)($this->makeRequest([
             'search' => 'dune',
@@ -116,7 +117,7 @@ final class GetListBookControllerTest extends TestCase
                     && $dto->sortBy === 'id'
                     && $dto->sortDirection === 'asc';
             }))
-            ->andReturn(Mockery::mock(\App\Dto\PaginatedResponseDto::class));
+            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         ($this->controller)($this->makeRequest());
     }

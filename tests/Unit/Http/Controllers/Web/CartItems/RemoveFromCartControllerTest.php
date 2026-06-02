@@ -31,7 +31,6 @@ final class RemoveFromCartControllerTest extends TestCase
 
         $this->controller = $this->app->make(RemoveFromCartController::class);
 
-        // Инициализируем сессию для работы хелпера back()
         $this->app->make('session')->start();
     }
 

@@ -90,9 +90,9 @@ final class GetListAuthorControllerTest extends TestCase
             ->andReturn([]);
 
         ($this->controller)($this->makeRequest([
-            'search'        => 'tolkien',
-            'perPage'       => 10,
-            'sortBy'        => 'name',
+            'search' => 'tolkien',
+            'perPage' => 10,
+            'sortBy' => 'name',
             'sortDirection' => 'desc',
         ]));
     }

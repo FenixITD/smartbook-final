@@ -18,7 +18,6 @@ final class ActivityLogResponseDtoTest extends TestCase
         $causer->id = 42;
         $causer->name = 'John Doe';
 
-        // 2. Создаем заполненную модель Activity
         $activity = new Activity();
         $activity->id = 1;
         $activity->log_name = 'cart';

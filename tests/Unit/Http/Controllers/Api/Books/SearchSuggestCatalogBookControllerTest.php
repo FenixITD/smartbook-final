@@ -13,10 +13,6 @@ use Tests\TestCase;
 
 final class SearchSuggestCatalogBookControllerTest extends TestCase
 {
-    // -------------------------------------------------------------------------
-    // Happy path
-    // -------------------------------------------------------------------------
-
     public function test_returns_200_with_catalog_suggestions(): void
     {
         $suggestions = [
@@ -30,9 +26,9 @@ final class SearchSuggestCatalogBookControllerTest extends TestCase
             ->once()
             ->andReturn($suggestions);
 
-        $request    = $this->makeSearchSuggestRequest('Design');
+        $request = $this->makeSearchSuggestRequest('Design');
         $controller = new SearchSuggestCatalogBookController($service);
-        $response   = $controller->__invoke($request);
+        $response = $controller->__invoke($request);
 
         $this->assertSame(200, $response->getStatusCode());
 
@@ -48,7 +44,7 @@ final class SearchSuggestCatalogBookControllerTest extends TestCase
         $service = $this->mock(SearchSuggestCatalogBookService::class);
         $service->shouldReceive('execute')->once()->andReturn([]);
 
-        $request  = $this->makeSearchSuggestRequest('nonexistent');
+        $request = $this->makeSearchSuggestRequest('nonexistent');
         $response = (new SearchSuggestCatalogBookController($service))->__invoke($request);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -56,10 +52,6 @@ final class SearchSuggestCatalogBookControllerTest extends TestCase
         $content = json_decode((string) $response->getContent(), true);
         $this->assertSame([], $content);
     }
-
-    // -------------------------------------------------------------------------
-    // Query passed to service
-    // -------------------------------------------------------------------------
 
     public function test_passes_search_query_from_request_to_service(): void
     {
@@ -117,10 +109,6 @@ final class SearchSuggestCatalogBookControllerTest extends TestCase
         $this->assertSame('The Pragmatic Programmer', $item['title']);
     }
 
-    // -------------------------------------------------------------------------
-    // Service interaction
-    // -------------------------------------------------------------------------
-
     public function test_calls_service_suggest_exactly_once(): void
     {
         /** @var SearchSuggestCatalogBookService&MockInterface $service */
@@ -144,10 +132,6 @@ final class SearchSuggestCatalogBookControllerTest extends TestCase
 
         $this->assertInstanceOf(SearchSuggestCatalogBookController::class, $controller);
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private function makeSearchSuggestRequest(string $query): SearchSuggestRequest
     {

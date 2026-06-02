@@ -16,10 +16,6 @@ final class UpdateBookControllerTest extends TestCase
 {
     use BookResponseDtoFactory;
 
-    // -------------------------------------------------------------------------
-    // Happy path
-    // -------------------------------------------------------------------------
-
     public function test_returns_200_with_updated_book_data(): void
     {
         $updated = $this->makeBookResponseDto(id: 5, title: 'Updated Title', status: 'archived');
@@ -31,9 +27,9 @@ final class UpdateBookControllerTest extends TestCase
             ->with(5, \Mockery::type(BookDto::class))
             ->andReturn($updated);
 
-        $request    = $this->makeBookDataRequest();
+        $request = $this->makeBookDataRequest();
         $controller = new UpdateBookController($repository);
-        $response   = $controller->__invoke($request, 5);
+        $response = $controller->__invoke($request, 5);
 
         $this->assertSame(200, $response->getStatusCode());
 
@@ -50,16 +46,12 @@ final class UpdateBookControllerTest extends TestCase
         $repository->shouldReceive('update')->andReturn($this->makeBookResponseDto());
 
         $response = (new UpdateBookController($repository))->__invoke($this->makeBookDataRequest(), 1);
-        $data     = json_decode((string) $response->getContent(), true)['data'];
+        $data = json_decode((string) $response->getContent(), true)['data'];
 
         foreach (['id', 'title', 'slug', 'authorId', 'description', 'price', 'stock', 'status', 'createdAt', 'updatedAt'] as $key) {
             $this->assertArrayHasKey($key, $data, "Key '{$key}' missing in response");
         }
     }
-
-    // -------------------------------------------------------------------------
-    // DTO mapping
-    // -------------------------------------------------------------------------
 
     public function test_passes_correct_book_id_to_repository(): void
     {
@@ -90,19 +82,15 @@ final class UpdateBookControllerTest extends TestCase
             ->andReturn($this->makeBookResponseDto());
 
         $request = $this->makeBookDataRequest([
-            'title'  => 'Refactoring',
-            'slug'   => 'refactoring',
-            'price'  => 24.99,
-            'stock'  => 15,
-            'status' => 'active',
+            'title' => 'Refactoring',
+            'slug' => 'refactoring',
+            'price' => 24.99,
+            'stock' => 15,
+            'status' => 'active'
         ]);
 
         (new UpdateBookController($repository))->__invoke($request, 7);
     }
-
-    // -------------------------------------------------------------------------
-    // Repository interaction
-    // -------------------------------------------------------------------------
 
     public function test_calls_repository_update_exactly_once(): void
     {
@@ -127,10 +115,6 @@ final class UpdateBookControllerTest extends TestCase
 
         (new UpdateBookController($repository))->__invoke($this->makeBookDataRequest(), 1);
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private function makeBookDataRequest(array $overrides = []): BookDataRequest
     {

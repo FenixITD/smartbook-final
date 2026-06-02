@@ -63,8 +63,6 @@ final class DeleteOrderItemControllerTest extends TestCase
 
     public function test_returns_200_even_when_order_item_not_found(): void
     {
-        // Repository returns false when record doesn't exist —
-        // the controller itself doesn't differentiate, it always returns 200.
         $this->repository
             ->shouldReceive('delete')
             ->with(999)

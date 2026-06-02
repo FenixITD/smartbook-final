@@ -16,10 +16,6 @@ final class CreateBookControllerTest extends TestCase
 {
     use BookResponseDtoFactory;
 
-    // -------------------------------------------------------------------------
-    // Happy path
-    // -------------------------------------------------------------------------
-
     public function test_returns_201_with_created_book(): void
     {
         $created = $this->makeBookResponseDto(id: 10, title: 'New Book', status: 'draft');
@@ -28,9 +24,9 @@ final class CreateBookControllerTest extends TestCase
         $repository = $this->mock(BookRepositoryInterface::class);
         $repository->shouldReceive('create')->once()->andReturn($created);
 
-        $request    = $this->makeBookDataRequest();
+        $request = $this->makeBookDataRequest();
         $controller = new CreateBookController($repository);
-        $response   = $controller->__invoke($request);
+        $response = $controller->__invoke($request);
 
         $this->assertSame(201, $response->getStatusCode());
 
@@ -47,16 +43,12 @@ final class CreateBookControllerTest extends TestCase
         $repository->shouldReceive('create')->andReturn($this->makeBookResponseDto());
 
         $response = (new CreateBookController($repository))->__invoke($this->makeBookDataRequest());
-        $data     = json_decode((string) $response->getContent(), true)['data'];
+        $data = json_decode((string) $response->getContent(), true)['data'];
 
         foreach (['id', 'title', 'slug', 'authorId', 'description', 'price', 'stock', 'status', 'createdAt', 'updatedAt'] as $key) {
             $this->assertArrayHasKey($key, $data, "Key '{$key}' missing in response");
         }
     }
-
-    // -------------------------------------------------------------------------
-    // DTO mapping
-    // -------------------------------------------------------------------------
 
     public function test_passes_correct_dto_to_repository(): void
     {
@@ -75,12 +67,12 @@ final class CreateBookControllerTest extends TestCase
             ->andReturn($this->makeBookResponseDto());
 
         $request = $this->makeBookDataRequest([
-            'title'    => 'Domain-Driven Design',
-            'slug'     => 'domain-driven-design',
+            'title' => 'Domain-Driven Design',
+            'slug' => 'domain-driven-design',
             'authorId' => 3,
-            'price'    => 29.99,
-            'stock'    => 5,
-            'status'   => 'active',
+            'price' => 29.99,
+            'stock' => 5,
+            'status' => 'active',
         ]);
 
         (new CreateBookController($repository))->__invoke($request);
@@ -108,10 +100,6 @@ final class CreateBookControllerTest extends TestCase
         (new CreateBookController($repository))->__invoke($request);
     }
 
-    // -------------------------------------------------------------------------
-    // Repository interaction
-    // -------------------------------------------------------------------------
-
     public function test_calls_repository_create_exactly_once(): void
     {
         /** @var BookRepositoryInterface&MockInterface $repository */
@@ -135,10 +123,6 @@ final class CreateBookControllerTest extends TestCase
 
         (new CreateBookController($repository))->__invoke($this->makeBookDataRequest());
     }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
 
     private function makeBookDataRequest(array $overrides = []): BookDataRequest
     {
