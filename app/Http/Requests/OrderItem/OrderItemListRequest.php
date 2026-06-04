@@ -6,6 +6,7 @@ namespace App\Http\Requests\OrderItem;
 
 use App\Dto\OrderItem\OrderItemFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class OrderItemListRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ final class OrderItemListRequest extends FormRequest
         return [
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sortBy' => ['nullable', 'string'],
+            'sortBy' => ['nullable', 'string', Rule::in(['id', 'quantity', 'price_at_purchase', 'created_at'])],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }

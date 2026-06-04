@@ -6,6 +6,7 @@ namespace App\Http\Requests\CartItem;
 
 use App\Dto\CartItem\CartItemFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class CartItemListRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ final class CartItemListRequest extends FormRequest
         return [
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sortBy' => ['nullable', 'string'],
+            'sortBy' => ['nullable', 'string', Rule::in(['id', 'quantity', 'created_at'])],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }

@@ -55,7 +55,8 @@ final class OrderObserver extends BaseEntityObserver
 
         $newStatus = OrderStatusEnum::tryFrom($model->status);
 
-        if (!$newStatus->shouldNotify()) {
+        // @phpstan-ignore identical.alwaysFalse
+        if ($newStatus === null || !$newStatus->shouldNotify()) {
             return;
         }
 

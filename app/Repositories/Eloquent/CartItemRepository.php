@@ -84,24 +84,13 @@ final class CartItemRepository implements CartItemRepositoryInterface
      */
     public function bulkAddOrIncrement(int $userId, array $items): void
     {
-        if ($items === []) {
-            return;
+        foreach ($items as $item) {
+            $this->addOrIncrement(new CartItemDto(
+                userId: $userId,
+                bookId: $item['book_id'],
+                quantity: $item['quantity']
+            ));
         }
-
-        $rows = array_map(
-            static fn (array $item): array => [
-                'user_id' => $userId,
-                'book_id' => $item['book_id'],
-                'quantity' => $item['quantity'],
-            ],
-            $items,
-        );
-
-        CartItem::upsert(
-            $rows,
-            uniqueBy: ['user_id', 'book_id'],
-            update: ['quantity'],
-        );
     }
 
     public function create(CartItemDto $data): CartItemResponseDto

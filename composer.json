@@ -100,7 +100,7 @@
             "@php artisan config:clear --ansi",
             "@test:lint",
             "@stan",
-            "@php artisan test"
+            "vendor/bin/phpunit"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

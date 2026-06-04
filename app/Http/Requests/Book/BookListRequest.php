@@ -6,6 +6,7 @@ namespace App\Http\Requests\Book;
 
 use App\Dto\Book\BookFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class BookListRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ class BookListRequest extends FormRequest
         return [
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sortBy' => ['nullable', 'string'],
+            'sortBy' => ['nullable', 'string', Rule::in(['id', 'title', 'price', 'publish_year', 'created_at'])],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }

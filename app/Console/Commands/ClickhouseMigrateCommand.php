@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Services\Clickhouse\ClickhouseManagerService;
+use App\Services\Clickhouse\ClickhouseMigratorService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
+use Throwable;
 
+/**
+ * The Laravel command-line tool (run via `php artisan clickhouse:migrate`) serves as the user
+ * entry point for triggering database schema migrations. It is responsible solely for operations
+ * within the command-line interface (CLI) and for handing off control.
+ */
 final class ClickhouseMigrateCommand extends Command
 {
     protected $signature = 'clickhouse:migrate';
 
-    protected $description = 'Run all ClickHouse SQL migrations from database/clickhouse/';
+    protected $description = 'Run pending ClickHouse SQL migrations';
 
-    public function handle(ClickhouseManagerService $clickhouseManagerService): int
+    public function handle(ClickhouseManagerService $clickhouseManagerService, ClickhouseMigratorService $migrator): int
     {
         if (!$clickhouseManagerService->ping()) {
             $this->error('Cannot connect to ClickHouse. Check CLICKHOUSE_* env variables.');
@@ -22,37 +28,57 @@ final class ClickhouseMigrateCommand extends Command
             return self::FAILURE;
         }
 
-        /** @var array<int, string> $files */
-        $files = File::glob(database_path('clickhouse/*.sql'));
+        $path = config('clickhouse.migrations_path', database_path('clickhouse'));
+        $migrationPath = is_string($path) ? $path : database_path('clickhouse');
 
-        if ($files === []) {
-            $this->info('No migration files found in database/clickhouse/');
+        try {
+            $migrator->ensureMigrationsTableExists();
 
-            return self::SUCCESS;
-        }
+            /** @var array<int, string> $pendingFiles */
+            $pendingFiles = $migrator->getPendingMigrations($migrationPath);
 
-        sort($files);
+            if ($pendingFiles === []) {
+                $this->info('No pending migrations found.');
 
-        foreach ($files as $file) {
-            $name = basename($file);
-            $this->info("Running: {$name}");
-
-            $sql = File::get($file);
-
-            $statements = array_filter(
-                array_map('trim', explode(';', $sql)),
-                static fn (string $statement): bool => $statement !== ''
-            );
-
-            foreach ($statements as $statement) {
-                $clickhouseManagerService->execute($statement);
+                return self::SUCCESS;
             }
 
-            $this->line('  <fg=green>Done</>');
+            foreach ($pendingFiles as $file) {
+                $name = basename($file);
+                $success = true;
+                $errorMessage = null;
+
+                $this->components->task("Running: {$name}", function () use ($migrator, $file, &$success, &$errorMessage) {
+                    try {
+                        $migrator->runMigration($file);
+
+                        return true;
+                    } catch (Throwable $e) {
+                        $success = false;
+                        $errorMessage = $e->getMessage();
+
+                        return false;
+                    }
+                });
+
+                if (!$success) {
+                    $this->error("Migration failed: {$name}");
+
+                    if ($errorMessage !== null) {
+                        $this->error($errorMessage);
+                    }
+
+                    return self::FAILURE;
+                }
+            }
+
+            $this->info('ClickHouse migrations finished.');
+
+            return self::SUCCESS;
+        } catch (Throwable $e) {
+            $this->error('Migration process failed: ' . $e->getMessage());
+
+            return self::FAILURE;
         }
-
-        $this->info('ClickHouse migrations finished.');
-
-        return self::SUCCESS;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Http\Requests\Review;
 
 use App\Dto\Review\ReviewFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ReviewListRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ class ReviewListRequest extends FormRequest
         return [
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sortBy' => ['nullable', 'string'],
+            'sortBy' => ['nullable', 'string', Rule::in(['id', 'rating', 'created_at'])],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }

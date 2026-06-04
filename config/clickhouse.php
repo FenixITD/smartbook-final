@@ -10,4 +10,5 @@ return [
     'password' => env('CLICKHOUSE_PASSWORD', ''),
     'timeout' => (float) env('CLICKHOUSE_TIMEOUT', 2.0),
     'connect_timeout' => (float) env('CLICKHOUSE_CONNECT_TIMEOUT', 2.0),
+    'migrations_path' => database_path('clickhouse'),
 ];

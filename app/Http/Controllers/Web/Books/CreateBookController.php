@@ -16,7 +16,7 @@ final readonly class CreateBookController
     public function __construct(
         private AuthorRepositoryInterface $authorRepository,
         private GenreRepositoryInterface $genreRepository,
-        private CreateBookService $service,
+        private CreateBookService $createBookService,
     ) {
     }
 
@@ -30,7 +30,7 @@ final readonly class CreateBookController
 
     public function store(BookWebDataRequest $request): RedirectResponse
     {
-        $this->service->execute($request->toDto(), $request->genres());
+        $this->createBookService->execute($request->toDto(), $request->genres());
 
         return redirect()->route('books.index')
             ->with('success', 'Book created successfully.');

@@ -6,6 +6,7 @@ namespace App\Http\Requests\Favorite;
 
 use App\Dto\Favorite\FavoriteFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class FavoriteListRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ class FavoriteListRequest extends FormRequest
         return [
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sortBy' => ['nullable', 'string'],
+            'sortBy' => ['nullable', 'string', Rule::in(['id', 'created_at'])],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }

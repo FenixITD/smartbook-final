@@ -6,8 +6,12 @@ namespace App\Services\Clickhouse;
 
 class ClickhouseQueryBuilderService
 {
+    /** @var array<int, string> */
     private array $wheres = [];
+
+    /** @var array<string, mixed> */
     private array $bindings = [];
+
     private ?int $limitValue = null;
     private ?int $offsetValue = null;
     private string $orderByColumn = 'created_at';
@@ -28,9 +32,12 @@ class ClickhouseQueryBuilderService
         return $this;
     }
 
+    /**
+     * @param array<int, mixed> $values
+     */
     public function whereIn(string $column, array $values): static
     {
-        $escaped = implode(',', array_map(fn($v) => "'" . addslashes((string) $v) . "'", $values));
+        $escaped = implode(',', array_map(static fn(mixed $v): string => "'" . addslashes(is_scalar($v) ? (string) $v : '') . "'", $values));
         $this->wheres[] = "{$column} IN ({$escaped})";
 
         return $this;
@@ -68,6 +75,9 @@ class ClickhouseQueryBuilderService
         );
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function get(): array
     {
         $where = $this->buildWhere();
@@ -83,7 +93,7 @@ class ClickhouseQueryBuilderService
 
     private function buildWhere(): string
     {
-        if (empty($this->wheres)) {
+        if ($this->wheres === []) {
             return '';
         }
 

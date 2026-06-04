@@ -6,6 +6,7 @@ namespace App\Http\Requests\Author;
 
 use App\Dto\Author\AuthorFiltersDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class AuthorListRequest extends FormRequest
 {
@@ -20,7 +21,7 @@ final class AuthorListRequest extends FormRequest
         return [
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sortBy' => ['nullable', 'string'],
+            'sortBy' => ['nullable', 'string', Rule::in(['id', 'name', 'created_at'])],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }

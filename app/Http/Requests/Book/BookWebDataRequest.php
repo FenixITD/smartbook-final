@@ -28,7 +28,7 @@ final class BookWebDataRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0', 'max:9999.99'],
             'stock' => ['required', 'integer', 'min:0'],
             'publishYear' => ['nullable', 'integer', 'min:1900', 'max:'.((int) date('Y') + 1)],
-            'coverImage' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'status' => ['required', 'string', 'in:draft,active,archived'],
             'genres' => ['nullable', 'array'],
             'genres.*' => ['integer', 'exists:genres,id'],

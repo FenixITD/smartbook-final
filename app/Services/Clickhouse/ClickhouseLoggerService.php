@@ -18,9 +18,14 @@ class ClickhouseLoggerService
             'username' => config('clickhouse.username'),
             'password' => config('clickhouse.password'),
         ]);
-        $this->client->database(config('clickhouse.database'));
+
+        $db = config('clickhouse.database');
+        $this->client->database(is_scalar($db) ? (string) $db : '');
     }
 
+    /**
+     * @param array<string, mixed> $properties
+     */
     public function log(
         string $logName,
         string $description,
