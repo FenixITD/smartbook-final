@@ -14,9 +14,9 @@ final class ClickhouseMigrateCommand extends Command
 
     protected $description = 'Run all ClickHouse SQL migrations from database/clickhouse/';
 
-    public function handle(ClickhouseManagerService $ch): int
+    public function handle(ClickhouseManagerService $clickhouseManagerService): int
     {
-        if (!$ch->ping()) {
+        if (!$clickhouseManagerService->ping()) {
             $this->error('Cannot connect to ClickHouse. Check CLICKHOUSE_* env variables.');
 
             return self::FAILURE;
@@ -45,7 +45,7 @@ final class ClickhouseMigrateCommand extends Command
             );
 
             foreach ($statements as $statement) {
-                $ch->execute($statement);
+                $clickhouseManagerService->execute($statement);
             }
 
             $this->line('  <fg=green>Done</>');
