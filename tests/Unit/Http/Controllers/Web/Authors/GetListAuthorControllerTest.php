@@ -8,7 +8,7 @@ use App\Dto\Author\AuthorFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Http\Controllers\Web\Authors\GetListAuthorController;
 use App\Http\Requests\Author\AuthorListRequest;
-use App\Services\Author\GetWebListAuthorService;
+use App\Services\Author\FetchWebListAuthorService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Mockery;
@@ -17,15 +17,15 @@ use Tests\TestCase;
 
 final class GetListAuthorControllerTest extends TestCase
 {
-    private MockInterface&GetWebListAuthorService $service;
+    private MockInterface&FetchWebListAuthorService $service;
     private GetListAuthorController $controller;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->service = Mockery::mock(GetWebListAuthorService::class);
-        $this->app->instance(GetWebListAuthorService::class, $this->service);
+        $this->service = Mockery::mock(FetchWebListAuthorService::class);
+        $this->app->instance(FetchWebListAuthorService::class, $this->service);
         $this->controller = $this->app->make(GetListAuthorController::class);
     }
 

@@ -32,7 +32,7 @@ final class GetListBookControllerTest extends TestCase
     public function test_returns_view(): void
     {
         $this->searchService
-            ->shouldReceive('getWebList')
+            ->shouldReceive('fetchWebList')
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         $response = ($this->controller)($this->makeRequest());
@@ -43,7 +43,7 @@ final class GetListBookControllerTest extends TestCase
     public function test_returns_correct_view_name(): void
     {
         $this->searchService
-            ->shouldReceive('getWebList')
+            ->shouldReceive('fetchWebList')
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         $response = ($this->controller)($this->makeRequest());
@@ -54,7 +54,7 @@ final class GetListBookControllerTest extends TestCase
     public function test_view_contains_books_key(): void
     {
         $this->searchService
-            ->shouldReceive('getWebList')
+            ->shouldReceive('fetchWebList')
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
         $response = ($this->controller)($this->makeRequest());
@@ -67,7 +67,7 @@ final class GetListBookControllerTest extends TestCase
         $books = Mockery::mock(PaginatedResponseDto::class);
 
         $this->searchService
-            ->shouldReceive('getWebList')
+            ->shouldReceive('fetchWebList')
             ->andReturn($books);
 
         $response = ($this->controller)($this->makeRequest());
@@ -78,7 +78,7 @@ final class GetListBookControllerTest extends TestCase
     public function test_calls_service_once(): void
     {
         $this->searchService
-            ->shouldReceive('getWebList')
+            ->shouldReceive('fetchWebList')
             ->once()
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
@@ -88,7 +88,7 @@ final class GetListBookControllerTest extends TestCase
     public function test_passes_filters_dto_from_request_to_service(): void
     {
         $this->searchService
-            ->shouldReceive('getWebList')
+            ->shouldReceive('fetchWebList')
             ->once()
             ->with(Mockery::on(function (BookFiltersDto $dto) {
                 return $dto->search === 'dune'
@@ -109,7 +109,7 @@ final class GetListBookControllerTest extends TestCase
     public function test_uses_default_filters_when_no_query_params(): void
     {
         $this->searchService
-            ->shouldReceive('getWebList')
+            ->shouldReceive('fetchWebList')
             ->once()
             ->with(Mockery::on(function (BookFiltersDto $dto) {
                 return $dto->search === null

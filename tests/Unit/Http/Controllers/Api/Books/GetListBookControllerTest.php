@@ -25,7 +25,7 @@ final class GetListBookControllerTest extends TestCase
 
         /** @var SearchBookService&MockInterface $service */
         $service = $this->mock(SearchBookService::class);
-        $service->shouldReceive('getList')->once()->andReturn($books);
+        $service->shouldReceive('fetchList')->once()->andReturn($books);
 
         $request = BookListRequest::createFrom(Request::create('/api/books', 'GET'));
         $controller = new GetListBookController($service);
@@ -46,7 +46,7 @@ final class GetListBookControllerTest extends TestCase
     {
         /** @var SearchBookService&MockInterface $service */
         $service = $this->mock(SearchBookService::class);
-        $service->shouldReceive('getList')->once()->andReturn([]);
+        $service->shouldReceive('fetchList')->once()->andReturn([]);
 
         $request = BookListRequest::createFrom(Request::create('/api/books', 'GET'));
         $controller = new GetListBookController($service);
@@ -62,7 +62,7 @@ final class GetListBookControllerTest extends TestCase
     {
         /** @var SearchBookService&MockInterface $service */
         $service = $this->mock(SearchBookService::class);
-        $service->shouldReceive('getList')
+        $service->shouldReceive('fetchList')
             ->once()
             ->withArgs(function (BookFiltersDto $dto): bool {
                 return $dto->search === null
@@ -81,7 +81,7 @@ final class GetListBookControllerTest extends TestCase
     {
         /** @var SearchBookService&MockInterface $service */
         $service = $this->mock(SearchBookService::class);
-        $service->shouldReceive('getList')
+        $service->shouldReceive('fetchList')
             ->once()
             ->withArgs(fn(BookFiltersDto $dto): bool => $dto->search === 'Laravel')
             ->andReturn([]);
@@ -97,7 +97,7 @@ final class GetListBookControllerTest extends TestCase
     {
         /** @var SearchBookService&MockInterface $service */
         $service = $this->mock(SearchBookService::class);
-        $service->shouldReceive('getList')
+        $service->shouldReceive('fetchList')
             ->once()
             ->withArgs(function (BookFiltersDto $dto): bool {
                 return $dto->perPage === 30
@@ -121,7 +121,7 @@ final class GetListBookControllerTest extends TestCase
     {
         /** @var SearchBookService&MockInterface $service */
         $service = $this->mock(SearchBookService::class);
-        $service->shouldReceive('getList')
+        $service->shouldReceive('fetchList')
             ->once()
             ->withArgs(function (BookFiltersDto $dto): bool {
                 return $dto->search === 'PHP'
@@ -147,7 +147,7 @@ final class GetListBookControllerTest extends TestCase
     {
         /** @var SearchBookService&MockInterface $service */
         $service = $this->mock(SearchBookService::class);
-        $service->shouldReceive('getList')->andReturn([$this->makeBookResponseDto()]);
+        $service->shouldReceive('fetchList')->andReturn([$this->makeBookResponseDto()]);
 
         $request  = BookListRequest::createFrom(Request::create('/api/books', 'GET'));
         $response = (new GetListBookController($service))->__invoke($request);

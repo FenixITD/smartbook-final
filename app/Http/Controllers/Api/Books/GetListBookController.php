@@ -36,7 +36,7 @@ final class GetListBookController extends Controller
     public function __invoke(BookListRequest $request): JsonResponse
     {
         $filters = $request->toDto();
-        $books = $this->searchService->getList($filters);
+        $books = $this->searchService->fetchList($filters);
 
         return BookResource::collection($books)->response();
     }

@@ -23,7 +23,7 @@ class SearchBookService
      * Retrieves an unpaginated list of books. Uses Elasticsearch if a search query is provided,
      * otherwise queries the repository directly.
      */
-    public function getList(BookFiltersDto $filters): array
+    public function fetchList(BookFiltersDto $filters): array
     {
         if ($filters->search === null) {
             return $this->repository->getList($filters);
@@ -43,7 +43,7 @@ class SearchBookService
      *
      * Retrieves a paginated list of books for the web interface, integrating with Elasticsearch for text search
      */
-    public function getWebList(BookFiltersDto $filters): PaginatedResponseDto
+    public function fetchWebList(BookFiltersDto $filters): PaginatedResponseDto
     {
         if ($filters->search === null) {
             return $this->repository->getWebList($filters);

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Authors;
 
 use App\Http\Requests\Author\AuthorListRequest;
-use App\Services\Author\GetWebListAuthorService;
+use App\Services\Author\FetchWebListAuthorService;
 use Illuminate\View\View;
 
 final readonly class GetListAuthorController
 {
     public function __construct(
-        private GetWebListAuthorService $getWebListAuthorService,
+        private FetchWebListAuthorService $getWebListAuthorService,
     ) {
     }
 

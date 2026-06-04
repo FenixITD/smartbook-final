@@ -8,7 +8,7 @@ use App\Dto\Author\AuthorFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 
-class GetWebListAuthorService
+class FetchWebListAuthorService
 {
     public function __construct(
         private SearchAuthorService $searchService,
