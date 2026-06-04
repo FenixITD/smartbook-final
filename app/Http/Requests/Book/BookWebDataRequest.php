@@ -54,33 +54,6 @@ final class BookWebDataRequest extends FormRequest
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
             coverImage: $coverImage,
-            averageRating: 0.0,
-            ratingsCount: 0,
-            status: (string) $this->string('status'),
-        );
-    }
-
-    public function toDtoForUpdate(BookResponseDto|null $book): BookDto
-    {
-        $coverImage = $book?->coverImage;
-
-        if ($this->hasFile('cover_image')) {
-            /** @var string $stored */
-            $stored = $this->file('cover_image')?->store('covers', 'public');
-            $coverImage = $stored;
-        }
-
-        return new BookDto(
-            title: (string) $this->string('title'),
-            slug: (string) $this->string('slug'),
-            authorId: $this->integer('authorId'),
-            description: (string) $this->string('description'),
-            price: (float) $this->string('price')->toString(),
-            stock: $this->integer('stock'),
-            publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
-            coverImage: $coverImage,
-            averageRating: $book->averageRating ?? 0.0,
-            ratingsCount: $book->ratingsCount ?? 0,
             status: (string) $this->string('status'),
         );
     }

@@ -15,8 +15,6 @@ final readonly class BookDto
         public int $stock,
         public int|null $publishYear,
         public string|null $coverImage,
-        public float|null $averageRating,
-        public int|null $ratingsCount,
         public string $status,
     ) {
     }
@@ -24,7 +22,7 @@ final readonly class BookDto
     /** @return array<string, mixed> */
     public function toArray(): array
     {
-        return [
+        $data = [
             'title' => $this->title,
             'slug' => $this->slug,
             'author_id' => $this->authorId,
@@ -32,10 +30,13 @@ final readonly class BookDto
             'price' => $this->price,
             'stock' => $this->stock,
             'publish_year' => $this->publishYear,
-            'cover_image' => $this->coverImage,
-            'average_rating' => $this->averageRating,
-            'ratings_count' => $this->ratingsCount,
             'status' => $this->status,
         ];
+
+        if ($this->coverImage !== null) {
+            $data['cover_image'] = $this->coverImage;
+        }
+
+        return $data;
     }
 }

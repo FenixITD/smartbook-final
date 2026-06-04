@@ -33,9 +33,7 @@ final readonly class UpdateBookController
 
     public function update(BookWebDataRequest $request, int $bookId): RedirectResponse
     {
-        $book = $this->bookRepository->getById($bookId);
-
-        $this->service->execute($bookId, $request->toDtoForUpdate($book), $request->genres());
+        $this->service->execute($bookId, $request->toDto(), $request->genres());
 
         return redirect()->route('books.index')
             ->with('success', 'Book updated successfully.');

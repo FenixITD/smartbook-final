@@ -20,8 +20,6 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'stock', type: 'integer', example: 8),
         new OA\Property(property: 'publishYear', type: 'integer', example: 2012),
         new OA\Property(property: 'coverImage', type: 'string', example: 'Book image'),
-        new OA\Property(property: 'averageRating', type: 'number', example: 4.6),
-        new OA\Property(property: 'ratingsCount', type: 'integer', example: 18),
         new OA\Property(property: 'status', type: 'string', example: 'archived'),
     ],
     type: 'object',
@@ -45,8 +43,6 @@ class BookDataRequest extends FormRequest
             'stock' => ['required', 'integer', 'min:0'],
             'publishYear' => ['nullable', 'integer', 'min:1900', 'max:'.((int) date('Y') + 1)],
             'coverImage' => ['nullable', 'string', 'max:255'],
-            'averageRating' => ['nullable', 'numeric', 'between:0,5'],
-            'ratingsCount' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', 'string', 'in:draft,active,archived'],
         ];
     }
@@ -62,8 +58,6 @@ class BookDataRequest extends FormRequest
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear'),
             coverImage: $this->has('coverImage') ? (string) $this->string('coverImage') : null,
-            averageRating: $this->float('averageRating'),
-            ratingsCount: $this->integer('ratingsCount'),
             status: (string) $this->string('status'),
         );
     }
