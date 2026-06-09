@@ -121,7 +121,7 @@
                         <div class="group flex flex-col rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
 
                             {{-- Clickable part: cover + info --}}
-                            <a href="{{ route('catalog.show', $book->id) }}" class="flex flex-col flex-1">
+                            <a href="{{ route('catalog.show', $book->slug) }}" class="flex flex-col flex-1">
 
                                 {{-- Cover --}}
                                 <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">

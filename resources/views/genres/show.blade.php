@@ -43,7 +43,7 @@
                     @if ($genre->booksCount)
                         <div class="px-6 py-4 flex justify-between items-center">
                             <flux:text class="text-zinc-500 text-sm">Books count</flux:text>
-                            <flux:badge variant="solid">{{ $genre->books_count ?? $genre->books->count() }}</flux:badge>
+                            <flux:badge variant="solid">{{ $genre->booksCount }}</flux:badge>
                         </div>
                     @endif
                 </div>

@@ -122,6 +122,17 @@ final class BookRepository implements BookRepositoryInterface
         return BookResponseDto::fromModel($bookId);
     }
 
+    public function findBySlugWithRelations(string $slug): BookResponseDto
+    {
+        $book = Book::with(['author', 'genres'])
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        return BookResponseDto::fromModel($book);
+    }
+
     /** @param array<int> $ids
      * @return array<BookResponseDto>
      */

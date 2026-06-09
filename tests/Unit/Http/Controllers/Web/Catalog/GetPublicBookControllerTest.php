@@ -35,45 +35,58 @@ final class GetPublicBookControllerTest extends TestCase
 
     public function test_returns_view(): void
     {
+        $slug = 'test-book-slug';
+        $bookDto = Mockery::mock(BookResponseDto::class);
+        $bookDto->id = 1;
+
         $this->bookRepository
-            ->shouldReceive('findByIdWithRelations')
+            ->shouldReceive('findBySlugWithRelations')
             ->once()
-            ->andReturn(Mockery::mock(BookResponseDto::class));
+            ->with($slug)
+            ->andReturn($bookDto);
 
         $this->reviewRepository
             ->shouldReceive('getByBookId')
             ->once()
+            ->with($bookDto->id)
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
-        $response = ($this->controller)(1);
+        $response = ($this->controller)($slug);
 
         $this->assertInstanceOf(View::class, $response);
     }
 
     public function test_returns_correct_view_name(): void
     {
+        $slug = 'test-book-slug';
+        $bookDto = Mockery::mock(BookResponseDto::class);
+        $bookDto->id = 1;
+
         $this->bookRepository
-            ->shouldReceive('findByIdWithRelations')
-            ->andReturn(Mockery::mock(BookResponseDto::class));
+            ->shouldReceive('findBySlugWithRelations')
+            ->andReturn($bookDto);
 
         $this->reviewRepository
             ->shouldReceive('getByBookId')
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
-        $response = ($this->controller)(1);
+        $response = ($this->controller)($slug);
 
         $this->assertSame('catalog.show', $response->name());
     }
 
-    public function test_calls_repositories_with_correct_book_id(): void
+    public function test_calls_repositories_with_correct_slug_and_id(): void
     {
+        $slug = 'awesome-book';
         $bookId = 42;
+        $bookDto = Mockery::mock(BookResponseDto::class);
+        $bookDto->id = $bookId;
 
         $this->bookRepository
-            ->shouldReceive('findByIdWithRelations')
+            ->shouldReceive('findBySlugWithRelations')
             ->once()
-            ->with($bookId)
-            ->andReturn(Mockery::mock(BookResponseDto::class));
+            ->with($slug)
+            ->andReturn($bookDto);
 
         $this->reviewRepository
             ->shouldReceive('getByBookId')
@@ -81,23 +94,25 @@ final class GetPublicBookControllerTest extends TestCase
             ->with($bookId)
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 
-        ($this->controller)($bookId);
+        ($this->controller)($slug);
     }
 
     public function test_passes_book_and_reviews_data_to_view(): void
     {
+        $slug = 'another-book';
         $bookDto = Mockery::mock(BookResponseDto::class);
+        $bookDto->id = 5;
         $reviewsDto = Mockery::mock(PaginatedResponseDto::class);
 
         $this->bookRepository
-            ->shouldReceive('findByIdWithRelations')
+            ->shouldReceive('findBySlugWithRelations')
             ->andReturn($bookDto);
 
         $this->reviewRepository
             ->shouldReceive('getByBookId')
             ->andReturn($reviewsDto);
 
-        $response = ($this->controller)(5);
+        $response = ($this->controller)($slug);
         $data = $response->getData();
 
         $this->assertArrayHasKey('book', $data);

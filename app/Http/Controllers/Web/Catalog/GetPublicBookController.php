@@ -16,10 +16,11 @@ final readonly class GetPublicBookController
     ) {
     }
 
-    public function __invoke(int $bookId): View
+    public function __invoke(string $slug): View
     {
-        $book = $this->bookRepository->findByIdWithRelations($bookId);
-        $reviews = $this->reviewRepository->getByBookId($bookId);
+        $book = $this->bookRepository->findBySlugWithRelations($slug);
+
+        $reviews = $this->reviewRepository->getByBookId($book->id);
 
         return view('catalog.show', compact('book', 'reviews'));
     }

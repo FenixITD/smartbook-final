@@ -37,7 +37,7 @@ class SearchSuggestCatalogBookService
                 'author' => $book->authorName,
                 'cover_image' => $book->coverImage,
                 'price' => $book->price,
-                'url' => route('catalog.show', $book->id),
+                'url' => route('catalog.show', $book->slug),
             ],
             $paginated->items,
         ));

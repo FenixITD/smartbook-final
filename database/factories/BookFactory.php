@@ -18,7 +18,7 @@ class BookFactory extends Factory
 
         return [
             'title' => $title,
-            'slug' => Str::slug(fake()->unique()->sentence(4)),
+            'slug' => Str::slug($title),
             'author_id' => Author::inRandomOrder()->value('id'),
             'description' => fake()->paragraph(5),
             'price' => fake()->randomFloat(2, 5, 100),

@@ -40,6 +40,8 @@ interface BookRepositoryInterface
 
     public function findByIdWithRelations(int $id): BookResponseDto;
 
+    public function findBySlugWithRelations(string $slug): BookResponseDto;
+
     /** @param array<int> $ids
      * @return array<BookResponseDto>
      */

@@ -27,7 +27,7 @@
                     <div class="divide-y divide-zinc-100 dark:divide-zinc-800">
                         <div class="px-6 py-4 flex justify-between">
                             <flux:text class="text-zinc-500 text-sm">Author</flux:text>
-                            <flux:text class="text-sm font-medium">{{ $book->author?->name ?? '—' }}</flux:text>
+                            <flux:text class="text-sm font-medium">{{ $book->authorName ?? '—' }}</flux:text>
                         </div>
                         <div class="px-6 py-4 flex justify-between">
                             <flux:text class="text-zinc-500 text-sm">Price</flux:text>
@@ -46,7 +46,7 @@
                         </div>
                         <div class="px-6 py-4 flex justify-between">
                             <flux:text class="text-zinc-500 text-sm">Publish year</flux:text>
-                            <flux:text class="text-sm font-medium">{{ $book->publish_year ?? '—' }}</flux:text>
+                            <flux:text class="text-sm font-medium">{{ $book->publishYear ?? '—' }}</flux:text>
                         </div>
                         <div class="px-6 py-4 flex justify-between">
                             <flux:text class="text-zinc-500 text-sm">Rating</flux:text>
