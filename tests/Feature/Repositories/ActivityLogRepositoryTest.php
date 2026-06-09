@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Repositories;
 
 use App\Dto\ActivityLog\ActivityLogFiltersDto;
+use App\Dto\ActivityLog\ActivityLogResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Eloquent\ActivityLogRepository;
 use App\Services\Clickhouse\ClickhouseManagerService;
@@ -292,7 +293,14 @@ final class ActivityLogRepositoryTest extends TestCase
 
         $result = $this->repository->getPaginated(new ActivityLogFiltersDto());
 
-        $this->assertSame($rows, $result->items);
+        $this->assertCount(2, $result->items);
+        $this->assertContainsOnlyInstancesOf(ActivityLogResponseDto::class, $result->items);
+        $this->assertSame(1, $result->items[0]->id);
+        $this->assertSame('audit', $result->items[0]->logName);
+        $this->assertSame('2024-01-01 00:00:00', $result->items[0]->createdAt);
+        $this->assertSame(2, $result->items[1]->id);
+        $this->assertSame('audit', $result->items[1]->logName);
+        $this->assertSame('2024-01-02 00:00:00', $result->items[1]->createdAt);
     }
 
     public function test_result_contains_total_from_count(): void

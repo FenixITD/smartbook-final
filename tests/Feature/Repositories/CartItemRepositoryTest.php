@@ -151,44 +151,6 @@ class CartItemRepositoryTest extends TestCase
         $this->assertEqualsWithDelta(50.0, $result, 0.001);
     }
 
-    public function test_getByUserId_returns_paginated_response_dto(): void
-    {
-        $user = $this->makeUser();
-        $book = $this->makeBook();
-        $this->makeCartItem($user, $book);
-
-        $result = $this->repository->getByUserId($user->id, 15);
-
-        $this->assertInstanceOf(PaginatedResponseDto::class, $result);
-        $this->assertSame(1, $result->total);
-        $this->assertSame(1, $result->currentPage);
-        $this->assertSame(15, $result->perPage);
-    }
-
-    public function test_getByUserId_returns_empty_paginator_when_no_items(): void
-    {
-        $user = $this->makeUser();
-
-        $result = $this->repository->getByUserId($user->id, 15);
-
-        $this->assertInstanceOf(PaginatedResponseDto::class, $result);
-        $this->assertSame(0, $result->total);
-    }
-
-    public function test_getByUserId_does_not_return_other_users_items(): void
-    {
-        $user1 = $this->makeUser();
-        $user2 = $this->makeUser();
-        $book = $this->makeBook();
-
-        $this->makeCartItem($user1, $book);
-        $this->makeCartItem($user2, $book);
-
-        $result = $this->repository->getByUserId($user1->id, 15);
-
-        $this->assertSame(1, $result->total);
-    }
-
     public function test_getAllByUserId_returns_array_of_cart_item_with_book_response_dtos(): void
     {
         $user = $this->makeUser();

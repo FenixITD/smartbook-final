@@ -41,8 +41,6 @@ class BookRepositoryTest extends TestCase
             stock: $overrides['stock'] ?? 10,
             publishYear: $overrides['publishYear'] ?? 2024,
             coverImage: $overrides['coverImage'] ?? null,
-            averageRating: $overrides['averageRating'] ?? 0.0,
-            ratingsCount: $overrides['ratingsCount'] ?? 0,
             status: $overrides['status'] ?? 'active',
         );
     }

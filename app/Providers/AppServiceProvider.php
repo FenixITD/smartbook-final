@@ -11,12 +11,8 @@ use App\Infrastructure\Persistence\EloquentTransactionManager;
 use App\Listeners\MergeCartOnLoginListener;
 use App\Listeners\SendOrderCreatedEmailListener;
 use App\Listeners\SendOrderStatusEmailListener;
-use App\Models\Author;
-use App\Models\Book;
 use App\Models\ClickhouseActivity;
-use App\Models\Genre;
 use App\Models\Order;
-use App\Models\Review;
 use App\Observers\ClickhouseActivityObserver;
 use App\Observers\OrderObserver;
 use App\Repositories\Eloquent\ActivityLogRepository;
@@ -144,7 +140,8 @@ class AppServiceProvider extends ServiceProvider
          */
         $this->app->singleton(Client::class, static fn () => ClientBuilder::create()
             ->setHosts([config('elasticsearch.host')])
-            ->build());
+            ->build()
+        );
 
         $this->app->singleton(
             ClickhouseActivityService::class

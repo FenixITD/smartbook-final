@@ -29,7 +29,8 @@ RUN install-php-extensions \
     pcntl \
     sockets \
     amqp \
-    curl
+    curl \
+    pcov
 
 # Composer
 # Это "multi-stage build". Вместо того чтобы скачивать установщик и ставить Composer вручную, Docker просто берет готовый

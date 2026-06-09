@@ -1,0 +1,1 @@
+Тесты для ClickhouseManagerService пропущены, так как этот сервис является прямой оберткой над сторонней библиотекой ClickHouseDB\Client и инстанцирует её внутри конструктора. Все сценарии использования менеджера покрыты через тесты ClickhouseQueryBuilderServiceTest и ClickhouseMigratorServiceTest
