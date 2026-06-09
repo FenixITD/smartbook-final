@@ -64,14 +64,24 @@ final class GenreRepository implements GenreRepositoryInterface
         return GenreResponseDto::fromModel($genreId);
     }
 
-    public function suggest(string $query): array
+    /**
+     * @param array<int> $ids
+     * @return array<GenreResponseDto>
+     */
+    public function getByIds(array $ids): array
     {
-        return Genre::where('name', 'like', "%{$query}%")
-            ->orderBy('name')
+        if ($ids === []) {
+            return [];
+        }
+
+        $genres = Genre::whereIn('id', $ids)
             ->select(['id', 'name', 'slug'])
-            ->limit(20)
-            ->get()
-            ->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+            ->get();
+
+        $sorted = $genres->sortBy(static fn (Genre $genre) => array_search($genre->id, $ids, true));
+
+        return $sorted->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+            ->values()
             ->all();
     }
 

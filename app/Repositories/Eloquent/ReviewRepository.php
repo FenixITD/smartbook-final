@@ -70,16 +70,6 @@ final class ReviewRepository implements ReviewRepositoryInterface
         return ReviewResponseDto::fromModel($reviewId);
     }
 
-    public function suggest(string $query): array
-    {
-        return Review::where('comment', 'like', "%{$query}%")
-            ->orderByDesc('id')
-            ->limit(20)
-            ->get()
-            ->map(static fn (Review $review) => ReviewResponseDto::fromModel($review))
-            ->all();
-    }
-
     public function getByIds(array $ids): array
     {
         return Review::with('user')

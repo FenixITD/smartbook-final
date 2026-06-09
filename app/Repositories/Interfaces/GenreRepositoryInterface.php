@@ -24,8 +24,11 @@ interface GenreRepositoryInterface
 
     public function findByIdWithRelations(int $id): GenreResponseDto;
 
-    /** @return array<GenreResponseDto> */
-    public function suggest(string $query): array;
+    /**
+     * @param array<int> $ids
+     * @return array<GenreResponseDto>
+     */
+    public function getByIds(array $ids): array;
 
     public function create(GenreDto $data): GenreResponseDto;
 

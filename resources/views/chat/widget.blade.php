@@ -52,7 +52,7 @@
                     });
 
                     if (!res.ok) {
-                        console.error('Ошибка при отправке сообщения:', await res.text());
+                        console.error('Error sending the message:', await res.text());
                         return;
                     }
 
@@ -65,7 +65,7 @@
                         this.scrollToBottom();
                     }
                 } catch (error) {
-                    console.error('Сетевая ошибка:', error);
+                    console.error('Network error:', error);
                 } finally {
                     this.sending = false;
                 }
@@ -75,15 +75,12 @@
         subscribeToChannel() {
             window.Echo.private(`conversation.${this.conversationId}`)
                 .listen('.MessageSent', (event) => {
-                    console.log('WS Payload:', event); // Оставьте для отладки, если что-то пойдет не так
+                    console.log('WS Payload:', event);
 
-                    // Laravel может прислать данные напрямую (event.id) или обернуть в свойство (event.message.id)
                     const incomingMsg = event.id ? event : (event.message || event);
 
-                    // Если ID всё равно нет, игнорируем, чтобы не сломать UI
                     if (!incomingMsg || !incomingMsg.id) return;
 
-                    // Сравниваем ID безопасно (превращая оба в строки), чтобы 1 не конфликтовало с '1'
                     const exists = this.messages.some(m => String(m.id) === String(incomingMsg.id));
 
                     if (!exists) {

@@ -21,9 +21,6 @@ interface ReviewRepositoryInterface
 
     public function findByIdWithRelations(int $id): ReviewResponseDto;
 
-    /** @return array<ReviewResponseDto> */
-    public function suggest(string $query): array;
-
     /** @param array<int> $ids
      * @return array<ReviewResponseDto> */
     public function getByIds(array $ids): array;

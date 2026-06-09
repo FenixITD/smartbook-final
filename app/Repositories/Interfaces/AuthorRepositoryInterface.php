@@ -24,8 +24,11 @@ interface AuthorRepositoryInterface
 
     public function findByIdWithRelations(int $id): AuthorResponseDto;
 
-    /** @return AuthorResponseDto[] */
-    public function suggest(string $query): array;
+    /**
+     * @param array<int> $ids
+     * @return array<AuthorResponseDto>
+     */
+    public function getByIds(array $ids): array;
 
     public function create(AuthorDto $data): AuthorResponseDto;
 

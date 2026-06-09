@@ -183,58 +183,6 @@ class GenreRepositoryTest extends TestCase
         $this->repository->findByIdWithRelations(999);
     }
 
-    public function test_suggest_returns_matching_genres(): void
-    {
-        Genre::factory()->create(['name' => 'Fantasy', 'slug' => 'fantasy']);
-        Genre::factory()->create(['name' => 'Horror', 'slug' => 'horror']);
-        Genre::factory()->create(['name' => 'Science Fiction', 'slug' => 'science-fiction']);
-
-        $result = $this->repository->suggest('fan');
-
-        $this->assertCount(1, $result);
-        $this->assertSame('Fantasy', $result[0]->name);
-    }
-
-    public function test_suggest_returns_array_of_genre_response_dto(): void
-    {
-        Genre::factory()->create(['name' => 'Fantasy', 'slug' => 'fantasy']);
-
-        $result = $this->repository->suggest('fan');
-
-        $this->assertContainsOnlyInstancesOf(GenreResponseDto::class, $result);
-    }
-
-    public function test_suggest_returns_empty_array_when_no_match(): void
-    {
-        Genre::factory()->create(['name' => 'Fantasy', 'slug' => 'fantasy']);
-
-        $result = $this->repository->suggest('xyz');
-
-        $this->assertSame([], $result);
-    }
-
-    public function test_suggest_limits_to_20_results(): void
-    {
-        foreach (range(1, 15) as $i) {
-            Genre::factory()->create(['name' => "Test Genre {$i}", 'slug' => "test-genre-{$i}"]);
-        }
-
-        $result = $this->repository->suggest('Test');
-
-        $this->assertLessThanOrEqual(20, count($result));
-    }
-
-    public function test_suggest_returns_results_ordered_by_name(): void
-    {
-        Genre::factory()->create(['name' => 'Thriller', 'slug' => 'thriller']);
-        Genre::factory()->create(['name' => 'Teen Fiction', 'slug' => 'teen-fiction']);
-
-        $result = $this->repository->suggest('T');
-
-        $this->assertSame('Teen Fiction', $result[0]->name);
-        $this->assertSame('Thriller', $result[1]->name);
-    }
-
     public function test_create_persists_genre_to_database(): void
     {
         $dto = new GenreDto(name: 'Fantasy', slug: 'fantasy');

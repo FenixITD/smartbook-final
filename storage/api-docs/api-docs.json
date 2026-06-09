@@ -1853,14 +1853,6 @@
                         "type": "string",
                         "example": "Book image"
                     },
-                    "averageRating": {
-                        "type": "number",
-                        "example": 4.6
-                    },
-                    "ratingsCount": {
-                        "type": "integer",
-                        "example": 18
-                    },
                     "status": {
                         "type": "string",
                         "example": "archived"

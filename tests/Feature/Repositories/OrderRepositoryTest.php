@@ -186,39 +186,6 @@ class OrderRepositoryTest extends TestCase
         $this->repository->findByIdWithRelations(99999);
     }
 
-    public function test_suggest_returns_orders_matching_status(): void
-    {
-        $this->createOrder(['status' => 'shipped']);
-        $this->createOrder(['status' => 'pending']);
-
-        $result = $this->repository->suggest('shipped');
-
-        $this->assertNotEmpty($result);
-        $this->assertInstanceOf(OrderResponseDto::class, $result[0]);
-        $this->assertEquals('shipped', $result[0]->status);
-    }
-
-    public function test_suggest_returns_empty_array_when_no_match(): void
-    {
-        $this->createOrder(['status' => 'pending']);
-
-        $result = $this->repository->suggest('nonexistent_xyz');
-
-        $this->assertIsArray($result);
-        $this->assertEmpty($result);
-    }
-
-    public function test_suggest_limits_to_20_results(): void
-    {
-        foreach (range(1, 25) as $i) {
-            $this->createOrder(['status' => 'pending']);
-        }
-
-        $result = $this->repository->suggest('pending');
-
-        $this->assertCount(20, $result);
-    }
-
     public function test_get_by_ids_returns_orders_for_given_ids(): void
     {
         $order1 = $this->createOrder();

@@ -34,7 +34,7 @@ class SearchSuggestGenreService
                 'name' => $genre->name,
                 'url' => route('genres.show', $genre->id),
             ],
-            $this->repository->suggest($query),
+            $this->repository->getByIds($ids),
         ));
     }
 }

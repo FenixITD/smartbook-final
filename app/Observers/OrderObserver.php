@@ -39,26 +39,30 @@ final class OrderObserver
         $statusChanged = $model->wasChanged('status');
         $paymentChanged = $model->wasChanged('payment_method');
 
-        // Прерываем, если не изменился ни статус, ни метод оплаты
         if (!$statusChanged && !$paymentChanged) {
             return;
         }
 
-        $newStatus = OrderStatusEnum::tryFrom($model->status);
+        $rawStatus = $model->getAttributes()['status'] ?? null;
+        $newStatus = is_int($rawStatus) || is_string($rawStatus)
+            ? OrderStatusEnum::tryFrom($rawStatus)
+            : null;
 
-        // Если метод оплаты НЕ менялся, проверяем, нужно ли отправлять уведомление для нового статуса (например, для Pending это false)
         if (!$paymentChanged && ($newStatus === null || !$newStatus->shouldNotify())) {
             return;
         }
 
         $user = $model->user;
-        $originalStatus = $model->getOriginal('status');
+        $originalRaw = $model->getOriginal('status');
+        $originalStatus = is_string($originalRaw) || is_int($originalRaw)
+            ? (string) $originalRaw
+            : '';
 
         if ($user !== null) {
             OrderStatusChangedEvent::dispatch(
                 new OrderStatusChangedDto(
                     orderId: $model->id,
-                    oldStatus: $originalStatus ?? '',
+                    oldStatus: $originalStatus,
                     newStatus: $model->status,
                     userEmail: $user->email ?? '',
                     userName: $user->name ?? '',

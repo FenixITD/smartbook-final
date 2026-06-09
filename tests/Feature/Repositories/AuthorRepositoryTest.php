@@ -209,47 +209,6 @@ final class AuthorRepositoryTest extends TestCase
         $this->assertSame(2, $result->booksCount);
     }
 
-    public function test_suggest_returns_matching_authors(): void
-    {
-        Author::factory()->create(['name' => 'Gabriel Garcia Marquez']);
-        Author::factory()->create(['name' => 'George Orwell']);
-        Author::factory()->create(['name' => 'Virginia Woolf']);
-
-        $result = $this->repository->suggest('Gar');
-
-        $this->assertCount(1, $result);
-        $this->assertSame('Gabriel Garcia Marquez', $result[0]->name);
-    }
-
-    public function test_suggest_returns_empty_array_when_no_match(): void
-    {
-        Author::factory()->create(['name' => 'George Orwell']);
-
-        $result = $this->repository->suggest('zzznomatch');
-
-        $this->assertCount(0, $result);
-    }
-
-    public function test_suggest_limits_to_20_results(): void
-    {
-        Author::factory()->count(25)->create(['name' => 'Test Author']);
-
-        $result = $this->repository->suggest('Test');
-
-        $this->assertCount(20, $result);
-    }
-
-    public function test_suggest_returns_authors_sorted_by_name(): void
-    {
-        Author::factory()->create(['name' => 'Zane Grey']);
-        Author::factory()->create(['name' => 'Zelda Fitzgerald']);
-
-        $result = $this->repository->suggest('Z');
-
-        $this->assertSame('Zane Grey', $result[0]->name);
-        $this->assertSame('Zelda Fitzgerald', $result[1]->name);
-    }
-
     public function test_create_persists_author_to_database(): void
     {
         $this->repository->create(new AuthorDto(name: 'Albert Camus'));

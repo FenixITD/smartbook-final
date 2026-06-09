@@ -69,17 +69,6 @@ final class OrderRepository implements OrderRepositoryInterface
         return OrderResponseDto::fromModel($orderId);
     }
 
-    public function suggest(string $query): array
-    {
-        return Order::where('id', 'like', "%{$query}%")
-            ->orWhere('status', 'like', "%{$query}%")
-            ->orderByDesc('id')
-            ->limit(20)
-            ->get()
-            ->map(static fn (Order $order) => OrderResponseDto::fromModel($order))
-            ->all();
-    }
-
     public function getByIds(array $ids): array
     {
         return Order::with('user')

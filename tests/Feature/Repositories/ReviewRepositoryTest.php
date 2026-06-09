@@ -150,29 +150,6 @@ class ReviewRepositoryTest extends TestCase
         $this->repository->findByIdWithRelations(99999);
     }
 
-    public function test_suggest_returns_matching_reviews(): void
-    {
-        $user = $this->makeUser();
-        $book = $this->makeBook();
-
-        $this->makeReview(['user_id' => $user->id, 'book_id' => $book->id, 'comment' => 'Great book indeed']);
-        $this->makeReview(['user_id' => $user->id, 'book_id' => $book->id, 'comment' => 'Terrible experience']);
-
-        $result = $this->repository->suggest('Great');
-
-        $this->assertCount(1, $result);
-        $this->assertContainsOnlyInstancesOf(ReviewResponseDto::class, $result);
-    }
-
-    public function test_suggest_returns_empty_when_no_match(): void
-    {
-        $this->makeReview(['comment' => 'Nothing relevant here']);
-
-        $result = $this->repository->suggest('xyznonexistent');
-
-        $this->assertCount(0, $result);
-    }
-
     public function test_get_by_ids_returns_matching_reviews(): void
     {
         $r1 = $this->makeReview();

@@ -64,14 +64,24 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return AuthorResponseDto::fromModel($authorId);
     }
 
-    public function suggest(string $query): array
+    /**
+     * @param array<int> $ids
+     * @return array<AuthorResponseDto>
+     */
+    public function getByIds(array $ids): array
     {
-        return Author::orderBy('name')
-            ->where('name', 'like', "%{$query}%")
+        if ($ids === []) {
+            return [];
+        }
+
+        $authors = Author::whereIn('id', $ids)
             ->select(['id', 'name'])
-            ->limit(20)
-            ->get()
-            ->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))
+            ->get();
+
+        $sorted = $authors->sortBy(static fn (Author $author) => array_search($author->id, $ids, true));
+
+        return $sorted->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))
+            ->values()
             ->all();
     }
 

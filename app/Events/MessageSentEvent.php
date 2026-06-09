@@ -24,17 +24,26 @@ final class MessageSentEvent implements ShouldBroadcast
     ) {
     }
 
+    /**
+     * The ShouldBroadcast interface (and its extension, ShouldBroadcastNow) requires the implementation
+     * of only one method: broadcastOn(). The broadcastWith and broadcastAs methods are optional and are therefore
+     * annotated with @noinspection PhpUnused. Since they are not specified as mandatory in the interface itself,
+     * the IDE does not know that they implement any contract or are used by the framework core.
+     */
     public function broadcastOn(): Channel
     {
         return new PrivateChannel('conversation.'.$this->conversationId);
     }
 
-    /** @return array<string, mixed> */
+    /** @return array<string, mixed>
+     * @noinspection PhpUnused
+     */
     public function broadcastWith(): array
     {
         return $this->message->toArray();
     }
 
+    /** @noinspection PhpUnused */
     public function broadcastAs(): string
     {
         return 'MessageSent';

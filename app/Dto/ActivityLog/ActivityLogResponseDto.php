@@ -50,20 +50,37 @@ final readonly class ActivityLogResponseDto
         );
     }
 
+    /**
+     * @param array<string, mixed> $row
+     */
     public static function fromArray(array $row): self
     {
         $propertiesRaw = $row['properties'] ?? '{}';
 
+        /** @var array<string, mixed> $properties */
+        $properties = is_string($propertiesRaw)
+            ? (json_decode($propertiesRaw, true) ?? [])
+            : (array) $propertiesRaw;
+
+        $id = $row['id'] ?? 0;
+        $logName = $row['log_name'] ?? null;
+        $description = $row['description'] ?? '';
+        $subjectType = $row['subject_type'] ?? null;
+        $subjectId = $row['subject_id'] ?? null;
+        $causerName = $row['causer_name'] ?? null;
+        $causerId = $row['causer_id'] ?? null;
+        $createdAt = $row['created_at'] ?? '';
+
         return new self(
-            id: (int) $row['id'],
-            logName: $row['log_name'] ?? null,
-            description: $row['description'] ?? '',
-            subjectType: $row['subject_type'] ?? null,
-            subjectId: isset($row['subject_id']) ? (int) $row['subject_id'] : null,
-            causerName: $row['causer_name'] ?? null,
-            causerId: isset($row['causer_id']) ? (int) $row['causer_id'] : null,
-            properties: is_string($propertiesRaw) ? json_decode($propertiesRaw, true) : (array) $propertiesRaw,
-            createdAt: $row['created_at'] ?? '',
+            id: is_numeric($id) ? (int) $id : 0,
+            logName: is_string($logName) ? $logName : null,
+            description: is_string($description) ? $description : '',
+            subjectType: is_string($subjectType) ? $subjectType : null,
+            subjectId: is_numeric($subjectId) ? (int) $subjectId : null,
+            causerName: is_string($causerName) ? $causerName : null,
+            causerId: is_numeric($causerId) ? (int) $causerId : null,
+            properties: $properties,
+            createdAt: is_string($createdAt) ? $createdAt : '',
         );
     }
 }

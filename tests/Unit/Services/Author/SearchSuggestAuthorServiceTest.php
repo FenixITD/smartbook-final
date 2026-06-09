@@ -34,7 +34,7 @@ class SearchSuggestAuthorServiceTest extends TestCase
             ->with('unknown', 5)
             ->andReturn([]);
 
-        $this->repository->expects('suggest')->never();
+        $this->repository->expects('getByIds')->never();
 
         $result = $this->service->execute('unknown');
 
@@ -53,8 +53,8 @@ class SearchSuggestAuthorServiceTest extends TestCase
         ];
 
         $this->repository
-            ->expects('suggest')
-            ->with('Tol')
+            ->expects('getByIds')
+            ->with([1, 2])
             ->andReturn($authors);
 
         $result = $this->service->execute('Tol');
@@ -76,7 +76,7 @@ class SearchSuggestAuthorServiceTest extends TestCase
         ];
 
         $this->repository
-            ->expects('suggest')
+            ->expects('getByIds')
             ->andReturn($authors);
 
         $result = $this->service->execute('Go');
@@ -91,7 +91,7 @@ class SearchSuggestAuthorServiceTest extends TestCase
             ->expects('search')
             ->andReturn([]);
 
-        $this->repository->expects('suggest')->never();
+        $this->repository->expects('getByIds')->never();
 
         $this->service->execute('query');
     }
@@ -106,15 +106,15 @@ class SearchSuggestAuthorServiceTest extends TestCase
         $this->service->execute('Dostoevsky');
     }
 
-    public function test_passes_query_to_repository_suggest(): void
+    public function test_passes_ids_to_repository_getByIds(): void
     {
         $this->searchService
             ->expects('search')
             ->andReturn([1]);
 
         $this->repository
-            ->expects('suggest')
-            ->with('Bulgakov')
+            ->expects('getByIds')
+            ->with([1])
             ->andReturn([
                 new AuthorResponseDto(id: 1, name: 'Bulgakov', createdAt: '2024-01-01 00:00:00', updatedAt: '2024-01-01 00:00:00'),
             ]);
@@ -129,7 +129,7 @@ class SearchSuggestAuthorServiceTest extends TestCase
             ->andReturn([1]);
 
         $this->repository
-            ->expects('suggest')
+            ->expects('getByIds')
             ->andReturn([
                 new AuthorResponseDto(id: 1, name: 'Author', createdAt: '2024-01-01 00:00:00', updatedAt: '2024-01-01 00:00:00'),
             ]);

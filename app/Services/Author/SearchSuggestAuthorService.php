@@ -34,7 +34,7 @@ class SearchSuggestAuthorService
                 'name' => $author->name,
                 'url' => route('authors.show', $author->id),
             ],
-            $this->repository->suggest($query),
+            $this->repository->getByIds($ids),
         ));
     }
 }

@@ -52,7 +52,7 @@ class PaginatedResponseDto
         $lastPage = (int) max(1, ceil($total / $perPage));
 
         $paginator = new LengthAwarePaginator(
-            items: $items,
+            items: collect($items),
             total: $total,
             perPage: $perPage,
             currentPage: $currentPage,

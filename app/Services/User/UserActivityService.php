@@ -43,15 +43,18 @@ class UserActivityService
     }
 
     /**
-     * @param array $items
-     * @return array
+     * @param array<mixed> $items
+     * @return array<int>
      */
     private function extractBookIds(array $items): array
     {
         $bookIds = [];
 
-        /** @var ActivityLogResponseDto $log */
         foreach ($items as $log) {
+            if (!$log instanceof ActivityLogResponseDto) {
+                continue;
+            }
+
             $propsArray = $log->properties;
 
             /** @var array<string, mixed>|null $attributes */
