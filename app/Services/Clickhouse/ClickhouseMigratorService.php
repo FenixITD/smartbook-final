@@ -7,10 +7,6 @@ namespace App\Services\Clickhouse;
 use Illuminate\Filesystem\Filesystem;
 use RuntimeException;
 
-/**
- * A service class that encapsulates all the technical and business logic for managing migrations in ClickHouse.
- * It provides isolated interaction with the file system and SQL queries, and maintains a history of database states.
- */
 class ClickhouseMigratorService
 {
     public function __construct(

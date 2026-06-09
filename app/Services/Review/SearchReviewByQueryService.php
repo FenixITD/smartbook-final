@@ -19,8 +19,6 @@ class SearchReviewByQueryService
      * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
-     *
-     * Performs a full-text search for reviews in Elasticsearch by user name and comment content, returning an array of matched review IDs
      */
     public function search(string $query, int $limit = 5): array
     {

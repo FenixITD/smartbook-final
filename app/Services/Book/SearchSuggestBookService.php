@@ -17,8 +17,6 @@ class SearchSuggestBookService
 
     /**
      * @return array<int, array{id: int, title: string, author: string|null, url: string}>
-     *
-     * Fetches up to 5 book suggestions for autocomplete search components, returning basic book details
      */
     public function execute(string $query): array
     {

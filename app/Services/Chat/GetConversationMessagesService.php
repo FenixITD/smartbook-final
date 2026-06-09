@@ -19,8 +19,6 @@ class GetConversationMessagesService
 
     /**
      * @return MessageDto[]
-     *
-     * Retrieves messages for a specific conversation. Validates ownership for non-admin users and marks messages as read if viewed by an admin.
      */
     public function getConversationMessages(GetConversationMessagesDto $dto): array
     {

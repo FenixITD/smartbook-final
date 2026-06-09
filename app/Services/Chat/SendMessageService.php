@@ -20,8 +20,6 @@ class SendMessageService
 
     /**
      * @return MessageDto
-     *
-     * Dispatches a new message in a conversation, validates ownership for regular users, and triggers a message sent event
      */
     public function sendMessage(SendMessageDto $dto): MessageDto
     {

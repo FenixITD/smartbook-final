@@ -19,8 +19,6 @@ class SearchOrderByQueryService
      * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
-     *
-     * Performs a full-text search for orders in Elasticsearch by the user's name, returning an array of matched order IDs
      */
     public function search(string $query, int $limit = 5): array
     {

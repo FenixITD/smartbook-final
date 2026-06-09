@@ -30,8 +30,6 @@ class ClickhouseManagerService
     }
 
     /**
-     * Insert a single row. Keys are used as column names.
-     *
      * @param array<string, mixed> $row
      */
     public function insert(string $table, array $row): void
@@ -43,8 +41,6 @@ class ClickhouseManagerService
     }
 
     /**
-     * Run a SELECT and return all rows.
-     *
      * @param array<string, mixed> $bindings Named bindings, referenced as {name:Type} in SQL
      *
      * @return array<int, array<string, mixed>>
@@ -58,8 +54,6 @@ class ClickhouseManagerService
     }
 
     /**
-     * Run a COUNT query and return the integer result.
-     *
      * @param array<string, mixed> $bindings
      */
     public function count(string $sql, array $bindings = []): int
@@ -73,9 +67,6 @@ class ClickhouseManagerService
         return 0;
     }
 
-    /**
-     * Execute a DDL statement (CREATE TABLE, CREATE DATABASE, etc.).
-     */
     public function execute(string $sql): void
     {
         $this->client->write($sql);

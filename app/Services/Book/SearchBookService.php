@@ -19,9 +19,6 @@ class SearchBookService
 
     /**
      * @return array<BookResponseDto>
-     *
-     * Retrieves an unpaginated list of books. Uses Elasticsearch if a search query is provided,
-     * otherwise queries the repository directly.
      */
     public function fetchList(BookFiltersDto $filters): array
     {

@@ -17,8 +17,6 @@ class SearchAuthorService
 
     /**
      * @return array<int>
-     *
-     * Searches and filters authors in Elasticsearch based on provided criteria, returning an array of author IDs
      */
     public function search(AuthorFiltersDto $filters): array
     {
@@ -44,8 +42,6 @@ class SearchAuthorService
 
     /**
      * @return array<string, mixed>
-     *
-     * Builds the Elasticsearch query array based on the provided author filters
      */
     private function buildQuery(AuthorFiltersDto $filters): array
     {

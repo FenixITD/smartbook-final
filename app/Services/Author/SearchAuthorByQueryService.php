@@ -15,8 +15,6 @@ class SearchAuthorByQueryService
 
     /**
      * @return array<int>
-     *
-     * Performs a full-text search for authors in Elasticsearch by name, returning an array of matched author IDs
      */
     public function search(string $query, int $limit = 5): array
     {

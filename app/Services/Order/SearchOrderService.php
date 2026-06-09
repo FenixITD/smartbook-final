@@ -21,8 +21,6 @@ class SearchOrderService
      * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
-     *
-     * Searches and filters orders in Elasticsearch based on provided criteria (like ID or status), returning an array of order IDs
      */
     public function search(OrderFiltersDto $filters): array
     {
@@ -51,8 +49,6 @@ class SearchOrderService
 
     /**
      * @return array<string, mixed>
-     *
-     * Builds the Elasticsearch query array based on the provided order filters
      */
     private function buildQuery(OrderFiltersDto $filters): array
     {

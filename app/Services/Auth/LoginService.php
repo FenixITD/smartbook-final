@@ -14,8 +14,6 @@ class LoginService
 {
     /**
      * @return bool
-     *
-     * Login with a request limit added to protect against password attacks
      */
     public function login(LoginDto $dto): bool
     {

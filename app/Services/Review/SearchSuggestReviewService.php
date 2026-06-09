@@ -20,8 +20,6 @@ class SearchSuggestReviewService
     /**
      * @throws ClientResponseException
      * @throws ServerResponseException
-     *
-     * Fetches up to 5 review suggestions for autocomplete search, returning the author's name, a truncated comment, and the URL
      * @return array<int, array<string, mixed>>
      */
     public function execute(string $query): array

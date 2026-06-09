@@ -21,8 +21,6 @@ class SearchGenreService
      * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
-     *
-     * Searches and filters genres in Elasticsearch based on provided criteria, returning an array of genre IDs
      */
     public function search(GenreFiltersDto $filters): array
     {

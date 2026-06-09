@@ -16,8 +16,6 @@ class SearchBookForDashboardService
 
     /**
      * @return array<int>
-     *
-     * Searches and filters books in Elasticsearch specifically for the admin dashboard, returning an array of book IDs
      */
     public function search(DashboardFiltersDto $filters): array
     {

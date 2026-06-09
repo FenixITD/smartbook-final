@@ -21,8 +21,6 @@ class SearchReviewService
      * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
-     *
-     * Searches and filters reviews in Elasticsearch based on provided criteria, returning an array of review IDs
      */
     public function search(ReviewFiltersDto $filters): array
     {
@@ -51,8 +49,6 @@ class SearchReviewService
 
     /**
      * @return array<string, mixed>
-     *
-     * Builds the Elasticsearch query array based on the provided review filters
      */
     private function buildQuery(ReviewFiltersDto $filters): array
     {

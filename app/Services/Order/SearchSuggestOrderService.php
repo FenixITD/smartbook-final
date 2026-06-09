@@ -17,8 +17,6 @@ class SearchSuggestOrderService
 
     /**
      * @return array<int, array{id: int, user_name: string, status: string, url: string}>
-     *
-     * Fetches up to 5 order suggestions for autocomplete search, returning basic order details and their URL
      */
     public function execute(string $query): array
     {
