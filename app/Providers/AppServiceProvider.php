@@ -17,12 +17,8 @@ use App\Models\ClickhouseActivity;
 use App\Models\Genre;
 use App\Models\Order;
 use App\Models\Review;
-use App\Observers\AuthorObserver;
-use App\Observers\BookObserver;
 use App\Observers\ClickhouseActivityObserver;
-use App\Observers\GenreObserver;
 use App\Observers\OrderObserver;
-use App\Observers\ReviewObserver;
 use App\Repositories\Eloquent\ActivityLogRepository;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\BookRepository;
@@ -178,11 +174,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         // ── RabbitMQ Notification Observers
-        Author::observe(AuthorObserver::class);
-        Book::observe(BookObserver::class);
-        Genre::observe(GenreObserver::class);
         Order::observe(OrderObserver::class);
-        Review::observe(ReviewObserver::class);
         ClickhouseActivity::observe(ClickhouseActivityObserver::class);
     }
 

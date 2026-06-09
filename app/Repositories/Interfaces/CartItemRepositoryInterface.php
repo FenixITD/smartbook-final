@@ -22,8 +22,6 @@ interface CartItemRepositoryInterface
     /** @return array<CartItemWithBookResponseDto> */
     public function getAllByUserId(int $userId): array;
 
-    public function getByUserId(int $userId, int $perPage): PaginatedResponseDto;
-
     public function deleteByUserId(int $userId): void;
 
     public function addOrIncrement(CartItemDto $data): void;

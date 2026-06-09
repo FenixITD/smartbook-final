@@ -10,7 +10,7 @@ final readonly class GenreFiltersDto
         public string|null $search = null,
         public int $perPage = 15,
         public string $sortBy = 'id',
-        public string $sortDirection = 'asc',
+        public string $sortDirection = 'desc',
     ) {
     }
 }

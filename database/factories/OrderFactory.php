@@ -13,7 +13,7 @@ class OrderFactory extends Factory
 {
     private const ORDER_STATUSES = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
 
-    private const ORDER_PAYMENT_METHODS = ['card', 'cash', 'WebPay'];
+    private const ORDER_PAYMENT_METHODS = ['card', 'cash', 'webpay'];
 
     public function definition(): array
     {

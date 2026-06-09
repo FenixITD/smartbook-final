@@ -12,7 +12,7 @@ final readonly class ClickhouseActivityObserver
 {
     public function __construct(
         private ClickhouseActivityService $service,
-        private ClickhouseManagerService  $ch,
+        private ClickhouseManagerService $clickhouseManagerService,
     ) {
     }
 
@@ -20,7 +20,7 @@ final readonly class ClickhouseActivityObserver
     {
         $row = $this->service->buildRow($activity);
 
-        $this->ch->insert('activity_log', $row);
+        $this->clickhouseManagerService->insert('activity_log', $row);
 
         /** @var int $id */
         $id = $row['id'];

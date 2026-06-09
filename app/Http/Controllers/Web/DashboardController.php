@@ -9,6 +9,7 @@ use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use App\Services\Book\GetDashboardBooksService;
 use Illuminate\View\View;
+use Log;
 
 final readonly class DashboardController
 {
@@ -21,7 +22,7 @@ final readonly class DashboardController
 
     public function __invoke(DashboardListRequest $request): View
     {
-        \Log::info('Dashboard search', [
+        Log::info('Dashboard search', [
             'all' => $request->all(),
             'dto' => $request->toDto(),
         ]);

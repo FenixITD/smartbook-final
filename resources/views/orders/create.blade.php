@@ -44,11 +44,12 @@
                         @error('shippingAddress') <flux:error>{{ $message }}</flux:error> @enderror
                     </flux:field>
 
-                    <flux:field>
-                        <flux:label for="paymentMethod">Payment method</flux:label>
-                        <flux:input id="paymentMethod" name="paymentMethod" value="{{ old('paymentMethod') }}" placeholder="e.g. Credit card" />
-                        @error('paymentMethod') <flux:error>{{ $message }}</flux:error> @enderror
-                    </flux:field>
+                    <flux:select name="paymentMethod" label="Payment method">
+                        <flux:select.option value="" disabled selected>Select payment method...</flux:select.option>
+                        <flux:select.option value="card" :selected="old('paymentMethod', $order->paymentMethod ?? '') === 'card'">Card</flux:select.option>
+                        <flux:select.option value="cash" :selected="old('paymentMethod', $order->paymentMethod ?? '') === 'cash'">Cash</flux:select.option>
+                        <flux:select.option value="webpay" :selected="old('paymentMethod', $order->paymentMethod ?? '') === 'webpay'">WebPay</flux:select.option>
+                    </flux:select>
 
                     <div class="flex gap-3 pt-2">
                         <flux:button type="submit" variant="primary">Create order</flux:button>

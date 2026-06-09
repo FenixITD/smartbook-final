@@ -63,7 +63,7 @@ class SearchOrderService
             $must[] = [
                 'multi_match' => [
                     'query' => $filters->search,
-                    'fields' => ['status'],
+                    'fields' => ['user_name'],
                     'fuzziness' => 'AUTO',
                 ],
             ];

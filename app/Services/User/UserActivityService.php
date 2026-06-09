@@ -22,14 +22,36 @@ class UserActivityService
     /**
      * @return array{0: PaginatedResponseDto, 1: array<int, BookResponseDto>}
      */
-    public function getWithBooks(ActivityLogFiltersDto $filters): array
+    public function fetchWithBooks(ActivityLogFiltersDto $filters): array
     {
         $logs = $this->activityRepository->getPaginated($filters);
 
+        $bookIds = $this->extractBookIds($logs->items);
+
+        if ($bookIds === []) {
+            return [$logs, []];
+        }
+
+        $books = $this->bookRepository->findByIdsWithAuthor($bookIds);
+
+        /** @var array<int, BookResponseDto> $booksById */
+        $booksById = collect($books)
+            ->keyBy(static fn (BookResponseDto $bookResponseDto) => $bookResponseDto->id)
+            ->all();
+
+        return [$logs, $booksById];
+    }
+
+    /**
+     * @param array $items
+     * @return array
+     */
+    private function extractBookIds(array $items): array
+    {
         $bookIds = [];
 
         /** @var ActivityLogResponseDto $log */
-        foreach ($logs->items as $log) {
+        foreach ($items as $log) {
             $propsArray = $log->properties;
 
             /** @var array<string, mixed>|null $attributes */
@@ -48,19 +70,6 @@ class UserActivityService
             }
         }
 
-        $bookIds = array_values(array_unique($bookIds));
-
-        if ($bookIds === []) {
-            return [$logs, []];
-        }
-
-        $books = $this->bookRepository->findByIdsWithAuthor($bookIds);
-
-        /** @var array<int, BookResponseDto> $booksById */
-        $booksById = collect($books)
-            ->keyBy(static fn (BookResponseDto $b) => $b->id)
-            ->all();
-
-        return [$logs, $booksById];
+        return array_values(array_unique($bookIds));
     }
 }

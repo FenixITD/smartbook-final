@@ -39,7 +39,7 @@ final class GetUserActivityControllerTest extends TestCase
         $booksById = [1 => Mockery::mock(BookResponseDto::class)];
 
         $this->service
-            ->shouldReceive('getWithBooks')
+            ->shouldReceive('fetchWithBooks')
             ->once()
             ->andReturn([$logs, $booksById]);
 
@@ -60,12 +60,12 @@ final class GetUserActivityControllerTest extends TestCase
         Auth::shouldReceive('id')->once()->andReturn(42);
 
         $this->service
-            ->shouldReceive('getWithBooks')
+            ->shouldReceive('fetchWithBooks')
             ->once()
             ->with(Mockery::on(function (ActivityLogFiltersDto $dto) {
                 return $dto->perPage === 25
                     && $dto->causerId === 42
-                    && $dto->logNames === ['CartItem', 'Favorite'];
+                    && $dto->logNames === ['CartItem', 'Favorite', 'Review'];
             }))
             ->andReturn([Mockery::mock(PaginatedResponseDto::class), []]);
 

@@ -68,8 +68,8 @@
                     </div>
                     <div class="w-40">
                         <flux:select name="sortDirection">
-                            <flux:select.option value="asc" :selected="request('sortDirection') === 'asc'">Ascending</flux:select.option>
-                            <flux:select.option value="desc" :selected="request('sortDirection') === 'desc'">Descending</flux:select.option>
+                            <flux:select.option value="asc" :selected="request('sortDirection', 'desc') === 'asc'">Ascending</flux:select.option>
+                            <flux:select.option value="desc" :selected="request('sortDirection', 'desc') === 'desc'">Descending</flux:select.option>
                         </flux:select>
                     </div>
                     <flux:button type="submit" variant="filled">Apply</flux:button>

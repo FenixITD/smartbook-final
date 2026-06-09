@@ -9,6 +9,7 @@ use App\Dto\Order\OrderFiltersDto;
 use App\Dto\Order\OrderResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Order;
+use App\Models\User;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 
 final class OrderRepository implements OrderRepositoryInterface
@@ -16,10 +17,19 @@ final class OrderRepository implements OrderRepositoryInterface
     /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array
     {
-        return Order::query()
-            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id))
-            ->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage)
+        $query = Order::query()
+            ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id));
+
+        if ($filters->sortBy === 'user_name') {
+            $query->orderBy(
+                User::select('name')->whereColumn('users.id', 'orders.user_id'),
+                $filters->sortDirection
+            );
+        } else {
+            $query->orderBy($filters->sortBy, $filters->sortDirection);
+        }
+
+        return $query->paginate($filters->perPage)
             ->getCollection()
             ->map(static fn (Order $order) => OrderResponseDto::fromModel($order))
             ->all();
@@ -28,11 +38,18 @@ final class OrderRepository implements OrderRepositoryInterface
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, OrderFiltersDto $filters): PaginatedResponseDto
     {
-        $paginator = Order::query()
-            ->whereIn('id', $ids)
-            ->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage)
-            ->withQueryString();
+        $query = Order::query()->whereIn('id', $ids);
+
+        if ($filters->sortBy === 'user_name') {
+            $query->orderBy(
+                User::select('name')->whereColumn('users.id', 'orders.user_id'),
+                $filters->sortDirection
+            );
+        } else {
+            $query->orderBy($filters->sortBy, $filters->sortDirection);
+        }
+
+        $paginator = $query->paginate($filters->perPage)->withQueryString();
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }

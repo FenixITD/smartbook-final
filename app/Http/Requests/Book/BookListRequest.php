@@ -32,7 +32,7 @@ class BookListRequest extends FormRequest
             search: $this->filled('search') ? (string) $this->string('search') : null,
             perPage: $this->integer('perPage', 15),
             sortBy: (string) $this->string('sortBy', 'id'),
-            sortDirection: (string) $this->string('sortDirection', 'asc'),
+            sortDirection: (string) $this->string('sortDirection', 'desc'),
         );
     }
 }

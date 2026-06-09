@@ -19,8 +19,9 @@
         </svg>
     </button>
 
-    <div x-show="open" @click="open = false" class="fixed inset-0" style="z-index: 9998;"></div>
+    <div x-cloak x-show="open" @click="open = false" class="fixed inset-0" style="z-index: 9998;"></div>
     <div
+        x-cloak
         x-show="open"
         x-transition:enter="transition ease-out duration-100"
         x-transition:enter-start="opacity-0 scale-95"

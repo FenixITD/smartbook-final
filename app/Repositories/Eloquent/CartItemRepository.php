@@ -42,16 +42,6 @@ final class CartItemRepository implements CartItemRepositoryInterface
             ->sum(DB::raw('books.price * cart_items.quantity'));
     }
 
-    public function getByUserId(int $userId, int $perPage): PaginatedResponseDto
-    {
-        $paginator = CartItem::with('book.author')
-            ->where('user_id', $userId)
-            ->paginate($perPage)
-            ->withQueryString();
-
-        return PaginatedResponseDto::fromPaginator($paginator);
-    }
-
     public function getAllByUserId(int $userId): array
     {
         return CartItem::with('book.author')

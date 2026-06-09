@@ -6,6 +6,7 @@ namespace App\Http\Requests\Order;
 
 use App\Dto\Order\OrderDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -35,8 +36,8 @@ final class OrderDataRequest extends FormRequest
             'total' => ['required', 'numeric', 'min:0', 'max:9999.99'],
             'status' => ['required', 'string', 'in:pending,paid,shipped,delivered,cancelled'],
             'shippingAddress' => ['required', 'string', 'max:255'],
-            'paymentMethod' => ['nullable', 'string', 'max:255'],
-        ];
+            'paymentMethod' => ['required', 'string', Rule::in(['cash', 'card', 'webpay'])],
+            ];
     }
 
     public function toDto(): OrderDto

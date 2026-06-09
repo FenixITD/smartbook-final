@@ -9,18 +9,11 @@ use App\Enums\OrderStatusEnum;
 use App\Events\OrderCreatedEvent;
 use App\Events\OrderStatusChangedEvent;
 use App\Models\Order;
-use Illuminate\Database\Eloquent\Model;
 
-final class OrderObserver extends BaseEntityObserver
+final class OrderObserver
 {
-    public function created(Model $model): void
+    public function created(Order $model): void
     {
-        parent::created($model);
-
-        if (!$model instanceof Order) {
-            return;
-        }
-
         $user = $model->user;
 
         if ($user !== null) {
@@ -37,32 +30,28 @@ final class OrderObserver extends BaseEntityObserver
         }
     }
 
-    public function updated(Model $model): void
+    public function updated(Order $model): void
     {
-        parent::updated($model);
-
-        if (!$model instanceof Order) {
-            return;
-        }
-
         if ($model->wasRecentlyCreated) {
             return;
         }
 
-        if (!$model->wasChanged('status')) {
+        $statusChanged = $model->wasChanged('status');
+        $paymentChanged = $model->wasChanged('payment_method');
+
+        // Прерываем, если не изменился ни статус, ни метод оплаты
+        if (!$statusChanged && !$paymentChanged) {
             return;
         }
 
         $newStatus = OrderStatusEnum::tryFrom($model->status);
 
-        // @phpstan-ignore identical.alwaysFalse
-        if ($newStatus === null || !$newStatus->shouldNotify()) {
+        // Если метод оплаты НЕ менялся, проверяем, нужно ли отправлять уведомление для нового статуса (например, для Pending это false)
+        if (!$paymentChanged && ($newStatus === null || !$newStatus->shouldNotify())) {
             return;
         }
 
         $user = $model->user;
-
-        /** @var string|null $originalStatus */
         $originalStatus = $model->getOriginal('status');
 
         if ($user !== null) {

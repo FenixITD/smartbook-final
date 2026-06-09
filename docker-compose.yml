@@ -22,6 +22,8 @@ services:
         condition: service_healthy
       clickhouse:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
   # RabbitMQ Queue Worker
   queue-worker:
@@ -43,6 +45,8 @@ services:
         condition: service_healthy
       db:
         condition: service_started
+      redis:
+        condition: service_healthy
 
   nginx:
     image: nginx:alpine
@@ -196,6 +200,20 @@ services:
     networks:
       - smartbook-net
 
+  redis:
+    image: 'redis:alpine'
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - smartbook-net
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 networks:
   smartbook-net:
     driver: bridge
@@ -205,3 +223,4 @@ volumes:
   minio_data:
   es_data:
   clickhouse_data:
+  redis_data:

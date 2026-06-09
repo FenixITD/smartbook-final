@@ -61,14 +61,15 @@
                     <div class="w-40">
                         <flux:select name="sortBy">
                             <flux:select.option value="id" :selected="request('sortBy') === 'id'">By ID</flux:select.option>
-                            <flux:select.option value="name" :selected="request('sortBy') === 'name'">By name</flux:select.option>
+                            <flux:select.option value="user_name" :selected="request('sortBy') === 'user_name'">By name</flux:select.option>
+                            <flux:select.option value="status" :selected="request('sortBy') === 'status'">By status</flux:select.option>
                             <flux:select.option value="created_at" :selected="request('sortBy') === 'created_at'">By date</flux:select.option>
                         </flux:select>
                     </div>
                     <div class="w-40">
                         <flux:select name="sortDirection">
-                            <flux:select.option value="asc" :selected="request('sortDirection') === 'asc'">Ascending</flux:select.option>
-                            <flux:select.option value="desc" :selected="request('sortDirection') === 'desc'">Descending</flux:select.option>
+                            <flux:select.option value="asc" :selected="request('sortDirection', 'desc') === 'asc'">Ascending</flux:select.option>
+                            <flux:select.option value="desc" :selected="request('sortDirection', 'desc') === 'desc'">Descending</flux:select.option>
                         </flux:select>
                     </div>
                     <flux:button type="submit" variant="filled">Apply</flux:button>

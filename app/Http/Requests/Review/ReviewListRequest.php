@@ -21,7 +21,7 @@ class ReviewListRequest extends FormRequest
         return [
             'search' => ['nullable', 'string'],
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sortBy' => ['nullable', 'string', Rule::in(['id', 'rating', 'created_at'])],
+            'sortBy' => ['nullable', 'string', Rule::in(['id', 'user_name', 'rating', 'created_at'])],
             'sortDirection' => ['nullable', 'in:asc,desc'],
         ];
     }
@@ -32,7 +32,7 @@ class ReviewListRequest extends FormRequest
             search: $this->has('search') ? (string) $this->string('search') : null,
             perPage: $this->integer('perPage', 15),
             sortBy: (string) $this->string('sortBy', 'id'),
-            sortDirection: (string) $this->string('sortDirection', 'asc'),
+            sortDirection: (string) $this->string('sortDirection', 'desc'),
         );
     }
 }

@@ -106,7 +106,7 @@ final class GetListAuthorControllerTest extends TestCase
                 return $arg->search === null
                     && $arg->perPage === 15
                     && $arg->sortBy === 'id'
-                    && $arg->sortDirection === 'asc';
+                    && $arg->sortDirection === 'desc';
             }))
             ->andReturn([]);
 

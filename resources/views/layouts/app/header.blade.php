@@ -6,10 +6,13 @@
     }
 @endphp
 
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <title></title>@include('partials.head')
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body class="min-h-screen bg-white dark:bg-zinc-800">
 <flux:header container class="sticky top-0 z-50 border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
@@ -162,7 +165,7 @@
     </script>
 
     {{-- Cart --}}
-    <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
+    <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!" wire:key="nav-cart">
         <flux:tooltip content="Cart" position="bottom">
             <div class="relative">
                 <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="shopping-cart" href="{{ route('cart.index') }}" />
@@ -182,7 +185,7 @@
 
     {{-- Favorites --}}
     @auth
-        <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
+        <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!" wire:key="nav-favorites">
             <flux:tooltip content="Favorites" position="bottom">
                 <div class="relative">
                     <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="heart" href="{{ route('favorites.index') }}" />
@@ -201,9 +204,9 @@
 
     {{-- Profile / Login --}}
     @auth
-        <x-desktop-user-menu />
+        <x-desktop-user-menu wire:key="nav-profile-menu" />
     @else
-        <flux:navbar class="py-0!">
+        <flux:navbar class="py-0!" wire:key="nav-login-menu">
             <flux:tooltip content="Sign in" position="bottom">
                 <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="user" href="{{ route('login') }}" />
             </flux:tooltip>
@@ -215,9 +218,9 @@
     <div
         x-data
         x-init="$el.style.top = (document.querySelector('header')?.offsetHeight ?? 64) + 'px'"
-        class="sticky z-40 border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden"
+        class="sticky z-50 w-full border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden"
     >
-        <div class="flex items-center justify-between px-4 py-2">
+        <div class="flex items-center justify-between px-4 py-2 mx-auto max-w-7xl">
 
             {{-- Left side of the menu --}}
             <div class="flex items-center gap-1">
@@ -254,8 +257,9 @@
                         {{-- Badge only for Chat --}}
                         @if ($label === 'Chat' && ($adminUnreadChatsCount ?? 0) >= 0)
                             <span
+                                x-cloak
                                 x-data="{ count: {{ $adminUnreadChatsCount ?? 0 }} }"
-                                @admin-unread-decreased.window="count = Math.max(0, count - $event.detail.by)"
+                                x-on:admin-unread-decreased.window="count = Math.max(0, count - $event.detail.by)"
                                 x-show="count > 0"
                                 x-text="count > 9 ? '9+' : count"
                                 class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold pointer-events-none"
@@ -269,7 +273,6 @@
     </div>
 @endif
 
-<!-- Mobile Menu -->
 <flux:sidebar collapsible="mobile" sticky class="lg:hidden border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
     <flux:sidebar.header>
         <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />

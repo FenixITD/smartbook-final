@@ -63,7 +63,7 @@ class SearchReviewService
             $must[] = [
                 'multi_match' => [
                     'query' => $filters->search,
-                    'fields' => ['content'],
+                    'fields' => ['user_name^3', 'comment'],
                     'fuzziness' => 'AUTO',
                 ],
             ];

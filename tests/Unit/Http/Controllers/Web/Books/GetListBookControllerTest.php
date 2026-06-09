@@ -115,7 +115,7 @@ final class GetListBookControllerTest extends TestCase
                 return $dto->search === null
                     && $dto->perPage === 15
                     && $dto->sortBy === 'id'
-                    && $dto->sortDirection === 'asc';
+                    && $dto->sortDirection === 'desc';
             }))
             ->andReturn(Mockery::mock(PaginatedResponseDto::class));
 

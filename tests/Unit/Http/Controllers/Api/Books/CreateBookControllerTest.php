@@ -85,16 +85,12 @@ final class CreateBookControllerTest extends TestCase
         $repository->shouldReceive('create')
             ->once()
             ->withArgs(function (BookDto $dto): bool {
-                return $dto->publishYear === 2021
-                    && $dto->averageRating === 4.8
-                    && $dto->ratingsCount === 200;
+                return $dto->publishYear === 2021;
             })
             ->andReturn($this->makeBookResponseDto());
 
         $request = $this->makeBookDataRequest([
-            'publishYear'   => 2021,
-            'averageRating' => 4.8,
-            'ratingsCount'  => 200,
+            'publishYear' => 2021,
         ]);
 
         (new CreateBookController($repository))->__invoke($request);

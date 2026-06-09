@@ -131,23 +131,13 @@ final class UpdateBookControllerTest extends TestCase
 
     public function test_update_calls_book_repository_get_by_id_with_correct_id(): void
     {
-        $this->bookRepository
-            ->shouldReceive('getById')
-            ->once()
-            ->with(3)
-            ->andReturn($this->makeBookResponseDto(id: 3, title: 'Dune'));
-
-        $this->service->shouldReceive('execute');
+        $this->service->shouldReceive('execute')->once()->with(3, Mockery::any(), Mockery::any());
 
         $this->controller->update($this->makeRequest(), 3);
     }
 
     public function test_update_calls_service_execute_once(): void
     {
-        $this->bookRepository
-            ->shouldReceive('getById')
-            ->andReturn($this->makeBookResponseDto(id: 1, title: 'Dune'));
-
         $this->service->shouldReceive('execute')->once();
 
         $this->controller->update($this->makeRequest(), 1);
@@ -155,10 +145,6 @@ final class UpdateBookControllerTest extends TestCase
 
     public function test_update_passes_correct_id_to_service(): void
     {
-        $this->bookRepository
-            ->shouldReceive('getById')
-            ->andReturn($this->makeBookResponseDto(id: 7, title: 'Dune'));
-
         $this->service
             ->shouldReceive('execute')
             ->once()
@@ -169,10 +155,6 @@ final class UpdateBookControllerTest extends TestCase
 
     public function test_update_passes_correct_dto_to_service(): void
     {
-        $this->bookRepository
-            ->shouldReceive('getById')
-            ->andReturn($this->makeBookResponseDto(id: 1, title: 'Old Title'));
-
         $this->service
             ->shouldReceive('execute')
             ->once()
@@ -187,10 +169,6 @@ final class UpdateBookControllerTest extends TestCase
 
     public function test_update_passes_genres_from_request_to_service(): void
     {
-        $this->bookRepository
-            ->shouldReceive('getById')
-            ->andReturn($this->makeBookResponseDto(id: 1, title: 'Dune'));
-
         $this->service
             ->shouldReceive('execute')
             ->once()
@@ -205,7 +183,6 @@ final class UpdateBookControllerTest extends TestCase
 
     public function test_update_returns_redirect_response(): void
     {
-        $this->bookRepository->shouldReceive('getById')->andReturn($this->makeBookResponseDto(id: 1, title: 'Dune'));
         $this->service->shouldReceive('execute');
 
         $response = $this->controller->update($this->makeRequest(), 1);
@@ -215,7 +192,6 @@ final class UpdateBookControllerTest extends TestCase
 
     public function test_update_redirects_to_books_index(): void
     {
-        $this->bookRepository->shouldReceive('getById')->andReturn($this->makeBookResponseDto(id: 1, title: 'Dune'));
         $this->service->shouldReceive('execute');
 
         $response = $this->controller->update($this->makeRequest(), 1);

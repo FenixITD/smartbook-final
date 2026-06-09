@@ -16,16 +16,16 @@ final class BookFiltersDtoTest extends TestCase
         $this->assertNull($dto->search);
         $this->assertSame(15, $dto->perPage);
         $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        $this->assertSame('desc', $dto->sortDirection);
     }
 
     public function test_book_filters_dto_initializes_with_custom_values(): void
     {
-        $dto = new BookFiltersDto('Fantasy', 25, 'title', 'desc');
+        $dto = new BookFiltersDto('Test', 50, 'name', 'asc');
 
-        $this->assertSame('Fantasy', $dto->search);
-        $this->assertSame(25, $dto->perPage);
-        $this->assertSame('title', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        $this->assertSame('Test', $dto->search);
+        $this->assertSame(50, $dto->perPage);
+        $this->assertSame('name', $dto->sortBy);
+        $this->assertSame('asc', $dto->sortDirection);
     }
 }

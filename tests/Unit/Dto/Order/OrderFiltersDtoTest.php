@@ -17,7 +17,7 @@ final class OrderFiltersDtoTest extends TestCase
         $this->assertNull($dto->search);
         $this->assertSame(15, $dto->perPage);
         $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        $this->assertSame('desc', $dto->sortDirection);
     }
 
     public function test_order_filters_dto_initializes_with_custom_values(): void
@@ -27,13 +27,13 @@ final class OrderFiltersDtoTest extends TestCase
             search: 'Express',
             perPage: 50,
             sortBy: 'total',
-            sortDirection: 'desc'
+            sortDirection: 'asc'
         );
 
         $this->assertSame(42, $dto->id);
         $this->assertSame('Express', $dto->search);
         $this->assertSame(50, $dto->perPage);
         $this->assertSame('total', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        $this->assertSame('asc', $dto->sortDirection);
     }
 }

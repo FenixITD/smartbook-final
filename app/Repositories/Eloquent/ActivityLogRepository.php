@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories\Eloquent;
 
 use App\Dto\ActivityLog\ActivityLogFiltersDto;
+use App\Dto\ActivityLog\ActivityLogResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\ActivityLogRepositoryInterface;
 use App\Services\Clickhouse\ClickhouseManagerService;
@@ -41,8 +42,11 @@ final readonly class ActivityLogRepository implements ActivityLogRepositoryInter
             ->offset(($filters->page - 1) * $filters->perPage)
             ->get();
 
+
+        $items = array_map(static fn (array $row) => ActivityLogResponseDto::fromArray($row), $rows);
+
         return PaginatedResponseDto::create(
-            items: $rows,
+            items: $items,
             total: $total,
             perPage: $filters->perPage,
             currentPage: $filters->page,

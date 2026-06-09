@@ -22,10 +22,10 @@ final readonly class GetUserActivityController
         $filters = new ActivityLogFiltersDto(
             perPage: $request->integer('perPage', 15),
             causerId: (int) Auth::id(),
-            logNames: ['CartItem', 'Favorite'],
+            logNames: ['CartItem', 'Favorite', 'Review'],
         );
 
-        [$logs, $booksById] = $this->service->getWithBooks($filters);
+        [$logs, $booksById] = $this->service->fetchWithBooks($filters);
 
         return view('user-activity.index', compact('logs', 'booksById'));
     }

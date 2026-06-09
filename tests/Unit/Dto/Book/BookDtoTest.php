@@ -20,8 +20,6 @@ final class BookDtoTest extends TestCase
             16,
             2012,
             'Test image',
-            4.9,
-            219,
             'draft',
         );
 
@@ -33,8 +31,6 @@ final class BookDtoTest extends TestCase
         $this->assertSame(16, $dto->stock);
         $this->assertSame(2012, $dto->publishYear);
         $this->assertSame('Test image', $dto->coverImage);
-        $this->assertSame(4.9, $dto->averageRating);
-        $this->assertSame(219, $dto->ratingsCount);
         $this->assertSame('draft', $dto->status);
 
         $this->assertSame([
@@ -45,10 +41,8 @@ final class BookDtoTest extends TestCase
             'price' => 95.0,
             'stock' => 16,
             'publish_year' => 2012,
-            'cover_image' => 'Test image',
-            'average_rating' => 4.9,
-            'ratings_count' => 219,
             'status' => 'draft',
+            'cover_image' => 'Test image',
         ], $dto->toArray());
     }
 }

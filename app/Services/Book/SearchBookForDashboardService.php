@@ -48,11 +48,26 @@ class SearchBookForDashboardService
 
         if ($filters->search !== null && $filters->search !== '') {
             $must[] = [
-                'multi_match' => [
-                    'query' => $filters->search,
-                    'fields' => ['title^3', 'description'],
-                    'type' => 'best_fields',
-                    'fuzziness' => 'AUTO',
+                'bool' => [
+                    'should' => [
+                        [
+                            'match_phrase_prefix' => [
+                                'title' => [
+                                    'query' => $filters->search,
+                                    'boost' => 3,
+                                ],
+                            ],
+                        ],
+                        [
+                            'multi_match' => [
+                                'query' => $filters->search,
+                                'fields' => ['title^3', 'description'],
+                                'type' => 'best_fields',
+                                'fuzziness' => 'AUTO',
+                            ],
+                        ],
+                    ],
+                    'minimum_should_match' => 1,
                 ],
             ];
         }

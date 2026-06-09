@@ -17,7 +17,7 @@ final class ReviewFiltersDtoTest extends TestCase
         $this->assertNull($dto->search);
         $this->assertSame(15, $dto->perPage);
         $this->assertSame('id', $dto->sortBy);
-        $this->assertSame('asc', $dto->sortDirection);
+        $this->assertSame('desc', $dto->sortDirection);
     }
 
     public function test_review_filters_dto_initializes_with_custom_values(): void
@@ -27,13 +27,13 @@ final class ReviewFiltersDtoTest extends TestCase
             search: 'excellent',
             perPage: 30,
             sortBy: 'rating',
-            sortDirection: 'desc'
+            sortDirection: 'asc'
         );
 
         $this->assertSame(5, $dto->id);
         $this->assertSame('excellent', $dto->search);
         $this->assertSame(30, $dto->perPage);
         $this->assertSame('rating', $dto->sortBy);
-        $this->assertSame('desc', $dto->sortDirection);
+        $this->assertSame('asc', $dto->sortDirection);
     }
 }
