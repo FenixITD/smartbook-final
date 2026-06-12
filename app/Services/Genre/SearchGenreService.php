@@ -11,6 +11,8 @@ use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use stdClass;
 
+use function is_scalar;
+
 class SearchGenreService
 {
     public function __construct(private Client $client)
@@ -18,9 +20,10 @@ class SearchGenreService
     }
 
     /**
-     * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
+     *
+     * @return array<int>
      */
     public function search(GenreFiltersDto $filters): array
     {

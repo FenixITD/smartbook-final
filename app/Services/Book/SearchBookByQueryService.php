@@ -7,6 +7,8 @@ namespace App\Services\Book;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 
+use function is_scalar;
+
 class SearchBookByQueryService
 {
     public function __construct(private Client $client)

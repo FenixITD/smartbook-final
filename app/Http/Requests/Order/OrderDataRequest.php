@@ -37,7 +37,7 @@ final class OrderDataRequest extends FormRequest
             'status' => ['required', 'string', 'in:pending,paid,shipped,delivered,cancelled'],
             'shippingAddress' => ['required', 'string', 'max:255'],
             'paymentMethod' => ['required', 'string', Rule::in(['cash', 'card', 'webpay'])],
-            ];
+        ];
     }
 
     public function toDto(): OrderDto

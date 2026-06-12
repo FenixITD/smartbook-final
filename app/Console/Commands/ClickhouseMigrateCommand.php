@@ -9,6 +9,8 @@ use App\Services\Clickhouse\ClickhouseMigratorService;
 use Illuminate\Console\Command;
 use Throwable;
 
+use function is_string;
+
 /**
  * The Laravel command-line tool (run via `php artisan clickhouse:migrate`) serves as the user
  * entry point for triggering database schema migrations. It is responsible solely for operations
@@ -48,7 +50,7 @@ final class ClickhouseMigrateCommand extends Command
                 $success = true;
                 $errorMessage = null;
 
-                $this->components->task("Running: {$name}", function () use ($migrator, $file, &$success, &$errorMessage) {
+                $this->components->task("Running: {$name}", static function () use ($migrator, $file, &$success, &$errorMessage) {
                     try {
                         $migrator->runMigration($file);
 
@@ -76,7 +78,7 @@ final class ClickhouseMigrateCommand extends Command
 
             return self::SUCCESS;
         } catch (Throwable $e) {
-            $this->error('Migration process failed: ' . $e->getMessage());
+            $this->error('Migration process failed: '.$e->getMessage());
 
             return self::FAILURE;
         }

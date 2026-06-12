@@ -18,6 +18,10 @@ class GetWebListGenreService
 
     public function get(GenreFiltersDto $filters): PaginatedResponseDto
     {
+        if ($filters->search === null || $filters->search === '') {
+            return $this->repository->getWebList($filters);
+        }
+
         $ids = $this->searchService->search($filters);
 
         if ($ids === []) {

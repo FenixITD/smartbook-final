@@ -9,6 +9,8 @@ use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Elastic\Elasticsearch\Exception\ServerResponseException;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 
+use function is_scalar;
+
 class SearchGenreByQueryService
 {
     public function __construct(private Client $client)
@@ -16,9 +18,10 @@ class SearchGenreByQueryService
     }
 
     /**
-     * @return array<int>
      * @throws ClientResponseException
      * @throws ServerResponseException
+     *
+     * @return array<int>
      */
     public function search(string $query, int $limit = 5): array
     {

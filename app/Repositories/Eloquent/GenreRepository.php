@@ -25,6 +25,16 @@ final class GenreRepository implements GenreRepositoryInterface
             ->all();
     }
 
+    public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto
+    {
+        $paginator = Genre::query()
+            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->paginate($filters->perPage)
+            ->withQueryString();
+
+        return PaginatedResponseDto::fromPaginator($paginator);
+    }
+
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, GenreFiltersDto $filters): PaginatedResponseDto
     {
@@ -66,6 +76,7 @@ final class GenreRepository implements GenreRepositoryInterface
 
     /**
      * @param array<int> $ids
+     *
      * @return array<GenreResponseDto>
      */
     public function getByIds(array $ids): array

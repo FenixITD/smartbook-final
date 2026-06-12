@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Clickhouse;
 
+use function count;
+use function is_int;
+use function is_scalar;
+
 class ClickhouseQueryBuilderService
 {
     /** @var array<int, string> */
@@ -12,19 +16,23 @@ class ClickhouseQueryBuilderService
     /** @var array<string, mixed> */
     private array $bindings = [];
 
-    private ?int $limitValue = null;
-    private ?int $offsetValue = null;
+    private int|null $limitValue = null;
+
+    private int|null $offsetValue = null;
+
     private string $orderByColumn = 'created_at';
+
     private string $orderByDirection = 'DESC';
 
     public function __construct(
         private readonly ClickhouseManagerService $manager,
         private readonly string $table,
-    ) {}
+    ) {
+    }
 
     public function where(string $column, mixed $value): static
     {
-        $key = $column . '_' . count($this->bindings);
+        $key = $column.'_'.count($this->bindings);
         $type = is_int($value) ? 'UInt64' : 'String';
         $this->wheres[] = "{$column} = {{$key}:{$type}}";
         $this->bindings[$key] = $value;
@@ -37,7 +45,7 @@ class ClickhouseQueryBuilderService
      */
     public function whereIn(string $column, array $values): static
     {
-        $escaped = implode(',', array_map(static fn(mixed $v): string => "'" . addslashes(is_scalar($v) ? (string) $v : '') . "'", $values));
+        $escaped = implode(',', array_map(static fn (mixed $v): string => "'".addslashes(is_scalar($v) ? (string) $v : '')."'", $values));
         $this->wheres[] = "{$column} IN ({$escaped})";
 
         return $this;
@@ -97,6 +105,6 @@ class ClickhouseQueryBuilderService
             return '';
         }
 
-        return ' WHERE ' . implode(' AND ', $this->wheres);
+        return ' WHERE '.implode(' AND ', $this->wheres);
     }
 }

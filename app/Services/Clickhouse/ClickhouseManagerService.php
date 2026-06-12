@@ -6,6 +6,8 @@ namespace App\Services\Clickhouse;
 
 use ClickHouseDB\Client;
 
+use function is_scalar;
+
 class ClickhouseManagerService
 {
     private Client $client;
@@ -47,8 +49,10 @@ class ClickhouseManagerService
      */
     public function select(string $sql, array $bindings = []): array
     {
+        $statement = $this->client->select($sql, $bindings);
+
         /** @var array<int, array<string, mixed>> $rows */
-        $rows = $this->client->select($sql, $bindings)->rows();
+        $rows = $statement->rows();
 
         return $rows;
     }

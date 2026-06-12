@@ -8,7 +8,6 @@ use App\Dto\CartItem\CartItemDto;
 use App\Dto\CartItem\CartItemFiltersDto;
 use App\Dto\CartItem\CartItemResponseDto;
 use App\Dto\CartItem\CartItemWithBookResponseDto;
-use App\Dto\PaginatedResponseDto;
 
 interface CartItemRepositoryInterface
 {

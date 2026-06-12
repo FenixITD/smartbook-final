@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Book;
 
 use App\Dto\Book\BookDto;
-use App\Dto\Book\BookResponseDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 use function is_array;

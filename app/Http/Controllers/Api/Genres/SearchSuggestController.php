@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Genres;
 
 use App\Http\Requests\Book\SearchSuggestRequest;
+use App\Http\Resources\Genre\SearchSuggestGenreResource;
 use App\Services\Genre\SearchSuggestGenreService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -29,14 +30,7 @@ use OpenApi\Attributes as OA;
             description: 'List of genre suggestions',
             content: new OA\JsonContent(
                 type: 'array',
-                items: new OA\Items(
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'name', type: 'string', example: 'Fantasy'),
-                        new OA\Property(property: 'slug', type: 'string', example: 'fantasy'),
-                    ],
-                    type: 'object',
-                )
+                items: new OA\Items(ref: '#/components/schemas/SearchSuggestGenreResource')
             )
         ),
     ]
@@ -50,8 +44,10 @@ final readonly class SearchSuggestController
 
     public function __invoke(SearchSuggestRequest $request): JsonResponse
     {
+        $suggestions = $this->service->execute($request->searchQuery());
+
         return response()->json(
-            $this->service->execute($request->searchQuery())
+            SearchSuggestGenreResource::collection($suggestions)
         );
     }
 }

@@ -14,9 +14,6 @@ class OpenConversationService
     ) {
     }
 
-    /**
-     * @return ConversationMessageDto
-     */
     public function openConversation(int $userId, int $bookId): ConversationMessageDto
     {
         $conversationId = $this->conversationRepository->findOrCreateByUserAndBook($userId, $bookId);

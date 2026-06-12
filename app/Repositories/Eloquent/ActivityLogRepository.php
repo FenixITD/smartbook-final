@@ -12,7 +12,9 @@ use App\Services\Clickhouse\ClickhouseManagerService;
 
 final readonly class ActivityLogRepository implements ActivityLogRepositoryInterface
 {
-    public function __construct(private ClickhouseManagerService $clickhouse) {}
+    public function __construct(private ClickhouseManagerService $clickhouse)
+    {
+    }
 
     public function getPaginated(ActivityLogFiltersDto $filters): PaginatedResponseDto
     {
@@ -41,7 +43,6 @@ final readonly class ActivityLogRepository implements ActivityLogRepositoryInter
             ->limit($filters->perPage)
             ->offset(($filters->page - 1) * $filters->perPage)
             ->get();
-
 
         $items = array_map(static fn (array $row) => ActivityLogResponseDto::fromArray($row), $rows);
 

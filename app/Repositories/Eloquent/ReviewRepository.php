@@ -36,6 +36,24 @@ final class ReviewRepository implements ReviewRepositoryInterface
             ->all();
     }
 
+    public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto
+    {
+        $query = Review::query();
+
+        if ($filters->sortBy === 'user_name') {
+            $query->orderBy(
+                User::select('name')->whereColumn('users.id', 'reviews.user_id'),
+                $filters->sortDirection
+            );
+        } else {
+            $query->orderBy($filters->sortBy, $filters->sortDirection);
+        }
+
+        $paginator = $query->paginate($filters->perPage)->withQueryString();
+
+        return PaginatedResponseDto::fromPaginator($paginator);
+    }
+
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, ReviewFiltersDto $filters): PaginatedResponseDto
     {

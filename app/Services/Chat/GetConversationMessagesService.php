@@ -23,7 +23,11 @@ class GetConversationMessagesService
     public function getConversationMessages(GetConversationMessagesDto $dto): array
     {
         if (!$dto->isAdmin) {
-            $this->conversationRepository->getOwnerId($dto->conversationId);
+            $ownerId = $this->conversationRepository->getOwnerId($dto->conversationId);
+
+            if ($ownerId !== $dto->userId) {
+                abort(403, 'Access denied.');
+            }
         }
 
         if ($dto->isAdmin) {

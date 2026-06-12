@@ -11,7 +11,10 @@ use OpenApi\Attributes as OA;
 #[OA\Schema(
     schema: 'AuthorResource',
     properties: [
+        new OA\Property(property: 'id', type: 'integer', example: 1),
         new OA\Property(property: 'name', type: 'string', example: 'Author name'),
+        new OA\Property(property: 'createdAt', type: 'string', example: '2024-01-01 12:00:00'),
+        new OA\Property(property: 'updatedAt', type: 'string', example: '2024-01-01 12:00:00'),
     ],
     type: 'object',
 )]

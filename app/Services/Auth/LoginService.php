@@ -12,9 +12,6 @@ use Illuminate\Validation\ValidationException;
 
 class LoginService
 {
-    /**
-     * @return bool
-     */
     public function login(LoginDto $dto): bool
     {
         $throttleKey = Str::transliterate(Str::lower($dto->email).'|'.$dto->ip);

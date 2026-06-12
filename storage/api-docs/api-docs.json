@@ -265,17 +265,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "name": {
-                                                "type": "string",
-                                                "example": "Leo Tolstoy"
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/SearchSuggestAuthorResource"
                                     }
                                 }
                             }
@@ -490,21 +480,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "title": {
-                                                "type": "string",
-                                                "example": "Harry Potter"
-                                            },
-                                            "slug": {
-                                                "type": "string",
-                                                "example": "harry-potter"
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/SearchSuggestCatalogBookResource"
                                     }
                                 }
                             }
@@ -546,17 +522,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "title": {
-                                                "type": "string",
-                                                "example": "Harry Potter"
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/SearchSuggestBookResource"
                                     }
                                 }
                             }
@@ -1117,21 +1083,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "name": {
-                                                "type": "string",
-                                                "example": "Fantasy"
-                                            },
-                                            "slug": {
-                                                "type": "string",
-                                                "example": "fantasy"
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/SearchSuggestGenreResource"
                                     }
                                 }
                             }
@@ -1519,21 +1471,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "status": {
-                                                "type": "string",
-                                                "example": "pending"
-                                            },
-                                            "total": {
-                                                "type": "number",
-                                                "example": 99.99
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/SearchSuggestOrderResource"
                                     }
                                 }
                             }
@@ -1748,21 +1686,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "comment": {
-                                                "type": "string",
-                                                "example": "Good book"
-                                            },
-                                            "rating": {
-                                                "type": "number",
-                                                "example": 4.5
-                                            }
-                                        },
-                                        "type": "object"
+                                        "$ref": "#/components/schemas/SearchSuggestReviewResource"
                                     }
                                 }
                             }
@@ -2015,15 +1939,48 @@
             },
             "AuthorResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "example": "Author name"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "SearchSuggestAuthorResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Leo Tolstoy"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/authors/1"
                     }
                 },
                 "type": "object"
             },
             "BookResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "title": {
                         "type": "string",
                         "example": "Book title"
@@ -2050,29 +2007,98 @@
                     },
                     "publishYear": {
                         "type": "integer",
-                        "example": 2012
+                        "example": 2012,
+                        "nullable": true
                     },
                     "coverImage": {
                         "type": "string",
-                        "example": "Book image"
+                        "example": "Book image",
+                        "nullable": true
                     },
                     "averageRating": {
                         "type": "number",
-                        "example": 4.6
+                        "example": 4.6,
+                        "nullable": true
                     },
                     "ratingsCount": {
                         "type": "integer",
-                        "example": 18
+                        "example": 18,
+                        "nullable": true
                     },
                     "status": {
                         "type": "string",
                         "example": "archived"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "SearchSuggestBookResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Harry Potter"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "J.K. Rowling",
+                        "nullable": true
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/books/1"
+                    }
+                },
+                "type": "object"
+            },
+            "SearchSuggestCatalogBookResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Harry Potter"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "J.K. Rowling",
+                        "nullable": true
+                    },
+                    "cover_image": {
+                        "type": "string",
+                        "example": "covers/harry.jpg",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 19.99
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost/catalog/harry-potter"
                     }
                 },
                 "type": "object"
             },
             "CartItemResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "userId": {
                         "type": "integer",
                         "example": 3
@@ -2084,12 +2110,24 @@
                     "quantity": {
                         "type": "integer",
                         "example": 13
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
                     }
                 },
                 "type": "object"
             },
             "FavoriteResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "userId": {
                         "type": "integer",
                         "example": 3
@@ -2097,12 +2135,24 @@
                     "bookId": {
                         "type": "integer",
                         "example": 4
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
                     }
                 },
                 "type": "object"
             },
             "GenreResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "example": "Genre name"
@@ -2110,12 +2160,41 @@
                     "slug": {
                         "type": "string",
                         "example": "genre-name"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "SearchSuggestGenreResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Fantasy"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/genres/1"
                     }
                 },
                 "type": "object"
             },
             "OrderResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "userId": {
                         "type": "integer",
                         "example": 3
@@ -2135,12 +2214,45 @@
                     "paymentMethod": {
                         "type": "string",
                         "example": "cash"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "SearchSuggestOrderResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/orders/1"
                     }
                 },
                 "type": "object"
             },
             "OrderItemResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "orderId": {
                         "type": "integer",
                         "example": 2
@@ -2156,12 +2268,24 @@
                     "priceAtPurchase": {
                         "type": "number",
                         "example": 16.99
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
                     }
                 },
                 "type": "object"
             },
             "ReviewResource": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "userId": {
                         "type": "integer",
                         "example": 3
@@ -2177,6 +2301,35 @@
                     "comment": {
                         "type": "string",
                         "example": "Good comment"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "example": "2024-01-01 12:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "SearchSuggestReviewResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "content": {
+                        "type": "string",
+                        "example": "Amazing read..."
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/reviews/1"
                     }
                 },
                 "type": "object"

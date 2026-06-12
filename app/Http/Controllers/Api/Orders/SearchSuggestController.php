@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Orders;
 
 use App\Http\Requests\Book\SearchSuggestRequest;
+use App\Http\Resources\Order\SearchSuggestOrderResource;
 use App\Services\Order\SearchSuggestOrderService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -29,14 +30,7 @@ use OpenApi\Attributes as OA;
             description: 'List of order suggestions',
             content: new OA\JsonContent(
                 type: 'array',
-                items: new OA\Items(
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'status', type: 'string', example: 'pending'),
-                        new OA\Property(property: 'total', type: 'number', example: 99.99),
-                    ],
-                    type: 'object',
-                )
+                items: new OA\Items(ref: '#/components/schemas/SearchSuggestOrderResource')
             )
         ),
     ]
@@ -50,8 +44,10 @@ final readonly class SearchSuggestController
 
     public function __invoke(SearchSuggestRequest $request): JsonResponse
     {
+        $suggestions = $this->service->execute($request->searchQuery());
+
         return response()->json(
-            $this->service->execute($request->searchQuery())
+            SearchSuggestOrderResource::collection($suggestions)
         );
     }
 }
