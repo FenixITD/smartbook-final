@@ -7,17 +7,19 @@ namespace App\Services\Clickhouse;
 use Illuminate\Filesystem\Filesystem;
 use RuntimeException;
 
+use function in_array;
+
 class ClickhouseMigratorService
 {
     public function __construct(
         private ClickhouseManagerService $db,
-        private Filesystem $files
+        private Filesystem $files,
     ) {
     }
 
     public function ensureMigrationsTableExists(): void
     {
-        $this->db->execute("CREATE TABLE IF NOT EXISTS clickhouse_migrations (migration String, executed_at DateTime DEFAULT now()) ENGINE = MergeTree() ORDER BY migration");
+        $this->db->execute('CREATE TABLE IF NOT EXISTS clickhouse_migrations (migration String, executed_at DateTime DEFAULT now()) ENGINE = MergeTree() ORDER BY migration');
     }
 
     /**
@@ -30,10 +32,10 @@ class ClickhouseMigratorService
         }
 
         /** @var array<int, string> $allFiles */
-        $allFiles = $this->files->glob($path . '/*.sql');
+        $allFiles = $this->files->glob($path.'/*.sql');
         sort($allFiles);
 
-        $executed = $this->db->select("SELECT migration FROM clickhouse_migrations");
+        $executed = $this->db->select('SELECT migration FROM clickhouse_migrations');
         $executedNames = array_column($executed, 'migration');
 
         $pending = [];
@@ -55,7 +57,7 @@ class ClickhouseMigratorService
         $statements = preg_split('/;(?=(?:[^\']*\'[^\']*\')*[^\']*$)/', $sql);
 
         if ($statements === false) {
-            throw new RuntimeException("Failed to parse migration: " . basename($file));
+            throw new RuntimeException('Failed to parse migration: '.basename($file));
         }
 
         foreach ($statements as $statement) {
@@ -67,7 +69,7 @@ class ClickhouseMigratorService
         }
 
         $this->db->insert('clickhouse_migrations', [
-            'migration' => basename($file)
+            'migration' => basename($file),
         ]);
     }
 }

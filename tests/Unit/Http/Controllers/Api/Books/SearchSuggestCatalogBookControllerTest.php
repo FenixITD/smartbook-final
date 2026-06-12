@@ -16,8 +16,22 @@ final class SearchSuggestCatalogBookControllerTest extends TestCase
     public function test_returns_200_with_catalog_suggestions(): void
     {
         $suggestions = [
-            ['id' => 10, 'title' => 'Design Patterns', 'slug' => 'design-patterns'],
-            ['id' => 11, 'title' => 'Design Systems', 'slug' => 'design-systems'],
+            [
+                'id' => 1,
+                'title' => 'Design Patterns',
+                'author' => 'Erich Gamma',
+                'cover_image' => null,
+                'price' => 39.99,
+                'url' => 'http://localhost/catalog/design-patterns'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Design Systems',
+                'author' => 'Alla Kholmatova',
+                'cover_image' => null,
+                'price' => 29.99,
+                'url' => 'http://localhost/catalog/design-systems'
+            ]
         ];
 
         /** @var SearchSuggestCatalogBookService&MockInterface $service */
@@ -94,7 +108,15 @@ final class SearchSuggestCatalogBookControllerTest extends TestCase
 
     public function test_single_result_is_correctly_structured(): void
     {
-        $suggestion = ['id' => 5, 'title' => 'The Pragmatic Programmer', 'slug' => 'pragmatic-programmer'];
+        $suggestion = [
+            'id' => 5,
+            'title' => 'The Pragmatic Programmer',
+            'slug' => 'pragmatic-programmer',
+            'author' => 'Andy Hunt',
+            'cover_image' => null,
+            'price' => 25.0,
+            'url' => 'http://test'
+        ];
 
         /** @var SearchSuggestCatalogBookService&MockInterface $service */
         $service = $this->mock(SearchSuggestCatalogBookService::class);

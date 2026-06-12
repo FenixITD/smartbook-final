@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Authors;
 
 use App\Http\Requests\Book\SearchSuggestRequest;
+use App\Http\Resources\Author\SearchSuggestAuthorResource;
 use App\Services\Author\SearchSuggestAuthorService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -29,13 +30,7 @@ use OpenApi\Attributes as OA;
             description: 'List of author suggestions',
             content: new OA\JsonContent(
                 type: 'array',
-                items: new OA\Items(
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'name', type: 'string', example: 'Leo Tolstoy'),
-                    ],
-                    type: 'object',
-                )
+                items: new OA\Items(ref: '#/components/schemas/SearchSuggestAuthorResource')
             )
         ),
     ]
@@ -49,8 +44,10 @@ final readonly class SearchSuggestController
 
     public function __invoke(SearchSuggestRequest $request): JsonResponse
     {
+        $suggestions = $this->service->execute($request->searchQuery());
+
         return response()->json(
-            $this->service->execute($request->searchQuery())
+            SearchSuggestAuthorResource::collection($suggestions)
         );
     }
 }

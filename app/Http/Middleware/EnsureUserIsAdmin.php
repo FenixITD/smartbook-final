@@ -16,9 +16,9 @@ class EnsureUserIsAdmin
             abort(403, 'Access denied.');
         }
 
+        /** @var Response $response */
         $response = $next($request);
 
-        /** @var Response $response */
         return $response;
     }
 }

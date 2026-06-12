@@ -20,6 +20,7 @@ class SearchSuggestReviewService
     /**
      * @throws ClientResponseException
      * @throws ServerResponseException
+     *
      * @return array<int, array<string, mixed>>
      */
     public function execute(string $query): array

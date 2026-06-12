@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Favorites;
 
 use App\Dto\Favorite\FavoriteFiltersDto;
+use App\Models\User;
 use App\Services\Favorite\FavoriteService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Models\User;
 
 final readonly class ShowFavoritesController
 {

@@ -16,8 +16,22 @@ final class SearchSuggestControllerTest extends TestCase
     public function test_returns_200_with_suggestions(): void
     {
         $suggestions = [
-            ['id' => 1, 'title' => 'Clean Code'],
-            ['id' => 2, 'title' => 'Clean Architecture'],
+            [
+                'id' => 1,
+                'title' => 'Clean Code',
+                'author' => 'Robert C. Martin',
+                'cover_image' => null,
+                'price' => 20.0,
+                'url' => 'http://localhost/api/books/1'
+            ],
+            [
+                'id' => 2,
+                'title' => 'Clean Architecture',
+                'author' => 'Robert C. Martin',
+                'cover_image' => null,
+                'price' => 25.0,
+                'url' => 'http://localhost/api/books/2'
+            ]
         ];
 
         /** @var SearchSuggestBookService&MockInterface $service */

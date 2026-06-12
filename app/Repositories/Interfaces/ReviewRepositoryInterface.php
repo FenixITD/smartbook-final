@@ -14,6 +14,8 @@ interface ReviewRepositoryInterface
     /** @return array<ReviewResponseDto> */
     public function getList(ReviewFiltersDto $filters): array;
 
+    public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto;
+
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, ReviewFiltersDto $filters): PaginatedResponseDto;
 

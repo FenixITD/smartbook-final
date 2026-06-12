@@ -18,13 +18,14 @@ class SendMessageService
     ) {
     }
 
-    /**
-     * @return MessageDto
-     */
     public function sendMessage(SendMessageDto $dto): MessageDto
     {
         if (!$dto->isAdmin) {
-            $this->conversationRepository->getOwnerId($dto->conversationId);
+            $ownerId = $this->conversationRepository->getOwnerId($dto->conversationId);
+
+            if ($ownerId !== $dto->userId) {
+                abort(403, 'Access denied.');
+            }
         }
 
         $messageDto = $this->messageRepository->create($dto->conversationId, $dto->userId, $dto->body);

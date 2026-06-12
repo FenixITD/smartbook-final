@@ -9,6 +9,8 @@ use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 use stdClass;
 
+use function is_scalar;
+
 class SearchAuthorService
 {
     public function __construct(private Client $client)

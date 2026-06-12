@@ -11,6 +11,9 @@ use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\ActivityLogRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
+use function is_array;
+use function is_scalar;
+
 class UserActivityService
 {
     public function __construct(
@@ -44,6 +47,7 @@ class UserActivityService
 
     /**
      * @param array<mixed> $items
+     *
      * @return array<int>
      */
     private function extractBookIds(array $items): array

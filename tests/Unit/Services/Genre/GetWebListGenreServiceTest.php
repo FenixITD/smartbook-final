@@ -10,13 +10,12 @@ use App\Repositories\Interfaces\GenreRepositoryInterface;
 use App\Services\Genre\GetWebListGenreService;
 use App\Services\Genre\SearchGenreService;
 use Mockery;
-use Mockery\MockInterface;
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class GetWebListGenreServiceTest extends TestCase
 {
-    private SearchGenreService&MockInterface $searchService;
-    private GenreRepositoryInterface&MockInterface $repository;
+    private SearchGenreService $searchService;
+    private GenreRepositoryInterface $repository;
     private GetWebListGenreService $service;
 
     protected function setUp(): void
@@ -27,26 +26,59 @@ class GetWebListGenreServiceTest extends TestCase
         $this->service = new GetWebListGenreService($this->searchService, $this->repository);
     }
 
-    public function test_returns_empty_paginated_when_no_ids_found(): void
+    protected function tearDown(): void
     {
-        $filters = new GenreFiltersDto();
-        $this->searchService->expects('search')->with($filters)->andReturn([]);
-
-        $result = $this->service->get($filters);
-
-        $this->assertSame([], $result->items);
-        $this->assertSame(0, $result->total);
+        Mockery::close();
+        parent::tearDown();
     }
 
-    public function test_returns_repo_results_when_ids_found(): void
+    public function test_returns_paginated_from_repository_when_search_is_empty(): void
     {
-        $filters = new GenreFiltersDto();
-        $paginated = new PaginatedResponseDto([], 0, 15, 1, 1);
-        $this->searchService->expects('search')->with($filters)->andReturn([1, 2]);
-        $this->repository->expects('getWebListByIds')->with([1, 2], $filters)->andReturn($paginated);
+        $filters = new GenreFiltersDto(search: null, perPage: 15);
+        $expected = PaginatedResponseDto::empty(15);
+
+        $this->repository->shouldReceive('getWebList')
+            ->once()
+            ->with($filters)
+            ->andReturn($expected);
 
         $result = $this->service->get($filters);
 
-        $this->assertSame($paginated, $result);
+        $this->assertSame($expected, $result);
+    }
+
+    public function test_returns_empty_paginated_response_when_search_returns_no_ids(): void
+    {
+        $filters = new GenreFiltersDto(search: 'Fantasy', perPage: 15);
+
+        $this->searchService->shouldReceive('search')
+            ->once()
+            ->with($filters)
+            ->andReturn([]);
+
+        $result = $this->service->get($filters);
+
+        $this->assertEquals([], $result->items);
+    }
+
+    public function test_returns_paginated_response_from_repository_when_ids_found(): void
+    {
+        $filters = new GenreFiltersDto(search: 'Fantasy', perPage: 15);
+        $ids = [1, 2];
+        $expected = PaginatedResponseDto::empty(15);
+
+        $this->searchService->shouldReceive('search')
+            ->once()
+            ->with($filters)
+            ->andReturn($ids);
+
+        $this->repository->shouldReceive('getWebListByIds')
+            ->once()
+            ->with($ids, $filters)
+            ->andReturn($expected);
+
+        $result = $this->service->get($filters);
+
+        $this->assertSame($expected, $result);
     }
 }

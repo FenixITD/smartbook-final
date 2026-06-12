@@ -10,6 +10,9 @@ use App\Events\OrderCreatedEvent;
 use App\Events\OrderStatusChangedEvent;
 use App\Models\Order;
 
+use function is_int;
+use function is_string;
+
 final class OrderObserver
 {
     public function created(Order $model): void

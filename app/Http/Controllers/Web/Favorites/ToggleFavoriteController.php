@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Favorites;
 
 use App\Http\Requests\Favorite\FavoriteToggleWebRequest;
+use App\Models\User;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use Illuminate\Http\RedirectResponse;
-use App\Models\User;
 
 final readonly class ToggleFavoriteController
 {

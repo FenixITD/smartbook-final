@@ -14,26 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->validateCsrfTokens(except: [
-            'authors',
-            'authors/*',
-            'books',
-            'books/*',
-            'cartItems',
-            'cartItems/*',
-            'favorites',
-            'favorites/*',
-            'genres',
-            'genres/*',
-            'orders',
-            'orders/*',
-            'orderItems',
-            'orderItems/*',
-            'reviews',
-            'reviews/*',
-            'docs*',
-            'api/documentation*',
-        ]);
+        $middleware->validateCsrfTokens(except: []);
 
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,

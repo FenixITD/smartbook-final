@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Books;
 
 use App\Http\Requests\Book\SearchSuggestRequest;
+use App\Http\Resources\Book\SearchSuggestCatalogBookResource;
 use App\Services\Book\SearchSuggestCatalogBookService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
@@ -29,14 +30,7 @@ use OpenApi\Attributes as OA;
             description: 'List of book suggestions for catalog',
             content: new OA\JsonContent(
                 type: 'array',
-                items: new OA\Items(
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer', example: 1),
-                        new OA\Property(property: 'title', type: 'string', example: 'Harry Potter'),
-                        new OA\Property(property: 'slug', type: 'string', example: 'harry-potter'),
-                    ],
-                    type: 'object',
-                )
+                items: new OA\Items(ref: '#/components/schemas/SearchSuggestCatalogBookResource')
             )
         ),
     ]
@@ -50,8 +44,10 @@ final readonly class SearchSuggestCatalogBookController
 
     public function __invoke(SearchSuggestRequest $request): JsonResponse
     {
+        $suggestions = $this->service->execute($request->searchQuery());
+
         return response()->json(
-            $this->service->execute($request->searchQuery())
+            SearchSuggestCatalogBookResource::collection($suggestions)
         );
     }
 }

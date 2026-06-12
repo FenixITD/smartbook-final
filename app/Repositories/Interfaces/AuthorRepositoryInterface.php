@@ -14,6 +14,8 @@ interface AuthorRepositoryInterface
     /** @return array<AuthorResponseDto> */
     public function getList(AuthorFiltersDto $filters): array;
 
+    public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto;
+
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, AuthorFiltersDto $filters): PaginatedResponseDto;
 
@@ -26,6 +28,7 @@ interface AuthorRepositoryInterface
 
     /**
      * @param array<int> $ids
+     *
      * @return array<AuthorResponseDto>
      */
     public function getByIds(array $ids): array;

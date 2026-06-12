@@ -46,6 +46,7 @@ class ClickhouseActivityService
         if ($activity->relationLoaded('causer')) {
             /** @var User|null $causer */
             $causer = $activity->causer;
+
             return $causer->name ?? '';
         }
 
