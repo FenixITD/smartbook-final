@@ -63,16 +63,22 @@ docker compose up -d --build
 ```bash
 # Заходим в контейнер:
 docker compose exec app sh
-# либо последующие команды вводим с приставкой 'docker compose exec app'
+# либо последующие команды в этом шаге вводим с приставкой 'docker compose exec app'
 
-# Внутри контейнера:
+# Внутри контейнера (или с приставкой):
 composer install
 php artisan key:generate
 php artisan migrate --seed
 exit
+
+#Пробуем открыть http://localhost:8000/. Если не открывается вводим эти команды по очереди:
+
+docker compose exec app chown -R www-data:www-data storage bootstrap/cache
+
+docker compose exec app chmod -R 775 storage bootstrap/cache
 ```
 
-### 5. Открыть в браузере
+### 5. Что можно открыть в браузере
 
 | Сервис | URL | Доступ |
 |---|---|---|
@@ -82,19 +88,3 @@ exit
 | MinIO Console | http://localhost:9001 | `smartbook` / `smartbook123` |
 | RabbitMQ Management | http://localhost:15672 | `guest` / `guest` |
 | Mailpit (почта) | http://localhost:8025 | — |
-
----
-
-## Разработка
-
-### Запуск dev-сервера (Vite + hot-reload)
-
-Поскольку Node.js вынесен в отдельный контейнер, для запуска Vite в режиме разработки используйте команду `run`:
-
-```bash
-# Запуск Vite (фронтенд)
-docker compose run --rm -p 5173:5173 node npm run dev
-
-# В другом окне терминала запуск слушателя очередей:
-docker compose exec app php artisan queue:listen --tries=1
-```
