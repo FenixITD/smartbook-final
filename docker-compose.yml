@@ -214,6 +214,13 @@ services:
       timeout: 5s
       retries: 5
 
+  node:
+    image: node:20-alpine
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    command: sh -c "npm install && npm run build"
+
 networks:
   smartbook-net:
     driver: bridge
