@@ -41,8 +41,29 @@ class DatabaseSeeder extends Seeder
         });
 
         Review::factory()->count(80)->create();
-        Favorite::factory()->count(20)->create();
-        CartItem::factory()->count(10)->create();
+
+        /**
+         * Resolving the conflict between random data generation (faker) and strict database rules.
+         */
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $favoriteBookIds = Book::inRandomOrder()->limit(2)->pluck('id');
+            foreach ($favoriteBookIds as $bookId) {
+                Favorite::factory()->create([
+                    'user_id' => $user->id,
+                    'book_id' => $bookId,
+                ]);
+            }
+
+            $cartBookIds = Book::inRandomOrder()->limit(1)->pluck('id');
+            foreach ($cartBookIds as $bookId) {
+                CartItem::factory()->create([
+                    'user_id' => $user->id,
+                    'book_id' => $bookId,
+                ]);
+            }
+        }
 
         Order::factory()->count(30)->create()->each(static function ($order): void {
             OrderItem::factory()->count(random_int(1, 6))->create([

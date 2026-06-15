@@ -22,7 +22,7 @@ class DeleteBookService
             $book = $this->bookRepository->getById($bookId);
 
             if ($book !== null && $book->coverImage !== null && $book->coverImage !== '') {
-                Storage::disk('public')->delete($book->coverImage);
+                Storage::disk('s3')->delete($book->coverImage);
             }
 
             $this->bookRepository->delete($bookId);

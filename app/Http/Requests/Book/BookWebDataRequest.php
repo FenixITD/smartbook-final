@@ -40,7 +40,7 @@ final class BookWebDataRequest extends FormRequest
 
         if ($this->hasFile('cover_image')) {
             /** @var string $stored */
-            $stored = $this->file('cover_image')?->store('covers', 'public');
+            $stored = $this->file('cover_image')?->store('covers', 's3');
             $coverImage = $stored;
         }
 
