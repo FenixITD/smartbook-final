@@ -28,7 +28,7 @@ final class SendOrderCreatedEmailListener implements ShouldQueue, ShouldBeUnique
             ->send(new OrderStatusMail($event->dto));
     }
 
-    public function failed(OrderCreatedEvent $event, Throwable $exception): void
+    public function failed(Throwable $exception): void
     {
         report($exception);
     }

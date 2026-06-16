@@ -14,7 +14,7 @@ final readonly class MergeCartOnLoginListener
     ) {
     }
 
-    public function handle(Login $event): void
+    public function handle(): void
     {
         $this->mergeSessionCartService->execute();
     }

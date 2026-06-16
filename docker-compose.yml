@@ -195,7 +195,6 @@ services:
       - "8123:8123"
     volumes:
       - clickhouse_data:/var/lib/clickhouse
-      - ./database/clickhouse:/docker-entrypoint-initdb.d:ro
     networks:
       - smartbook-net
     ulimits:

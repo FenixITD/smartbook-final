@@ -69,6 +69,7 @@ docker compose exec app sh
 composer install
 php artisan key:generate
 php artisan migrate --seed
+php artisan clickhouse:migrate
 exit
 
 #Пробуем открыть http://localhost:8000/. Если не открывается вводим эти команды по очереди:

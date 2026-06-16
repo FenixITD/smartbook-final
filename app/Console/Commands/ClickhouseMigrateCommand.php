@@ -13,7 +13,7 @@ use function is_string;
 
 /**
  * The Laravel command-line tool (run via `php artisan clickhouse:migrate`) serves as the user
- * entry point for triggering database schema migrations. It is responsible solely for operations
+ * entry point for triggering database schema migrations. It is responsible only for operations
  * within the command-line interface (CLI) and for handing off control.
  */
 final class ClickhouseMigrateCommand extends Command

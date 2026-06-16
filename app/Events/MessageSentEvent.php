@@ -35,7 +35,8 @@ final class MessageSentEvent implements ShouldBroadcast
         return new PrivateChannel('conversation.'.$this->conversationId);
     }
 
-    /** @return array<string, mixed>
+    /**
+     * @return array<string, mixed>
      * @noinspection PhpUnused
      */
     public function broadcastWith(): array
@@ -43,7 +44,9 @@ final class MessageSentEvent implements ShouldBroadcast
         return $this->message->toArray();
     }
 
-    /** @noinspection PhpUnused */
+    /**
+     * @noinspection PhpUnused
+     */
     public function broadcastAs(): string
     {
         return 'MessageSent';
