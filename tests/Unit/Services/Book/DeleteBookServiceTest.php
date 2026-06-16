@@ -38,7 +38,7 @@ class DeleteBookServiceTest extends TestCase
 
         $this->service->execute(1);
 
-        $this->assertFalse(Storage::disk('public')->exists('cover.jpg'));
+        $this->assertFalse(Storage::disk('s3')->exists('cover.jpg'));
     }
 
     public function test_deletes_book_without_cover_image(): void
