@@ -236,6 +236,8 @@ services:
       - .:/var/www/html
     working_dir: /var/www/html
     command: sh -c "npm install && npm run build"
+    depends_on:
+      - app
 
 networks:
   smartbook-net:
