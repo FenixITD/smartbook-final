@@ -31,55 +31,11 @@ Laravel 12 приложение для продажи книг с полноте
 
 ---
 
-## Быстрый старт
+## Как развернуть проект
 
-### 1. Клонировать репозиторий
+Просто запустите команду <span style="color: #ff9900;">./setup.sh</span> в терминале =)
 
-```bash
-git clone <url-репозитория> <название-папки>
-cd <название-папки>
-```
-
-### 2. Создать файл окружения
-
-```bash
-cp .env.example .env
-```
-
-Все значения по умолчанию уже настроены под Docker и работают без изменений. 
-Единственное, что нужно поменять — NOTIFICATION_RECIPIENT (email для уведомлений). 
-Надо зайти в файл .env и в NOTIFICATION_RECIPIENT поменять значение с your@email.com на свой email.
-### 3. Собрать и запустить контейнеры
-
-```bash
-docker compose up -d --build
-```
-
-> Первый запуск займёт несколько минут — Docker скачает образы и соберёт PHP-контейнер.
-> Elasticsearch, ClickHouse и RabbitMQ стартуют с healthcheck, поэтому `app` поднимется только после их готовности.
-
-### 4. Установить зависимости и подготовить приложение
-
-```bash
-# Заходим в контейнер:
-docker compose exec app sh
-# либо последующие команды в этом шаге вводим с приставкой 'docker compose exec app'
-
-# Внутри контейнера (или с приставкой):
-composer install
-php artisan key:generate
-php artisan clickhouse:migrate
-php artisan migrate --seed
-exit
-
-#Пробуем открыть http://localhost:8000/. Если не открывается вводим эти команды по очереди:
-
-docker compose exec app chown -R www-data:www-data storage bootstrap/cache
-
-docker compose exec app chmod -R 775 storage bootstrap/cache
-```
-
-### 5. Что можно открыть в браузере
+## 5. Что можно открыть в браузере
 
 | Сервис | URL | Доступ |
 |---|---|---|
