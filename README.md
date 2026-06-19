@@ -1,49 +1,59 @@
-# SmartBook — Интернет-магазин книг
+# SmartBook — Online Bookstore
 
-Laravel 12 приложение для продажи книг с полнотекстовым поиском, real-time уведомлениями и аналитикой.
+Laravel 12 application for selling books with full-text search, real-time notifications, and analytics.
 
-## Стек технологий
+## Tech Stack
 
-| Компонент | Технология |
+| Component | Technology |
 |---|---|
 | Backend | PHP 8.2+, Laravel 12, Livewire 4, Laravel Fortify |
 | Frontend | Tailwind CSS 4, Vite 7, Flux UI |
-| База данных | PostgreSQL 17 |
-| Поиск | Elasticsearch 8.12 + Laravel Scout |
-| Аналитика | ClickHouse 24.3 |
-| Очереди | RabbitMQ 3 |
+| Database | PostgreSQL 17 |
+| Search | Elasticsearch 8.12 + Laravel Scout |
+| Analytics | ClickHouse 24.3 |
+| Queues | RabbitMQ 3 |
 | WebSockets | Laravel Reverb |
-| Хранилище файлов | MinIO (S3-совместимое) |
-| Кэш и сессии | Redis |
-| Веб-сервер | Nginx + PHP-FPM |
-| Почта (dev) | Mailpit |
+| File Storage | MinIO (S3-compatible) |
+| Cache & Sessions | Redis |
+| Web Server | Nginx + PHP-FPM |
+| Mail (dev) | Mailpit |
 
 ---
 
-## Требования
+## Requirements
 
-Перед началом убедись, что на машине установлены:
+Before you begin, make sure the following are installed on your machine:
 
-- [Docker](https://docs.docker.com/get-docker/) и [Docker Compose](https://docs.docker.com/compose/install/) (v2+)
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) (v2+)
 - [Git](https://git-scm.com/)
 
-> PHP, Node.js, Composer устанавливать **не нужно** — всё работает внутри Docker-контейнеров.
+> PHP, Node.js, and Composer do **not** need to be installed — everything runs inside Docker containers.
 
 ---
 
-## Как развернуть проект
+## How to Deploy the Project
 
-1. Скопируйте проект в папку - `git clone https://github.com/FenixITD/smartbook-final <название папки>`
-2. Перейдите в папку с проектом - `cd <название папки>`
-3. Запустите команду `./setup.sh` в терминале
+1. Clone the project into a folder - `git clone https://github.com/FenixITD/smartbook-final <folder name>`
+2. Navigate to the project folder - `cd <folder name>`
+3. Run the command `./setup.sh` in your terminal
 
-## 5. Что можно открыть в браузере
+## Login Credentials
 
-| Сервис | URL | Доступ |
+### Admin
+- email -> admin@smartbook.com
+- password -> admin123
+
+### User
+- email -> user@smartbook.com
+- password -> user123
+
+## What You Can Open in the Browser
+
+| Service | URL | Access |
 |---|---|---|
-| Приложение | http://localhost:8000 | — |
+| Application | http://localhost:8000 | — |
 | Swagger API Docs | http://localhost:8000/api/documentation | — |
 | pgAdmin | http://localhost:5050 | `admin@smartbook.ru` / `admin123` |
 | MinIO Console | http://localhost:9001 | `smartbook` / `smartbook123` |
 | RabbitMQ Management | http://localhost:15672 | `guest` / `guest` |
-| Mailpit (почта) | http://localhost:8025 | — |
+| Mailpit (mail) | http://localhost:8025 | — |
