@@ -58,4 +58,6 @@ interface BookRepositoryInterface
     public function update(int $id, BookDto $data): BookResponseDto|null;
 
     public function delete(int $id): bool;
+
+    public function recalculateRating(int $bookId): void;
 }

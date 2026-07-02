@@ -19,6 +19,7 @@ final class ReviewRepository implements ReviewRepositoryInterface
     public function getList(ReviewFiltersDto $filters): array
     {
         $query = Review::query()
+            ->with('user:id,name')
             ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id));
 
         if ($filters->sortBy === 'user_name') {
@@ -38,7 +39,8 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Review::query();
+        $query = Review::query()
+            ->with(['user:id,name', 'book:id,title']);
 
         if ($filters->sortBy === 'user_name') {
             $query->orderBy(
@@ -57,7 +59,9 @@ final class ReviewRepository implements ReviewRepositoryInterface
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, ReviewFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Review::query()->whereIn('id', $ids);
+        $query = Review::query()
+            ->with(['user:id,name', 'book:id,title'])
+            ->whereIn('id', $ids);
 
         if ($filters->sortBy === 'user_name') {
             $query->orderBy(
@@ -124,7 +128,7 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function getByBookId(int $bookId, int $perPage = 10): PaginatedResponseDto
     {
-        $paginator = Review::with('user')
+        $paginator = Review::with('user:id,name')
             ->where('book_id', $bookId)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);

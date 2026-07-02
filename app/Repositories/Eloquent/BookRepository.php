@@ -194,6 +194,26 @@ final class BookRepository implements BookRepositoryInterface
         return (bool) Book::findOrFail($id)->delete();
     }
 
+    public function recalculateRating(int $bookId): void
+    {
+        $book = Book::find($bookId);
+
+        if ($book === null) {
+            return;
+        }
+
+        $stats = $book->reviews()
+            ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as ratings_count')
+            ->first();
+
+        $ratingsCount = (int) ($stats->ratings_count ?? 0);
+
+        $book->update([
+            'average_rating' => $ratingsCount > 0 ? round((float) $stats->avg_rating, 2) : null,
+            'ratings_count' => $ratingsCount,
+        ]);
+    }
+
     /** @param array<int> $ids */
     private function orderByIds(array $ids): string
     {

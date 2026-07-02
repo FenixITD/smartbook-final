@@ -49,6 +49,7 @@ use Carbon\CarbonImmutable;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -176,6 +177,8 @@ class AppServiceProvider extends ServiceProvider
         Order::observe(OrderObserver::class);
         Review::observe(ReviewObserver::class);
         ClickhouseActivity::observe(ClickhouseActivityObserver::class);
+
+        Model::preventLazyLoading(! $this->app->isProduction());
     }
 
     /**

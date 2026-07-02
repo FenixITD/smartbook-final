@@ -18,6 +18,7 @@ final class OrderRepository implements OrderRepositoryInterface
     public function getList(OrderFiltersDto $filters): array
     {
         $query = Order::query()
+            ->with('user:id,name')
             ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id));
 
         if ($filters->sortBy === 'user_name') {
@@ -37,7 +38,8 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Order::query();
+        $query = Order::query()
+            ->with('user:id,name');
 
         if ($filters->sortBy === 'user_name') {
             $query->orderBy(
@@ -56,7 +58,9 @@ final class OrderRepository implements OrderRepositoryInterface
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, OrderFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Order::query()->whereIn('id', $ids);
+        $query = Order::query()
+            ->with('user:id,name')
+            ->whereIn('id', $ids);
 
         if ($filters->sortBy === 'user_name') {
             $query->orderBy(
@@ -74,7 +78,7 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function getById(int $id): OrderResponseDto|null
     {
-        $orderId = Order::find($id);
+        $orderId = Order::with('user:id,name')->find($id);
 
         return $orderId !== null ? OrderResponseDto::fromModel($orderId) : null;
     }
@@ -89,7 +93,7 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function getByIds(array $ids): array
     {
-        return Order::with('user')
+        return Order::with('user:id,name')
             ->whereIn('id', $ids)
             ->get()
             ->map(static fn (Order $order) => OrderResponseDto::fromModel($order))
@@ -100,6 +104,7 @@ final class OrderRepository implements OrderRepositoryInterface
     {
         /** @var Order $order */
         $order = Order::create($data->toArray());
+        $order->load('user:id,name');
 
         return OrderResponseDto::fromModel($order);
     }
@@ -112,6 +117,7 @@ final class OrderRepository implements OrderRepositoryInterface
 
         /** @var Order $fresh */
         $fresh = $order->fresh();
+        $fresh?->load('user:id,name');
 
         return OrderResponseDto::fromModel($fresh);
     }
