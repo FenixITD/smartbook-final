@@ -107,7 +107,7 @@ final class BookRepository implements BookRepositoryInterface
     {
         $ids = array_keys($quantitiesByBookId);
 
-        return (float) Book::whereIn('id', $ids)
+        return Book::whereIn('id', $ids)
             ->get(['id', 'price'])
             ->sum(static fn (Book $book) => $book->price * $quantitiesByBookId[$book->id]);
     }
@@ -160,13 +160,18 @@ final class BookRepository implements BookRepositoryInterface
             ->paginate($perPage)
             ->withQueryString();
 
-        $paginator->setCollection(
-            $paginator->getCollection()->map(
-                static fn (Book $book): BookResponseDto => BookResponseDto::fromModel($book)
-            )
-        );
+        $items = $paginator->getCollection()->map(
+            static fn (Book $book): BookResponseDto => BookResponseDto::fromModel($book)
+        )->all();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return new PaginatedResponseDto(
+            items: $items,
+            total: $paginator->total(),
+            perPage: $paginator->perPage(),
+            currentPage: $paginator->currentPage(),
+            lastPage: $paginator->lastPage(),
+            links: $paginator->links()->toHtml(),
+        );
     }
 
     public function create(BookDto $data): BookResponseDto
@@ -177,7 +182,7 @@ final class BookRepository implements BookRepositoryInterface
         return BookResponseDto::fromModel($book);
     }
 
-    public function update(int $id, BookDto $data): BookResponseDto|null
+    public function update(int $id, BookDto $data): BookResponseDto
     {
         $book = Book::findOrFail($id);
 
@@ -206,10 +211,14 @@ final class BookRepository implements BookRepositoryInterface
             ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as ratings_count')
             ->first();
 
-        $ratingsCount = (int) ($stats->ratings_count ?? 0);
+        $rawCount = $stats?->getAttribute('ratings_count');
+        $ratingsCount = is_numeric($rawCount) ? (int) $rawCount : 0;
+
+        $rawAvg = $stats?->getAttribute('avg_rating');
+        $averageRating = is_numeric($rawAvg) ? round((float) $rawAvg, 2) : null;
 
         $book->update([
-            'average_rating' => $ratingsCount > 0 ? round((float) $stats->avg_rating, 2) : null,
+            'average_rating' => $ratingsCount > 0 ? $averageRating : null,
             'ratings_count' => $ratingsCount,
         ]);
     }

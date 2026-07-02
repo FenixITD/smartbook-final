@@ -109,7 +109,7 @@ final class OrderRepository implements OrderRepositoryInterface
         return OrderResponseDto::fromModel($order);
     }
 
-    public function update(int $id, OrderDto $data): OrderResponseDto|null
+    public function update(int $id, OrderDto $data): OrderResponseDto
     {
         $order = Order::findOrFail($id);
 
@@ -117,7 +117,7 @@ final class OrderRepository implements OrderRepositoryInterface
 
         /** @var Order $fresh */
         $fresh = $order->fresh();
-        $fresh?->load('user:id,name');
+        $fresh->load('user:id,name');
 
         return OrderResponseDto::fromModel($fresh);
     }

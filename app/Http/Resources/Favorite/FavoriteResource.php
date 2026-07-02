@@ -30,12 +30,15 @@ final class FavoriteResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var FavoriteResponseDto $resource */
+        $resource = $this->resource;
+
         return [
-            'id' => $this->id,
-            'userId' => $this->userId,
-            'bookId' => $this->bookId,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'id' => $resource->id,
+            'userId' => $resource->userId,
+            'bookId' => $resource->bookId,
+            'createdAt' => $resource->createdAt,
+            'updatedAt' => $resource->updatedAt,
         ];
     }
 }

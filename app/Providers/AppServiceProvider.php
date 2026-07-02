@@ -178,7 +178,7 @@ class AppServiceProvider extends ServiceProvider
         Review::observe(ReviewObserver::class);
         ClickhouseActivity::observe(ClickhouseActivityObserver::class);
 
-        Model::preventLazyLoading(! $this->app->isProduction());
+        Model::preventLazyLoading(config('app.env') !== 'production');
     }
 
     /**
@@ -189,10 +189,10 @@ class AppServiceProvider extends ServiceProvider
         Date::use(CarbonImmutable::class);
 
         DB::prohibitDestructiveCommands(
-            app()->isProduction(),
+            config('app.env') === 'production',
         );
 
-        Password::defaults(static fn (): Password|null => app()->isProduction()
+        Password::defaults(static fn (): Password|null => config('app.env') === 'production'
             ? Password::min(12)
                 ->mixedCase()
                 ->letters()

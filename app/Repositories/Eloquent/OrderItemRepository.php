@@ -39,7 +39,7 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
         return OrderItemResponseDto::fromModel($orderItem);
     }
 
-    public function update(int $id, OrderItemDto $data): OrderItemResponseDto|null
+    public function update(int $id, OrderItemDto $data): OrderItemResponseDto
     {
         $orderItem = OrderItem::findOrFail($id);
 

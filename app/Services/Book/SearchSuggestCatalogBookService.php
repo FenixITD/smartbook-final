@@ -29,14 +29,17 @@ class SearchSuggestCatalogBookService
         $paginated = $this->repository->getOrderedByIds($ids, perPage: 5);
 
         return array_values(array_map(
-            static fn (BookResponseDto $book): array => [
+            static function (mixed $book): array {
+                /** @var BookResponseDto $book */
+                return [
                 'id' => $book->id,
                 'title' => $book->title,
                 'author' => $book->authorName,
                 'cover_image' => $book->coverImage,
                 'price' => $book->price,
                 'url' => route('catalog.show', $book->slug),
-            ],
+                ];
+            },
             $paginated->items,
         ));
     }

@@ -109,7 +109,7 @@ final class ReviewRepository implements ReviewRepositoryInterface
         return ReviewResponseDto::fromModel($review);
     }
 
-    public function update(int $id, ReviewDto $data): ReviewResponseDto|null
+    public function update(int $id, ReviewDto $data): ReviewResponseDto
     {
         $review = Review::findOrFail($id);
 

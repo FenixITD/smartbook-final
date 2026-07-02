@@ -33,15 +33,18 @@ final class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var OrderResponseDto $resource */
+        $resource = $this->resource;
+
         return [
-            'id' => $this->id,
-            'userId' => $this->userId,
-            'total' => $this->total,
-            'status' => $this->status,
-            'shippingAddress' => $this->shippingAddress,
-            'paymentMethod' => $this->paymentMethod,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'id' => $resource->id,
+            'userId' => $resource->userId,
+            'total' => $resource->total,
+            'status' => $resource->status,
+            'shippingAddress' => $resource->shippingAddress,
+            'paymentMethod' => $resource->paymentMethod,
+            'createdAt' => $resource->createdAt,
+            'updatedAt' => $resource->updatedAt,
         ];
     }
 }

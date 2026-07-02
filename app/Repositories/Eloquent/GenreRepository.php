@@ -104,7 +104,7 @@ final class GenreRepository implements GenreRepositoryInterface
         return GenreResponseDto::fromModel($genre);
     }
 
-    public function update(int $id, GenreDto $data): GenreResponseDto|null
+    public function update(int $id, GenreDto $data): GenreResponseDto
     {
         $genre = Genre::findOrFail($id);
 

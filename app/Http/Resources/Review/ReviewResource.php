@@ -32,14 +32,17 @@ final class ReviewResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var ReviewResponseDto $resource */
+        $resource = $this->resource;
+
         return [
-            'id' => $this->id,
-            'userId' => $this->userId,
-            'bookId' => $this->bookId,
-            'rating' => $this->rating,
-            'comment' => $this->comment,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'id' => $resource->id,
+            'userId' => $resource->userId,
+            'bookId' => $resource->bookId,
+            'rating' => $resource->rating,
+            'comment' => $resource->comment,
+            'createdAt' => $resource->createdAt,
+            'updatedAt' => $resource->updatedAt,
         ];
     }
 }

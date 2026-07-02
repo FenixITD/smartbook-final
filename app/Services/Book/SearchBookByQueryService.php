@@ -54,11 +54,12 @@ class SearchBookByQueryService
             ],
         ]);
 
-        /** @var array<int, array<string, mixed>> $hits */
-        $hits = $response->asArray()['hits']['hits'];
+        /** @var array{hits: array{hits: array<int, array<string, mixed>>}} $data */
+        $data = $response->asArray();
+        $hits = $data['hits']['hits'];
 
         return array_map(
-            static fn (array $hit): int => (int) $hit['_id'],
+            static fn (array $hit): int => is_numeric($hit['_id'] ?? null) ? (int) $hit['_id'] : 0,
             $hits,
         );
     }

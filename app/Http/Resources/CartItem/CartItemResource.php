@@ -31,13 +31,16 @@ final class CartItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var CartItemResponseDto $resource */
+        $resource = $this->resource;
+
         return [
-            'id' => $this->id,
-            'userId' => $this->userId,
-            'bookId' => $this->bookId,
-            'quantity' => $this->quantity,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'id' => $resource->id,
+            'userId' => $resource->userId,
+            'bookId' => $resource->bookId,
+            'quantity' => $resource->quantity,
+            'createdAt' => $resource->createdAt,
+            'updatedAt' => $resource->updatedAt,
         ];
     }
 }

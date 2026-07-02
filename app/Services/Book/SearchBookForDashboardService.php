@@ -6,6 +6,7 @@ namespace App\Services\Book;
 
 use App\Dto\Dashboard\DashboardFiltersDto;
 use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Response\Elasticsearch;
 use stdClass;
 
 class SearchBookForDashboardService
@@ -19,8 +20,11 @@ class SearchBookForDashboardService
      */
     public function search(DashboardFiltersDto $filters): array
     {
+        $index = config('elasticsearch.books_index');
+
+        /** @var Elasticsearch $response */
         $response = $this->client->search([
-            'index' => (string) config('elasticsearch.books_index'),
+            'index' => is_scalar($index) ? (string) $index : '',
             'body' => [
                 'query' => $this->buildQuery($filters),
                 'sort' => $this->buildSort($filters->sort),
@@ -29,11 +33,12 @@ class SearchBookForDashboardService
             ],
         ]);
 
-        /** @var array<int, array<string, mixed>> $hits */
-        $hits = $response->asArray()['hits']['hits'];
+        /** @var array{hits: array{hits: array<int, array<string, mixed>>}} $data */
+        $data = $response->asArray();
+        $hits = $data['hits']['hits'];
 
         return array_map(
-            static fn (array $hit): int => (int) $hit['_id'],
+            static fn (array $hit): int => is_numeric($hit['_id'] ?? null) ? (int) $hit['_id'] : 0,
             $hits,
         );
     }

@@ -104,7 +104,7 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return AuthorResponseDto::fromModel($author);
     }
 
-    public function update(int $id, AuthorDto $data): AuthorResponseDto|null
+    public function update(int $id, AuthorDto $data): AuthorResponseDto
     {
         $authorId = Author::findOrFail($id);
 

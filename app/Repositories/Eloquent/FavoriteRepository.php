@@ -39,7 +39,7 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
         return FavoriteResponseDto::fromModel($favorite);
     }
 
-    public function update(int $id, FavoriteDto $data): FavoriteResponseDto|null
+    public function update(int $id, FavoriteDto $data): FavoriteResponseDto
     {
         $favorite = Favorite::findOrFail($id);
 

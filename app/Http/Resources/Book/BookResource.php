@@ -39,21 +39,24 @@ final class BookResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var BookResponseDto $resource */
+        $resource = $this->resource;
+
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'authorId' => $this->authorId,
-            'description' => $this->description,
-            'price' => $this->price,
-            'stock' => $this->stock,
-            'publishYear' => $this->publishYear,
-            'coverImage' => $this->coverImage,
-            'averageRating' => $this->averageRating,
-            'ratingsCount' => $this->ratingsCount,
-            'status' => $this->status,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'id' => $resource->id,
+            'title' => $resource->title,
+            'slug' => $resource->slug,
+            'authorId' => $resource->authorId,
+            'description' => $resource->description,
+            'price' => $resource->price,
+            'stock' => $resource->stock,
+            'publishYear' => $resource->publishYear,
+            'coverImage' => $resource->coverImage,
+            'averageRating' => $resource->averageRating,
+            'ratingsCount' => $resource->ratingsCount,
+            'status' => $resource->status,
+            'createdAt' => $resource->createdAt,
+            'updatedAt' => $resource->updatedAt,
         ];
     }
 }

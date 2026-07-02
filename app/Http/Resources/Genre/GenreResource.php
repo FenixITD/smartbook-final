@@ -30,12 +30,15 @@ final class GenreResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var GenreResponseDto $resource */
+        $resource = $this->resource;
+
         return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'id' => $resource->id,
+            'name' => $resource->name,
+            'slug' => $resource->slug,
+            'createdAt' => $resource->createdAt,
+            'updatedAt' => $resource->updatedAt,
         ];
     }
 }

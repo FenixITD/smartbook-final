@@ -32,14 +32,17 @@ final class OrderItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /** @var OrderItemResponseDto $resource */
+        $resource = $this->resource;
+
         return [
-            'id' => $this->id,
-            'orderId' => $this->orderId,
-            'bookId' => $this->bookId,
-            'quantity' => $this->quantity,
-            'priceAtPurchase' => $this->priceAtPurchase,
-            'createdAt' => $this->createdAt,
-            'updatedAt' => $this->updatedAt,
+            'id' => $resource->id,
+            'orderId' => $resource->orderId,
+            'bookId' => $resource->bookId,
+            'quantity' => $resource->quantity,
+            'priceAtPurchase' => $resource->priceAtPurchase,
+            'createdAt' => $resource->createdAt,
+            'updatedAt' => $resource->updatedAt,
         ];
     }
 }

@@ -90,7 +90,7 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return CartItemResponseDto::fromModel($cartItem);
     }
 
-    public function update(int $id, CartItemDto $data): CartItemResponseDto|null
+    public function update(int $id, CartItemDto $data): CartItemResponseDto
     {
         $cartItem = CartItem::findOrFail($id);
 
