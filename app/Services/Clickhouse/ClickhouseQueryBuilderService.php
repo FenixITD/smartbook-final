@@ -45,8 +45,17 @@ class ClickhouseQueryBuilderService
      */
     public function whereIn(string $column, array $values): static
     {
-        $escaped = implode(',', array_map(static fn (mixed $v): string => "'".addslashes(is_scalar($v) ? (string) $v : '')."'", $values));
-        $this->wheres[] = "{$column} IN ({$escaped})";
+        $keys = [];
+
+        foreach ($values as $value) {
+            $key = $column.'_'.count($this->bindings);
+            $type = is_int($value) ? 'UInt64' : 'String';
+            $keys[] = "{{$key}:{$type}}";
+            $this->bindings[$key] = $value;
+        }
+
+        $placeholders = implode(',', $keys);
+        $this->wheres[] = "{$column} IN ({$placeholders})";
 
         return $this;
     }

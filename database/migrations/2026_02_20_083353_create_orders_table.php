@@ -12,7 +12,7 @@ return new class extends Migration {
         Schema::create('orders', static function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->index()->constrained()->onDelete('restrict');
-            $table->decimal('total', 6, 2);
+            $table->decimal('total', 10, 2);
             $table->enum('status', ['pending', 'paid', 'shipped', 'delivered', 'cancelled'])->default('pending');
             $table->text('shipping_address');
             $table->string('payment_method')->nullable();

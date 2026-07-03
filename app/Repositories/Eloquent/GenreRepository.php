@@ -10,6 +10,7 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 
 final class GenreRepository implements GenreRepositoryInterface
 {
@@ -50,12 +51,14 @@ final class GenreRepository implements GenreRepositoryInterface
     /** @return GenreResponseDto[] */
     public function getAll(): array
     {
-        return Genre::orderBy('name')
-            ->select(['id', 'name', 'slug'])
-            ->limit(200)
-            ->get()
-            ->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
-            ->all();
+        return Cache::rememberForever('genres.all', function () {
+            return Genre::orderBy('name')
+                ->select(['id', 'name', 'slug'])
+                ->limit(200)
+                ->get()
+                ->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
+                ->all();
+        });
     }
 
     public function getById(int $id): GenreResponseDto|null
@@ -101,6 +104,8 @@ final class GenreRepository implements GenreRepositoryInterface
         /** @var Genre $genre */
         $genre = Genre::create($data->toArray());
 
+        Cache::forget('genres.all');
+
         return GenreResponseDto::fromModel($genre);
     }
 
@@ -113,11 +118,19 @@ final class GenreRepository implements GenreRepositoryInterface
         /** @var Genre $fresh */
         $fresh = $genre->fresh();
 
+        Cache::forget('genres.all');
+
         return GenreResponseDto::fromModel($fresh);
     }
 
     public function delete(int $id): bool
     {
-        return (bool) Genre::findOrFail($id)->delete();
+        $deleted = (bool) Genre::findOrFail($id)->delete();
+
+        if ($deleted) {
+            Cache::forget('genres.all');
+        }
+
+        return $deleted;
     }
 }

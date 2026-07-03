@@ -10,6 +10,7 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 
 final class AuthorRepository implements AuthorRepositoryInterface
 {
@@ -50,12 +51,14 @@ final class AuthorRepository implements AuthorRepositoryInterface
     /** @return AuthorResponseDto[] */
     public function getAll(): array
     {
-        return Author::orderBy('name')
-            ->select(['id', 'name'])
-            ->limit(200)
-            ->get()
-            ->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))
-            ->all();
+        return Cache::rememberForever('authors.all', function () {
+            return Author::orderBy('name')
+                ->select(['id', 'name'])
+                ->limit(200)
+                ->get()
+                ->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))
+                ->all();
+        });
     }
 
     public function getById(int $id): AuthorResponseDto|null
@@ -101,6 +104,8 @@ final class AuthorRepository implements AuthorRepositoryInterface
         /** @var Author $author */
         $author = Author::create($data->toArray());
 
+        Cache::forget('authors.all');
+
         return AuthorResponseDto::fromModel($author);
     }
 
@@ -113,11 +118,19 @@ final class AuthorRepository implements AuthorRepositoryInterface
         /** @var Author $fresh */
         $fresh = $authorId->fresh();
 
+        Cache::forget('authors.all');
+
         return AuthorResponseDto::fromModel($fresh);
     }
 
     public function delete(int $id): bool
     {
-        return (bool) Author::findOrFail($id)->delete();
+        $deleted = (bool) Author::findOrFail($id)->delete();
+
+        if ($deleted) {
+            Cache::forget('authors.all');
+        }
+
+        return $deleted;
     }
 }

@@ -17,7 +17,7 @@ final class OrderRepository implements OrderRepositoryInterface
     /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array
     {
-        $query = Order::query()
+        $query = $this->scopedQuery()
             ->with('user:id,name')
             ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id));
 
@@ -38,7 +38,7 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function getWebList(OrderFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Order::query()
+        $query = $this->scopedQuery()
             ->with('user:id,name');
 
         if ($filters->sortBy === 'user_name') {
@@ -58,7 +58,7 @@ final class OrderRepository implements OrderRepositoryInterface
     /** @param array<int> $ids */
     public function getWebListByIds(array $ids, OrderFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Order::query()
+        $query = $this->scopedQuery()
             ->with('user:id,name')
             ->whereIn('id', $ids);
 
@@ -78,14 +78,14 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function getById(int $id): OrderResponseDto|null
     {
-        $orderId = Order::with('user:id,name')->find($id);
+        $orderId = $this->scopedQuery()->with('user:id,name')->find($id);
 
         return $orderId !== null ? OrderResponseDto::fromModel($orderId) : null;
     }
 
     public function findByIdWithRelations(int $id): OrderResponseDto
     {
-        $orderId = Order::with(['user', 'items'])
+        $orderId = $this->scopedQuery()->with(['user', 'items'])
             ->findOrFail($id);
 
         return OrderResponseDto::fromModel($orderId);
@@ -93,7 +93,7 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function getByIds(array $ids): array
     {
-        return Order::with('user:id,name')
+        return $this->scopedQuery()->with('user:id,name')
             ->whereIn('id', $ids)
             ->get()
             ->map(static fn (Order $order) => OrderResponseDto::fromModel($order))
@@ -111,7 +111,7 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function update(int $id, OrderDto $data): OrderResponseDto
     {
-        $order = Order::findOrFail($id);
+        $order = $this->scopedQuery()->findOrFail($id);
 
         $order->update($data->toArray());
 
@@ -124,6 +124,17 @@ final class OrderRepository implements OrderRepositoryInterface
 
     public function delete(int $id): bool
     {
-        return (bool) Order::findOrFail($id)->delete();
+        return (bool) $this->scopedQuery()->findOrFail($id)->delete();
+    }
+
+    private function scopedQuery()
+    {
+        $query = Order::query();
+
+        if (auth()->check() && auth()->user()->role !== 'admin') {
+            $query->where('orders.user_id', auth()->id());
+        }
+
+        return $query;
     }
 }

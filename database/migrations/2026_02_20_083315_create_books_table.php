@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->foreignId('author_id')->index()->constrained()->onDelete('restrict');
             $table->text('description');
-            $table->decimal('price', 6, 2);
+            $table->decimal('price', 10, 2);
             $table->integer('stock')->default(0);
             $table->integer('publish_year')->nullable();
             $table->string('cover_image')->nullable();

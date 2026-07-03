@@ -40,14 +40,20 @@ class DatabaseSeeder extends Seeder
             $book->genres()->attach($genres);
         });
 
-        Review::factory()->count(80)->create();
-
         /**
          * Resolving the conflict between random data generation (faker) and strict database rules.
          */
         $users = User::all();
 
         foreach ($users as $user) {
+            $reviewBookIds = Book::inRandomOrder()->limit(random_int(5, 8))->pluck('id');
+            foreach ($reviewBookIds as $bookId) {
+                Review::factory()->create([
+                    'user_id' => $user->id,
+                    'book_id' => $bookId,
+                ]);
+            }
+
             $favoriteBookIds = Book::inRandomOrder()->limit(2)->pluck('id');
             foreach ($favoriteBookIds as $bookId) {
                 Favorite::factory()->create([

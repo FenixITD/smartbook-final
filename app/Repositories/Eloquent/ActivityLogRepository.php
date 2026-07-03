@@ -9,6 +9,7 @@ use App\Dto\ActivityLog\ActivityLogResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\ActivityLogRepositoryInterface;
 use App\Services\Clickhouse\ClickhouseManagerService;
+use Illuminate\Support\Facades\Cache;
 
 final readonly class ActivityLogRepository implements ActivityLogRepositoryInterface
 {
@@ -18,39 +19,43 @@ final readonly class ActivityLogRepository implements ActivityLogRepositoryInter
 
     public function getPaginated(ActivityLogFiltersDto $filters): PaginatedResponseDto
     {
-        $query = $this->clickhouse->table('activity_log');
+        $cacheKey = 'activity_logs_' . md5(serialize($filters));
 
-        if ($filters->logName !== null) {
-            $query->where('log_name', $filters->logName);
-        }
+        return Cache::remember($cacheKey, 60, function () use ($filters) {
+            $query = $this->clickhouse->table('activity_log');
 
-        if ($filters->causerId !== null) {
-            $query->where('causer_id', $filters->causerId);
-        }
+            if ($filters->logName !== null) {
+                $query->where('log_name', $filters->logName);
+            }
 
-        if ($filters->subjectType !== null) {
-            $query->where('subject_type', $filters->subjectType);
-        }
+            if ($filters->causerId !== null) {
+                $query->where('causer_id', $filters->causerId);
+            }
 
-        if ($filters->logNames !== []) {
-            $query->whereIn('log_name', $filters->logNames);
-        }
+            if ($filters->subjectType !== null) {
+                $query->where('subject_type', $filters->subjectType);
+            }
 
-        $total = $query->count();
+            if ($filters->logNames !== []) {
+                $query->whereIn('log_name', $filters->logNames);
+            }
 
-        $rows = $query
-            ->orderByDesc('created_at')
-            ->limit($filters->perPage)
-            ->offset(($filters->page - 1) * $filters->perPage)
-            ->get();
+            $total = $query->count();
 
-        $items = array_map(static fn (array $row) => ActivityLogResponseDto::fromArray($row), $rows);
+            $rows = $query
+                ->orderByDesc('created_at')
+                ->limit($filters->perPage)
+                ->offset(($filters->page - 1) * $filters->perPage)
+                ->get();
 
-        return PaginatedResponseDto::create(
-            items: $items,
-            total: $total,
-            perPage: $filters->perPage,
-            currentPage: $filters->page,
-        );
+            $items = array_map(static fn (array $row) => ActivityLogResponseDto::fromArray($row), $rows);
+
+            return PaginatedResponseDto::create(
+                items: $items,
+                total: $total,
+                perPage: $filters->perPage,
+                currentPage: $filters->page,
+            );
+        });
     }
 }
