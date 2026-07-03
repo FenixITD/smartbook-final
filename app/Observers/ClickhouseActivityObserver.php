@@ -6,13 +6,12 @@ namespace App\Observers;
 
 use App\Models\ClickhouseActivity;
 use App\Services\Clickhouse\ClickhouseActivityService;
-use App\Services\Clickhouse\ClickhouseManagerService;
+use Illuminate\Support\Facades\Redis;
 
 final readonly class ClickhouseActivityObserver
 {
     public function __construct(
         private ClickhouseActivityService $service,
-        private ClickhouseManagerService $clickhouseManagerService,
     ) {
     }
 
@@ -20,12 +19,9 @@ final readonly class ClickhouseActivityObserver
     {
         $row = $this->service->buildRow($activity);
 
-        $this->clickhouseManagerService->insert('activity_log', $row);
+        Redis::rpush('clickhouse_activities_buffer', json_encode($row));
 
-        /** @var int $id */
-        $id = $row['id'];
-
-        $activity->id = $id;
+        $activity->id = $row['id'];
         $activity->exists = true;
         $activity->wasRecentlyCreated = true;
 

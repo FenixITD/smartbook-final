@@ -291,9 +291,6 @@
 
     <flux:sidebar.nav>
         @auth
-            <flux:sidebar.item icon="user" :href="route('profile.edit')" wire:navigate>
-                {{ __('Profile') }}
-            </flux:sidebar.item>
         @else
             <flux:sidebar.item icon="arrow-right-end-on-rectangle" :href="route('login')" wire:navigate>
                 {{ __('Sign in') }}

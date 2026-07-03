@@ -23,4 +23,3 @@ require __DIR__.'/web/webOrders.php';
 require __DIR__.'/web/webReviews.php';
 
 require __DIR__.'/channels.php';
-require __DIR__.'/settings.php';

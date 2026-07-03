@@ -5,17 +5,14 @@ declare(strict_types=1);
 namespace App\Services\Clickhouse;
 
 use App\Models\ClickhouseActivity;
-use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 use const JSON_THROW_ON_ERROR;
 use const JSON_UNESCAPED_UNICODE;
 
 class ClickhouseActivityService
 {
-    /**
-     * @return array<string, mixed>
-     */
     public function buildRow(ClickhouseActivity $activity): array
     {
         $id = $this->generateId();
@@ -43,21 +40,19 @@ class ClickhouseActivityService
 
     private function resolveCauserName(ClickhouseActivity $activity): string
     {
-        if ($activity->relationLoaded('causer')) {
-            /** @var User|null $causer */
-            $causer = $activity->causer;
-
-            return $causer->name ?? '';
+        if ($activity->relationLoaded('causer') && $activity->causer !== null) {
+            return $activity->causer->name ?? '';
         }
 
         if ($activity->causer_id === null) {
             return '';
         }
 
-        /** @var User|null $user */
-        $user = User::find($activity->causer_id);
+        if (Auth::check() && Auth::id() === $activity->causer_id) {
+            return Auth::user()->name ?? '';
+        }
 
-        return $user->name ?? '';
+        return '';
     }
 
     private function serializeProperties(ClickhouseActivity $activity): string

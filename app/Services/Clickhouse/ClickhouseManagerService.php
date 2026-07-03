@@ -31,9 +31,6 @@ class ClickhouseManagerService
         $this->client->setConnectTimeOut(is_numeric($connectTimeout) ? (float) $connectTimeout : 1.0);
     }
 
-    /**
-     * @param array<string, mixed> $row
-     */
     public function insert(string $table, array $row): void
     {
         $columns = array_keys($row);
@@ -42,24 +39,25 @@ class ClickhouseManagerService
         $this->client->insert($table, [$values], $columns);
     }
 
-    /**
-     * @param array<string, mixed> $bindings Named bindings, referenced as {name:Type} in SQL
-     *
-     * @return array<int, array<string, mixed>>
-     */
+    public function insertBatch(string $table, array $rows): void
+    {
+        if ($rows === []) {
+            return;
+        }
+
+        $columns = array_keys($rows[0]);
+        $values = array_map(static fn (array $row): array => array_values($row), $rows);
+
+        $this->client->insert($table, $values, $columns);
+    }
+
     public function select(string $sql, array $bindings = []): array
     {
         $statement = $this->client->select($sql, $bindings);
 
-        /** @var array<int, array<string, mixed>> $rows */
-        $rows = $statement->rows();
-
-        return $rows;
+        return $statement->rows();
     }
 
-    /**
-     * @param array<string, mixed> $bindings
-     */
     public function count(string $sql, array $bindings = []): int
     {
         $rows = $this->select($sql, $bindings);
