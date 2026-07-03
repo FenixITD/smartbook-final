@@ -6,6 +6,7 @@ namespace App\Services\Chat;
 
 use App\Dto\Chat\MessageDto;
 use App\Dto\Chat\SendMessageDto;
+use App\Events\ConversationCreatedEvent;
 use App\Events\MessageSentEvent;
 use App\Repositories\Interfaces\ConversationRepositoryInterface;
 use App\Repositories\Interfaces\MessageRepositoryInterface;
@@ -29,6 +30,16 @@ class SendMessageService
         }
 
         $messageDto = $this->messageRepository->create($dto->conversationId, $dto->userId, $dto->body);
+
+        $messageCount = $this->conversationRepository->getMessageCount($dto->conversationId);
+
+        if ($messageCount === 1) {
+            $summaryDto = $this->conversationRepository->getSummary($dto->conversationId);
+
+            if ($summaryDto) {
+                ConversationCreatedEvent::dispatch((array) $summaryDto);
+            }
+        }
 
         MessageSentEvent::dispatch($messageDto, $dto->conversationId);
 

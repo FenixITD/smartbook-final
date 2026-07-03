@@ -79,4 +79,33 @@ final class ConversationRepository implements ConversationRepositoryInterface
     {
         Conversation::where('id', $conversationId)->update(['status' => 'closed']);
     }
+
+    public function getMessageCount(int $conversationId): int
+    {
+        return Message::where('conversation_id', $conversationId)->count();
+    }
+
+    public function getSummary(int $conversationId): ConversationSummaryDto|null
+    {
+        $conversation = Conversation::with([
+            'user:id,name',
+            'book:id,title',
+            'messages' => static function (HasMany $q): void {
+                $q->latest()->limit(1);
+            },
+        ])
+            ->withCount([
+                'messages as unread_count' => static function (Builder $q): void {
+                    $q->whereNull('read_at')
+                        ->whereColumn('messages.user_id', 'conversations.user_id');
+                },
+            ])
+            ->find($conversationId);
+
+        if (!$conversation) {
+            return null;
+        }
+
+        return ConversationSummaryDto::fromModel($conversation);
+    }
 }

@@ -19,3 +19,7 @@ Broadcast::channel('conversation.{conversationId}', function ($user, int $conver
     return $user->id === $conversation->user_id
         || $user->role === 'admin';
 });
+
+Broadcast::channel('admin.conversations', function ($user) {
+    return $user->role === 'admin';
+});
