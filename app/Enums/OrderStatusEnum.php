@@ -52,4 +52,19 @@ enum OrderStatusEnum: string
             default => true,
         };
     }
+
+    public function canTransitionTo(self $newStatus): bool
+    {
+        if ($this === $newStatus) {
+            return true;
+        }
+
+        return match ($this) {
+            self::Pending => in_array($newStatus, [self::Paid, self::Cancelled], true),
+            self::Paid => in_array($newStatus, [self::Shipped, self::Cancelled], true),
+            self::Shipped => in_array($newStatus, [self::Delivered, self::Cancelled], true),
+            self::Delivered => false,
+            self::Cancelled => false,
+        };
+    }
 }

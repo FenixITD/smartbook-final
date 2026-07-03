@@ -34,4 +34,6 @@ interface ReviewRepositoryInterface
     public function delete(int $id): bool;
 
     public function getByBookId(int $bookId, int $perPage = 10): PaginatedResponseDto;
+
+    public function findByUserAndBook(int $userId, int $bookId): ReviewResponseDto|null;
 }

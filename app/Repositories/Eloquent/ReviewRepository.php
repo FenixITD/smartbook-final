@@ -146,4 +146,14 @@ final class ReviewRepository implements ReviewRepositoryInterface
             links: $paginator->links()->toHtml(),
         );
     }
+
+    public function findByUserAndBook(int $userId, int $bookId): ReviewResponseDto|null
+    {
+        $review = Review::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->with('user:id,name')
+            ->first();
+
+        return $review !== null ? ReviewResponseDto::fromModel($review) : null;
+    }
 }

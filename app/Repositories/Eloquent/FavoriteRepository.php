@@ -9,6 +9,7 @@ use App\Dto\Favorite\FavoriteFiltersDto;
 use App\Dto\Favorite\FavoriteResponseDto;
 use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
+use UnexpectedValueException;
 
 final class FavoriteRepository implements FavoriteRepositoryInterface
 {
@@ -58,19 +59,19 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
 
     public function toggle(int $userId, int $bookId): bool
     {
-        $existing = Favorite::where('user_id', $userId)
+        $deleted = Favorite::where('user_id', $userId)
             ->where('book_id', $bookId)
-            ->first();
+            ->delete();
 
-        if ($existing !== null) {
-            $existing->delete();
-
+        if ($deleted > 0) {
             return false;
         }
 
-        Favorite::create([
+        Favorite::insertOrIgnore([
             'user_id' => $userId,
             'book_id' => $bookId,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return true;
@@ -83,7 +84,7 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
             ->orderByDesc('created_at')
             ->limit(100)
             ->pluck('book_id')
-            ->map(static fn (mixed $id) => is_numeric($id) ? (int) $id : throw new \UnexpectedValueException('book_id is not numeric'))
+            ->map(static fn (mixed $id) => is_numeric($id) ? (int) $id : throw new UnexpectedValueException('book_id is not numeric'))
             ->all();
     }
 }

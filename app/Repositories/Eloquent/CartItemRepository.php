@@ -57,29 +57,41 @@ final class CartItemRepository implements CartItemRepositoryInterface
 
     public function addOrIncrement(CartItemDto $data): void
     {
-        $existing = CartItem::where('user_id', $data->userId)
-            ->where('book_id', $data->bookId)
-            ->first();
-
-        if ($existing !== null) {
-            $existing->increment('quantity', $data->quantity);
-        } else {
-            CartItem::create($data->toArray());
-        }
+        CartItem::upsert(
+            [
+                [
+                    'user_id' => $data->userId,
+                    'book_id' => $data->bookId,
+                    'quantity' => $data->quantity,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            ],
+            ['user_id', 'book_id'],
+            ['quantity' => DB::raw('cart_items.quantity + EXCLUDED.quantity')]
+        );
     }
 
-    /**
-     * @param array<int, array{book_id: int, quantity: int}> $items
-     */
     public function bulkAddOrIncrement(int $userId, array $items): void
     {
-        foreach ($items as $item) {
-            $this->addOrIncrement(new CartItemDto(
-                userId: $userId,
-                bookId: $item['book_id'],
-                quantity: $item['quantity']
-            ));
+        if ($items === []) {
+            return;
         }
+
+        $now = now();
+        $upsertData = array_map(static fn (array $item): array => [
+            'user_id' => $userId,
+            'book_id' => $item['book_id'],
+            'quantity' => $item['quantity'],
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], $items);
+
+        CartItem::upsert(
+            $upsertData,
+            ['user_id', 'book_id'],
+            ['quantity' => DB::raw('cart_items.quantity + EXCLUDED.quantity')]
+        );
     }
 
     public function create(CartItemDto $data): CartItemResponseDto

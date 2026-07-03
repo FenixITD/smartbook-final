@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api\Orders;
 
 use App\Http\Requests\Order\OrderDataRequest;
 use App\Http\Resources\Order\OrderResource;
-use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Services\Order\UpdateOrderService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
@@ -46,13 +46,13 @@ use OpenApi\Attributes as OA;
 readonly class UpdateOrderController
 {
     public function __construct(
-        private OrderRepositoryInterface $repository,
+        private UpdateOrderService $service,
     ) {
     }
 
     public function __invoke(OrderDataRequest $request, int $orderId): JsonResponse
     {
-        $updatedOrder = $this->repository->update($orderId, $request->toDto());
+        $updatedOrder = $this->service->execute($orderId, $request->toDto());
 
         return (new OrderResource($updatedOrder))->response();
     }

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Web\Orders;
 
 use App\Http\Requests\Order\OrderDataRequest;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Services\Order\UpdateOrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -13,6 +14,7 @@ final readonly class UpdateOrderController
 {
     public function __construct(
         private OrderRepositoryInterface $repository,
+        private UpdateOrderService $service,
     ) {
     }
 
@@ -25,7 +27,7 @@ final readonly class UpdateOrderController
 
     public function update(OrderDataRequest $request, int $orderId): RedirectResponse
     {
-        $this->repository->update($orderId, $request->toDto());
+        $this->service->execute($orderId, $request->toDto());
 
         return redirect()->route('orders.index')
             ->with('success', 'Order updated successfully.');
