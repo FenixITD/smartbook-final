@@ -10,10 +10,15 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Traits\CreatesPaginatedResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 
 final class AuthorRepository implements AuthorRepositoryInterface
 {
+    use CreatesPaginatedResponse;
+
     /** @return array<AuthorResponseDto> */
     public function getList(AuthorFiltersDto $filters): array
     {
@@ -36,16 +41,14 @@ final class AuthorRepository implements AuthorRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @param array<int> $ids */
-    public function getWebListByIds(array $ids, AuthorFiltersDto $filters): PaginatedResponseDto
+    public function getWebListByIds(array $ids, int $total, AuthorFiltersDto $filters): PaginatedResponseDto
     {
-        $paginator = Author::query()
+        $items = Author::query()
             ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage)
-            ->withQueryString();
+            ->get();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage);
     }
 
     /** @return AuthorResponseDto[] */

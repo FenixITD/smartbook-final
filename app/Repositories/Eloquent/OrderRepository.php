@@ -11,9 +11,14 @@ use App\Dto\PaginatedResponseDto;
 use App\Models\Order;
 use App\Models\User;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Traits\CreatesPaginatedResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 final class OrderRepository implements OrderRepositoryInterface
 {
+    use CreatesPaginatedResponse;
+
     /** @return array<OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array
     {
@@ -55,8 +60,7 @@ final class OrderRepository implements OrderRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @param array<int> $ids */
-    public function getWebListByIds(array $ids, OrderFiltersDto $filters): PaginatedResponseDto
+    public function getWebListByIds(array $ids, int $total, OrderFiltersDto $filters): PaginatedResponseDto
     {
         $query = $this->scopedQuery()
             ->with('user:id,name')
@@ -71,9 +75,9 @@ final class OrderRepository implements OrderRepositoryInterface
             $query->orderBy($filters->sortBy, $filters->sortDirection);
         }
 
-        $paginator = $query->paginate($filters->perPage)->withQueryString();
+        $items = $query->get();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage);
     }
 
     public function getById(int $id): OrderResponseDto|null

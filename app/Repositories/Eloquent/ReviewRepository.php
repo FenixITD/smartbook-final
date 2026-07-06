@@ -12,9 +12,14 @@ use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Models\User;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use App\Traits\CreatesPaginatedResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 final class ReviewRepository implements ReviewRepositoryInterface
 {
+    use CreatesPaginatedResponse;
+
     /** @return array<ReviewResponseDto> */
     public function getList(ReviewFiltersDto $filters): array
     {
@@ -56,8 +61,7 @@ final class ReviewRepository implements ReviewRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @param array<int> $ids */
-    public function getWebListByIds(array $ids, ReviewFiltersDto $filters): PaginatedResponseDto
+    public function getWebListByIds(array $ids, int $total, ReviewFiltersDto $filters): PaginatedResponseDto
     {
         $query = Review::query()
             ->with(['user:id,name', 'book:id,title'])
@@ -72,9 +76,9 @@ final class ReviewRepository implements ReviewRepositoryInterface
             $query->orderBy($filters->sortBy, $filters->sortDirection);
         }
 
-        $paginator = $query->paginate($filters->perPage)->withQueryString();
+        $items = $query->get();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage);
     }
 
     public function getById(int $id): ReviewResponseDto|null

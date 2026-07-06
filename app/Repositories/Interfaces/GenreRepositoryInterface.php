@@ -17,7 +17,7 @@ interface GenreRepositoryInterface
     public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto;
 
     /** @param array<int> $ids */
-    public function getWebListByIds(array $ids, GenreFiltersDto $filters): PaginatedResponseDto;
+    public function getWebListByIds(array $ids, int $total, GenreFiltersDto $filters): PaginatedResponseDto;
 
     /** @return array<mixed> */
     public function getAll(): array;

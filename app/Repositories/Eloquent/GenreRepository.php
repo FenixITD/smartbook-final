@@ -10,10 +10,15 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Traits\CreatesPaginatedResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 
 final class GenreRepository implements GenreRepositoryInterface
 {
+    use CreatesPaginatedResponse;
+
     /** @return array<GenreResponseDto> */
     public function getList(GenreFiltersDto $filters): array
     {
@@ -36,16 +41,14 @@ final class GenreRepository implements GenreRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @param array<int> $ids */
-    public function getWebListByIds(array $ids, GenreFiltersDto $filters): PaginatedResponseDto
+    public function getWebListByIds(array $ids, int $total, GenreFiltersDto $filters): PaginatedResponseDto
     {
-        $paginator = Genre::query()
+        $items = Genre::query()
             ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
-            ->paginate($filters->perPage)
-            ->withQueryString();
+            ->get();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage);
     }
 
     /** @return GenreResponseDto[] */

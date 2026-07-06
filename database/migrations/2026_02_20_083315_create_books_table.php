@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->integer('ratings_count')->default(0);
             $table->enum('status', ['active', 'draft', 'archived'])->default('active');
             $table->timestamps();
+
+            $table->index(['status', 'average_rating']);
         });
     }
 

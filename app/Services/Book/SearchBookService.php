@@ -8,6 +8,7 @@ use App\Dto\Book\BookFiltersDto;
 use App\Dto\Book\BookResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
+use Illuminate\Pagination\Paginator;
 
 class SearchBookService
 {
@@ -26,7 +27,8 @@ class SearchBookService
             return $this->repository->getList($filters);
         }
 
-        $ids = $this->searchService->search($filters->search);
+        $page = Paginator::resolveCurrentPage() ?: 1;
+        [$ids] = $this->searchService->searchPaginated($filters->search, $filters->perPage, $page);
 
         if ($ids === []) {
             return [];
@@ -35,23 +37,19 @@ class SearchBookService
         return $this->repository->getListByIds($ids, $filters);
     }
 
-    /**
-     * @return PaginatedResponseDto
-     *
-     * Retrieves a paginated list of books for the web interface, integrating with Elasticsearch for text search
-     */
     public function fetchWebList(BookFiltersDto $filters): PaginatedResponseDto
     {
         if ($filters->search === null) {
             return $this->repository->getWebList($filters);
         }
 
-        $ids = $this->searchService->search($filters->search);
+        $page = Paginator::resolveCurrentPage() ?: 1;
+        [$ids, $total] = $this->searchService->searchPaginated($filters->search, $filters->perPage, $page);
 
         if ($ids === []) {
             return PaginatedResponseDto::empty($filters->perPage);
         }
 
-        return $this->repository->getWebListByIds($ids, $filters);
+        return $this->repository->getWebListByIds($ids, $total, $filters);
     }
 }

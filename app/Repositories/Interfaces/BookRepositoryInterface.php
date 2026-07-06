@@ -25,13 +25,13 @@ interface BookRepositoryInterface
     public function getWebList(BookFiltersDto $filters): PaginatedResponseDto;
 
     /** @param array<int> $ids */
-    public function getWebListByIds(array $ids, BookFiltersDto $filters): PaginatedResponseDto;
+    public function getWebListByIds(array $ids, int $total, BookFiltersDto $filters): PaginatedResponseDto;
 
     /** @param array<int> $ids */
     public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto;
 
     /** @param array<int> $ids */
-    public function getDashboardListByIds(array $ids, DashboardFiltersDto $filters): PaginatedResponseDto;
+    public function getDashboardListByIds(array $ids, int $total, DashboardFiltersDto $filters): PaginatedResponseDto;
 
     public function getById(int $id): BookResponseDto|null;
 

@@ -16,6 +16,8 @@ return new class extends Migration {
             $table->float('rating');
             $table->text('comment')->nullable();
             $table->timestamps();
+
+            $table->index(['book_id', 'created_at']);
         });
     }
 

@@ -12,10 +12,15 @@ use App\Dto\PaginatedResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
+use App\Traits\CreatesPaginatedResponse;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use function count;
 
 final class BookRepository implements BookRepositoryInterface
 {
+    use CreatesPaginatedResponse;
+
     /** @return array<BookResponseDto> */
     public function getList(BookFiltersDto $filters): array
     {
@@ -37,8 +42,7 @@ final class BookRepository implements BookRepositoryInterface
         return Book::query()
             ->whereIn('id', $ids)
             ->orderByRaw($this->orderByIds($ids))
-            ->paginate($filters->perPage)
-            ->getCollection()
+            ->get()
             ->map(static fn (Book $book) => BookResponseDto::fromModel($book))
             ->all();
     }
@@ -53,16 +57,14 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @param array<int> $ids */
-    public function getWebListByIds(array $ids, BookFiltersDto $filters): PaginatedResponseDto
+    public function getWebListByIds(array $ids, int $total, BookFiltersDto $filters): PaginatedResponseDto
     {
-        $paginator = Book::with(['author', 'genres'])
+        $items = Book::with(['author', 'genres'])
             ->whereIn('id', $ids)
             ->orderByRaw($this->orderByIds($ids))
-            ->paginate($filters->perPage)
-            ->withQueryString();
+            ->get();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage);
     }
 
     /** @param array<int> $ids */
@@ -77,8 +79,7 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator);
     }
 
-    /** @param array<int> $ids */
-    public function getDashboardListByIds(array $ids, DashboardFiltersDto $filters): PaginatedResponseDto
+    public function getDashboardListByIds(array $ids, int $total, DashboardFiltersDto $filters): PaginatedResponseDto
     {
         [$column, $direction] = match ($filters->sort) {
             'price_asc' => ['price', 'asc'],
@@ -87,11 +88,19 @@ final class BookRepository implements BookRepositoryInterface
             default => ['average_rating', 'desc'],
         };
 
-        $paginator = Book::with(['author', 'genres'])
+        $items = Book::with(['author', 'genres'])
             ->whereIn('id', $ids)
             ->orderBy($column, $direction)
-            ->paginate($filters->perPage)
-            ->withQueryString();
+            ->get();
+
+        $paginator = new LengthAwarePaginator(
+            $items,
+            $total,
+            $filters->perPage,
+            Paginator::resolveCurrentPage() ?: 1,
+            ['path' => Paginator::resolveCurrentPath()]
+        );
+        $paginator->withQueryString();
 
         return PaginatedResponseDto::fromPaginator($paginator);
     }

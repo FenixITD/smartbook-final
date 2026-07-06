@@ -18,12 +18,12 @@ class GetDashboardBooksService
 
     public function get(DashboardFiltersDto $filters): PaginatedResponseDto
     {
-        $ids = $this->searchService->search($filters);
+        [$ids, $total] = $this->searchService->search($filters);
 
         if ($ids === []) {
             return PaginatedResponseDto::empty($filters->perPage);
         }
 
-        return $this->bookRepository->getDashboardListByIds($ids, $filters);
+        return $this->bookRepository->getDashboardListByIds($ids, $total, $filters);
     }
 }
