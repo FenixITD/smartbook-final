@@ -10,19 +10,27 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
-use App\Traits\CreatesPaginatedResponse;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 
-final class GenreRepository implements GenreRepositoryInterface
+final class GenreRepository extends AbstractEloquentRepository implements GenreRepositoryInterface
 {
-    use CreatesPaginatedResponse;
+    protected function getModelClass(): string
+    {
+        return Genre::class;
+    }
 
-    /** @return array<GenreResponseDto> */
+    protected function getResponseDtoClass(): string
+    {
+        return GenreResponseDto::class;
+    }
+
+    protected function afterCreate(mixed $model): void { Cache::forget('genres.all'); }
+    protected function afterUpdate(mixed $model): void { Cache::forget('genres.all'); }
+    protected function afterDelete(int $id): void { Cache::forget('genres.all'); }
+
     public function getList(GenreFiltersDto $filters): array
     {
-        return Genre::query()
+        return $this->query()
             ->when($filters->search !== null, static fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
@@ -33,29 +41,28 @@ final class GenreRepository implements GenreRepositoryInterface
 
     public function getWebList(GenreFiltersDto $filters): PaginatedResponseDto
     {
-        $paginator = Genre::query()
+        $paginator = $this->query()
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->withQueryString();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Genre $genre) => GenreResponseDto::fromModel($genre));
     }
 
     public function getWebListByIds(array $ids, int $total, GenreFiltersDto $filters): PaginatedResponseDto
     {
-        $items = Genre::query()
+        $items = $this->query()
             ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->get();
 
-        return $this->createPaginatedResponse($items, $total, $filters->perPage);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Genre $genre) => GenreResponseDto::fromModel($genre));
     }
 
-    /** @return GenreResponseDto[] */
     public function getAll(): array
     {
         return Cache::rememberForever('genres.all', function () {
-            return Genre::orderBy('name')
+            return $this->query()->orderBy('name')
                 ->select(['id', 'name', 'slug'])
                 ->limit(200)
                 ->get()
@@ -64,76 +71,38 @@ final class GenreRepository implements GenreRepositoryInterface
         });
     }
 
-    public function getById(int $id): GenreResponseDto|null
-    {
-        $genreId = Genre::find($id);
-
-        return $genreId !== null ? GenreResponseDto::fromModel($genreId) : null;
-    }
-
     public function findByIdWithRelations(int $id): GenreResponseDto
     {
-        $genreId = Genre::with(['books'])
-            ->withCount('books')
-            ->findOrFail($id);
+        /** @var Genre $genre */
+        $genre = $this->query()->with(['books'])->withCount('books')->findOrFail($id);
 
-        return GenreResponseDto::fromModel($genreId);
+        return GenreResponseDto::fromModel($genre);
     }
 
-    /**
-     * @param array<int> $ids
-     *
-     * @return array<GenreResponseDto>
-     */
     public function getByIds(array $ids): array
     {
         if ($ids === []) {
             return [];
         }
 
-        $genres = Genre::whereIn('id', $ids)
-            ->select(['id', 'name', 'slug'])
-            ->get();
-
+        $genres = $this->query()->whereIn('id', $ids)->select(['id', 'name', 'slug'])->get();
         $sorted = $genres->sortBy(static fn (Genre $genre) => array_search($genre->id, $ids, true));
 
-        return $sorted->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))
-            ->values()
-            ->all();
+        return $sorted->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))->values()->all();
+    }
+
+    public function getById(int $id): GenreResponseDto|null
+    {
+        return $this->executeGetById($id);
     }
 
     public function create(GenreDto $data): GenreResponseDto
     {
-        /** @var Genre $genre */
-        $genre = Genre::create($data->toArray());
-
-        Cache::forget('genres.all');
-
-        return GenreResponseDto::fromModel($genre);
+        return $this->executeCreate($data);
     }
 
-    public function update(int $id, GenreDto $data): GenreResponseDto
+    public function update(int $id, GenreDto $data): GenreResponseDto|null
     {
-        $genre = Genre::findOrFail($id);
-
-        $genre->update($data->toArray());
-
-        /** @var Genre $fresh */
-        $fresh = $genre->fresh();
-
-        Cache::forget('genres.all');
-
-        return GenreResponseDto::fromModel($fresh);
-    }
-
-    public function delete(int $id): bool
-    {
-        $deleted = (bool) Genre::findOrFail($id)->delete();
-
-        if ($deleted) {
-            Cache::forget('genres.all');
-        }
-
-        return $deleted;
+        return $this->executeUpdate($id, $data);
     }
 }

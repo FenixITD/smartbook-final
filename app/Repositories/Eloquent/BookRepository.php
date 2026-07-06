@@ -54,7 +54,7 @@ final class BookRepository implements BookRepositoryInterface
             ->paginate($filters->perPage)
             ->withQueryString();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
     public function getWebListByIds(array $ids, int $total, BookFiltersDto $filters): PaginatedResponseDto
@@ -64,10 +64,9 @@ final class BookRepository implements BookRepositoryInterface
             ->orderByRaw($this->orderByIds($ids))
             ->get();
 
-        return $this->createPaginatedResponse($items, $total, $filters->perPage);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
-    /** @param array<int> $ids */
     public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto
     {
         $paginator = Book::with('author')
@@ -76,7 +75,7 @@ final class BookRepository implements BookRepositoryInterface
             ->paginate($perPage)
             ->withQueryString();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
     public function getDashboardListByIds(array $ids, int $total, DashboardFiltersDto $filters): PaginatedResponseDto
@@ -102,7 +101,7 @@ final class BookRepository implements BookRepositoryInterface
         );
         $paginator->withQueryString();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
     public function getById(int $id): BookResponseDto|null
@@ -160,7 +159,6 @@ final class BookRepository implements BookRepositoryInterface
         Book::findOrFail($bookId)->genres()->sync($genreIds);
     }
 
-    /** @param array<int> $ids */
     public function getOrderedByIds(array $ids, int $perPage): PaginatedResponseDto
     {
         $paginator = Book::with('author')
@@ -169,18 +167,7 @@ final class BookRepository implements BookRepositoryInterface
             ->paginate($perPage)
             ->withQueryString();
 
-        $items = $paginator->getCollection()->map(
-            static fn (Book $book): BookResponseDto => BookResponseDto::fromModel($book)
-        )->all();
-
-        return new PaginatedResponseDto(
-            items: $items,
-            total: $paginator->total(),
-            perPage: $paginator->perPage(),
-            currentPage: $paginator->currentPage(),
-            lastPage: $paginator->lastPage(),
-            links: $paginator->links()->toHtml(),
-        );
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
     public function create(BookDto $data): BookResponseDto

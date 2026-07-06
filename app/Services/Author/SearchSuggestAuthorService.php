@@ -6,33 +6,27 @@ namespace App\Services\Author;
 
 use App\Dto\Author\AuthorResponseDto;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Services\Abstracts\AbstractSearchSuggestService;
 
-class SearchSuggestAuthorService
+class SearchSuggestAuthorService extends AbstractSearchSuggestService
 {
     public function __construct(
-        private AuthorRepositoryInterface $repository,
-        private SearchAuthorByQueryService $searchService,
+        AuthorRepositoryInterface $repository,
+        SearchAuthorByQueryService $searchService,
     ) {
+        parent::__construct($repository, $searchService);
     }
 
     /**
-     * @return array<int, array{id: int, name: string, url: string}>
+     * @param AuthorResponseDto $entity
+     * @return array{id: int, name: string, url: string}
      */
-    public function execute(string $query): array
+    protected function mapResult(mixed $entity): array
     {
-        $ids = $this->searchService->search($query, limit: 5);
-
-        if ($ids === []) {
-            return [];
-        }
-
-        return array_values(array_map(
-            static fn (AuthorResponseDto $author): array => [
-                'id' => $author->id,
-                'name' => $author->name,
-                'url' => route('authors.show', $author->id),
-            ],
-            $this->repository->getByIds($ids),
-        ));
+        return [
+            'id' => $entity->id,
+            'name' => $entity->name,
+            'url' => route('authors.show', $entity->id),
+        ];
     }
 }

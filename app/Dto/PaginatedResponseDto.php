@@ -25,10 +25,16 @@ class PaginatedResponseDto
      *
      * @param LengthAwarePaginator<int, TModel> $paginator
      */
-    public static function fromPaginator(LengthAwarePaginator $paginator): self
+    public static function fromPaginator(LengthAwarePaginator $paginator, ?callable $mapper = null): self
     {
+        $items = $paginator->items();
+
+        if ($mapper !== null) {
+            $items = array_map($mapper, $items);
+        }
+
         return new self(
-            items: $paginator->items(),
+            items: $items,
             total: $paginator->total(),
             perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),

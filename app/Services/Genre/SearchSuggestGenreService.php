@@ -6,33 +6,27 @@ namespace App\Services\Genre;
 
 use App\Dto\Genre\GenreResponseDto;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Services\Abstracts\AbstractSearchSuggestService;
 
-class SearchSuggestGenreService
+class SearchSuggestGenreService extends AbstractSearchSuggestService
 {
     public function __construct(
-        private GenreRepositoryInterface $repository,
-        private SearchGenreByQueryService $searchService,
+        GenreRepositoryInterface $repository,
+        SearchGenreByQueryService $searchService,
     ) {
+        parent::__construct($repository, $searchService);
     }
 
     /**
-     * @return array<int, array{id: int, name: string, url: string}>
+     * @param GenreResponseDto $entity
+     * @return array{id: int, name: string, url: string}
      */
-    public function execute(string $query): array
+    protected function mapResult(mixed $entity): array
     {
-        $ids = $this->searchService->search($query, limit: 5);
-
-        if ($ids === []) {
-            return [];
-        }
-
-        return array_values(array_map(
-            static fn (GenreResponseDto $genre): array => [
-                'id' => $genre->id,
-                'name' => $genre->name,
-                'url' => route('genres.show', $genre->id),
-            ],
-            $this->repository->getByIds($ids),
-        ));
+        return [
+            'id' => $entity->id,
+            'name' => $entity->name,
+            'url' => route('genres.show', $entity->id),
+        ];
     }
 }

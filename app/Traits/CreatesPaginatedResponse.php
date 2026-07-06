@@ -13,7 +13,7 @@ trait CreatesPaginatedResponse
     /**
      * @param iterable<mixed> $items
      */
-    protected function createPaginatedResponse(iterable $items, int $total, int $perPage): PaginatedResponseDto
+    protected function createPaginatedResponse(iterable $items, int $total, int $perPage, ?callable $mapper = null): PaginatedResponseDto
     {
         $paginator = new LengthAwarePaginator(
             $items,
@@ -25,6 +25,6 @@ trait CreatesPaginatedResponse
 
         $paginator->withQueryString();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return PaginatedResponseDto::fromPaginator($paginator, $mapper);
     }
 }

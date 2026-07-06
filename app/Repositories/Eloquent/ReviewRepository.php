@@ -12,18 +12,22 @@ use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Models\User;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
-use App\Traits\CreatesPaginatedResponse;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 
-final class ReviewRepository implements ReviewRepositoryInterface
+final class ReviewRepository extends AbstractEloquentRepository implements ReviewRepositoryInterface
 {
-    use CreatesPaginatedResponse;
+    protected function getModelClass(): string
+    {
+        return Review::class;
+    }
 
-    /** @return array<ReviewResponseDto> */
+    protected function getResponseDtoClass(): string
+    {
+        return ReviewResponseDto::class;
+    }
+
     public function getList(ReviewFiltersDto $filters): array
     {
-        $query = Review::query()
+        $query = $this->query()
             ->with('user:id,name')
             ->when($filters->id !== null, static fn ($q) => $q->where('id', $filters->id));
 
@@ -44,8 +48,7 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function getWebList(ReviewFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Review::query()
-            ->with(['user:id,name', 'book:id,title']);
+        $query = $this->query()->with(['user:id,name', 'book:id,title']);
 
         if ($filters->sortBy === 'user_name') {
             $query->orderBy(
@@ -58,12 +61,12 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
         $paginator = $query->paginate($filters->perPage)->withQueryString();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Review $review) => ReviewResponseDto::fromModel($review));
     }
 
     public function getWebListByIds(array $ids, int $total, ReviewFiltersDto $filters): PaginatedResponseDto
     {
-        $query = Review::query()
+        $query = $this->query()
             ->with(['user:id,name', 'book:id,title'])
             ->whereIn('id', $ids);
 
@@ -78,27 +81,25 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
         $items = $query->get();
 
-        return $this->createPaginatedResponse($items, $total, $filters->perPage);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Review $review) => ReviewResponseDto::fromModel($review));
     }
 
     public function getById(int $id): ReviewResponseDto|null
     {
-        $reviewId = Review::find($id);
-
-        return $reviewId !== null ? ReviewResponseDto::fromModel($reviewId) : null;
+        return $this->executeGetById($id);
     }
 
     public function findByIdWithRelations(int $id): ReviewResponseDto
     {
-        $reviewId = Review::with(['user', 'book'])
-            ->findOrFail($id);
+        /** @var Review $review */
+        $review = $this->query()->with(['user', 'book'])->findOrFail($id);
 
-        return ReviewResponseDto::fromModel($reviewId);
+        return ReviewResponseDto::fromModel($review);
     }
 
     public function getByIds(array $ids): array
     {
-        return Review::with('user')
+        return $this->query()->with('user')
             ->whereIn('id', $ids)
             ->get()
             ->map(static fn (Review $review) => ReviewResponseDto::fromModel($review))
@@ -107,53 +108,28 @@ final class ReviewRepository implements ReviewRepositoryInterface
 
     public function create(ReviewDto $data): ReviewResponseDto
     {
-        /** @var Review $review */
-        $review = Review::create($data->toArray());
-
-        return ReviewResponseDto::fromModel($review);
+        return $this->executeCreate($data);
     }
 
-    public function update(int $id, ReviewDto $data): ReviewResponseDto
+    public function update(int $id, ReviewDto $data): ReviewResponseDto|null
     {
-        $review = Review::findOrFail($id);
-
-        $review->update($data->toArray());
-
-        /** @var Review $fresh */
-        $fresh = $review->fresh();
-
-        return ReviewResponseDto::fromModel($fresh);
-    }
-
-    public function delete(int $id): bool
-    {
-        return (bool) Review::findOrFail($id)->delete();
+        return $this->executeUpdate($id, $data);
     }
 
     public function getByBookId(int $bookId, int $perPage = 10): PaginatedResponseDto
     {
-        $paginator = Review::with('user:id,name')
+        $paginator = $this->query()->with('user:id,name')
             ->where('book_id', $bookId)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 
-        $items = $paginator->getCollection()
-            ->map(static fn (Review $review) => BookReviewResponseDto::fromModel($review))
-            ->all();
-
-        return new PaginatedResponseDto(
-            items: $items,
-            total: $paginator->total(),
-            perPage: $paginator->perPage(),
-            currentPage: $paginator->currentPage(),
-            lastPage: $paginator->lastPage(),
-            links: $paginator->links()->toHtml(),
-        );
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Review $review) => BookReviewResponseDto::fromModel($review));
     }
 
     public function findByUserAndBook(int $userId, int $bookId): ReviewResponseDto|null
     {
-        $review = Review::where('user_id', $userId)
+        /** @var Review|null $review */
+        $review = $this->query()->where('user_id', $userId)
             ->where('book_id', $bookId)
             ->with('user:id,name')
             ->first();

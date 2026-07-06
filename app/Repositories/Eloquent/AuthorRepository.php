@@ -10,19 +10,27 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
-use App\Traits\CreatesPaginatedResponse;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 
-final class AuthorRepository implements AuthorRepositoryInterface
+final class AuthorRepository extends AbstractEloquentRepository implements AuthorRepositoryInterface
 {
-    use CreatesPaginatedResponse;
+    protected function getModelClass(): string
+    {
+        return Author::class;
+    }
 
-    /** @return array<AuthorResponseDto> */
+    protected function getResponseDtoClass(): string
+    {
+        return AuthorResponseDto::class;
+    }
+
+    protected function afterCreate(mixed $model): void { Cache::forget('authors.all'); }
+    protected function afterUpdate(mixed $model): void { Cache::forget('authors.all'); }
+    protected function afterDelete(int $id): void { Cache::forget('authors.all'); }
+
     public function getList(AuthorFiltersDto $filters): array
     {
-        return Author::query()
+        return $this->query()
             ->when($filters->search !== null, static fn ($q) => $q->where('name', 'like', "%{$filters->search}%"))
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
@@ -33,29 +41,28 @@ final class AuthorRepository implements AuthorRepositoryInterface
 
     public function getWebList(AuthorFiltersDto $filters): PaginatedResponseDto
     {
-        $paginator = Author::query()
+        $paginator = $this->query()
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->paginate($filters->perPage)
             ->withQueryString();
 
-        return PaginatedResponseDto::fromPaginator($paginator);
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Author $author) => AuthorResponseDto::fromModel($author));
     }
 
     public function getWebListByIds(array $ids, int $total, AuthorFiltersDto $filters): PaginatedResponseDto
     {
-        $items = Author::query()
+        $items = $this->query()
             ->whereIn('id', $ids)
             ->orderBy($filters->sortBy, $filters->sortDirection)
             ->get();
 
-        return $this->createPaginatedResponse($items, $total, $filters->perPage);
+        return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Author $author) => AuthorResponseDto::fromModel($author));
     }
 
-    /** @return AuthorResponseDto[] */
     public function getAll(): array
     {
         return Cache::rememberForever('authors.all', function () {
-            return Author::orderBy('name')
+            return $this->query()->orderBy('name')
                 ->select(['id', 'name'])
                 ->limit(200)
                 ->get()
@@ -66,74 +73,36 @@ final class AuthorRepository implements AuthorRepositoryInterface
 
     public function getById(int $id): AuthorResponseDto|null
     {
-        $authorId = Author::find($id);
-
-        return $authorId !== null ? AuthorResponseDto::fromModel($authorId) : null;
+        return $this->executeGetById($id);
     }
 
     public function findByIdWithRelations(int $id): AuthorResponseDto
     {
-        $authorId = Author::with(['books'])
-            ->withCount('books')
-            ->findOrFail($id);
+        /** @var Author $author */
+        $author = $this->query()->with(['books'])->withCount('books')->findOrFail($id);
 
-        return AuthorResponseDto::fromModel($authorId);
+        return AuthorResponseDto::fromModel($author);
     }
 
-    /**
-     * @param array<int> $ids
-     *
-     * @return array<AuthorResponseDto>
-     */
     public function getByIds(array $ids): array
     {
         if ($ids === []) {
             return [];
         }
 
-        $authors = Author::whereIn('id', $ids)
-            ->select(['id', 'name'])
-            ->get();
-
+        $authors = $this->query()->whereIn('id', $ids)->select(['id', 'name'])->get();
         $sorted = $authors->sortBy(static fn (Author $author) => array_search($author->id, $ids, true));
 
-        return $sorted->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))
-            ->values()
-            ->all();
+        return $sorted->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))->values()->all();
     }
 
     public function create(AuthorDto $data): AuthorResponseDto
     {
-        /** @var Author $author */
-        $author = Author::create($data->toArray());
-
-        Cache::forget('authors.all');
-
-        return AuthorResponseDto::fromModel($author);
+        return $this->executeCreate($data);
     }
 
-    public function update(int $id, AuthorDto $data): AuthorResponseDto
+    public function update(int $id, AuthorDto $data): AuthorResponseDto|null
     {
-        $authorId = Author::findOrFail($id);
-
-        $authorId->update($data->toArray());
-
-        /** @var Author $fresh */
-        $fresh = $authorId->fresh();
-
-        Cache::forget('authors.all');
-
-        return AuthorResponseDto::fromModel($fresh);
-    }
-
-    public function delete(int $id): bool
-    {
-        $deleted = (bool) Author::findOrFail($id)->delete();
-
-        if ($deleted) {
-            Cache::forget('authors.all');
-        }
-
-        return $deleted;
+        return $this->executeUpdate($id, $data);
     }
 }

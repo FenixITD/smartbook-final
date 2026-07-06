@@ -6,34 +6,28 @@ namespace App\Services\Order;
 
 use App\Dto\Order\OrderResponseDto;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Services\Abstracts\AbstractSearchSuggestService;
 
-class SearchSuggestOrderService
+class SearchSuggestOrderService extends AbstractSearchSuggestService
 {
     public function __construct(
-        private OrderRepositoryInterface $repository,
-        private SearchOrderByQueryService $service,
+        OrderRepositoryInterface $repository,
+        SearchOrderByQueryService $searchService,
     ) {
+        parent::__construct($repository, $searchService);
     }
 
     /**
-     * @return array<int, array{id: int, user_name: string, status: string, url: string}>
+     * @param OrderResponseDto $entity
+     * @return array{id: int, user_name: string, status: string, url: string}
      */
-    public function execute(string $query): array
+    protected function mapResult(mixed $entity): array
     {
-        $ids = $this->service->search($query, limit: 5);
-
-        if ($ids === []) {
-            return [];
-        }
-
-        return array_values(array_map(
-            static fn (OrderResponseDto $order): array => [
-                'id' => $order->id,
-                'user_name' => $order->userName,
-                'status' => $order->status,
-                'url' => route('orders.show', $order->id),
-            ],
-            $this->repository->getByIds($ids),
-        ));
+        return [
+            'id' => $entity->id,
+            'user_name' => $entity->userName,
+            'status' => $entity->status,
+            'url' => route('orders.show', $entity->id),
+        ];
     }
 }
