@@ -219,6 +219,11 @@ final class BookRepository implements BookRepositoryInterface
         ]);
     }
 
+    public function decrementStock(int $bookId, int $quantity): void
+    {
+        Book::where('id', $bookId)->decrement('stock', $quantity);
+    }
+
     /** @param array<int> $ids */
     private function orderByIds(array $ids): string
     {

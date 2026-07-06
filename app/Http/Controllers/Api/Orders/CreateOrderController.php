@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api\Orders;
 
 use App\Http\Requests\Order\OrderDataRequest;
 use App\Http\Resources\Order\OrderResource;
-use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Services\Order\CreateOrderService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
@@ -34,13 +34,13 @@ use OpenApi\Attributes as OA;
 readonly class CreateOrderController
 {
     public function __construct(
-        private OrderRepositoryInterface $repository,
+        private CreateOrderService $createOrderService,
     ) {
     }
 
     public function __invoke(OrderDataRequest $request): JsonResponse
     {
-        $order = $this->repository->create($request->toDto());
+        $order = $this->createOrderService->execute($request->toDto());
 
         return (new OrderResource($order))->response()->setStatusCode(201);
     }

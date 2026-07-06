@@ -60,4 +60,6 @@ interface BookRepositoryInterface
     public function delete(int $id): bool;
 
     public function recalculateRating(int $bookId): void;
+
+    public function decrementStock(int $bookId, int $quantity): void;
 }
