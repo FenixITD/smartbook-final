@@ -7,6 +7,7 @@ namespace App\Services\Cart;
 use App\Dto\Book\BookResponseDto;
 use App\Dto\CartItem\CartItemWithBookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 class GuestCartService
@@ -79,9 +80,21 @@ class GuestCartService
     {
         $this->validateQuantity($quantity);
 
-        $cart = $this->guestCartStorage->getCart();
+        $book = $this->bookRepository->getById($bookId);
+        if (!$book) {
+            throw ValidationException::withMessages(['cart' => 'Book not found.']);
+        }
 
-        $cart[$bookId]['quantity'] = ($cart[$bookId]['quantity'] ?? 0) + $quantity;
+        $cart = $this->guestCartStorage->getCart();
+        $currentQuantity = $cart[$bookId]['quantity'] ?? 0;
+
+        if ($currentQuantity + $quantity > $book->stock) {
+            throw ValidationException::withMessages([
+                'quantity' => "Cannot add more. Only {$book->stock} available in stock."
+            ]);
+        }
+
+        $cart[$bookId]['quantity'] = $currentQuantity + $quantity;
         $cart[$bookId]['book_id'] = $bookId;
 
         $this->guestCartStorage->saveCart($cart);
@@ -90,6 +103,13 @@ class GuestCartService
     public function update(int $bookId, int $quantity): void
     {
         $this->validateQuantity($quantity);
+
+        $book = $this->bookRepository->getById($bookId);
+        if ($book && $quantity > $book->stock) {
+            throw ValidationException::withMessages([
+                'quantity' => "Cannot update. Only {$book->stock} available in stock."
+            ]);
+        }
 
         $cart = $this->guestCartStorage->getCart();
 

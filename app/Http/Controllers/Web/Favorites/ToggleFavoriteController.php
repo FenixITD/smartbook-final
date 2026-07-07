@@ -20,11 +20,16 @@ final readonly class ToggleFavoriteController
     {
         /** @var User $user */
         $user = $request->user();
+        $bookId = $request->integer('book_id');
 
-        $this->favoriteRepository->toggle(
+        $isAdded = $this->favoriteRepository->toggle(
             userId: $user->id,
-            bookId: $request->integer('book_id'),
+            bookId: $bookId,
         );
+
+        activity('Favorite')
+            ->withProperties(['user_id' => $user->id, 'book_id' => $bookId])
+            ->log($isAdded ? 'created' : 'deleted');
 
         return back();
     }

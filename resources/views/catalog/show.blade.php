@@ -122,8 +122,15 @@
                                     Add to cart
                                 </button>
                             </div>
+
+                            {{-- Validation error specifically for quantity --}}
+                            @error('quantity')
+                            <p class="text-sm font-medium text-red-600 dark:text-red-400 mt-2">
+                                {{ $message }}
+                            </p>
+                            @enderror
                         </form>
-                        <p class="text-sm text-green-600 dark:text-green-400">
+                        <p class="text-sm text-green-600 dark:text-green-400 mt-1">
                             In stock ({{ $book->stock }} available)
                         </p>
                     @else
@@ -267,7 +274,6 @@
         @if (count($reviews->items) > 0)
             <div class="flex flex-col gap-6">
                 @foreach ($reviews->items as $review)
-                    {{-- Скрываем из списка снизу, так как он уже отображен в самом верху --}}
                     @if(isset($userReview) && $review->id === $userReview->id)
                         @continue
                     @endif

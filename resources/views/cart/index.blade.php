@@ -48,6 +48,13 @@
                     </flux:callout>
                 @endif
 
+                {{-- Show stock validation errors globally at the top of the cart --}}
+                @error('quantity')
+                <flux:callout variant="danger" icon="exclamation-triangle">
+                    {{ $message }}
+                </flux:callout>
+                @enderror
+
                 @if (count($cartItems) === 0)
                     <div class="flex flex-col items-center justify-center py-24 text-zinc-400 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
                         <flux:icon name="shopping-cart" class="w-12 h-12 mb-3" />

@@ -100,8 +100,8 @@
                             <td class="px-6 py-4 text-sm text-zinc-400">{{ $book->id }}</td>
                             <td class="px-6 py-4">
                                 <div class="w-10 h-14 rounded overflow-hidden bg-zinc-100 dark:bg-zinc-700">
-                                    @if ($book->cover_image)
-                                        <img src="{{ Storage::url($book->cover_image) }}" alt="{{ $book->title }}"
+                                    @if ($book->coverImage)
+                                        <img src="{{ Storage::url($book->coverImage) }}" alt="{{ $book->title }}"
                                              class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
@@ -112,9 +112,9 @@
                             </td>
                             <td class="px-6 py-4">
                                 <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 max-w-xs truncate">{{ $book->title }}</p>
-                                <p class="text-xs text-zinc-400 mt-0.5">{{ $book->publish_year }}</p>
+                                <p class="text-xs text-zinc-400 mt-0.5">{{ $book->publishYear }}</p>
                             </td>
-                            <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">{{ $book->author?->name }}</td>
+                            <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">{{ $book->authorName }}</td>
                             <td class="px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">${{ number_format($book->price, 2) }}</td>
                             <td class="px-6 py-4">
                                 @php
@@ -130,8 +130,8 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end gap-2">
-                                    <flux:button href="{{ route('books.show', $book) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
-                                    <flux:button href="{{ route('books.edit', $book) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
+                                    <flux:button href="{{ route('books.show', $book->id) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
+                                    <flux:button href="{{ route('books.edit', $book->id) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
                                     <div>
                                         <flux:modal.trigger name="delete-book-{{ $book->id }}">
                                             <flux:button variant="ghost" size="sm" icon="trash">Delete</flux:button>
@@ -146,7 +146,7 @@
                                                     <flux:button variant="ghost">Cancel</flux:button>
                                                 </flux:modal.close>
 
-                                                <form action="{{ route('books.destroy', $book) }}" method="POST">
+                                                <form action="{{ route('books.destroy', $book->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <flux:button type="submit" variant="danger">Delete</flux:button>

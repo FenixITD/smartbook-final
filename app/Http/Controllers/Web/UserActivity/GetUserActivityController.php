@@ -20,6 +20,7 @@ final readonly class GetUserActivityController
     public function __invoke(UserActivityFilterRequest $request): View
     {
         $filters = new ActivityLogFiltersDto(
+            page: $request->integer('page', 1),
             perPage: $request->integer('perPage', 15),
             causerId: (int) Auth::id(),
             logNames: ['CartItem', 'Favorite', 'Review'],

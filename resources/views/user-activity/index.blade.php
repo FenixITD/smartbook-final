@@ -29,6 +29,7 @@
                             $isReview = $log->logName === 'Review'; //
                             $isAdded = in_array($log->description, ['added', 'created']);
                             $isRemoved = in_array($log->description, ['deleted']);
+                            $isUpdated = in_array($log->description, ['updated']);
 
                             $bookId = $log->properties['book_id']
                                 ?? $log->properties['attributes']['book_id']
@@ -55,6 +56,12 @@
                                 $bgColor = 'bg-red-50 dark:bg-red-950';
                                 $borderColor = 'border-red-100 dark:border-red-900';
                                 $actionText = 'Removed from cart';
+                            } elseif ($isCart && $isUpdated) {
+                                $icon = 'shopping-cart';
+                                $iconColor = 'text-blue-500';
+                                $bgColor = 'bg-blue-50 dark:bg-blue-950';
+                                $borderColor = 'border-blue-100 dark:border-blue-900';
+                                $actionText = 'Updated cart quantity';
                             } elseif ($isFavorite && $isAdded) {
                                 $icon = 'heart';
                                 $iconColor = 'text-pink-500';

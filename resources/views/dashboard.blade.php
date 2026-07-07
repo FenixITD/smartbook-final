@@ -125,8 +125,8 @@
 
                                 {{-- Cover --}}
                                 <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                                    @if ($book->cover_image)
-                                        <img src="{{ Storage::url($book->cover_image) }}"
+                                    @if ($book->coverImage)
+                                        <img src="{{ Storage::url($book->coverImage) }}"
                                              alt="{{ $book->title }}"
                                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                     @else
@@ -148,13 +148,13 @@
 
                                 {{-- Info --}}
                                 <div class="p-3 flex flex-col gap-1 flex-1">
-                                    <p class="text-xs text-zinc-400 dark:text-zinc-500 truncate">{{ $book->author?->name ?? '—' }}</p>
+                                    <p class="text-xs text-zinc-400 dark:text-zinc-500 truncate">{{ $book->authorName ?? '—' }}</p>
                                     <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 leading-tight line-clamp-2">{{ $book->title }}</p>
 
-                                    @if ($book->average_rating > 0)
+                                    @if ($book->averageRating > 0)
                                         <div class="flex items-center gap-1 mt-auto pt-1">
                                             <flux:icon name="star" class="w-3 h-3 text-yellow-400" />
-                                            <span class="text-xs text-zinc-500">{{ number_format($book->average_rating, 1) }} ({{ $book->ratings_count }})</span>
+                                            <span class="text-xs text-zinc-500">{{ number_format($book->averageRating, 1) }} ({{ $book->ratingsCount }})</span>
                                         </div>
                                     @endif
 
