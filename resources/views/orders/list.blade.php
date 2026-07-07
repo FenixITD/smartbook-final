@@ -99,7 +99,7 @@
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                                 <td class="px-6 py-4 text-sm text-zinc-400 dark:text-zinc-500">{{ $order->id }}</td>
                                 <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
-                                    {{ $order->user?->name ?? 'User #'.$order->user_id }}
+                                    {{ $order->userName ?? 'User #'.$order->userId }}
                                 </td>
                                 <td class="px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
                                     ${{ number_format($order->total, 2) }}
@@ -119,15 +119,15 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400 max-w-xs truncate">
-                                    {{ $order->shipping_address }}
+                                    {{ $order->shippingAddress }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                                    {{ $order->created_at->format('d.m.Y') }}
+                                    {{ $order->createdAt }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <flux:button href="{{ route('orders.show', $order) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
-                                        <flux:button href="{{ route('orders.edit', $order) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
+                                        <flux:button href="{{ route('orders.show', $order->id) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
+                                        <flux:button href="{{ route('orders.edit', $order->id) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
                                         <div>
                                             <flux:modal.trigger name="delete-order-{{ $order->id }}">
                                                 <flux:button variant="ghost" size="sm" icon="trash">Delete</flux:button>
@@ -142,7 +142,7 @@
                                                         <flux:button variant="ghost">Cancel</flux:button>
                                                     </flux:modal.close>
 
-                                                    <form action="{{ route('orders.destroy', $order) }}" method="POST">
+                                                    <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <flux:button type="submit" variant="danger">Delete</flux:button>

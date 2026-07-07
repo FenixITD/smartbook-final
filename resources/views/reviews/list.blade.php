@@ -99,10 +99,10 @@
                             <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                                 <td class="px-6 py-4 text-sm text-zinc-400 dark:text-zinc-500">{{ $review->id }}</td>
                                 <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400">
-                                    {{ $review->user?->name ?? 'User #'.$review->user_id }}
+                                    {{ $review->userName ?? 'User #'.$review->userId }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-zinc-600 dark:text-zinc-400 max-w-xs truncate">
-                                    {{ $review->book?->title ?? 'Book #'.$review->book_id }}
+                                    {{ $review->book?->title ?? 'Book #'.$review->bookId }}
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-1">
@@ -114,12 +114,12 @@
                                     {{ $review->comment ?? '—' }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                                    {{ $review->created_at->format('d.m.Y') }}
+                                    {{ $review->createdAt }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <flux:button href="{{ route('reviews.show', $review) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
-                                        <flux:button href="{{ route('reviews.edit', $review) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
+                                        <flux:button href="{{ route('reviews.show', $review->id) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
+                                        <flux:button href="{{ route('reviews.edit', $review->id) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
                                         <div>
                                             <flux:modal.trigger name="delete-review-{{ $review->id }}">
                                                 <flux:button variant="ghost" size="sm" icon="trash">Delete</flux:button>
@@ -134,7 +134,7 @@
                                                         <flux:button variant="ghost">Cancel</flux:button>
                                                     </flux:modal.close>
 
-                                                    <form action="{{ route('reviews.destroy', $review) }}" method="POST">
+                                                    <form action="{{ route('reviews.destroy', $review->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <flux:button type="submit" variant="danger">Delete</flux:button>

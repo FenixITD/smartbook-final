@@ -9,11 +9,21 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
+if ! grep -q "^REVERB_APP_ID=.\+" .env; then
+    echo "Generating Reverb app credentials..."
+    sed -i "s/^REVERB_APP_ID=.*/REVERB_APP_ID=$(openssl rand -hex 4)/" .env
+    sed -i "s/^REVERB_APP_KEY=.*/REVERB_APP_KEY=$(openssl rand -hex 10)/" .env
+    sed -i "s/^REVERB_APP_SECRET=.*/REVERB_APP_SECRET=$(openssl rand -hex 10)/" .env
+fi
+
 echo "Starting databases and PHP container..."
 docker compose up -d app
 
 echo "Installing PHP packages (Composer)..."
 docker compose exec app composer install
+
+echo "Clearing any stale config cache..."
+docker compose exec app php artisan config:clear
 
 echo "Building frontend and starting remaining services..."
 docker compose up -d

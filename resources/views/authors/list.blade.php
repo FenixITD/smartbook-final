@@ -108,12 +108,12 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                                    {{ $author->created_at->format('d.m.Y') }}
+                                    {{ $author->createdAt }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">
-                                        <flux:button href="{{ route('authors.show', $author) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
-                                        <flux:button href="{{ route('authors.edit', $author) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
+                                        <flux:button href="{{ route('authors.show', $author->id) }}" variant="ghost" size="sm" icon="eye">View</flux:button>
+                                        <flux:button href="{{ route('authors.edit', $author->id) }}" variant="ghost" size="sm" icon="pencil">Edit</flux:button>
                                         <div>
                                             <flux:modal.trigger name="delete-author-{{ $author->id }}">
                                                 <flux:button variant="ghost" size="sm" icon="trash">Delete</flux:button>
@@ -128,7 +128,7 @@
                                                         <flux:button variant="ghost">Cancel</flux:button>
                                                     </flux:modal.close>
 
-                                                    <form action="{{ route('authors.destroy', $author) }}" method="POST">
+                                                    <form action="{{ route('authors.destroy', $author->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <flux:button type="submit" variant="danger">Delete</flux:button>
