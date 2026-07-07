@@ -102,7 +102,7 @@ final class ConversationRepository implements ConversationRepositoryInterface
             ])
             ->find($conversationId);
 
-        if (!$conversation) {
+        if ($conversation === null) {
             return null;
         }
 

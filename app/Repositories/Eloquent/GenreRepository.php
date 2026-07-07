@@ -10,8 +10,12 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @extends AbstractEloquentRepository<Genre, GenreResponseDto>
+ */
 final class GenreRepository extends AbstractEloquentRepository implements GenreRepositoryInterface
 {
     protected function getModelClass(): string
@@ -28,6 +32,7 @@ final class GenreRepository extends AbstractEloquentRepository implements GenreR
     protected function afterUpdate(mixed $model): void { Cache::forget('genres.all'); }
     protected function afterDelete(int $id): void { Cache::forget('genres.all'); }
 
+    /** @return array<int, GenreResponseDto> */
     public function getList(GenreFiltersDto $filters): array
     {
         return $this->query()
@@ -59,6 +64,7 @@ final class GenreRepository extends AbstractEloquentRepository implements GenreR
         return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Genre $genre) => GenreResponseDto::fromModel($genre));
     }
 
+    /** @return array<int, GenreResponseDto> */
     public function getAll(): array
     {
         return Cache::rememberForever('genres.all', function () {
@@ -79,6 +85,10 @@ final class GenreRepository extends AbstractEloquentRepository implements GenreR
         return GenreResponseDto::fromModel($genre);
     }
 
+    /**
+     * @param array<int> $ids
+     * @return array<int, GenreResponseDto>
+     */
     public function getByIds(array $ids): array
     {
         if ($ids === []) {
@@ -86,7 +96,7 @@ final class GenreRepository extends AbstractEloquentRepository implements GenreR
         }
 
         $genres = $this->query()->whereIn('id', $ids)->select(['id', 'name', 'slug'])->get();
-        $sorted = $genres->sortBy(static fn (Genre $genre) => array_search($genre->id, $ids, true));
+        $sorted = $genres->sortBy(static fn ($model): int|string|false => array_search($model->id, $ids, true));
 
         return $sorted->map(static fn (Genre $genre) => GenreResponseDto::fromModel($genre))->values()->all();
     }
@@ -98,11 +108,17 @@ final class GenreRepository extends AbstractEloquentRepository implements GenreR
 
     public function create(GenreDto $data): GenreResponseDto
     {
-        return $this->executeCreate($data);
+        /** @var GenreResponseDto $response */
+        $response = $this->executeCreate($data);
+
+        return $response;
     }
 
     public function update(int $id, GenreDto $data): GenreResponseDto|null
     {
-        return $this->executeUpdate($id, $data);
+        /** @var GenreResponseDto|null $response */
+        $response = $this->executeUpdate($id, $data);
+
+        return $response;
     }
 }

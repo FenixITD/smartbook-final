@@ -36,7 +36,7 @@ class SendMessageService
         if ($messageCount === 1) {
             $summaryDto = $this->conversationRepository->getSummary($dto->conversationId);
 
-            if ($summaryDto) {
+            if ($summaryDto !== null) {
                 ConversationCreatedEvent::dispatch((array) $summaryDto);
             }
         }

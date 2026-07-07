@@ -8,6 +8,9 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use App\Services\Abstracts\AbstractSearchSuggestService;
 
+/**
+ * @extends AbstractSearchSuggestService<GenreResponseDto>
+ */
 class SearchSuggestGenreService extends AbstractSearchSuggestService
 {
     public function __construct(
@@ -18,11 +21,12 @@ class SearchSuggestGenreService extends AbstractSearchSuggestService
     }
 
     /**
-     * @param GenreResponseDto $entity
-     * @return array{id: int, name: string, url: string}
+     * @param mixed $entity
+     * @return array<string, mixed>
      */
     protected function mapResult(mixed $entity): array
     {
+        /** @var GenreResponseDto $entity */
         return [
             'id' => $entity->id,
             'name' => $entity->name,

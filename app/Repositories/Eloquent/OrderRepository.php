@@ -13,6 +13,9 @@ use App\Models\User;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @extends AbstractEloquentRepository<Order, OrderResponseDto>
+ */
 final class OrderRepository extends AbstractEloquentRepository implements OrderRepositoryInterface
 {
     protected function getModelClass(): string
@@ -25,17 +28,21 @@ final class OrderRepository extends AbstractEloquentRepository implements OrderR
         return OrderResponseDto::class;
     }
 
+    /** @return Builder<Order> */
     protected function query(): Builder
     {
         $query = parent::query();
 
-        if (auth()->check() && auth()->user()->role !== 'admin') {
-            $query->where('orders.user_id', auth()->id());
+        $user = auth()->user();
+
+        if ($user !== null && $user->role !== 'admin') {
+            $query->where('orders.user_id', $user->id);
         }
 
         return $query;
     }
 
+    /** @return array<int, OrderResponseDto> */
     public function getList(OrderFiltersDto $filters): array
     {
         $query = $this->query()
@@ -111,6 +118,10 @@ final class OrderRepository extends AbstractEloquentRepository implements OrderR
         return OrderResponseDto::fromModel($order);
     }
 
+    /**
+     * @param array<int> $ids
+     * @return array<int, OrderResponseDto>
+     */
     public function getByIds(array $ids): array
     {
         return $this->query()->with('user:id,name')
@@ -129,7 +140,7 @@ final class OrderRepository extends AbstractEloquentRepository implements OrderR
         return OrderResponseDto::fromModel($order);
     }
 
-    public function update(int $id, OrderDto $data): OrderResponseDto|null
+    public function update(int $id, OrderDto $data): OrderResponseDto
     {
         /** @var Order $order */
         $order = $this->query()->findOrFail($id);

@@ -22,7 +22,7 @@ class AddCartItemService
     {
         $book = $this->bookRepository->getById($bookId);
 
-        if (!$book) {
+        if ($book === null) {
             throw ValidationException::withMessages(['cart' => 'Book not found.']);
         }
 

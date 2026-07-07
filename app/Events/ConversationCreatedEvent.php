@@ -17,6 +17,9 @@ final class ConversationCreatedEvent implements ShouldBroadcast
     use InteractsWithSockets;
     use SerializesModels;
 
+    /**
+     * @param array<string, mixed> $conversation
+     */
     public function __construct(
         public array $conversation,
     ) {

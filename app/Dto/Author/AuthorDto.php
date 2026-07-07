@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Dto\Author;
 
-final readonly class AuthorDto
+use Illuminate\Contracts\Support\Arrayable;
+
+/**
+ * @implements Arrayable<string, mixed>
+ */
+final readonly class AuthorDto implements Arrayable
 {
     public function __construct(
         public string $name,

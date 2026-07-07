@@ -8,6 +8,9 @@ use App\Dto\Review\ReviewResponseDto;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 use App\Services\Abstracts\AbstractSearchSuggestService;
 
+/**
+ * @extends AbstractSearchSuggestService<ReviewResponseDto>
+ */
 class SearchSuggestReviewService extends AbstractSearchSuggestService
 {
     public function __construct(
@@ -18,11 +21,12 @@ class SearchSuggestReviewService extends AbstractSearchSuggestService
     }
 
     /**
-     * @param ReviewResponseDto $entity
+     * @param mixed $entity
      * @return array<string, mixed>
      */
     protected function mapResult(mixed $entity): array
     {
+        /** @var ReviewResponseDto $entity */
         return [
             'id' => $entity->id,
             'user_name' => $entity->userName,

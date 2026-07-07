@@ -10,8 +10,12 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @extends AbstractEloquentRepository<Author, AuthorResponseDto>
+ */
 final class AuthorRepository extends AbstractEloquentRepository implements AuthorRepositoryInterface
 {
     protected function getModelClass(): string
@@ -28,6 +32,7 @@ final class AuthorRepository extends AbstractEloquentRepository implements Autho
     protected function afterUpdate(mixed $model): void { Cache::forget('authors.all'); }
     protected function afterDelete(int $id): void { Cache::forget('authors.all'); }
 
+    /** @return array<int, AuthorResponseDto> */
     public function getList(AuthorFiltersDto $filters): array
     {
         return $this->query()
@@ -59,6 +64,7 @@ final class AuthorRepository extends AbstractEloquentRepository implements Autho
         return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Author $author) => AuthorResponseDto::fromModel($author));
     }
 
+    /** @return array<int, AuthorResponseDto> */
     public function getAll(): array
     {
         return Cache::rememberForever('authors.all', function () {
@@ -84,6 +90,10 @@ final class AuthorRepository extends AbstractEloquentRepository implements Autho
         return AuthorResponseDto::fromModel($author);
     }
 
+    /**
+     * @param array<int> $ids
+     * @return array<int, AuthorResponseDto>
+     */
     public function getByIds(array $ids): array
     {
         if ($ids === []) {
@@ -91,18 +101,24 @@ final class AuthorRepository extends AbstractEloquentRepository implements Autho
         }
 
         $authors = $this->query()->whereIn('id', $ids)->select(['id', 'name'])->get();
-        $sorted = $authors->sortBy(static fn (Author $author) => array_search($author->id, $ids, true));
+        $sorted = $authors->sortBy(static fn ($model): int|string|false => array_search($model->id, $ids, true));
 
         return $sorted->map(static fn (Author $author) => AuthorResponseDto::fromModel($author))->values()->all();
     }
 
     public function create(AuthorDto $data): AuthorResponseDto
     {
-        return $this->executeCreate($data);
+        /** @var AuthorResponseDto $response */
+        $response = $this->executeCreate($data);
+
+        return $response;
     }
 
     public function update(int $id, AuthorDto $data): AuthorResponseDto|null
     {
-        return $this->executeUpdate($id, $data);
+        /** @var AuthorResponseDto|null $response */
+        $response = $this->executeUpdate($id, $data);
+
+        return $response;
     }
 }

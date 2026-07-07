@@ -7,6 +7,7 @@ namespace App\Services\Abstracts;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Response\Elasticsearch;
 
+use function assert;
 use function is_scalar;
 
 abstract class AbstractSearchByQueryService
@@ -23,6 +24,9 @@ abstract class AbstractSearchByQueryService
         return is_scalar($index) ? (string) $index : '';
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function search(string $query, int $limit = 5): array
     {
         $response = $this->client->search([
@@ -34,9 +38,14 @@ abstract class AbstractSearchByQueryService
             ],
         ]);
 
+        assert($response instanceof Elasticsearch);
+
         return $this->extractIds($response);
     }
 
+    /**
+     * @return array{0: array<int, int>, 1: int}
+     */
     public function searchPaginated(string $query, int $perPage, int $page = 1): array
     {
         $from = ($page - 1) * $perPage;
@@ -52,23 +61,41 @@ abstract class AbstractSearchByQueryService
             ],
         ]);
 
+        assert($response instanceof Elasticsearch);
+
         $ids = $this->extractIds($response);
-        $total = $response->asArray()['hits']['total']['value'] ?? 0;
+
+        /** @var array{hits: array{total: array{value: int}}} $data */
+        $data = $response->asArray();
+        $total = $data['hits']['total']['value'];
 
         return [$ids, $total];
     }
 
-    protected function extractIds(Elasticsearch|array $response): array
+    /**
+     * @return array<int, int>
+     */
+    protected function extractIds(Elasticsearch $response): array
     {
-        $data = $response instanceof Elasticsearch ? $response->asArray() : $response;
-        $hits = $data['hits']['hits'] ?? [];
+        /** @var array{hits: array{hits: array<int, array{_id: int|string}>}} $data */
+        $data = $response->asArray();
+
+        /** @var array<int, array{_id: int|string}> $hits */
+        $hits = $data['hits']['hits'];
 
         return array_map(
-            static fn (array $hit): int => is_numeric($hit['_id'] ?? null) ? (int) $hit['_id'] : 0,
+            function (array $hit): int {
+                /** @var int|string $id */
+                $id = $hit['_id'];
+                return (int) $id;
+            },
             $hits,
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function buildQueryArray(string $query): array
     {
         return [

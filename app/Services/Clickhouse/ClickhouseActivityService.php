@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Clickhouse;
 
 use App\Models\ClickhouseActivity;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,6 +14,7 @@ use const JSON_UNESCAPED_UNICODE;
 
 class ClickhouseActivityService
 {
+    /** @return array<string, mixed> */
     public function buildRow(ClickhouseActivity $activity): array
     {
         $id = $this->generateId();
@@ -41,7 +43,11 @@ class ClickhouseActivityService
     private function resolveCauserName(ClickhouseActivity $activity): string
     {
         if ($activity->relationLoaded('causer') && $activity->causer !== null) {
-            return $activity->causer->name ?? '';
+            /** @var Model $causer */
+            $causer = $activity->causer;
+            $name = $causer->getAttribute('name');
+
+            return is_scalar($name) ? (string) $name : '';
         }
 
         if ($activity->causer_id === null) {

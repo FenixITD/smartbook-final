@@ -19,9 +19,9 @@ final readonly class ClickhouseActivityObserver
     {
         $row = $this->service->buildRow($activity);
 
-        Redis::rpush('clickhouse_activities_buffer', json_encode($row));
+        Redis::rPush('clickhouse_activities_buffer', json_encode($row));
 
-        $activity->id = $row['id'];
+        $activity->id = is_numeric($row['id'] ?? null) ? (int) $row['id'] : 0;
         $activity->exists = true;
         $activity->wasRecentlyCreated = true;
 

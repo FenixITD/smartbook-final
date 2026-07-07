@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Book;
 
+use App\Dto\Book\BookResponseDto;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Services\Abstracts\AbstractSearchSuggestService;
 
+/**
+ * @extends AbstractSearchSuggestService<BookResponseDto>
+ */
 class SearchSuggestCatalogBookService extends AbstractSearchSuggestService
 {
     public function __construct(
@@ -18,6 +22,7 @@ class SearchSuggestCatalogBookService extends AbstractSearchSuggestService
 
     protected function mapResult(mixed $entity): array
     {
+        /** @var BookResponseDto $entity */
         return [
             'id' => $entity->id,
             'title' => $entity->title,
@@ -28,8 +33,13 @@ class SearchSuggestCatalogBookService extends AbstractSearchSuggestService
         ];
     }
 
+    /**
+     * @param array<int> $ids
+     * @return array<int, BookResponseDto>
+     */
     protected function fetchEntities(array $ids): array
     {
+        /** @phpstan-ignore-next-line */
         return $this->repository->getOrderedByIds($ids, perPage: 5)->items;
     }
 }

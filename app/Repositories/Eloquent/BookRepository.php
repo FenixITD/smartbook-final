@@ -92,11 +92,13 @@ final class BookRepository implements BookRepositoryInterface
             ->orderBy($column, $direction)
             ->get();
 
+        $currentPage = Paginator::resolveCurrentPage();
+
         $paginator = new LengthAwarePaginator(
             $items,
             $total,
             $filters->perPage,
-            Paginator::resolveCurrentPage() ?: 1,
+            $currentPage !== 0 ? $currentPage : 1,
             ['path' => Paginator::resolveCurrentPath()]
         );
         $paginator->withQueryString();

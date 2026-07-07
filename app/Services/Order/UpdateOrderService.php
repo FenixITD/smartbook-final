@@ -23,7 +23,8 @@ class UpdateOrderService
     {
         $lock = Cache::lock("order_update_{$orderId}", 5);
 
-        return $lock->block(5, function () use ($orderId, $dto): OrderResponseDto {
+        /** @var OrderResponseDto $response */
+        $response = $lock->block(5, function () use ($orderId, $dto): OrderResponseDto {
             $order = $this->repository->getById($orderId);
 
             if ($order === null) {
@@ -41,7 +42,15 @@ class UpdateOrderService
                 }
             }
 
-            return $this->repository->update($orderId, $dto);
+            $updatedOrder = $this->repository->update($orderId, $dto);
+
+            if ($updatedOrder === null) {
+                throw new NotFoundHttpException('Order could not be updated.');
+            }
+
+            return $updatedOrder;
         });
+
+        return $response;
     }
 }

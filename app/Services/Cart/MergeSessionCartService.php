@@ -33,7 +33,7 @@ class MergeSessionCartService
 
         $lock = Cache::lock("merge_cart_{$userId}", 5);
 
-        if (!$lock->get()) {
+        if ($lock->get() === false) {
             return;
         }
 

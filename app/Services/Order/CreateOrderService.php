@@ -27,7 +27,8 @@ class CreateOrderService
 
     public function execute(OrderDto $dto): OrderResponseDto
     {
-        return $this->transactionManager->transaction(function () use ($dto): OrderResponseDto {
+        /** @var OrderResponseDto $orderResponse */
+        $orderResponse = $this->transactionManager->transaction(function () use ($dto): OrderResponseDto {
             $cartItems = $this->cartItemRepository->getAllByUserId($dto->userId);
 
             if ($cartItems === []) {
@@ -39,6 +40,12 @@ class CreateOrderService
             $total = 0.0;
 
             foreach ($cartItems as $item) {
+                if ($item->book === null) {
+                    throw ValidationException::withMessages([
+                        'cart' => "A book in your cart is no longer available.",
+                    ]);
+                }
+
                 if ($item->book->stock < $item->quantity) {
                     throw ValidationException::withMessages([
                         'stock' => "Not enough stock for book: {$item->book->title}",
@@ -59,6 +66,10 @@ class CreateOrderService
             $order = $this->orderRepository->create($orderDto);
 
             foreach ($cartItems as $item) {
+                if ($item->book === null) {
+                    continue;
+                }
+
                 $this->orderItemRepository->create(new OrderItemDto(
                     orderId: $order->id,
                     bookId: $item->bookId,
@@ -73,5 +84,7 @@ class CreateOrderService
 
             return $order;
         });
+
+        return $orderResponse;
     }
 }

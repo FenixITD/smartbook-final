@@ -40,6 +40,7 @@ final class MessageSentEvent implements ShouldBroadcast
     }
 
     /**
+     * @return array<string, mixed>
      * @noinspection PhpUnused
      */
     public function broadcastWith(): array

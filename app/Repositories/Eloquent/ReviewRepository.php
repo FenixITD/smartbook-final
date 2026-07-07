@@ -11,8 +11,12 @@ use App\Dto\Review\ReviewFiltersDto;
 use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Contracts\Support\Arrayable;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 
+/**
+ * @extends AbstractEloquentRepository<Review, ReviewResponseDto>
+ */
 final class ReviewRepository extends AbstractEloquentRepository implements ReviewRepositoryInterface
 {
     protected function getModelClass(): string
@@ -25,6 +29,7 @@ final class ReviewRepository extends AbstractEloquentRepository implements Revie
         return ReviewResponseDto::class;
     }
 
+    /** @return array<int, ReviewResponseDto> */
     public function getList(ReviewFiltersDto $filters): array
     {
         $query = $this->query()
@@ -97,6 +102,10 @@ final class ReviewRepository extends AbstractEloquentRepository implements Revie
         return ReviewResponseDto::fromModel($review);
     }
 
+    /**
+     * @param array<int> $ids
+     * @return array<int, ReviewResponseDto>
+     */
     public function getByIds(array $ids): array
     {
         return $this->query()->with('user')
@@ -108,12 +117,18 @@ final class ReviewRepository extends AbstractEloquentRepository implements Revie
 
     public function create(ReviewDto $data): ReviewResponseDto
     {
-        return $this->executeCreate($data);
+        /** @var ReviewResponseDto $response */
+        $response = $this->executeCreate($data);
+
+        return $response;
     }
 
     public function update(int $id, ReviewDto $data): ReviewResponseDto|null
     {
-        return $this->executeUpdate($id, $data);
+        /** @var ReviewResponseDto|null $response */
+        $response = $this->executeUpdate($id, $data);
+
+        return $response;
     }
 
     public function getByBookId(int $bookId, int $perPage = 10): PaginatedResponseDto

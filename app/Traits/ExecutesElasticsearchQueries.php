@@ -23,7 +23,7 @@ trait ExecutesElasticsearchQueries
         int $perPage,
         ?array $sort = null
     ): array {
-        $page = Paginator::resolveCurrentPage() ?: 1;
+        $page = max(1, Paginator::resolveCurrentPage());
         $from = ($page - 1) * $perPage;
 
         $body = [
@@ -44,13 +44,17 @@ trait ExecutesElasticsearchQueries
             'body' => $body,
         ]);
 
-        /** @var array{hits: array{total: array{value: int}, hits: array<int, array<string, mixed>>}} $data */
+        /** @var array{hits: array{total: array{value: int}, hits: array<int, array{_id: int|string}>}} $data */
         $data = $response->asArray();
-        $hits = $data['hits']['hits'] ?? [];
-        $total = $data['hits']['total']['value'] ?? 0;
+        $hits = $data['hits']['hits'];
+        $total = $data['hits']['total']['value'];
 
         $ids = array_map(
-            static fn (array $hit): int => (int) ($hit['_id'] ?? 0),
+            function (array $hit): int {
+                /** @var int $id */
+                $id = $hit['_id'];
+                return $id;
+            },
             $hits,
         );
 

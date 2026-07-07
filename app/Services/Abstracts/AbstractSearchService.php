@@ -20,6 +20,10 @@ abstract class AbstractSearchService
 
     abstract protected function getIndexConfigKey(): string;
 
+    /**
+     * @param object{search: string|null, perPage: int} $filters
+     * @return array<int, mixed>
+     */
     public function search(mixed $filters): array
     {
         $index = config($this->getIndexConfigKey());
@@ -33,6 +37,10 @@ abstract class AbstractSearchService
         );
     }
 
+    /**
+     * @param object{search: string|null, perPage: int} $filters
+     * @return array<string, mixed>
+     */
     protected function buildQuery(mixed $filters): array
     {
         if ($filters->search === null || $filters->search === '') {
@@ -52,6 +60,9 @@ abstract class AbstractSearchService
         ];
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function getSearchFields(): array
     {
         return ['name^3'];

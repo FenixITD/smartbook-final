@@ -27,7 +27,7 @@ class SearchBookService
             return $this->repository->getList($filters);
         }
 
-        $page = Paginator::resolveCurrentPage() ?: 1;
+        $page = max(1, Paginator::resolveCurrentPage());
         [$ids] = $this->searchService->searchPaginated($filters->search, $filters->perPage, $page);
 
         if ($ids === []) {
@@ -43,7 +43,7 @@ class SearchBookService
             return $this->repository->getWebList($filters);
         }
 
-        $page = Paginator::resolveCurrentPage() ?: 1;
+        $page = max(1, Paginator::resolveCurrentPage());
         [$ids, $total] = $this->searchService->searchPaginated($filters->search, $filters->perPage, $page);
 
         if ($ids === []) {

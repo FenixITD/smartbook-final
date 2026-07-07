@@ -31,6 +31,7 @@ class ClickhouseManagerService
         $this->client->setConnectTimeOut(is_numeric($connectTimeout) ? (float) $connectTimeout : 1.0);
     }
 
+    /** @param array<string, mixed> $row */
     public function insert(string $table, array $row): void
     {
         $columns = array_keys($row);
@@ -39,6 +40,7 @@ class ClickhouseManagerService
         $this->client->insert($table, [$values], $columns);
     }
 
+    /** @param array<int, array<string, mixed>> $rows */
     public function insertBatch(string $table, array $rows): void
     {
         if ($rows === []) {
@@ -51,13 +53,19 @@ class ClickhouseManagerService
         $this->client->insert($table, $values, $columns);
     }
 
+    /**
+     * @param array<string, mixed> $bindings
+     * @return array<int, array<string, mixed>>
+     */
     public function select(string $sql, array $bindings = []): array
     {
         $statement = $this->client->select($sql, $bindings);
 
+        /** @phpstan-ignore-next-line */
         return $statement->rows();
     }
 
+    /** @param array<string, mixed> $bindings */
     public function count(string $sql, array $bindings = []): int
     {
         $rows = $this->select($sql, $bindings);

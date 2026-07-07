@@ -7,19 +7,24 @@ namespace App\Traits;
 use App\Dto\PaginatedResponseDto;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 
 trait CreatesPaginatedResponse
 {
     /**
-     * @param iterable<mixed> $items
+     * @template T
+     * @param array<array-key, T>|Collection<array-key, T> $items
+     * @param callable|null $mapper
      */
-    protected function createPaginatedResponse(iterable $items, int $total, int $perPage, ?callable $mapper = null): PaginatedResponseDto
+    protected function createPaginatedResponse(array|Collection $items, int $total, int $perPage, ?callable $mapper = null): PaginatedResponseDto
     {
+        $currentPage = max(1, Paginator::resolveCurrentPage());
+
         $paginator = new LengthAwarePaginator(
             $items,
             $total,
             $perPage,
-            Paginator::resolveCurrentPage() ?: 1,
+            $currentPage,
             ['path' => Paginator::resolveCurrentPath()]
         );
 

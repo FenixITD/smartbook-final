@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Dto\Genre;
 
-final readonly class GenreDto
+use Illuminate\Contracts\Support\Arrayable;
+
+/**
+ * @implements Arrayable<string, mixed>
+ */
+final readonly class GenreDto implements Arrayable
 {
     public function __construct(
         public string $name,

@@ -8,6 +8,9 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Services\Abstracts\AbstractSearchSuggestService;
 
+/**
+ * @extends AbstractSearchSuggestService<AuthorResponseDto>
+ */
 class SearchSuggestAuthorService extends AbstractSearchSuggestService
 {
     public function __construct(
@@ -18,11 +21,12 @@ class SearchSuggestAuthorService extends AbstractSearchSuggestService
     }
 
     /**
-     * @param AuthorResponseDto $entity
-     * @return array{id: int, name: string, url: string}
+     * @param mixed $entity
+     * @return array<string, mixed>
      */
     protected function mapResult(mixed $entity): array
     {
+        /** @var AuthorResponseDto $entity */
         return [
             'id' => $entity->id,
             'name' => $entity->name,

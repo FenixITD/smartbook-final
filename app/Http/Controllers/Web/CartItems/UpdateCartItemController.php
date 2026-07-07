@@ -25,7 +25,7 @@ final readonly class UpdateCartItemController
         $quantity = $request->integer('quantity');
         $book = $this->bookRepository->getById($bookId);
 
-        if ($book && $quantity > $book->stock) {
+        if ($book !== null && $quantity > $book->stock) {
             return back()->withErrors([
                 'quantity' => "Cannot update. Only {$book->stock} available in stock."
             ]);

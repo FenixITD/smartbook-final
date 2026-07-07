@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Dto\Review;
 
-final readonly class ReviewDto
+use Illuminate\Contracts\Support\Arrayable;
+
+/**
+ * @implements Arrayable<string, mixed>
+ */
+final readonly class ReviewDto implements Arrayable
 {
     public function __construct(
         public int $userId,

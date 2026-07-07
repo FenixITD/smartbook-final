@@ -8,6 +8,9 @@ use App\Dto\Order\OrderResponseDto;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Services\Abstracts\AbstractSearchSuggestService;
 
+/**
+ * @extends AbstractSearchSuggestService<OrderResponseDto>
+ */
 class SearchSuggestOrderService extends AbstractSearchSuggestService
 {
     public function __construct(
@@ -18,11 +21,12 @@ class SearchSuggestOrderService extends AbstractSearchSuggestService
     }
 
     /**
-     * @param OrderResponseDto $entity
-     * @return array{id: int, user_name: string, status: string, url: string}
+     * @param mixed $entity
+     * @return array<string, mixed>
      */
     protected function mapResult(mixed $entity): array
     {
+        /** @var OrderResponseDto $entity */
         return [
             'id' => $entity->id,
             'user_name' => $entity->userName,

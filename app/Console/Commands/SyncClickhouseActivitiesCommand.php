@@ -21,13 +21,15 @@ final class SyncClickhouseActivitiesCommand extends Command
         $rows = [];
 
         while (true) {
-            $item = Redis::lpop('clickhouse_activities_buffer');
+            $item = Redis::lPop('clickhouse_activities_buffer');
 
-            if ($item === null || $item === false) {
+            if ($item === false) {
                 break;
             }
 
-            $rows[] = json_decode((string) $item, true);
+            /** @var array<string, mixed> $decoded */
+            $decoded = json_decode((string) $item, true, 512, JSON_THROW_ON_ERROR);
+            $rows[] = $decoded;
 
             if (count($rows) >= $batchSize) {
                 break;
@@ -39,7 +41,7 @@ final class SyncClickhouseActivitiesCommand extends Command
                 $clickhouseManagerService->insertBatch('activity_log', $rows);
             } catch (Throwable $e) {
                 foreach ($rows as $row) {
-                    Redis::rpush('clickhouse_activities_buffer', json_encode($row));
+                    Redis::rPush('clickhouse_activities_buffer', json_encode($row));
                 }
 
                 $this->error($e->getMessage());

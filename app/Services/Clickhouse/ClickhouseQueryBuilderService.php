@@ -92,9 +92,7 @@ class ClickhouseQueryBuilderService
         );
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
+    /** @return array<int, array<string, mixed>> */
     public function get(): array
     {
         $where = $this->buildWhere();

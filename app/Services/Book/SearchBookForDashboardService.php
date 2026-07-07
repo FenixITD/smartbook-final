@@ -17,6 +17,9 @@ class SearchBookForDashboardService
     {
     }
 
+    /**
+     * @return array{0: array<int>, 1: int}
+     */
     public function search(DashboardFiltersDto $filters): array
     {
         $index = config('elasticsearch.books_index');
@@ -30,6 +33,9 @@ class SearchBookForDashboardService
         );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function buildQuery(DashboardFiltersDto $filters): array
     {
         $must = [];
@@ -94,6 +100,9 @@ class SearchBookForDashboardService
         return ['bool' => $bool];
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     private function buildSort(string $sort): array
     {
         return match ($sort) {

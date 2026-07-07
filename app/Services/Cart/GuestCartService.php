@@ -81,7 +81,7 @@ class GuestCartService
         $this->validateQuantity($quantity);
 
         $book = $this->bookRepository->getById($bookId);
-        if (!$book) {
+        if ($book === null) {
             throw ValidationException::withMessages(['cart' => 'Book not found.']);
         }
 
@@ -105,7 +105,7 @@ class GuestCartService
         $this->validateQuantity($quantity);
 
         $book = $this->bookRepository->getById($bookId);
-        if ($book && $quantity > $book->stock) {
+        if ($book !== null && $quantity > $book->stock) {
             throw ValidationException::withMessages([
                 'quantity' => "Cannot update. Only {$book->stock} available in stock."
             ]);
