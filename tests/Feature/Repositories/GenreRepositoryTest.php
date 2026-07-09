@@ -77,7 +77,7 @@ class GenreRepositoryTest extends TestCase
         $ids = $genres->pluck('id')->all();
 
         $filters = new GenreFiltersDto();
-        $result = $this->repository->getWebListByIds($ids, $filters);
+        $result = $this->repository->getWebListByIds($ids, count($ids), $filters);
 
         $this->assertInstanceOf(PaginatedResponseDto::class, $result);
         $this->assertSame(3, $result->total);
@@ -89,7 +89,7 @@ class GenreRepositoryTest extends TestCase
         $ids = $genres->pluck('id')->take(2)->all();
 
         $filters = new GenreFiltersDto();
-        $result = $this->repository->getWebListByIds($ids, $filters);
+        $result = $this->repository->getWebListByIds($ids, count($ids), $filters);
 
         $this->assertSame(2, $result->total);
     }
@@ -100,7 +100,7 @@ class GenreRepositoryTest extends TestCase
         $ids = $genres->pluck('id')->all();
 
         $filters = new GenreFiltersDto(perPage: 2);
-        $result = $this->repository->getWebListByIds($ids, $filters);
+        $result = $this->repository->getWebListByIds($ids, count($ids), $filters);
 
         $this->assertSame(5, $result->total);
         $this->assertSame(2, $result->perPage);

@@ -79,7 +79,7 @@ class ReviewRepositoryTest extends TestCase
         $book = $this->makeBook();
 
         $first = $this->makeReview(['user_id' => $user->id, 'book_id' => $book->id]);
-        $second = $this->makeReview(['user_id' => $user->id, 'book_id' => $book->id]);
+        $second = $this->makeReview(['user_id' => $this->makeUser()->id, 'book_id' => $book->id]);
 
         $filters = new ReviewFiltersDto(sortBy: 'id', sortDirection: 'desc');
         $result = $this->repository->getList($filters);
@@ -99,7 +99,7 @@ class ReviewRepositoryTest extends TestCase
         $ids = $reviews->pluck('id')->all();
         $filters = new ReviewFiltersDto(perPage: 10);
 
-        $result = $this->repository->getWebListByIds($ids, $filters);
+        $result = $this->repository->getWebListByIds($ids, count($ids), $filters);
 
         $this->assertInstanceOf(PaginatedResponseDto::class, $result);
         $this->assertSame(3, $result->total);
@@ -111,7 +111,7 @@ class ReviewRepositoryTest extends TestCase
         $this->makeReview();
 
         $filters = new ReviewFiltersDto(perPage: 10);
-        $result = $this->repository->getWebListByIds([$included->id], $filters);
+        $result = $this->repository->getWebListByIds([$included->id], is_countable([$included->id]) ? count([$included->id]) : (is_array([$included->id]) ? count([$included->id]) : 0), $filters);
 
         $this->assertSame(1, $result->total);
     }
@@ -244,7 +244,7 @@ class ReviewRepositoryTest extends TestCase
         $user = $this->makeUser();
 
         $this->makeReview(['book_id' => $book->id, 'user_id' => $user->id]);
-        $this->makeReview(['book_id' => $book->id, 'user_id' => $user->id]);
+        $this->makeReview(['book_id' => $book->id, 'user_id' => $this->makeUser()->id]);
         $this->makeReview();
 
         $result = $this->repository->getByBookId($book->id);
@@ -271,9 +271,7 @@ class ReviewRepositoryTest extends TestCase
         $book = $this->makeBook();
         $user = $this->makeUser();
 
-        for ($i = 0; $i < 5; $i++) {
-            $this->makeReview(['book_id' => $book->id, 'user_id' => $user->id]);
-        }
+        for ($i = 0; $i < 5; $i++) { $this->makeReview(['book_id' => $book->id, 'user_id' => $this->makeUser()->id]); }
 
         $result = $this->repository->getByBookId($book->id, perPage: 2);
 

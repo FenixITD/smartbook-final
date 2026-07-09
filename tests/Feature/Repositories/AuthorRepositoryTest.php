@@ -105,7 +105,7 @@ final class AuthorRepositoryTest extends TestCase
         $authors = Author::factory()->count(3)->create();
         $ids = $authors->pluck('id')->all();
 
-        $result = $this->repository->getWebListByIds($ids, new AuthorFiltersDto());
+        $result = $this->repository->getWebListByIds($ids, count($ids), new AuthorFiltersDto());
 
         $this->assertInstanceOf(PaginatedResponseDto::class, $result);
     }
@@ -117,7 +117,7 @@ final class AuthorRepositoryTest extends TestCase
 
         $ids = $included->pluck('id')->all();
 
-        $result = $this->repository->getWebListByIds($ids, new AuthorFiltersDto());
+        $result = $this->repository->getWebListByIds($ids, count($ids), new AuthorFiltersDto());
 
         $this->assertCount(2, $result->items);
     }
@@ -126,7 +126,7 @@ final class AuthorRepositoryTest extends TestCase
     {
         Author::factory()->count(3)->create();
 
-        $result = $this->repository->getWebListByIds([], new AuthorFiltersDto());
+        $result = $this->repository->getWebListByIds([], is_countable([]) ? count([]) : (is_array([]) ? count([]) : 0), new AuthorFiltersDto());
 
         $this->assertCount(0, $result->items);
     }

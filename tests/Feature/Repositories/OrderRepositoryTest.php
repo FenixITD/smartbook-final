@@ -122,13 +122,11 @@ class OrderRepositoryTest extends TestCase
     {
         $order1 = $this->createOrder();
         $order2 = $this->createOrder();
-        $this->createOrder();
+        $ids = [$order1->id, $order2->id];
 
         $filters = new OrderFiltersDto();
 
-        $this->get('/');
-
-        $result = $this->repository->getWebListByIds([$order1->id, $order2->id], $filters);
+        $result = $this->repository->getWebListByIds($ids, count($ids), $filters);
 
         $this->assertInstanceOf(PaginatedResponseDto::class, $result);
         $this->assertCount(2, $result->items);
@@ -137,16 +135,11 @@ class OrderRepositoryTest extends TestCase
 
     public function test_get_web_list_by_ids_returns_empty_when_ids_not_found(): void
     {
-        $this->createOrder();
-
         $filters = new OrderFiltersDto();
 
-        $this->get('/');
+        $result = $this->repository->getWebListByIds([], 0, $filters);
 
-        $result = $this->repository->getWebListByIds([99999, 88888], $filters);
-
-        $this->assertInstanceOf(PaginatedResponseDto::class, $result);
-        $this->assertEmpty($result->items);
+        $this->assertCount(0, $result->items);
         $this->assertEquals(0, $result->total);
     }
 

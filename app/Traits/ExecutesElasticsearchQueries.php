@@ -52,7 +52,7 @@ trait ExecutesElasticsearchQueries
         $ids = array_map(
             function (array $hit): int {
                 /** @var int $id */
-                $id = $hit['_id'];
+                $id = (int) $hit['_id'];
                 return $id;
             },
             $hits,

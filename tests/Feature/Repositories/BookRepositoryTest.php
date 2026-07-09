@@ -128,8 +128,8 @@ class BookRepositoryTest extends TestCase
         $result = $this->repository->getWebList($filters);
 
         $item = $result->items[0];
-        $this->assertTrue($item->relationLoaded('author'));
-        $this->assertTrue($item->relationLoaded('genres'));
+        $this->assertTrue($item->authorName !== null);
+        $this->assertTrue($item->genres !== []);
     }
 
     public function test_get_web_list_by_ids_returns_only_requested_books(): void
@@ -138,7 +138,7 @@ class BookRepositoryTest extends TestCase
         $ids = $books->take(3)->pluck('id')->all();
 
         $filters = new BookFiltersDto();
-        $result = $this->repository->getWebListByIds($ids, $filters);
+        $result = $this->repository->getWebListByIds($ids, count($ids), $filters);
 
         $this->assertSame(3, $result->total);
     }
@@ -152,7 +152,7 @@ class BookRepositoryTest extends TestCase
 
         $this->assertInstanceOf(PaginatedResponseDto::class, $result);
         foreach ($result->items as $item) {
-            $this->assertTrue($item->relationLoaded('author'));
+            $this->assertTrue($item->authorName !== null);
         }
     }
 
@@ -164,7 +164,7 @@ class BookRepositoryTest extends TestCase
         $ids = [$cheap->id, $expensive->id];
 
         $filters = new DashboardFiltersDto(sort: 'price_asc');
-        $result = $this->repository->getDashboardListByIds($ids, $filters);
+        $result = $this->repository->getDashboardListByIds($ids, count($ids), $filters);
 
         $this->assertSame($cheap->id, $result->items[0]->id);
     }
@@ -177,7 +177,7 @@ class BookRepositoryTest extends TestCase
         $ids = [$cheap->id, $expensive->id];
 
         $filters = new DashboardFiltersDto(sort: 'price_desc');
-        $result = $this->repository->getDashboardListByIds($ids, $filters);
+        $result = $this->repository->getDashboardListByIds($ids, count($ids), $filters);
 
         $this->assertSame($expensive->id, $result->items[0]->id);
     }
@@ -190,7 +190,7 @@ class BookRepositoryTest extends TestCase
         $ids = [$old->id, $new->id];
 
         $filters = new DashboardFiltersDto(sort: 'newest');
-        $result = $this->repository->getDashboardListByIds($ids, $filters);
+        $result = $this->repository->getDashboardListByIds($ids, count($ids), $filters);
 
         $this->assertSame($new->id, $result->items[0]->id);
     }
@@ -203,7 +203,7 @@ class BookRepositoryTest extends TestCase
         $ids = [$lowRated->id, $highRated->id];
 
         $filters = new DashboardFiltersDto(sort: 'rating');
-        $result = $this->repository->getDashboardListByIds($ids, $filters);
+        $result = $this->repository->getDashboardListByIds($ids, count($ids), $filters);
 
         $this->assertSame($highRated->id, $result->items[0]->id);
     }

@@ -81,7 +81,7 @@
 
                                     {{-- Info --}}
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-xs text-zinc-400 truncate">{{ $item->book->author?->name ?? '—' }}</p>
+                                        <p class="text-xs text-zinc-400 truncate">{{ $item->book->authorName ?? '—' }}</p>
                                         <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{{ $item->book->title }}</p>
                                         <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
                                             ${{ number_format($item->book->price, 2) }}
