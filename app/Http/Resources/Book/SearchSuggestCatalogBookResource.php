@@ -15,7 +15,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'title', type: 'string', example: 'Harry Potter'),
         new OA\Property(property: 'author', type: 'string', example: 'J.K. Rowling', nullable: true),
         new OA\Property(property: 'cover_image', type: 'string', example: 'covers/harry.jpg', nullable: true),
-        new OA\Property(property: 'price', type: 'number', example: 19.99),
+        new OA\Property(property: 'price', type: 'string', example: '19.99'),
         new OA\Property(property: 'url', type: 'string', example: 'http://localhost/catalog/harry-potter'),
     ],
     type: 'object',

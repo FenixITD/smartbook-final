@@ -11,7 +11,7 @@ final readonly class BookDto
         public string $slug,
         public int $authorId,
         public string $description,
-        public float $price,
+        public string $price,
         public int $stock,
         public int|null $publishYear,
         public string|null $coverImage,

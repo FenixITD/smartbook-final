@@ -15,7 +15,7 @@ class OrderItem extends Model
     use HasFactory;
 
     protected $casts = [
-        'price_at_purchase' => 'float',
+        'price_at_purchase' => 'decimal:2',
     ];
 
     protected $fillable = [

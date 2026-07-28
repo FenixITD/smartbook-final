@@ -22,7 +22,7 @@ class Order extends Model
     use Searchable;
 
     protected $casts = [
-        'total' => 'float',
+        'total' => 'decimal:2',
     ];
 
     protected $fillable = [

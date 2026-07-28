@@ -54,7 +54,7 @@ class BookDataRequest extends FormRequest
             slug: (string) $this->string('slug'),
             authorId: $this->integer('authorId'),
             description: (string) $this->string('description'),
-            price: $this->float('price'),
+            price: $this->string('price')->toString(),
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear'),
             coverImage: $this->has('coverImage') ? (string) $this->string('coverImage') : null,

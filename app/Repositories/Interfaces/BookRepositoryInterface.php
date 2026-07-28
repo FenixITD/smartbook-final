@@ -36,7 +36,7 @@ interface BookRepositoryInterface
     public function getById(int $id): BookResponseDto|null;
 
     /** @param array<int, int> $quantitiesByBookId */
-    public function getTotalByIdsAndQuantities(array $quantitiesByBookId): float;
+    public function getTotalByIdsAndQuantities(array $quantitiesByBookId): string;
 
     public function findByIdWithRelations(int $id): BookResponseDto;
 

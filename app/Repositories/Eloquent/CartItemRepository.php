@@ -33,12 +33,14 @@ final class CartItemRepository implements CartItemRepositoryInterface
         return $cartItem !== null ? CartItemResponseDto::fromModel($cartItem) : null;
     }
 
-    public function getTotalByUserId(int $userId): float
+    public function getTotalByUserId(int $userId): string
     {
-        return (float) CartItem::query()
+        $sum = CartItem::query()
             ->join('books', 'cart_items.book_id', '=', 'books.id')
             ->where('cart_items.user_id', $userId)
             ->sum(DB::raw('books.price * cart_items.quantity'));
+
+        return bcadd('0', (string) $sum, 2);
     }
 
     public function getAllByUserId(int $userId): array

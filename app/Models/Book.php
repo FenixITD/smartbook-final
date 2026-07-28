@@ -23,7 +23,7 @@ class Book extends Model
     use Searchable;
 
     protected $casts = [
-        'price' => 'float',
+        'price' => 'decimal:2',
         'average_rating' => 'float',
     ];
 

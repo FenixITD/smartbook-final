@@ -11,7 +11,7 @@ final readonly class OrderDto
         public string $status,
         public string $shippingAddress,
         public string $paymentMethod,
-        public float|null $total = null,
+        public string|null $total = null,
     ) {
     }
 

@@ -16,7 +16,7 @@ interface CartItemRepositoryInterface
 
     public function getById(int $id): CartItemResponseDto|null;
 
-    public function getTotalByUserId(int $userId): float;
+    public function getTotalByUserId(int $userId): string;
 
     /** @return array<CartItemWithBookResponseDto> */
     public function getAllByUserId(int $userId): array;

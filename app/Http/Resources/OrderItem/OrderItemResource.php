@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'orderId', type: 'integer', example: 2),
         new OA\Property(property: 'bookId', type: 'integer', example: 3),
         new OA\Property(property: 'quantity', type: 'integer', example: 2),
-        new OA\Property(property: 'priceAtPurchase', type: 'number', example: 16.99),
+        new OA\Property(property: 'priceAtPurchase', type: 'string', example: '16.99'),
         new OA\Property(property: 'createdAt', type: 'string', example: '2024-01-01 12:00:00'),
         new OA\Property(property: 'updatedAt', type: 'string', example: '2024-01-01 12:00:00'),
     ],

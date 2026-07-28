@@ -12,6 +12,6 @@ final readonly class OrderStatusChangedDto
         public string $newStatus,
         public string $userEmail,
         public string $userName,
-        public float $total,
+        public string $total,
     ) {}
 }

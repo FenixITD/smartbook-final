@@ -12,7 +12,7 @@ class OrderResponseDto
         public int $id,
         public int $userId,
         public string $userName,
-        public float $total,
+        public string $total,
         public string $status,
         public string $shippingAddress,
         public string $paymentMethod,

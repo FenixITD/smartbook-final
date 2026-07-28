@@ -49,7 +49,7 @@ final class BookWebDataRequest extends FormRequest
             slug: (string) $this->string('slug'),
             authorId: $this->integer('authorId'),
             description: (string) $this->string('description'),
-            price: (float) $this->string('price')->toString(),
+            price: $this->string('price')->toString(),
             stock: $this->integer('stock'),
             publishYear: $this->integer('publishYear') !== 0 ? $this->integer('publishYear') : null,
             coverImage: $coverImage,

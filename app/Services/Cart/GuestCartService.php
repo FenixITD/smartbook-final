@@ -63,12 +63,12 @@ class GuestCartService
         return $items;
     }
 
-    public function getTotal(): float
+    public function getTotal(): string
     {
         $cart = $this->guestCartStorage->getCart();
 
         if ($cart === []) {
-            return 0.0;
+            return '0.00';
         }
 
         $quantitiesByBookId = array_column($cart, 'quantity', 'book_id');

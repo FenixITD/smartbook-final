@@ -47,7 +47,7 @@ class CreateOrderService
 
             $lockedBooks = $bookIds !== [] ? $this->bookRepository->lockForUpdateByIds($bookIds) : [];
 
-            $total = 0.0;
+            $total = '0.00';
 
             foreach ($cartItems as $item) {
                 if ($item->book === null) {
@@ -70,7 +70,7 @@ class CreateOrderService
                     ]);
                 }
 
-                $total += $lockedBook->price * $item->quantity;
+                $total = bcadd($total, bcmul($lockedBook->price, (string) $item->quantity, 2), 2);
             }
 
             $orderDto = new OrderDto(
