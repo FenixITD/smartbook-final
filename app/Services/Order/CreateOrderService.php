@@ -37,6 +37,16 @@ class CreateOrderService
                 ]);
             }
 
+            $bookIds = [];
+
+            foreach ($cartItems as $item) {
+                if ($item->book !== null) {
+                    $bookIds[] = $item->bookId;
+                }
+            }
+
+            $lockedBooks = $bookIds !== [] ? $this->bookRepository->lockForUpdateByIds($bookIds) : [];
+
             $total = 0.0;
 
             foreach ($cartItems as $item) {
@@ -46,13 +56,21 @@ class CreateOrderService
                     ]);
                 }
 
-                if ($item->book->stock < $item->quantity) {
+                $lockedBook = $lockedBooks[$item->bookId] ?? null;
+
+                if ($lockedBook === null) {
                     throw ValidationException::withMessages([
-                        'stock' => "Not enough stock for book: {$item->book->title}",
+                        'cart' => "A book in your cart is no longer available.",
                     ]);
                 }
 
-                $total += $item->book->price * $item->quantity;
+                if ($lockedBook->stock < $item->quantity) {
+                    throw ValidationException::withMessages([
+                        'stock' => "Not enough stock for book: {$lockedBook->title}",
+                    ]);
+                }
+
+                $total += $lockedBook->price * $item->quantity;
             }
 
             $orderDto = new OrderDto(
@@ -74,10 +92,16 @@ class CreateOrderService
                     orderId: $order->id,
                     bookId: $item->bookId,
                     quantity: $item->quantity,
-                    priceAtPurchase: $item->book->price,
+                    priceAtPurchase: $lockedBooks[$item->bookId]->price,
                 ));
 
-                $this->bookRepository->decrementStock($item->bookId, $item->quantity);
+                $decremented = $this->bookRepository->decrementStock($item->bookId, $item->quantity);
+
+                if (!$decremented) {
+                    throw ValidationException::withMessages([
+                        'stock' => "Not enough stock for book: {$item->book->title}",
+                    ]);
+                }
             }
 
             $this->cartItemRepository->deleteByUserId($dto->userId);

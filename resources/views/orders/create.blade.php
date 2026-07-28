@@ -11,6 +11,17 @@
 
         <div class="max-w-xl">
             <div class="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+                @if ($errors->any())
+                    <div class="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+                        <p class="font-medium">Couldn't create the order:</p>
+                        <ul class="mt-1 list-disc pl-5">
+                            @foreach ($errors->all() as $message)
+                                <li>{{ $message }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('orders.store') }}" class="flex flex-col gap-5">
                     @csrf
 
@@ -44,12 +55,16 @@
                         @error('shippingAddress') <flux:error>{{ $message }}</flux:error> @enderror
                     </flux:field>
 
-                    <flux:select name="paymentMethod" label="Payment method">
-                        <flux:select.option value="" disabled selected>Select payment method...</flux:select.option>
-                        <flux:select.option value="card" :selected="old('paymentMethod', $order->paymentMethod ?? '') === 'card'">Card</flux:select.option>
-                        <flux:select.option value="cash" :selected="old('paymentMethod', $order->paymentMethod ?? '') === 'cash'">Cash</flux:select.option>
-                        <flux:select.option value="webpay" :selected="old('paymentMethod', $order->paymentMethod ?? '') === 'webpay'">WebPay</flux:select.option>
-                    </flux:select>
+                    <flux:field>
+                        <flux:label for="paymentMethod">Payment method</flux:label>
+                        <flux:select id="paymentMethod" name="paymentMethod" required :invalid="$errors->has('paymentMethod')">
+                            <flux:select.option value="" disabled :selected="old('paymentMethod', '') === ''">Select payment method...</flux:select.option>
+                            <flux:select.option value="card" :selected="old('paymentMethod') === 'card'">Card</flux:select.option>
+                            <flux:select.option value="cash" :selected="old('paymentMethod') === 'cash'">Cash</flux:select.option>
+                            <flux:select.option value="webpay" :selected="old('paymentMethod') === 'webpay'">WebPay</flux:select.option>
+                        </flux:select>
+                        @error('paymentMethod') <flux:error>{{ $message }}</flux:error> @enderror
+                    </flux:field>
 
                     <div class="flex gap-3 pt-2">
                         <flux:button type="submit" variant="primary">Create order</flux:button>

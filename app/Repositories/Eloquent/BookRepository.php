@@ -221,9 +221,30 @@ final class BookRepository implements BookRepositoryInterface
         ]);
     }
 
-    public function decrementStock(int $bookId, int $quantity): void
+    public function decrementStock(int $bookId, int $quantity): bool
     {
-        Book::where('id', $bookId)->decrement('stock', $quantity);
+        $affected = Book::where('id', $bookId)
+            ->where('stock', '>=', $quantity)
+            ->decrement('stock', $quantity);
+
+        return $affected > 0;
+    }
+
+    /** @param array<int> $ids
+     * @return array<int, BookResponseDto>
+     */
+    public function lockForUpdateByIds(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return Book::whereIn('id', $ids)
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id')
+            ->map(static fn (Book $book) => BookResponseDto::fromModel($book))
+            ->all();
     }
 
     /** @param array<int> $ids */

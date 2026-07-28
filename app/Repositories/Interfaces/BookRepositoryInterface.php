@@ -61,5 +61,14 @@ interface BookRepositoryInterface
 
     public function recalculateRating(int $bookId): void;
 
-    public function decrementStock(int $bookId, int $quantity): void;
+    /**
+     * @return bool true if the stock was decremented, false if there was not enough stock left.
+     */
+    public function decrementStock(int $bookId, int $quantity): bool;
+
+    /**
+     * @param array<int> $ids
+     * @return array<int, BookResponseDto>
+     */
+    public function lockForUpdateByIds(array $ids): array;
 }
