@@ -12,4 +12,12 @@ class SearchReviewService extends AbstractSearchService
     {
         return 'elasticsearch.reviews_index';
     }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function getSearchFields(): array
+    {
+        return ['user_name^3','comment'];
+    }
 }

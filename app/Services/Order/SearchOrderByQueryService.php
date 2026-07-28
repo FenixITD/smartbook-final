@@ -12,4 +12,32 @@ class SearchOrderByQueryService extends AbstractSearchByQueryService
     {
         return 'elasticsearch.orders_index';
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function buildQueryArray(string $query): array
+    {
+        return [
+            'bool' => [
+                'should' => [
+                    [
+                        'match_phrase_prefix' => [
+                            'user_name' => [
+                                'query' => $query,
+                                'max_expansions' => 10,
+                            ],
+                        ],
+                    ],
+                    [
+                        'multi_match' => [
+                            'query' => $query,
+                            'fields' => ['user_name^3'],
+                            'fuzziness' => 'AUTO',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
 }
