@@ -11,7 +11,6 @@ use App\Dto\Review\ReviewFiltersDto;
 use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Models\User;
-use Illuminate\Contracts\Support\Arrayable;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
 
 /**
@@ -27,6 +26,14 @@ final class ReviewRepository extends AbstractEloquentRepository implements Revie
     protected function getResponseDtoClass(): string
     {
         return ReviewResponseDto::class;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function freshRelations(): array
+    {
+        return ['user'];
     }
 
     /** @return array<int, ReviewResponseDto> */

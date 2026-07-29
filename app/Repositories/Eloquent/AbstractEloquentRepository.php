@@ -34,6 +34,14 @@ abstract class AbstractEloquentRepository
     }
 
     /**
+     * @return array<int, string>
+     */
+    protected function freshRelations(): array
+    {
+        return [];
+    }
+
+    /**
      * @param TModel|null $model
      * @return TDto|null
      */
@@ -68,7 +76,7 @@ abstract class AbstractEloquentRepository
         $this->afterCreate($model);
 
         /** @var TDto $dto */
-        $dto = $this->mapToDto($model->fresh());
+        $dto = $this->mapToDto($model->fresh($this->freshRelations()));
 
         return $dto;
     }
@@ -85,7 +93,7 @@ abstract class AbstractEloquentRepository
 
         $this->afterUpdate($model);
 
-        return $this->mapToDto($model->fresh());
+        return $this->mapToDto($model->fresh($this->freshRelations()));
     }
 
     public function delete(int $id): bool
