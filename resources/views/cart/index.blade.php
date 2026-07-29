@@ -191,7 +191,9 @@
                         </div>
 
                         @auth
-                            <flux:button variant="primary" class="w-full mt-5">Checkout</flux:button>
+                            <a href="{{ route('checkout.create') }}" class="block w-full mt-5">
+                                <flux:button variant="primary" class="w-full">Checkout</flux:button>
+                            </a>
                         @else
                             <a href="{{ route('login') }}"
                                class="block w-full mt-5 text-center py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors">

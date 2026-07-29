@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Dto\Order;
 
+use App\Dto\OrderItem\OrderItemInputDto;
+
 final readonly class OrderDto
 {
+    /** @param OrderItemInputDto[]|null $items */
     public function __construct(
         public int $userId,
         public string $status,
         public string $shippingAddress,
         public string $paymentMethod,
         public string|null $total = null,
+        public array|null $items = null,
     ) {
     }
 

@@ -19,6 +19,7 @@ require __DIR__.'/web/webUserActivity.php';
 require __DIR__.'/web/webAuthors.php';
 require __DIR__.'/web/webBooks.php';
 require __DIR__.'/web/webGenres.php';
+require __DIR__.'/web/checkout.php';
 require __DIR__.'/web/webOrders.php';
 require __DIR__.'/web/webReviews.php';
 
