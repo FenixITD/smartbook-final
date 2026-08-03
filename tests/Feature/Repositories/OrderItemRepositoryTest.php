@@ -146,7 +146,7 @@ class OrderItemRepositoryTest extends TestCase
             orderId: $order->id,
             bookId: $book->id,
             quantity: 3,
-            priceAtPurchase: 29.99,
+            priceAtPurchase: '29.99',
         );
 
         $result = $this->repository->create($dto);
@@ -171,7 +171,7 @@ class OrderItemRepositoryTest extends TestCase
             orderId: $order->id,
             bookId: $book->id,
             quantity: 2,
-            priceAtPurchase: 14.50,
+            priceAtPurchase: '14.50',
         );
 
         $result = $this->repository->create($dto);
@@ -179,7 +179,7 @@ class OrderItemRepositoryTest extends TestCase
         $this->assertSame($order->id, $result->orderId);
         $this->assertSame($book->id, $result->bookId);
         $this->assertSame(2, $result->quantity);
-        $this->assertSame(14.50, $result->priceAtPurchase);
+        $this->assertSame('14.50', $result->priceAtPurchase);
         $this->assertNotEmpty($result->createdAt);
         $this->assertNotEmpty($result->updatedAt);
     }
@@ -192,14 +192,14 @@ class OrderItemRepositoryTest extends TestCase
             orderId: $item->order_id,
             bookId: $item->book_id,
             quantity: 5,
-            priceAtPurchase: 49.99,
+            priceAtPurchase: '49.99',
         );
 
         $result = $this->repository->update($item->id, $dto);
 
         $this->assertInstanceOf(OrderItemResponseDto::class, $result);
         $this->assertSame(5, $result->quantity);
-        $this->assertSame(49.99, $result->priceAtPurchase);
+        $this->assertSame('49.99', $result->priceAtPurchase);
         $this->assertDatabaseHas('order_items', [
             'id' => $item->id,
             'quantity' => 5,
@@ -218,7 +218,7 @@ class OrderItemRepositoryTest extends TestCase
             orderId: $order->id,
             bookId: $book->id,
             quantity: 1,
-            priceAtPurchase: 9.99,
+            priceAtPurchase: '9.99',
         );
 
         $this->expectException(ModelNotFoundException::class);

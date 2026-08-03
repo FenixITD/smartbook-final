@@ -15,19 +15,19 @@ final class OrderItemDtoTest extends TestCase
             orderId: 10,
             bookId: 42,
             quantity: 3,
-            priceAtPurchase: 25.50,
+            priceAtPurchase: '25.50',
         );
 
         $this->assertSame(10, $dto->orderId);
         $this->assertSame(42, $dto->bookId);
         $this->assertSame(3, $dto->quantity);
-        $this->assertSame(25.50, $dto->priceAtPurchase);
+        $this->assertSame('25.50', $dto->priceAtPurchase);
 
         $this->assertSame([
             'order_id' => 10,
             'book_id' => 42,
             'quantity' => 3,
-            'price_at_purchase' => 25.50,
+            'price_at_purchase' => '25.50',
         ], $dto->toArray());
     }
 }

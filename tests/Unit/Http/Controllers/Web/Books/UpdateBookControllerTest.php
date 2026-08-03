@@ -235,7 +235,7 @@ final class UpdateBookControllerTest extends TestCase
             authorId: 1,
             authorName: 'Test Author',
             description: 'Test description',
-            price: 19.99,
+            price: '19.99',
             stock: 10,
             publishYear: null,
             coverImage: null,

@@ -30,7 +30,7 @@ final class CreateOrderItemControllerTest extends TestCase
 
     public function test_returns_201_with_created_order_item(): void
     {
-        $responseDto = $this->makeResponseDto(id: 1, orderId: 2, bookId: 3, quantity: 2, priceAtPurchase: 16.99);
+        $responseDto = $this->makeResponseDto(id: 1, orderId: 2, bookId: 3, quantity: 2, priceAtPurchase: '16.99');
 
         $this->repository
             ->shouldReceive('create')
@@ -49,7 +49,7 @@ final class CreateOrderItemControllerTest extends TestCase
 
     public function test_response_contains_created_order_item_data(): void
     {
-        $responseDto = $this->makeResponseDto(id: 5, orderId: 2, bookId: 3, quantity: 2, priceAtPurchase: 16.99);
+        $responseDto = $this->makeResponseDto(id: 5, orderId: 2, bookId: 3, quantity: 2, priceAtPurchase: '16.99');
 
         $this->repository
             ->shouldReceive('create')
@@ -67,7 +67,7 @@ final class CreateOrderItemControllerTest extends TestCase
         $this->assertSame(2, $data['orderId']);
         $this->assertSame(3, $data['bookId']);
         $this->assertSame(2, $data['quantity']);
-        $this->assertSame(16.99, $data['priceAtPurchase']);
+        $this->assertSame('16.99', $data['priceAtPurchase']);
         $this->assertSame('2024-01-01 00:00:00', $data['createdAt']);
         $this->assertSame('2024-01-01 00:00:00', $data['updatedAt']);
     }
@@ -81,9 +81,9 @@ final class CreateOrderItemControllerTest extends TestCase
                 $arg->orderId === 2
                 && $arg->bookId === 3
                 && $arg->quantity === 4
-                && $arg->priceAtPurchase === 9.99
+                && $arg->priceAtPurchase === '9.99'
             ))
-            ->andReturn($this->makeResponseDto(id: 1, orderId: 2, bookId: 3, quantity: 4, priceAtPurchase: 9.99));
+            ->andReturn($this->makeResponseDto(id: 1, orderId: 2, bookId: 3, quantity: 4, priceAtPurchase: '9.99'));
 
         ($this->controller)($this->makeRequest([
             'orderId' => 2,
@@ -105,7 +105,7 @@ final class CreateOrderItemControllerTest extends TestCase
         int $orderId,
         int $bookId,
         int $quantity,
-        float $priceAtPurchase,
+        string $priceAtPurchase,
     ): OrderItemResponseDto {
         return new OrderItemResponseDto(
             id: $id,

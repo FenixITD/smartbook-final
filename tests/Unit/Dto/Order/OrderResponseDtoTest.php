@@ -34,7 +34,7 @@ final class OrderResponseDtoTest extends TestCase
         $this->assertSame(10, $dto->id);
         $this->assertSame(5, $dto->userId);
         $this->assertSame('John Doe', $dto->userName);
-        $this->assertSame(99.99, $dto->total);
+        $this->assertSame('99.99', $dto->total);
         $this->assertSame('pending', $dto->status);
         $this->assertSame('456 Elm St', $dto->shippingAddress);
         $this->assertSame('paypal', $dto->paymentMethod);

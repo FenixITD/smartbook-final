@@ -96,7 +96,9 @@ final class ReviewRepository extends AbstractEloquentRepository implements Revie
 
     public function getById(int $id): ReviewResponseDto|null
     {
-        return $this->executeGetById($id);
+        $review = $this->query()->with('user:id,name')->find($id);
+
+        return $review !== null ? ReviewResponseDto::fromModel($review) : null;
     }
 
     public function findByIdWithRelations(int $id): ReviewResponseDto

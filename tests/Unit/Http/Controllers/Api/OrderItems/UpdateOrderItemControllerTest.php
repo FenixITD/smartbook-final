@@ -34,7 +34,7 @@ final class UpdateOrderItemControllerTest extends TestCase
             ->shouldReceive('update')
             ->once()
             ->with(4, Mockery::type(OrderItemDto::class))
-            ->andReturn($this->makeResponseDto(id: 4, orderId: 1, bookId: 2, quantity: 3, priceAtPurchase: 14.99));
+            ->andReturn($this->makeResponseDto(id: 4, orderId: 1, bookId: 2, quantity: 3, priceAtPurchase: '14.99'));
 
         $response = ($this->controller)($this->makeRequest([
             'orderId' => 1,
@@ -50,7 +50,7 @@ final class UpdateOrderItemControllerTest extends TestCase
     {
         $this->repository
             ->shouldReceive('update')
-            ->andReturn($this->makeResponseDto(id: 4, orderId: 1, bookId: 2, quantity: 3, priceAtPurchase: 14.99));
+            ->andReturn($this->makeResponseDto(id: 4, orderId: 1, bookId: 2, quantity: 3, priceAtPurchase: '14.99'));
 
         $response = ($this->controller)($this->makeRequest([
             'orderId' => 1,
@@ -64,7 +64,7 @@ final class UpdateOrderItemControllerTest extends TestCase
         $this->assertSame(1, $data['orderId']);
         $this->assertSame(2, $data['bookId']);
         $this->assertSame(3, $data['quantity']);
-        $this->assertSame(14.99, $data['priceAtPurchase']);
+        $this->assertSame('14.99', $data['priceAtPurchase']);
     }
 
     public function test_passes_correct_id_and_dto_to_repository(): void
@@ -78,10 +78,10 @@ final class UpdateOrderItemControllerTest extends TestCase
                     $arg->orderId === 2
                     && $arg->bookId === 5
                     && $arg->quantity === 1
-                    && $arg->priceAtPurchase === 29.99
+                    && $arg->priceAtPurchase === '29.99'
                 ),
             )
-            ->andReturn($this->makeResponseDto(id: 7, orderId: 2, bookId: 5, quantity: 1, priceAtPurchase: 29.99));
+            ->andReturn($this->makeResponseDto(id: 7, orderId: 2, bookId: 5, quantity: 1, priceAtPurchase: '29.99'));
 
         ($this->controller)($this->makeRequest([
             'orderId' => 2,
@@ -103,7 +103,7 @@ final class UpdateOrderItemControllerTest extends TestCase
         int $orderId,
         int $bookId,
         int $quantity,
-        float $priceAtPurchase,
+        string $priceAtPurchase,
     ): OrderItemResponseDto {
         return new OrderItemResponseDto(
             id: $id,

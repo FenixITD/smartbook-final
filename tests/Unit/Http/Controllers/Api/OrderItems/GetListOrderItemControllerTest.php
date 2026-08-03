@@ -34,8 +34,8 @@ final class GetListOrderItemControllerTest extends TestCase
             ->shouldReceive('getList')
             ->once()
             ->andReturn([
-                $this->makeResponseDto(1, 1, 2, 1, 9.99),
-                $this->makeResponseDto(2, 1, 3, 2, 19.99),
+                $this->makeResponseDto(1, 1, 2, 1, '9.99'),
+                $this->makeResponseDto(2, 1, 3, 2, '19.99'),
             ]);
 
         $response = ($this->controller)($this->makeRequest());
@@ -48,9 +48,9 @@ final class GetListOrderItemControllerTest extends TestCase
         $this->repository
             ->shouldReceive('getList')
             ->andReturn([
-                $this->makeResponseDto(1, 1, 2, 1, 9.99),
-                $this->makeResponseDto(2, 1, 3, 2, 19.99),
-                $this->makeResponseDto(3, 2, 4, 1, 5.00),
+                $this->makeResponseDto(1, 1, 2, 1, '9.99'),
+                $this->makeResponseDto(2, 1, 3, 2, '19.99'),
+                $this->makeResponseDto(3, 2, 4, 1, '5.00'),
             ]);
 
         $response = ($this->controller)($this->makeRequest());
@@ -58,7 +58,7 @@ final class GetListOrderItemControllerTest extends TestCase
 
         $this->assertCount(3, $data);
         $this->assertSame(1, $data[0]['id']);
-        $this->assertSame(9.99, $data[0]['priceAtPurchase']);
+        $this->assertSame('9.99', $data[0]['priceAtPurchase']);
         $this->assertSame(2, $data[1]['id']);
         $this->assertSame(3, $data[2]['id']);
     }
@@ -125,7 +125,7 @@ final class GetListOrderItemControllerTest extends TestCase
         int $orderId,
         int $bookId,
         int $quantity,
-        float $priceAtPurchase,
+        string $priceAtPurchase,
     ): OrderItemResponseDto {
         return new OrderItemResponseDto(
             id: $id,

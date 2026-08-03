@@ -17,6 +17,7 @@ final readonly class ClickhouseActivityObserver
 
     public function saving(ClickhouseActivity $activity): bool
     {
+        fwrite(STDERR, "OBSERVER saving called\n");
         $row = $this->service->buildRow($activity);
 
         Redis::rPush('clickhouse_activities_buffer', json_encode($row));

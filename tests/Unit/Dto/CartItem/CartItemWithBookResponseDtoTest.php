@@ -71,7 +71,7 @@ final class CartItemWithBookResponseDtoTest extends TestCase
             authorId: 2,
             authorName: 'Author',
             description: 'Desc',
-            price: 15.0,
+            price: '15.00',
             stock: 10,
             publishYear: 2020,
             coverImage: null,

@@ -52,7 +52,7 @@ final class ShowCartControllerTest extends TestCase
         $this->assertArrayHasKey('cartItems', $data);
         $this->assertArrayHasKey('total', $data);
         $this->assertSame([], $data['cartItems']);
-        $this->assertSame(150.50, $data['total']);
+        $this->assertSame('150.5', $data['total']);
     }
 
     public function test_guest_user_sees_cart_from_guest_service(): void
@@ -72,6 +72,6 @@ final class ShowCartControllerTest extends TestCase
 
         $data = $response->getData();
         $this->assertSame([], $data['cartItems']);
-        $this->assertSame(99.99, $data['total']);
+        $this->assertSame('99.99', $data['total']);
     }
 }

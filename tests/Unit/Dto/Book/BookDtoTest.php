@@ -15,8 +15,8 @@ final class BookDtoTest extends TestCase
             'Test Book',
             'test-book',
             3,
-            'Test description',
-            95.0,
+             'Test description',
+            '95.00',
             16,
             2012,
             'Test image',
@@ -27,7 +27,7 @@ final class BookDtoTest extends TestCase
         $this->assertSame('test-book', $dto->slug);
         $this->assertSame(3, $dto->authorId);
         $this->assertSame('Test description', $dto->description);
-        $this->assertSame(95.0, $dto->price);
+        $this->assertSame('95.00', $dto->price);
         $this->assertSame(16, $dto->stock);
         $this->assertSame(2012, $dto->publishYear);
         $this->assertSame('Test image', $dto->coverImage);
@@ -38,7 +38,7 @@ final class BookDtoTest extends TestCase
             'slug' => 'test-book',
             'author_id' => 3,
             'description' => 'Test description',
-            'price' => 95.0,
+            'price' => '95.00',
             'stock' => 16,
             'publish_year' => 2012,
             'status' => 'draft',

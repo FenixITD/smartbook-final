@@ -37,7 +37,7 @@ class BookRepositoryTest extends TestCase
             slug: $overrides['slug'] ?? 'test-book',
             authorId: $overrides['authorId'] ?? $author->id,
             description: $overrides['description'] ?? 'Some description',
-            price: $overrides['price'] ?? 19.99,
+            price: $overrides['price'] ?? '19.99',
             stock: $overrides['stock'] ?? 10,
             publishYear: $overrides['publishYear'] ?? 2024,
             coverImage: $overrides['coverImage'] ?? null,
@@ -390,11 +390,11 @@ class BookRepositoryTest extends TestCase
 
     public function test_create_book_has_correct_price_and_stock(): void
     {
-        $dto = $this->makeBookDto(['price' => 29.99, 'stock' => 42]);
+        $dto = $this->makeBookDto(['price' => '29.99', 'stock' => 42]);
 
         $result = $this->repository->create($dto);
 
-        $this->assertEqualsWithDelta(29.99, $result->price, 0.001);
+        $this->assertSame('29.99', $result->price);
         $this->assertSame(42, $result->stock);
     }
 

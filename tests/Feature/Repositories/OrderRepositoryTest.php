@@ -45,7 +45,7 @@ class OrderRepositoryTest extends TestCase
     {
         return new OrderDto(
             userId: $attributes['user_id'] ?? $this->user->id,
-            total: $attributes['total'] ?? 49.99,
+            total: $attributes['total'] ?? '49.99',
             status: $attributes['status'] ?? 'pending',
             shippingAddress: $attributes['shipping_address'] ?? '456 Main St',
             paymentMethod: $attributes['payment_method'] ?? 'cash',
@@ -241,12 +241,12 @@ class OrderRepositoryTest extends TestCase
 
     public function test_create_returns_dto_with_correct_data(): void
     {
-        $dto = $this->makeDto(['total' => 123.45, 'status' => 'paid']);
+        $dto = $this->makeDto(['total' => '123.45', 'status' => 'paid']);
 
         $result = $this->repository->create($dto);
 
         $this->assertEquals($this->user->id, $result->userId);
-        $this->assertEquals(123.45, $result->total);
+        $this->assertSame('123.45', $result->total);
         $this->assertEquals('paid', $result->status);
         $this->assertNotEmpty($result->createdAt);
         $this->assertNotEmpty($result->updatedAt);
@@ -256,13 +256,13 @@ class OrderRepositoryTest extends TestCase
     {
         $order = $this->createOrder(['status' => 'pending']);
 
-        $dto = $this->makeDto(['status' => 'shipped', 'total' => 200.00]);
+        $dto = $this->makeDto(['status' => 'shipped', 'total' => '200.00']);
 
         $result = $this->repository->update($order->id, $dto);
 
         $this->assertInstanceOf(OrderResponseDto::class, $result);
         $this->assertEquals('shipped', $result->status);
-        $this->assertEquals(200.00, $result->total);
+        $this->assertSame('200.00', $result->total);
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
             'status' => 'shipped',

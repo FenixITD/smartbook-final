@@ -28,7 +28,7 @@ final class OrderItemResponseDtoTest extends TestCase
         $this->assertSame(10, $dto->orderId);
         $this->assertSame(42, $dto->bookId);
         $this->assertSame(2, $dto->quantity);
-        $this->assertSame(19.99, $dto->priceAtPurchase);
+        $this->assertSame('19.99', $dto->priceAtPurchase);
         $this->assertSame('2026-06-01 12:00:00', $dto->createdAt);
         $this->assertSame('2026-06-01 12:30:00', $dto->updatedAt);
     }

@@ -31,7 +31,7 @@ final class GetOrderItemControllerTest extends TestCase
             ->shouldReceive('getById')
             ->once()
             ->with(3)
-            ->andReturn($this->makeResponseDto(id: 3, orderId: 1, bookId: 2, quantity: 1, priceAtPurchase: 12.50));
+            ->andReturn($this->makeResponseDto(id: 3, orderId: 1, bookId: 2, quantity: 1, priceAtPurchase: '12.50'));
 
         $response = ($this->controller)(3);
 
@@ -42,7 +42,7 @@ final class GetOrderItemControllerTest extends TestCase
     {
         $this->repository
             ->shouldReceive('getById')
-            ->andReturn($this->makeResponseDto(id: 3, orderId: 1, bookId: 2, quantity: 1, priceAtPurchase: 12.50));
+            ->andReturn($this->makeResponseDto(id: 3, orderId: 1, bookId: 2, quantity: 1, priceAtPurchase: '12.50'));
 
         $response = ($this->controller)(3);
         $data = json_decode($response->getContent(), true)['data'];
@@ -51,7 +51,7 @@ final class GetOrderItemControllerTest extends TestCase
         $this->assertSame(1, $data['orderId']);
         $this->assertSame(2, $data['bookId']);
         $this->assertSame(1, $data['quantity']);
-        $this->assertSame(12.50, $data['priceAtPurchase']);
+        $this->assertSame('12.50', $data['priceAtPurchase']);
         $this->assertSame('2024-01-01 00:00:00', $data['createdAt']);
         $this->assertSame('2024-01-01 00:00:00', $data['updatedAt']);
     }
@@ -62,7 +62,7 @@ final class GetOrderItemControllerTest extends TestCase
             ->shouldReceive('getById')
             ->once()
             ->with(42)
-            ->andReturn($this->makeResponseDto(id: 42, orderId: 5, bookId: 7, quantity: 3, priceAtPurchase: 29.99));
+            ->andReturn($this->makeResponseDto(id: 42, orderId: 5, bookId: 7, quantity: 3, priceAtPurchase: '29.99'));
 
         ($this->controller)(42);
     }
@@ -72,7 +72,7 @@ final class GetOrderItemControllerTest extends TestCase
         int $orderId,
         int $bookId,
         int $quantity,
-        float $priceAtPurchase,
+        string $priceAtPurchase,
     ): OrderItemResponseDto {
         return new OrderItemResponseDto(
             id: $id,

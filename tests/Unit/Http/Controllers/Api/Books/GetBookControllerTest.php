@@ -35,7 +35,7 @@ final class GetBookControllerTest extends TestCase
         $this->assertSame('Clean Code', $content['data']['title']);
         $this->assertSame('test-book', $content['data']['slug']);
         $this->assertSame(1, $content['data']['authorId']);
-        $this->assertSame(19.99, $content['data']['price']);
+        $this->assertSame('19.99', $content['data']['price']);
         $this->assertSame(10, $content['data']['stock']);
         $this->assertSame('active', $content['data']['status']);
     }

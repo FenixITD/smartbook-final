@@ -56,7 +56,7 @@ final class ReviewResponseDtoTest extends TestCase
         $dto = ReviewResponseDto::fromModel($review);
 
         $this->assertSame(26, $dto->id);
-        $this->assertSame('', $dto->userName);
+        $this->assertSame('Unknown', $dto->userName);
         $this->assertSame('', $dto->comment);
         $this->assertSame('', $dto->createdAt);
         $this->assertSame('', $dto->updatedAt);

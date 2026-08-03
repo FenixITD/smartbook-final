@@ -60,7 +60,7 @@ final class CreateBookControllerTest extends TestCase
                 return $dto->title === 'Domain-Driven Design'
                     && $dto->slug === 'domain-driven-design'
                     && $dto->authorId === 3
-                    && $dto->price === 29.99
+                    && $dto->price === '29.99'
                     && $dto->stock === 5
                     && $dto->status === 'active';
             })

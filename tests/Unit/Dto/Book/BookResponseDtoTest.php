@@ -53,7 +53,7 @@ final class BookResponseDtoTest extends TestCase
         $this->assertSame(1, $dto->authorId);
         $this->assertSame('J.R.R. Tolkien', $dto->authorName);
         $this->assertSame('Epic high-fantasy book', $dto->description);
-        $this->assertSame(29.99, $dto->price);
+        $this->assertSame('29.99', $dto->price);
         $this->assertSame(100, $dto->stock);
         $this->assertSame(1954, $dto->publishYear);
         $this->assertSame('lotr.jpg', $dto->coverImage);

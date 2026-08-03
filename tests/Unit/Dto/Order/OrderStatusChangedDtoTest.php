@@ -17,7 +17,7 @@ final class OrderStatusChangedDtoTest extends TestCase
             newStatus: 'completed',
             userEmail: 'alex@example.com',
             userName: 'Alex Mercer',
-            total: 1250.00,
+            total: '1250.00',
         );
 
         $this->assertSame(100, $dto->orderId);
@@ -25,6 +25,6 @@ final class OrderStatusChangedDtoTest extends TestCase
         $this->assertSame('completed', $dto->newStatus);
         $this->assertSame('alex@example.com', $dto->userEmail);
         $this->assertSame('Alex Mercer', $dto->userName);
-        $this->assertSame(1250.00, $dto->total);
+        $this->assertSame('1250.00', $dto->total);
     }
 }

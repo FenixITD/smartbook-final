@@ -75,7 +75,7 @@ final class UpdateBookControllerTest extends TestCase
                 return $id === 7
                     && $dto->title === 'Refactoring'
                     && $dto->slug === 'refactoring'
-                    && $dto->price === 24.99
+                    && $dto->price === '24.99'
                     && $dto->stock === 15
                     && $dto->status === 'active';
             })
