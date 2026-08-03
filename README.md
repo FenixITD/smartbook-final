@@ -41,17 +41,13 @@ Before you begin, make sure the following are installed on your machine:
 
 > The demo accounts below are created **only when `APP_ENV=local`** (via `setup.sh`). In other environments they are never seeded.
 
-### Admin (local development)
+### Admin
 - email -> admin@smartbook.com
 - password -> admin123
 
-### User (local development)
+### User
 - email -> user@smartbook.com
 - password -> user123
-
-> When `setup.sh` runs against a non-`local` environment (`APP_ENV != local`), it does **not** seed demo data.
-> Instead it generates a strong random admin password, writes `ADMIN_EMAIL` / `ADMIN_PASSWORD` into `.env`,
-> and prints the credentials to the console at the end of the deployment. No manual configuration is required.
 
 ## What You Can Open in the Browser
 

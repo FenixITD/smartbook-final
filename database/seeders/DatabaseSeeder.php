@@ -16,6 +16,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -38,39 +39,10 @@ class DatabaseSeeder extends Seeder
                 'password' => bcrypt('user123'),
             ]);
         } else {
-            $adminEmail = (string) env('ADMIN_EMAIL');
-            $adminPassword = (string) env('ADMIN_PASSWORD');
-            $adminName = (string) (env('ADMIN_NAME') ?: 'Admin');
-
-            if ($adminEmail === '' || $adminPassword === '') {
-                $this->command->warn(
-                    'ADMIN_EMAIL / ADMIN_PASSWORD are not set — no admin account was created.'
-                );
-            } else {
-                /** @var User|null $admin */
-                $admin = User::query()->where('email', $adminEmail)->first();
-
-                if ($admin === null) {
-                    $admin = new User();
-                    $admin->forceFill([
-                        'name' => $adminName,
-                        'email' => $adminEmail,
-                        'email_verified_at' => now(),
-                        'password' => $adminPassword,
-                        'role' => 'admin',
-                    ]);
-                    $admin->save();
-
-                    $this->command->info("Admin account created: {$adminEmail}");
-                } else {
-                    $admin->forceFill([
-                        'password' => $adminPassword,
-                        'role' => 'admin',
-                    ])->save();
-
-                    $this->command->info("Admin account credentials updated: {$adminEmail}");
-                }
-            }
+            $this->command->warn('APP_ENV is not "local": creating users with random passwords, skipping demo accounts.');
+            User::factory()->count(10)->create([
+                'password' => Hash::make(Str::random(40)),
+            ]);
         }
 
         Author::factory()->count(10)->create();
