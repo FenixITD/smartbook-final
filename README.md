@@ -39,6 +39,8 @@ Before you begin, make sure the following are installed on your machine:
 
 ## Login Credentials
 
+> The demo accounts below are created **only when `APP_ENV=local`** (via `setup.sh`). In other environments they are never seeded.
+
 ### Admin
 - email -> admin@smartbook.com
 - password -> admin123
