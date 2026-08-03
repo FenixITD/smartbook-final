@@ -12,15 +12,14 @@ final readonly class ClickhouseActivityObserver
 {
     public function __construct(
         private ClickhouseActivityService $service,
-    ) {
-    }
+    ) {}
 
     public function saving(ClickhouseActivity $activity): bool
     {
-        fwrite(STDERR, "OBSERVER saving called\n");
+        error_log('OBSERVER saving called');
         $row = $this->service->buildRow($activity);
 
-        Redis::rPush('clickhouse_activities_buffer', json_encode($row));
+        Redis::xadd('clickhouse_activities_stream', '*', ['payload' => json_encode($row)]);
 
         $activity->id = is_numeric($row['id'] ?? null) ? (int) $row['id'] : 0;
         $activity->exists = true;

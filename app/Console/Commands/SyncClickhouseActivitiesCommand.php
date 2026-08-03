@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Console\Commands;
@@ -11,20 +12,26 @@ use Throwable;
 final class SyncClickhouseActivitiesCommand extends Command
 {
     protected $signature = 'clickhouse:sync-activities';
+
     protected $description = 'Sync buffered activities from Redis Stream to ClickHouse';
 
     private const STREAM = 'clickhouse_activities_stream';
+
     private const GROUP = 'ch-sync-group';
+
     private const DLQ_STREAM = 'clickhouse_activities_dlq';
+
     private const BATCH_SIZE = 1000;
+
     private const MAX_DELIVERIES = 3;
+
     private const IDLE_THRESHOLD_MS = 5 * 60 * 1000;
 
     public function handle(ClickhouseManagerService $clickhouseManagerService): int
     {
         $this->ensureGroupExists();
 
-        $consumerName = 'consumer-' . gethostname() . '-' . getmypid();
+        $consumerName = 'consumer-'.gethostname().'-'.getmypid();
 
         $entries = $this->claimStaleEntries($consumerName);
 
@@ -37,9 +44,12 @@ final class SyncClickhouseActivitiesCommand extends Command
             );
 
             if (is_array($fresh)) {
-                $freshEntries = $fresh[self::STREAM] ?? [];
-                if (is_array($freshEntries)) {
-                    foreach ($freshEntries as $id => $fields) {
+                foreach ($fresh as $streamEntries) {
+                    if (! is_array($streamEntries)) {
+                        continue;
+                    }
+
+                    foreach ($streamEntries as $id => $fields) {
                         $entries[strval($id)] = $this->toStringKeyed($fields);
                     }
                 }
@@ -69,10 +79,11 @@ final class SyncClickhouseActivitiesCommand extends Command
             $clickhouseManagerService->insertBatch('activity_log', $rows);
             Redis::xack(self::STREAM, self::GROUP, $goodIds);
             Redis::xdel(self::STREAM, $goodIds);
-            $this->info('Synced ' . count($rows) . ' activities to ClickHouse.');
+            $this->info('Synced '.count($rows).' activities to ClickHouse.');
         } catch (Throwable $e) {
             $this->error($e->getMessage());
-            $this->warn(count($rows) . ' activities will be retried on next run.');
+            $this->warn(count($rows).' activities will be retried on next run.');
+
             return self::FAILURE;
         }
 
@@ -84,7 +95,7 @@ final class SyncClickhouseActivitiesCommand extends Command
         try {
             Redis::xgroup('CREATE', self::STREAM, self::GROUP, '0', true);
         } catch (Throwable $e) {
-            if (!str_contains($e->getMessage(), 'BUSYGROUP')) {
+            if (! str_contains($e->getMessage(), 'BUSYGROUP')) {
                 throw $e;
             }
         }
@@ -108,22 +119,17 @@ final class SyncClickhouseActivitiesCommand extends Command
                 100
             );
 
-            if (!is_array($claim)) {
+            if (! is_array($claim)) {
                 break;
             }
 
-            $newCursor = $claim[0] ?? '0-0';
-            if (is_string($newCursor)) {
-                $cursor = $newCursor;
-            }
-
             $claimed = $claim[1] ?? [];
-            if (!is_array($claimed)) {
+            if (! is_array($claimed)) {
                 $claimed = [];
             }
 
             foreach ($claimed as $id => $fields) {
-                if (!is_string($id)) {
+                if (! is_string($id)) {
                     $id = strval($id);
                 }
                 $deliveryCount = $this->deliveryCount($id);
@@ -133,16 +139,23 @@ final class SyncClickhouseActivitiesCommand extends Command
                     $this->moveToDlq($id, is_string($payload) ? $payload : null, 'max_deliveries_exceeded');
                     Redis::xack(self::STREAM, self::GROUP, [$id]);
                     Redis::xdel(self::STREAM, [$id]);
-                    $this->warn('Entry ' . $id . ' moved to dead letter after ' . self::MAX_DELIVERIES . ' attempts.');
+                    $this->warn('Entry '.$id.' moved to dead letter after '.self::MAX_DELIVERIES.' attempts.');
+
                     continue;
                 }
 
                 $result[$id] = $this->toStringKeyed($fields);
             }
-        } while ($cursor !== '0-0');
+
+            $newCursor = $claim[0] ?? '0-0';
+            if (! is_string($newCursor) || $newCursor === '0-0') {
+                break;
+            }
+            $cursor = $newCursor;
+        } while (true);
 
         if ($result !== []) {
-            $this->warn('Reclaimed ' . count($result) . ' stale entries from previous run.');
+            $this->warn('Reclaimed '.count($result).' stale entries from previous run.');
         }
 
         return $result;
@@ -159,7 +172,7 @@ final class SyncClickhouseActivitiesCommand extends Command
     }
 
     /**
-     * @param array<string, mixed> $entries
+     * @param  array<string, mixed>  $entries
      * @return array{0: list<array<string, mixed>>, 1: list<string>, 2: array<string, string>}
      */
     private function decodeEntries(array $entries): array
@@ -176,7 +189,7 @@ final class SyncClickhouseActivitiesCommand extends Command
                 $rows[] = $this->toStringKeyed($decoded);
                 $goodIds[] = $id;
             } catch (Throwable $e) {
-                $badIds[$id] = 'decode_error: ' . $e->getMessage();
+                $badIds[$id] = 'decode_error: '.$e->getMessage();
             }
         }
 
@@ -194,12 +207,11 @@ final class SyncClickhouseActivitiesCommand extends Command
     }
 
     /**
-     * @param mixed $fields
      * @return array<string, mixed>
      */
     private function toStringKeyed(mixed $fields): array
     {
-        if (!is_array($fields)) {
+        if (! is_array($fields)) {
             return [];
         }
 
