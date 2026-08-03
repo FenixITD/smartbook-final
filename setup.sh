@@ -33,17 +33,9 @@ docker compose exec app php artisan key:generate
 
 echo "Running analytics migrations (ClickHouse)..."
 docker compose exec app php artisan clickhouse:migrate
-echo "Running main DB migrations (PostgreSQL)..."
-docker compose exec app php artisan migrate
 
-APP_ENV_VALUE=$(grep -E "^APP_ENV=" .env | cut -d '=' -f2 | tr -d '[:space:]')
-if [ "$APP_ENV_VALUE" = "local" ]; then
-    echo "APP_ENV=local detected — seeding demo/test data..."
-    docker compose exec app php artisan db:seed
-else
-    echo "APP_ENV is \"$APP_ENV_VALUE\" (not local) — skipping db:seed."
-    echo "No demo accounts are created; production users must be created manually."
-fi
+echo "Running main DB migrations (PostgreSQL) and seeding test data..."
+docker compose exec app php artisan migrate --seed
 
 echo "Setting permissions for storage and cache folders..."
 docker compose exec app chown -R www-data:www-data storage bootstrap/cache
@@ -54,12 +46,6 @@ echo "DONE! The project has been successfully deployed and started."
 echo "================================================="
 echo "🌍 Website:       http://localhost:8000"
 echo "📚 API Docs:      http://localhost:8000/api/documentation"
-if [ "$APP_ENV_VALUE" = "local" ]; then
-    echo "👤 Demo admin:    admin@smartbook.com / admin123 (local only)"
-    echo "👤 Demo user:     user@smartbook.com / user123 (local only)"
-else
-    echo "👤 Demo accounts: not seeded (APP_ENV is not \"local\")"
-fi
 echo "🐘 pgAdmin:       http://localhost:5050 ($(grep -E '^PGADMIN_DEFAULT_EMAIL=' .env | cut -d '=' -f2 | tr -d '[:space:]'))"
 echo "🐰 Queues:        http://localhost:15672 (guest / guest)"
 echo "🪣 Storage:       http://localhost:9001 ($(grep -E '^MINIO_ROOT_USER=' .env | cut -d '=' -f2 | tr -d '[:space:]') / $(grep -E '^MINIO_ROOT_PASSWORD=' .env | cut -d '=' -f2 | tr -d '[:space:]'))"

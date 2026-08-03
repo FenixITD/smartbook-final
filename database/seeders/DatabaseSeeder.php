@@ -15,35 +15,22 @@ use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->environment('local')) {
-            /**
-             * Demo accounts with publicly known credentials — for local development only.
-             * They are intentionally never created in other environments.
-             */
-            User::factory()->count(10)->create();
-            User::factory()->admin()->create([
-                'name' => 'Admin User',
-                'email' => 'admin@smartbook.com',
-                'password' => bcrypt('admin123'),
-            ]);
-            User::factory()->user()->create([
-                'name' => 'User',
-                'email' => 'user@smartbook.com',
-                'password' => bcrypt('user123'),
-            ]);
-        } else {
-            $this->command->warn('APP_ENV is not "local": creating users with random passwords, skipping demo accounts.');
-            User::factory()->count(10)->create([
-                'password' => Hash::make(Str::random(40)),
-            ]);
-        }
+        User::factory()->count(10)->create();
+        User::factory()->admin()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@smartbook.com',
+            'password' => bcrypt('admin123'),
+        ]);
+        User::factory()->user()->create([
+            'name' => 'User',
+            'email' => 'user@smartbook.com',
+            'password' => bcrypt('user123'),
+        ]);
 
         Author::factory()->count(10)->create();
         Genre::factory()->count(15)->create();
