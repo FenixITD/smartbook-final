@@ -10,6 +10,7 @@ use App\Dto\Genre\GenreResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Genre;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
+use App\Traits\OrdersByIds;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Cache;
 
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Cache;
  */
 final class GenreRepository extends AbstractEloquentRepository implements GenreRepositoryInterface
 {
+    use OrdersByIds;
+
     protected function getModelClass(): string
     {
         return Genre::class;
@@ -56,9 +59,13 @@ final class GenreRepository extends AbstractEloquentRepository implements GenreR
 
     public function getWebListByIds(array $ids, int $total, GenreFiltersDto $filters): PaginatedResponseDto
     {
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
+        }
+
         $items = $this->query()
             ->whereIn('id', $ids)
-            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->orderByRaw($this->orderByIds($ids))
             ->get();
 
         return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Genre $genre) => GenreResponseDto::fromModel($genre));

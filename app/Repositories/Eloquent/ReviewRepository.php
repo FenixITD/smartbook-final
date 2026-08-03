@@ -12,12 +12,15 @@ use App\Dto\Review\ReviewResponseDto;
 use App\Models\Review;
 use App\Models\User;
 use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use App\Traits\OrdersByIds;
 
 /**
  * @extends AbstractEloquentRepository<Review, ReviewResponseDto>
  */
 final class ReviewRepository extends AbstractEloquentRepository implements ReviewRepositoryInterface
 {
+    use OrdersByIds;
+
     protected function getModelClass(): string
     {
         return Review::class;
@@ -78,20 +81,15 @@ final class ReviewRepository extends AbstractEloquentRepository implements Revie
 
     public function getWebListByIds(array $ids, int $total, ReviewFiltersDto $filters): PaginatedResponseDto
     {
-        $query = $this->query()
-            ->with(['user:id,name', 'book:id,title'])
-            ->whereIn('id', $ids);
-
-        if ($filters->sortBy === 'user_name') {
-            $query->orderBy(
-                User::select('name')->whereColumn('users.id', 'reviews.user_id'),
-                $filters->sortDirection
-            );
-        } else {
-            $query->orderBy($filters->sortBy, $filters->sortDirection);
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
         }
 
-        $items = $query->get();
+        $items = $this->query()
+            ->with(['user:id,name', 'book:id,title'])
+            ->whereIn('id', $ids)
+            ->orderByRaw($this->orderByIds($ids))
+            ->get();
 
         return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Review $review) => ReviewResponseDto::fromModel($review));
     }

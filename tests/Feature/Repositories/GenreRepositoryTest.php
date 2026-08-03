@@ -108,6 +108,16 @@ class GenreRepositoryTest extends TestCase
         $this->assertSame(1, $result->currentPage);
     }
 
+    public function test_get_web_list_by_ids_preserves_given_id_order(): void
+    {
+        $genres = Genre::factory()->count(5)->create();
+        $ids = $genres->pluck('id')->shuffle()->values()->all();
+
+        $result = $this->repository->getWebListByIds($ids, count($ids), new GenreFiltersDto());
+
+        $this->assertSame($ids, array_map(static fn (GenreResponseDto $genre): int => $genre->id, $result->items));
+    }
+
     public function test_get_all_returns_all_genres_ordered_by_name(): void
     {
         Genre::factory()->create(['name' => 'Zzz', 'slug' => 'zzz']);

@@ -11,6 +11,7 @@ use App\Dto\PaginatedResponseDto;
 use App\Models\Order;
 use App\Models\User;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Traits\OrdersByIds;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Builder;
  */
 final class OrderRepository extends AbstractEloquentRepository implements OrderRepositoryInterface
 {
+    use OrdersByIds;
+
     protected function getModelClass(): string
     {
         return Order::class;
@@ -84,20 +87,15 @@ final class OrderRepository extends AbstractEloquentRepository implements OrderR
 
     public function getWebListByIds(array $ids, int $total, OrderFiltersDto $filters): PaginatedResponseDto
     {
-        $query = $this->query()
-            ->with('user:id,name')
-            ->whereIn('id', $ids);
-
-        if ($filters->sortBy === 'user_name') {
-            $query->orderBy(
-                User::select('name')->whereColumn('users.id', 'orders.user_id'),
-                $filters->sortDirection
-            );
-        } else {
-            $query->orderBy($filters->sortBy, $filters->sortDirection);
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
         }
 
-        $items = $query->get();
+        $items = $this->query()
+            ->with('user:id,name')
+            ->whereIn('id', $ids)
+            ->orderByRaw($this->orderByIds($ids))
+            ->get();
 
         return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Order $order) => OrderResponseDto::fromModel($order));
     }

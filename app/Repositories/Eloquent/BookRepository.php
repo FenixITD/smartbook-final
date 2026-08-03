@@ -13,13 +13,14 @@ use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 
 use App\Traits\CreatesPaginatedResponse;
+use App\Traits\OrdersByIds;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-use function count;
 
 final class BookRepository implements BookRepositoryInterface
 {
     use CreatesPaginatedResponse;
+    use OrdersByIds;
 
     /** @return array<BookResponseDto> */
     public function getList(BookFiltersDto $filters): array
@@ -247,16 +248,5 @@ final class BookRepository implements BookRepositoryInterface
             ->keyBy('id')
             ->map(static fn (Book $book) => BookResponseDto::fromModel($book))
             ->all();
-    }
-
-    /** @param array<int> $ids */
-    private function orderByIds(array $ids): string
-    {
-        $cases = collect($ids)
-            ->values()
-            ->map(static fn (int $id, int $pos) => "WHEN id = {$id} THEN {$pos}")
-            ->implode(' ');
-
-        return 'CASE '.$cases.' ELSE '.count($ids).' END';
     }
 }

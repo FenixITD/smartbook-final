@@ -116,6 +116,16 @@ class ReviewRepositoryTest extends TestCase
         $this->assertSame(1, $result->total);
     }
 
+    public function test_get_web_list_by_ids_preserves_given_id_order(): void
+    {
+        $reviews = collect([$this->makeReview(), $this->makeReview(), $this->makeReview()]);
+        $ids = $reviews->pluck('id')->shuffle()->values()->all();
+
+        $result = $this->repository->getWebListByIds($ids, count($ids), new ReviewFiltersDto(perPage: 10));
+
+        $this->assertSame($ids, array_map(static fn (ReviewResponseDto $review): int => $review->id, $result->items));
+    }
+
     public function test_get_by_id_returns_dto_when_found(): void
     {
         $review = $this->makeReview();

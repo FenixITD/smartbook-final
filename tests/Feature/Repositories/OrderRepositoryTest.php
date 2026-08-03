@@ -143,6 +143,16 @@ class OrderRepositoryTest extends TestCase
         $this->assertEquals(0, $result->total);
     }
 
+    public function test_get_web_list_by_ids_preserves_given_id_order(): void
+    {
+        $orders = collect([$this->createOrder(), $this->createOrder(), $this->createOrder()]);
+        $ids = $orders->pluck('id')->shuffle()->values()->all();
+
+        $result = $this->repository->getWebListByIds($ids, count($ids), new OrderFiltersDto());
+
+        $this->assertSame($ids, array_map(static fn (OrderResponseDto $order): int => $order->id, $result->items));
+    }
+
     public function test_get_by_id_returns_order_response_dto(): void
     {
         $order = $this->createOrder();

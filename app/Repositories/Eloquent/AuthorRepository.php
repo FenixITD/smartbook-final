@@ -10,6 +10,7 @@ use App\Dto\Author\AuthorResponseDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
+use App\Traits\OrdersByIds;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Cache;
 
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Cache;
  */
 final class AuthorRepository extends AbstractEloquentRepository implements AuthorRepositoryInterface
 {
+    use OrdersByIds;
+
     protected function getModelClass(): string
     {
         return Author::class;
@@ -56,9 +59,13 @@ final class AuthorRepository extends AbstractEloquentRepository implements Autho
 
     public function getWebListByIds(array $ids, int $total, AuthorFiltersDto $filters): PaginatedResponseDto
     {
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
+        }
+
         $items = $this->query()
             ->whereIn('id', $ids)
-            ->orderBy($filters->sortBy, $filters->sortDirection)
+            ->orderByRaw($this->orderByIds($ids))
             ->get();
 
         return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Author $author) => AuthorResponseDto::fromModel($author));

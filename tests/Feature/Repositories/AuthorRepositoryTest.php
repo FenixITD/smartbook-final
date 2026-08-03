@@ -131,6 +131,16 @@ final class AuthorRepositoryTest extends TestCase
         $this->assertCount(0, $result->items);
     }
 
+    public function test_get_web_list_by_ids_preserves_given_id_order(): void
+    {
+        $authors = Author::factory()->count(5)->create();
+        $ids = $authors->pluck('id')->shuffle()->values()->all();
+
+        $result = $this->repository->getWebListByIds($ids, count($ids), new AuthorFiltersDto());
+
+        $this->assertSame($ids, array_map(static fn (AuthorResponseDto $author): int => $author->id, $result->items));
+    }
+
     public function test_get_all_returns_array_of_author_response_dtos(): void
     {
         Author::factory()->count(3)->create();
