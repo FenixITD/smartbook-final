@@ -60,9 +60,9 @@ if [ "$APP_ENV_VALUE" = "local" ]; then
 else
     echo "👤 Demo accounts: not seeded (APP_ENV is not \"local\")"
 fi
-echo "🐘 pgAdmin:       http://localhost:5050 (admin@smartbook.ru)"
+echo "🐘 pgAdmin:       http://localhost:5050 ($(grep -E '^PGADMIN_DEFAULT_EMAIL=' .env | cut -d '=' -f2 | tr -d '[:space:]'))"
 echo "🐰 Queues:        http://localhost:15672 (guest / guest)"
-echo "🪣 Storage:       http://localhost:9001 (smartbook / smartbook123)"
+echo "🪣 Storage:       http://localhost:9001 ($(grep -E '^MINIO_ROOT_USER=' .env | cut -d '=' -f2 | tr -d '[:space:]') / $(grep -E '^MINIO_ROOT_PASSWORD=' .env | cut -d '=' -f2 | tr -d '[:space:]'))"
 echo "📧 Mail:          http://localhost:8025"
 echo "================================================="
 echo ""

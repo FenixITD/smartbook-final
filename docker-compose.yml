@@ -118,9 +118,9 @@ services:
     container_name: db2
     restart: unless-stopped
     environment:
-      POSTGRES_DB: smartbook
-      POSTGRES_USER: smartbook_user
-      POSTGRES_PASSWORD: StrongPassword_123!
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/db/pg_hba.conf:/etc/postgresql/pg_hba.conf
@@ -135,8 +135,8 @@ services:
     container_name: pgadmin2
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@smartbook.ru
-      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
     networks:
@@ -152,8 +152,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: smartbook
-      MINIO_ROOT_PASSWORD: smartbook123
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     volumes:
       - minio_data:/data
     networks:
@@ -170,9 +170,11 @@ services:
     depends_on:
       minio:
         condition: service_healthy
+    env_file:
+      - .env
     entrypoint: >
       sh -c "
-      mc alias set local http://minio:9000 smartbook smartbook123;
+      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
       mc mb local/smartbook-covers || true;
       mc anonymous set public local/smartbook-covers;
       exit 0;
@@ -237,7 +239,7 @@ services:
     environment:
       CLICKHOUSE_DB: smartbook
       CLICKHOUSE_USER: default
-      CLICKHOUSE_PASSWORD: clickhouse
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
     container_name: clickhouse
     restart: unless-stopped
     ports:
