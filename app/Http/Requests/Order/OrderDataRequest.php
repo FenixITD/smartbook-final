@@ -42,13 +42,16 @@ final class OrderDataRequest extends FormRequest
 
     public function toDto(): OrderDto
     {
-        $items = array_map(
-            fn (array $item): OrderItemInputDto => new OrderItemInputDto(
-                bookId: (int) ($item['bookId'] ?? 0),
-                quantity: (int) ($item['quantity'] ?? 1),
-            ),
-            (array) $this->input('items', []),
-        );
+        $items = array_map(function (mixed $item): OrderItemInputDto {
+            $item = is_array($item) ? $item : [];
+            $bookId = $item['bookId'] ?? 0;
+            $quantity = $item['quantity'] ?? 1;
+
+            return new OrderItemInputDto(
+                bookId: is_int($bookId) ? $bookId : 0,
+                quantity: is_int($quantity) ? $quantity : 1,
+            );
+        }, (array) $this->input('items', []));
 
         return new OrderDto(
             userId: $this->integer('userId'),

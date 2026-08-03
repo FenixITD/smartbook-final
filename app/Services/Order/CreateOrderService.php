@@ -31,17 +31,9 @@ class CreateOrderService
         /** @var OrderResponseDto $orderResponse */
         $orderResponse = $this->transactionManager->transaction(function () use ($dto): OrderResponseDto {
             $useDirectItems = $dto->items !== null;
+            $items = $dto->items;
 
-            /** @var OrderItemInputDto[] $items */
-            if ($useDirectItems) {
-                $items = $dto->items;
-
-                if ($items === []) {
-                    throw ValidationException::withMessages([
-                        'items' => 'At least one item is required.',
-                    ]);
-                }
-            } else {
+            if ($items === null) {
                 $cartItems = $this->cartItemRepository->getAllByUserId($dto->userId);
 
                 if ($cartItems === []) {
@@ -66,12 +58,18 @@ class CreateOrderService
                 }
             }
 
+            if ($items === []) {
+                throw ValidationException::withMessages([
+                    'items' => 'At least one item is required.',
+                ]);
+            }
+
             $bookIds = array_map(
                 static fn (OrderItemInputDto $item): int => $item->bookId,
                 $items,
             );
 
-            $lockedBooks = $bookIds !== [] ? $this->bookRepository->lockForUpdateByIds($bookIds) : [];
+            $lockedBooks = $this->bookRepository->lockForUpdateByIds($bookIds);
 
             $total = '0.00';
 
@@ -90,7 +88,8 @@ class CreateOrderService
                     ]);
                 }
 
-                $total = bcadd($total, bcmul($lockedBook->price, (string) $item->quantity, 2), 2);
+                $price = is_numeric($lockedBook->price) ? $lockedBook->price : '0';
+                $total = bcadd($total, bcmul($price, (string) $item->quantity, 2), 2);
             }
 
             $order = $this->orderRepository->create(new OrderDto(

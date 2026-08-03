@@ -15,7 +15,7 @@ trait OrdersByIds
     {
         $cases = collect($ids)
             ->values()
-            ->map(static fn (int $id, int $pos) => 'WHEN id = '.(int) $id.' THEN '.(int) $pos)
+            ->map(static fn (int $id, int $pos) => 'WHEN id = '.$id.' THEN '.$pos)
             ->implode(' ');
 
         return 'CASE '.$cases.' ELSE '.count($ids).' END';

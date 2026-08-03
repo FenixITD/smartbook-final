@@ -245,8 +245,9 @@ final class BookRepository implements BookRepositoryInterface
         return Book::whereIn('id', $ids)
             ->lockForUpdate()
             ->get()
-            ->keyBy('id')
-            ->map(static fn (Book $book) => BookResponseDto::fromModel($book))
+            ->mapWithKeys(static fn (Book $book): array => [
+                $book->id => BookResponseDto::fromModel($book),
+            ])
             ->all();
     }
 }
