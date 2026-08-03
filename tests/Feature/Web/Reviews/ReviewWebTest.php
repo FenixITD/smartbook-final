@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Feature\Web\Reviews;
 
@@ -112,6 +114,27 @@ final class ReviewWebTest extends TestCase
             ]);
 
         $response->assertStatus(403);
+    }
+
+    public function test_public_user_cannot_retarget_review_to_another_book(): void
+    {
+        $user = User::factory()->create();
+        $author = Author::factory()->create();
+        $book1 = Book::factory()->create(['author_id' => $author->id]);
+        $book2 = Book::factory()->create(['author_id' => $author->id]);
+        $review = Review::factory()->create(['user_id' => $user->id, 'book_id' => $book1->id, 'rating' => 3]);
+        Review::factory()->create(['user_id' => $user->id, 'book_id' => $book2->id, 'rating' => 4]);
+
+        $response = $this->actingAs($user)
+            ->from('/catalog/book')
+            ->put("/_test/public-reviews/{$review->id}", [
+                'book_id' => $book2->id,
+                'rating' => 5,
+                'comment' => 'Trying to retarget',
+            ]);
+
+        $response->assertRedirect('/catalog/book')->assertSessionHas('success');
+        $this->assertDatabaseHas('reviews', ['id' => $review->id, 'book_id' => $book1->id, 'rating' => 5]);
     }
 
     public function test_public_user_can_delete_own_review(): void
