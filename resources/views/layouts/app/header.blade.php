@@ -218,7 +218,7 @@
     <div
         x-data
         x-init="$el.style.top = (document.querySelector('header')?.offsetHeight ?? 64) + 'px'"
-        class="sticky z-50 w-full border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden"
+        class="sticky z-40 w-full border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900 max-lg:hidden"
     >
         <div class="flex items-center justify-between px-4 py-2 mx-auto max-w-7xl">
 
