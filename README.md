@@ -37,15 +37,10 @@ Before you begin, make sure the following are installed on your machine:
 2. Navigate to the project folder - `cd <folder name>`
 3. Run the command `./setup.sh` in your terminal
 
-## Login Credentials
+## Demo Accounts
 
-### Admin
-- email -> admin@smartbook.com
-- password -> admin123
-
-### User
-- email -> user@smartbook.com
-- password -> user123
+The `php artisan migrate --seed` command generates random passwords for the demo
+accounts (`admin@smartbook.com` / `user@smartbook.com`) and prints them to the console.
 
 ## What You Can Open in the Browser
 
@@ -53,7 +48,7 @@ Before you begin, make sure the following are installed on your machine:
 |---|---|---|
 | Application | http://localhost:8000 | — |
 | Swagger API Docs | http://localhost:8000/api/documentation | — |
-| pgAdmin | http://localhost:5050 | `admin@smartbook.ru` / `admin123` |
-| MinIO Console | http://localhost:9001 | `smartbook` / `smartbook123` |
+| pgAdmin | http://localhost:5050 | see `PGADMIN_DEFAULT_*` in `.env` |
+| MinIO Console | http://localhost:9001 | see `MINIO_ROOT_*` in `.env` |
 | RabbitMQ Management | http://localhost:15672 | `guest` / `guest` |
 | Mailpit (mail) | http://localhost:8025 | — |

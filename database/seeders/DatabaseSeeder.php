@@ -15,22 +15,33 @@ use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
         User::factory()->count(10)->create();
+
+        $adminPassword = Str::password(16);
         User::factory()->admin()->create([
             'name' => 'Admin User',
             'email' => 'admin@smartbook.com',
-            'password' => bcrypt('admin123'),
+            'password' => bcrypt($adminPassword),
         ]);
+
+        $userPassword = Str::password(16);
         User::factory()->user()->create([
             'name' => 'User',
             'email' => 'user@smartbook.com',
-            'password' => bcrypt('user123'),
+            'password' => bcrypt($userPassword),
         ]);
+
+        $this->command->info('=================================================');
+        $this->command->info('Demo accounts created:');
+        $this->command->info("  Admin: admin@smartbook.com / {$adminPassword}");
+        $this->command->info("  User:  user@smartbook.com / {$userPassword}");
+        $this->command->info('=================================================');
 
         Author::factory()->count(10)->create();
         Genre::factory()->count(15)->create();
