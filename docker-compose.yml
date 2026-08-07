@@ -14,6 +14,8 @@ services:
       - APP_ENV=local
       - APP_DEBUG=true
     depends_on: # Контейнер app не начнет подниматься, пока не будут выполнены следующие условия:
+      db:
+        condition: service_healthy
       elasticsearch:
         condition: service_healthy
       minio:
@@ -129,6 +131,12 @@ services:
     networks:
       - smartbook-net
     command: ["postgres", "-c", "listen_addresses=*", "-c", "hba_file=/etc/postgresql/pg_hba.conf"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   pgadmin:
     image: dpage/pgadmin4:latest

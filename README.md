@@ -29,6 +29,13 @@ Before you begin, make sure the following are installed on your machine:
 
 > PHP, Node.js, and Composer do **not** need to be installed — everything runs inside Docker containers.
 
+> **Linux / WSL2 only:** Elasticsearch requires the host's `vm.max_map_count` to be
+> at least `262144` (the default is `65530`). If the check inside `setup.sh` fails,
+> apply one of the following and then run `./setup.sh` again:
+>
+> - Temporarily (current session only): `sudo sysctl -w vm.max_map_count=262144`
+> - Permanently (recommended): `echo 'vm.max_map_count=262144' | sudo tee /etc/sysctl.d/99-elasticsearch.conf`
+
 ## How to Deploy the Project
 
 1. Clone the project into a folder - `git clone https://github.com/FenixITD/smartbook-final <folder name>`
@@ -41,6 +48,9 @@ Before you begin, make sure the following are installed on your machine:
 > (the `node` container runs `npm install && npm run build`). Wait for it to exit
 > with code `0` (`docker compose ps`) before opening the site — otherwise you may see
 > a 500 error (missing `public/build/manifest.json`).
+>
+> **Note:** `setup.sh` is meant to be run **once** on a fresh clone. Re-running it
+> regenerates the app key and re-seeds the database.
 
 ## Demo Accounts
 

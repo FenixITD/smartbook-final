@@ -4,6 +4,23 @@ set -e
 
 echo "Starting deployment of the SmartBook project..."
 
+if [ -f /proc/sys/vm/max_map_count ]; then
+    CURRENT_MAP_COUNT=$(cat /proc/sys/vm/max_map_count)
+    if [ "$CURRENT_MAP_COUNT" -lt 262144 ]; then
+        echo ""
+        echo "ERROR: Elasticsearch requires vm.max_map_count >= 262144, but the current value is ${CURRENT_MAP_COUNT}."
+        echo ""
+        echo "Fix it temporarily (current session only):"
+        echo "  sudo sysctl -w vm.max_map_count=262144"
+        echo ""
+        echo "Or permanently (recommended):"
+        echo "  echo 'vm.max_map_count=262144' | sudo tee /etc/sysctl.d/99-elasticsearch.conf"
+        echo ""
+        echo "Then run ./setup.sh again."
+        exit 1
+    fi
+fi
+
 if [ ! -f .env ]; then
     echo "Creating .env file from the example..."
     cp .env.example .env
