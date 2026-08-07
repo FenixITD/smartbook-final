@@ -17,6 +17,17 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'userId', type: 'integer', example: 3),
         new OA\Property(property: 'shippingAddress', type: 'string', example: 'Pushkina 19'),
         new OA\Property(property: 'paymentMethod', type: 'string', example: 'cash'),
+        new OA\Property(
+            property: 'items',
+            type: 'array',
+            items: new OA\Items(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'bookId', type: 'integer', example: 4),
+                    new OA\Property(property: 'quantity', type: 'integer', example: 2),
+                ],
+            ),
+        ),
     ],
     type: 'object',
 )]
@@ -44,12 +55,10 @@ final class OrderDataRequest extends FormRequest
     {
         $items = array_map(function (mixed $item): OrderItemInputDto {
             $item = is_array($item) ? $item : [];
-            $bookId = $item['bookId'] ?? 0;
-            $quantity = $item['quantity'] ?? 1;
 
             return new OrderItemInputDto(
-                bookId: is_int($bookId) ? $bookId : 0,
-                quantity: is_int($quantity) ? $quantity : 1,
+                bookId: (int) ($item['bookId'] ?? 0),
+                quantity: (int) ($item['quantity'] ?? 1),
             );
         }, (array) $this->input('items', []));
 
