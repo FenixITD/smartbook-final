@@ -29,13 +29,18 @@ Before you begin, make sure the following are installed on your machine:
 
 > PHP, Node.js, and Composer do **not** need to be installed — everything runs inside Docker containers.
 
----
-
 ## How to Deploy the Project
 
 1. Clone the project into a folder - `git clone https://github.com/FenixITD/smartbook-final <folder name>`
 2. Navigate to the project folder - `cd <folder name>`
 3. Run the command `./setup.sh` in your terminal
+
+> **Note:** the following ports must be free: `5432`, `6379`, `8000`, `8080`, `8123`, `9000`, `9001`, `9200`, `5050`, `8025`, `5672`, `15672`, `1025`.
+
+> **Note:** right after `setup.sh` finishes, the frontend may still be building
+> (the `node` container runs `npm install && npm run build`). Wait for it to exit
+> with code `0` (`docker compose ps`) before opening the site — otherwise you may see
+> a 500 error (missing `public/build/manifest.json`).
 
 ## Demo Accounts
 
