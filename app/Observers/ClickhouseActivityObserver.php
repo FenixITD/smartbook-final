@@ -16,7 +16,6 @@ final readonly class ClickhouseActivityObserver
 
     public function saving(ClickhouseActivity $activity): bool
     {
-        error_log('OBSERVER saving called');
         $row = $this->service->buildRow($activity);
 
         Redis::xadd('clickhouse_activities_stream', '*', ['payload' => json_encode($row)]);

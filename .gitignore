@@ -23,9 +23,15 @@ yarn-error.log
 /.zed
 *.dockerignore
 vendor
-node_modules
+node_modules/
 .php-cs-fixer.cache
 coverage/
 npm-debug.log*
 yarn-error.log*
 /public/coverage-report
+storage/framework/testing/
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+.git/
