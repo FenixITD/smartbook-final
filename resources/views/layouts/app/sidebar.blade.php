@@ -101,6 +101,12 @@
     </flux:dropdown>
 </flux:header>
 
+@if (session('warning'))
+    <flux:callout variant="warning" icon="exclamation-triangle">
+        {{ session('warning') }}
+    </flux:callout>
+@endif
+
 {{ $slot }}
 
 @fluxScripts

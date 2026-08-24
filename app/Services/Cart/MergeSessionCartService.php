@@ -54,10 +54,14 @@ class MergeSessionCartService
                     $booksById[$book->id] = $book;
                 }
 
+                $warnings = [];
+
                 foreach ($guestCart as $bookId => $guestItem) {
                     $book = $booksById[$bookId] ?? null;
 
                     if ($book === null) {
+                        $warnings[] = 'A book in your cart is no longer available.';
+
                         continue;
                     }
 
@@ -65,6 +69,12 @@ class MergeSessionCartService
                     $guestQty = $guestItem['quantity'];
 
                     $newQty = min($book->stock, $currentQty + $guestQty);
+
+                    if ($newQty < $currentQty + $guestQty) {
+                        $warnings[] = $newQty === 0
+                            ? "\"{$book->title}\" is no longer available and was removed from your cart."
+                            : "Only {$newQty} of \"{$book->title}\" available in stock. Your cart has been updated.";
+                    }
 
                     if ($newQty > 0) {
                         if (isset($userQuantities[$bookId])) {
@@ -78,9 +88,13 @@ class MergeSessionCartService
                         }
                     }
                 }
-            });
 
-            $this->guestCartService->clear();
+                if ($warnings !== []) {
+                    session()->flash('warning', implode(' ', $warnings));
+                }
+
+                $this->guestCartService->clear();
+            });
         } finally {
             $lock->release();
         }
