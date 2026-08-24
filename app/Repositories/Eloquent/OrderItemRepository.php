@@ -39,6 +39,22 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
         return OrderItemResponseDto::fromModel($orderItem);
     }
 
+    /** @param array<OrderItemDto> $data */
+    public function createMany(array $data): void
+    {
+        if ($data === []) {
+            return;
+        }
+
+        $now = now();
+
+        OrderItem::query()->insert(array_map(static fn (OrderItemDto $dto): array => [
+            ...$dto->toArray(),
+            'created_at' => $now,
+            'updated_at' => $now,
+        ], $data));
+    }
+
     public function update(int $id, OrderItemDto $data): OrderItemResponseDto
     {
         $orderItem = OrderItem::findOrFail($id);

@@ -119,14 +119,17 @@ class CreateOrderService
                 total: $total,
             ));
 
-            foreach ($items as $item) {
-                $this->orderItemRepository->create(new OrderItemDto(
+            $this->orderItemRepository->createMany(array_map(
+                static fn (OrderItemInputDto $item): OrderItemDto => new OrderItemDto(
                     orderId: $order->id,
                     bookId: $item->bookId,
                     quantity: $item->quantity,
                     priceAtPurchase: $lockedBooks[$item->bookId]->price,
-                ));
+                ),
+                $items,
+            ));
 
+            foreach ($items as $item) {
                 $decremented = $this->bookRepository->decrementStock($item->bookId, $item->quantity);
 
                 if (!$decremented) {

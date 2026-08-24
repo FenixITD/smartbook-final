@@ -17,6 +17,9 @@ interface OrderItemRepositoryInterface
 
     public function create(OrderItemDto $data): OrderItemResponseDto;
 
+    /** @param array<OrderItemDto> $data */
+    public function createMany(array $data): void;
+
     public function update(int $id, OrderItemDto $data): OrderItemResponseDto|null;
 
     public function delete(int $id): bool;

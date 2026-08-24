@@ -20,6 +20,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'items',
             type: 'array',
+            maxItems: 50,
             items: new OA\Items(
                 properties: [
                     new OA\Property(property: 'bookId', type: 'integer', example: 4),
@@ -45,9 +46,9 @@ final class OrderDataRequest extends FormRequest
             'userId' => ['required', 'integer', 'exists:users,id'],
             'shippingAddress' => ['required', 'string', 'max:255'],
             'paymentMethod' => ['required', 'string', Rule::in(['cash', 'card', 'webpay'])],
-            'items' => ['required', 'array', 'min:1'],
-            'items.*.bookId' => ['required', 'integer', 'exists:books,id'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items' => ['required', 'array', 'min:1', 'max:50'],
+            'items.*.bookId' => ['required', 'integer', 'distinct', 'exists:books,id'],
+            'items.*.quantity' => ['required', 'integer', 'min:1', 'max:99'],
         ];
     }
 
