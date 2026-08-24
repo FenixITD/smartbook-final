@@ -61,7 +61,8 @@
             <div class="w-full lg:w-96 shrink-0">
                 <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 sticky top-6">
 
-                    <form method="POST" action="{{ route('checkout.store') }}" class="flex flex-col gap-5">
+                    <form method="POST" action="{{ route('checkout.store') }}" class="flex flex-col gap-5"
+                          onsubmit="const b=this.querySelector('button[type=submit]'); if (b && !b.disabled) { b.disabled = true; b.textContent = 'Placing order...'; }">
                         @csrf
 
                         <flux:field>

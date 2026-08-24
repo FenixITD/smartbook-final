@@ -13,6 +13,7 @@ use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use App\Repositories\Interfaces\OrderItemRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\ValidationException;
 
 class CreateOrderService
@@ -27,6 +28,16 @@ class CreateOrderService
     }
 
     public function execute(OrderDto $dto): OrderResponseDto
+    {
+        $lock = Cache::lock("order_create_{$dto->userId}", 10);
+
+        /** @var OrderResponseDto $orderResponse */
+        $orderResponse = $lock->block(10, fn (): OrderResponseDto => $this->createOrderInTransaction($dto));
+
+        return $orderResponse;
+    }
+
+    private function createOrderInTransaction(OrderDto $dto): OrderResponseDto
     {
         /** @var OrderResponseDto $orderResponse */
         $orderResponse = $this->transactionManager->transaction(function () use ($dto): OrderResponseDto {
