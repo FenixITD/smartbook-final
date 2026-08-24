@@ -8,6 +8,7 @@ use App\Dto\PaginatedResponseDto;
 use App\Dto\Review\ReviewDto;
 use App\Dto\Review\ReviewFiltersDto;
 use App\Dto\Review\ReviewResponseDto;
+use App\Models\Review;
 
 interface ReviewRepositoryInterface
 {
@@ -32,6 +33,9 @@ interface ReviewRepositoryInterface
     public function update(int $id, ReviewDto $data): ReviewResponseDto|null;
 
     public function delete(int $id): bool;
+
+    /** @return array<Review> */
+    public function getModelsByBookId(int $bookId): array;
 
     public function getByBookId(int $bookId, int $perPage = 10): PaginatedResponseDto;
 

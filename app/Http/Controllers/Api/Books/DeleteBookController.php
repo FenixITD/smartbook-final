@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Books;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Services\Book\DeleteBookService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
@@ -37,13 +37,13 @@ use OpenApi\Attributes as OA;
 final class DeleteBookController extends Controller
 {
     public function __construct(
-        private BookRepositoryInterface $repository,
+        private DeleteBookService $service,
     ) {
     }
 
     public function __invoke(int $bookId): JsonResponse
     {
-        $this->repository->delete($bookId);
+        $this->service->execute($bookId);
 
         return response()->json([
             'message' => 'Book deleted successfully',

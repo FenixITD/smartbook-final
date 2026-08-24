@@ -148,6 +148,11 @@ final class ReviewRepository extends AbstractEloquentRepository implements Revie
         return PaginatedResponseDto::fromPaginator($paginator, static fn (Review $review) => BookReviewResponseDto::fromModel($review));
     }
 
+    public function getModelsByBookId(int $bookId): array
+    {
+        return Review::query()->where('book_id', $bookId)->get()->all();
+    }
+
     public function findByUserAndBook(int $userId, int $bookId): ReviewResponseDto|null
     {
         /** @var Review|null $review */

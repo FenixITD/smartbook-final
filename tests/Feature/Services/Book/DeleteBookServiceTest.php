@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 namespace Tests\Feature\Services\Book;
-use App\Models\{Author, Book};
+use App\Models\{Author, Book, Review, User};
 use App\Services\Book\DeleteBookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -22,4 +23,26 @@ final class DeleteBookServiceTest extends TestCase {
         $this->app->make(DeleteBookService::class)->execute($book->id);
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
     }
+    public function test_deleting_book_removes_its_reviews_through_model_events(): void {
+        Storage::fake('s3');
+        $user = User::factory()->create();
+        $secondUser = User::factory()->create();
+        $author = Author::factory()->create();
+        $book = Book::factory()->create(['author_id' => $author->id]);
+        $otherBook = Book::factory()->create(['author_id' => $author->id]);
+        $firstReview = Review::factory()->create(['user_id' => $user->id, 'book_id' => $book->id, 'rating' => 4]);
+        $secondReview = Review::factory()->create(['user_id' => $secondUser->id, 'book_id' => $book->id, 'rating' => 5]);
+        $keptReview = Review::factory()->create(['user_id' => $user->id, 'book_id' => $otherBook->id]);
+
+        Event::fake(['eloquent.deleted: '.Review::class]);
+
+        $this->app->make(DeleteBookService::class)->execute($book->id);
+
+        $this->assertDatabaseMissing('reviews', ['id' => $firstReview->id]);
+        $this->assertDatabaseMissing('reviews', ['id' => $secondReview->id]);
+        $this->assertDatabaseHas('reviews', ['id' => $keptReview->id]);
+
+        Event::assertDispatched('eloquent.deleted: '.Review::class, 2);
+    }
 }
+

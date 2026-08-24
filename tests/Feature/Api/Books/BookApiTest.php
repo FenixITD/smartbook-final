@@ -80,12 +80,15 @@ final class BookApiTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $author = Author::factory()->create();
+        $user = User::factory()->create();
         $book = Book::factory()->create(['author_id' => $author->id]);
+        $review = \App\Models\Review::factory()->create(['user_id' => $user->id, 'book_id' => $book->id]);
 
         $response = $this->actingAs($admin, 'sanctum')->deleteJson("/api/books/{$book->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
+        $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
     }
 
     public function test_search_suggest_admin(): void
