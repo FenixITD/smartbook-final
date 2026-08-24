@@ -19,7 +19,7 @@
                     {{-- Cover --}}
                     @if ($book->coverImage)
                         <div class="h-56 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                            <img src="{{ Storage::url($book->coverImage) }}" alt="{{ $book->title }}"
+                            <img src="{{ Storage::disk('s3')->url($book->coverImage) }}" alt="{{ $book->title }}"
                                  class="w-full h-full object-cover">
                         </div>
                     @endif

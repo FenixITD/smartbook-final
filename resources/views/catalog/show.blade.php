@@ -43,7 +43,7 @@
                 {{-- LEFT: Cover --}}
                 <div class="book-cover-wrapper">
                     @if ($book->coverImage)
-                        <img src="{{ Storage::url($book->coverImage) }}"
+                        <img src="{{ Storage::disk('s3')->url($book->coverImage) }}"
                              alt="{{ $book->title }}"
                              style="width: 100%; height: 480px; border-radius: 1rem; box-shadow: 0 4px 24px rgba(0,0,0,0.12); object-fit: cover; display: block; background-color: #f4f4f5; text-align: center; line-height: 480px; color: #a1a1aa;">
                     @else

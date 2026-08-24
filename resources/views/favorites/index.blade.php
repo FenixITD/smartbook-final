@@ -25,7 +25,7 @@
                                 {{-- Cover --}}
                                 <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
                                     @if ($book->coverImage)
-                                        <img src="{{ Storage::url($book->coverImage) }}"
+                                        <img src="{{ Storage::disk('s3')->url($book->coverImage) }}"
                                              alt="{{ $book->title }}"
                                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                     @else

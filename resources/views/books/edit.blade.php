@@ -70,7 +70,7 @@
                                 <flux:label for="cover_image">Cover image</flux:label>
                                 @if ($book->coverImage)
                                     <div class="mb-2 flex items-center gap-3">
-                                        <img src="{{ Storage::url($book->coverImage) }}" alt="Current cover"
+                                        <img src="{{ Storage::disk('s3')->url($book->coverImage) }}" alt="Current cover"
                                              class="w-12 h-16 object-cover rounded-lg border border-zinc-200">
                                         <span class="text-xs text-zinc-400">Current cover</span>
                                     </div>

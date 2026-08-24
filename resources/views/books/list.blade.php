@@ -101,7 +101,7 @@
                             <td class="px-6 py-4">
                                 <div class="w-10 h-14 rounded overflow-hidden bg-zinc-100 dark:bg-zinc-700">
                                     @if ($book->coverImage)
-                                        <img src="{{ Storage::url($book->coverImage) }}" alt="{{ $book->title }}"
+                                        <img src="{{ Storage::disk('s3')->url($book->coverImage) }}" alt="{{ $book->title }}"
                                              class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">

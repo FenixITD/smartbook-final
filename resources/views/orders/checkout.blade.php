@@ -30,7 +30,7 @@
                             <div class="flex items-center gap-4 p-4">
                                 <div class="w-14 h-20 rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0">
                                     @if ($item->book?->coverImage)
-                                        <img src="{{ Storage::url($item->book->coverImage) }}" alt="{{ $item->book->title }}"
+                                        <img src="{{ Storage::disk('s3')->url($item->book->coverImage) }}" alt="{{ $item->book->title }}"
                                              class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
