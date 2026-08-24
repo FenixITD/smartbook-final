@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Web\Orders;
 
-use App\Http\Requests\Order\OrderDataRequest;
+use App\Http\Requests\Order\OrderUpdateRequest;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Services\Order\UpdateOrderService;
 use Illuminate\Http\RedirectResponse;
@@ -25,7 +25,7 @@ final readonly class UpdateOrderController
         return view('orders.edit', compact('order'));
     }
 
-    public function update(OrderDataRequest $request, int $orderId): RedirectResponse
+    public function update(OrderUpdateRequest $request, int $orderId): RedirectResponse
     {
         $this->service->execute($orderId, $request->toDto());
 

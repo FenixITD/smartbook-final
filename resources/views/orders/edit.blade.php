@@ -22,9 +22,8 @@
                     </flux:field>
 
                     <flux:field>
-                        <flux:label for="total">Total ($)</flux:label>
-                        <flux:input id="total" name="total" type="number" step="0.01" min="0" value="{{ old('total', $order->total) }}" :invalid="$errors->has('total')" />
-                        @error('total') <flux:error>{{ $message }}</flux:error> @enderror
+                        <flux:label for="total">Total</flux:label>
+                        <flux:text class="text-sm font-bold">${{ number_format($order->total, 2) }}</flux:text>
                     </flux:field>
 
                     <flux:field>

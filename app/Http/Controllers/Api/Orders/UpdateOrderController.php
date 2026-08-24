@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Orders;
 
-use App\Http\Requests\Order\OrderDataRequest;
+use App\Http\Requests\Order\OrderUpdateRequest;
 use App\Http\Resources\Order\OrderResource;
 use App\Services\Order\UpdateOrderService;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +17,7 @@ use OpenApi\Attributes as OA;
     requestBody: new OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
-            ref: '#/components/schemas/OrderDataRequest'
+            ref: '#/components/schemas/OrderUpdateRequest'
         ),
     ),
     tags: ['Orders'],
@@ -50,7 +50,7 @@ readonly class UpdateOrderController
     ) {
     }
 
-    public function __invoke(OrderDataRequest $request, int $orderId): JsonResponse
+    public function __invoke(OrderUpdateRequest $request, int $orderId): JsonResponse
     {
         $updatedOrder = $this->service->execute($orderId, $request->toDto());
 
