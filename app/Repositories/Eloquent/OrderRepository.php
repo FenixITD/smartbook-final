@@ -38,7 +38,11 @@ final class OrderRepository extends AbstractEloquentRepository implements OrderR
 
         $user = auth()->user();
 
-        if ($user !== null && $user->role !== 'admin') {
+        if ($user === null) {
+            return $query->whereRaw('1 = 0');
+        }
+
+        if ($user->role !== 'admin') {
             $query->where('orders.user_id', $user->id);
         }
 
