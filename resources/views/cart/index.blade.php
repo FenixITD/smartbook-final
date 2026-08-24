@@ -69,7 +69,7 @@
 
                                     {{-- Cover --}}
                                     <div class="w-14 h-20 rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-800 shrink-0">
-                                        @if ($item->book->coverImage)
+                                        @if ($item->book?->coverImage)
                                             <img src="{{ Storage::url($item->book->coverImage) }}" alt="{{ $item->book->title }}"
                                                  class="w-full h-full object-cover">
                                         @else
@@ -81,10 +81,10 @@
 
                                     {{-- Info --}}
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-xs text-zinc-400 truncate">{{ $item->book->authorName ?? '—' }}</p>
-                                        <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{{ $item->book->title }}</p>
+                                        <p class="text-xs text-zinc-400 truncate">{{ $item->book?->authorName ?? '—' }}</p>
+                                        <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{{ $item->book?->title }}</p>
                                         <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
-                                            ${{ number_format($item->book->price, 2) }}
+                                            ${{ number_format($item->book?->price ?? 0, 2) }}
                                         </p>
                                     </div>
 
@@ -130,7 +130,7 @@
                                     {{-- Subtotal --}}
                                     <div class="w-20 text-right shrink-0">
                                         <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                                            ${{ number_format($item->book->price * $item->quantity, 2) }}
+                                            ${{ number_format(($item->book?->price ?? 0) * $item->quantity, 2) }}
                                         </p>
                                     </div>
 
@@ -146,7 +146,7 @@
 
                                         <flux:modal name="delete-cart-item-{{ $item->bookId }}" class="min-w-[22rem]">
                                             <flux:heading size="lg">Remove item?</flux:heading>
-                                            <flux:subheading>Are you sure you want to remove "{{ $item->book->title }}" from your cart?</flux:subheading>
+                                            <flux:subheading>Are you sure you want to remove "{{ $item->book?->title }}" from your cart?</flux:subheading>
 
                                             <div class="flex gap-2 mt-6 justify-end">
                                                 <flux:modal.close>

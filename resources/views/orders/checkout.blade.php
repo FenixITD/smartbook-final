@@ -42,13 +42,13 @@
                                     <p class="text-xs text-zinc-400 truncate">{{ $item->book?->authorName ?? '—' }}</p>
                                     <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">{{ $item->book?->title }}</p>
                                     <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
-                                        ${{ number_format($item->book->price, 2) }}
+                                        ${{ number_format($item->book?->price ?? 0, 2) }}
                                     </p>
                                 </div>
                                 <div class="text-right shrink-0">
                                     <p class="text-xs text-zinc-500">x{{ $item->quantity }}</p>
                                     <p class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                                        ${{ number_format($item->book->price * $item->quantity, 2) }}
+                                        ${{ number_format(($item->book?->price ?? 0) * $item->quantity, 2) }}
                                     </p>
                                 </div>
                             </div>
