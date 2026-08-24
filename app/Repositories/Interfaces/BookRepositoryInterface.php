@@ -69,6 +69,9 @@ interface BookRepositoryInterface
      */
     public function decrementStock(int $bookId, int $quantity): bool;
 
+    /** @return bool true if the stock was incremented, false if the book does not exist. */
+    public function incrementStock(int $bookId, int $quantity): bool;
+
     /**
      * @param array<int> $ids
      * @return array<int, BookResponseDto>

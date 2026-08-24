@@ -31,6 +31,17 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
         return $orderItemId !== null ? OrderItemResponseDto::fromModel($orderItemId) : null;
     }
 
+    /** @return array<OrderItemResponseDto> */
+    public function getAllByOrderId(int $orderId): array
+    {
+        return OrderItem::query()
+            ->where('order_id', $orderId)
+            ->orderBy('id')
+            ->get()
+            ->map(static fn (OrderItem $item) => OrderItemResponseDto::fromModel($item))
+            ->all();
+    }
+
     public function create(OrderItemDto $data): OrderItemResponseDto
     {
         /** @var OrderItem $orderItem */

@@ -248,6 +248,17 @@ final class BookRepository implements BookRepositoryInterface
         return (bool) $book->decrement('stock', $quantity);
     }
 
+    public function incrementStock(int $bookId, int $quantity): bool
+    {
+        $book = Book::find($bookId);
+
+        if ($book === null) {
+            return false;
+        }
+
+        return (bool) $book->increment('stock', $quantity);
+    }
+
     /** @param array<int> $ids
      * @return array<int, BookResponseDto>
      */

@@ -1,8 +1,13 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Feature\Api\Orders;
 
+use App\Models\Author;
+use App\Models\Book;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\User;
 use App\Services\Order\SearchSuggestOrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -32,12 +37,27 @@ final class OrderApiTest extends TestCase
 
         $mock = Mockery::mock(SearchSuggestOrderService::class);
         $mock->shouldReceive('execute')->withAnyArgs()->andReturn([
-            ['id' => $order->id, 'user_name' => 'User', 'status' => 'pending', 'url' => 'http://localhost/orders/1']
+            ['id' => $order->id, 'user_name' => 'User', 'status' => 'pending', 'url' => 'http://localhost/orders/1'],
         ]);
         $this->app->instance(SearchSuggestOrderService::class, $mock);
 
         $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.orders.suggest', ['q' => 'pend']));
 
         $response->assertStatus(200)->assertJsonPath('0.id', $order->id);
+    }
+
+    public function test_admin_can_delete_pending_order_and_restore_stock(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $user = User::factory()->create();
+        $book = Book::factory()->for(Author::factory())->create(['status' => 'active', 'stock' => 0]);
+        $order = Order::factory()->create(['user_id' => $user->id, 'status' => 'pending']);
+        OrderItem::factory()->create(['order_id' => $order->id, 'book_id' => $book->id, 'quantity' => 10]);
+
+        $response = $this->actingAs($admin, 'sanctum')->deleteJson("/api/orders/{$order->id}");
+
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('orders', ['id' => $order->id]);
+        $this->assertDatabaseHas('books', ['id' => $book->id, 'stock' => 10]);
     }
 }

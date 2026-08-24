@@ -15,6 +15,9 @@ interface OrderItemRepositoryInterface
 
     public function getById(int $id): OrderItemResponseDto|null;
 
+    /** @return array<OrderItemResponseDto> */
+    public function getAllByOrderId(int $orderId): array;
+
     public function create(OrderItemDto $data): OrderItemResponseDto;
 
     /** @param array<OrderItemDto> $data */
