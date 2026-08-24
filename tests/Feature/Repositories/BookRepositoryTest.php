@@ -12,6 +12,8 @@ use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\Review;
+use App\Models\User;
 use App\Repositories\Eloquent\BookRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -405,5 +407,37 @@ class BookRepositoryTest extends TestCase
         $result = $this->repository->findByIdWithRelations($book->id);
 
         $this->assertNotNull($result->authorName);
+    }
+
+    public function test_recalculate_rating_writes_zero_when_book_has_no_reviews(): void
+    {
+        $book = Book::factory()->for(Author::factory())->create([
+            'average_rating' => 4.50,
+            'ratings_count' => 2,
+        ]);
+
+        $this->repository->recalculateRating($book->id);
+
+        $fresh = $book->fresh();
+
+        $this->assertNotNull($fresh);
+        $this->assertSame(0, (int) $fresh->ratings_count);
+        $this->assertEqualsWithDelta(0.0, (float) $fresh->average_rating, 0.001);
+    }
+
+    public function test_recalculate_rating_averages_existing_reviews(): void
+    {
+        $book = Book::factory()->for(Author::factory())->create();
+
+        Review::factory()->for(User::factory())->create(['book_id' => $book->id, 'rating' => 4]);
+        Review::factory()->for(User::factory())->create(['book_id' => $book->id, 'rating' => 5]);
+
+        $this->repository->recalculateRating($book->id);
+
+        $fresh = $book->fresh();
+
+        $this->assertNotNull($fresh);
+        $this->assertSame(2, (int) $fresh->ratings_count);
+        $this->assertEqualsWithDelta(4.5, (float) $fresh->average_rating, 0.001);
     }
 }

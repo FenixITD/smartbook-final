@@ -151,4 +151,26 @@ final class ReviewWebTest extends TestCase
         $response->assertRedirect('/catalog/book')->assertSessionHas('success');
         $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
     }
+
+    public function test_deleting_last_review_resets_book_rating(): void
+    {
+        $user = User::factory()->create();
+        $author = Author::factory()->create();
+        $book = Book::factory()->create(['author_id' => $author->id]);
+        $review = Review::factory()->create(['user_id' => $user->id, 'book_id' => $book->id, 'rating' => 5]);
+
+        $book->refresh();
+        $this->assertSame(1, (int) $book->ratings_count);
+
+        $response = $this->actingAs($user)
+            ->from('/catalog/book')
+            ->delete("/_test/public-reviews/{$review->id}");
+
+        $response->assertRedirect('/catalog/book')->assertSessionHas('success');
+        $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
+
+        $book->refresh();
+        $this->assertSame(0, (int) $book->ratings_count);
+        $this->assertEqualsWithDelta(0.0, (float) $book->average_rating, 0.001);
+    }
 }

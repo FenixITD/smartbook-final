@@ -232,7 +232,7 @@ final class BookRepository implements BookRepositoryInterface
         $averageRating = is_numeric($rawAvg) ? round((float) $rawAvg, 2) : null;
 
         $book->update([
-            'average_rating' => $ratingsCount > 0 ? $averageRating : null,
+            'average_rating' => $ratingsCount > 0 ? $averageRating : 0,
             'ratings_count' => $ratingsCount,
         ]);
     }
