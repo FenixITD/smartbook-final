@@ -75,6 +75,8 @@ class CreateOrderService
                 ]);
             }
 
+            $items = $this->mergeItemsByBook($items);
+
             $bookIds = array_map(
                 static fn (OrderItemInputDto $item): int => $item->bookId,
                 $items,
@@ -172,5 +174,29 @@ class CreateOrderService
 
             $cartQuantities[$item->bookId] = max(0, $remaining);
         }
+    }
+
+    /**
+     * @param array<OrderItemInputDto> $items
+     * @return array<OrderItemInputDto>
+     */
+    private function mergeItemsByBook(array $items): array
+    {
+        $merged = [];
+
+        foreach ($items as $item) {
+            if (isset($merged[$item->bookId])) {
+                $merged[$item->bookId] = new OrderItemInputDto(
+                    bookId: $item->bookId,
+                    quantity: $merged[$item->bookId]->quantity + $item->quantity,
+                );
+
+                continue;
+            }
+
+            $merged[$item->bookId] = $item;
+        }
+
+        return array_values($merged);
     }
 }
