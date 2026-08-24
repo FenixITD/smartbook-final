@@ -40,6 +40,6 @@ class SearchSuggestCatalogBookService extends AbstractSearchSuggestService
     protected function fetchEntities(array $ids): array
     {
         /** @phpstan-ignore-next-line */
-        return $this->repository->getOrderedByIds($ids, perPage: 5)->items;
+        return $this->repository->getOrderedActiveByIds($ids, perPage: 5)->items;
     }
 }

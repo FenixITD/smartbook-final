@@ -53,6 +53,9 @@ interface BookRepositoryInterface
     /** @param array<int> $ids */
     public function getOrderedByIds(array $ids, int $perPage): PaginatedResponseDto;
 
+    /** @param array<int> $ids */
+    public function getOrderedActiveByIds(array $ids, int $perPage): PaginatedResponseDto;
+
     public function create(BookDto $data): BookResponseDto;
 
     public function update(int $id, BookDto $data): BookResponseDto|null;

@@ -20,6 +20,11 @@ final readonly class GetPublicBookController
     public function __invoke(string $slug): View
     {
         $book = $this->bookRepository->findBySlugWithRelations($slug);
+
+        if ($book->status !== 'active' && Auth::user()?->role !== 'admin') {
+            abort(404);
+        }
+
         $reviews = $this->reviewRepository->getByBookId($book->id);
 
         $userReview = null;

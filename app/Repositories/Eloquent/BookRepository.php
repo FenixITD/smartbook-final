@@ -175,6 +175,19 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
+    /** @param array<int> $ids */
+    public function getOrderedActiveByIds(array $ids, int $perPage): PaginatedResponseDto
+    {
+        $paginator = Book::with('author')
+            ->whereIn('id', $ids)
+            ->where('status', 'active')
+            ->orderByRaw($this->orderByIds($ids))
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return PaginatedResponseDto::fromPaginator($paginator, static fn (Book $book) => BookResponseDto::fromModel($book));
+    }
+
     public function create(BookDto $data): BookResponseDto
     {
         /** @var Book $book */

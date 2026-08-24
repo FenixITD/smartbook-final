@@ -6,6 +6,7 @@ namespace App\Http\Requests\CartItem;
 
 use App\Dto\CartItem\CartItemDto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -30,7 +31,7 @@ class CartItemDataRequest extends FormRequest
     {
         return [
             'userId' => ['required', 'integer', 'exists:users,id'],
-            'bookId' => ['required', 'integer', 'exists:books,id'],
+            'bookId' => ['required', 'integer', Rule::exists('books', 'id')->where('status', 'active')],
             'quantity' => ['required', 'integer'],
         ];
     }

@@ -93,6 +93,12 @@ class CreateOrderService
                     ]);
                 }
 
+                if ($lockedBook->status !== 'active') {
+                    throw ValidationException::withMessages([
+                        'items' => "Book \"{$lockedBook->title}\" is no longer available.",
+                    ]);
+                }
+
                 if ($lockedBook->stock < $item->quantity) {
                     throw ValidationException::withMessages([
                         'stock' => "Not enough stock for book: {$lockedBook->title}",
