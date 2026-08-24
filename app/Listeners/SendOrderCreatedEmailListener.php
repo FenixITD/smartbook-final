@@ -22,6 +22,8 @@ final class SendOrderCreatedEmailListener implements ShouldQueue, ShouldBeUnique
 
     public int $backoff = 60;
 
+    public $afterCommit = true;
+
     public function handle(OrderCreatedEvent $event): void
     {
         Mail::to($event->dto->userEmail)

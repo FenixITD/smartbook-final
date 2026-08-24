@@ -22,6 +22,8 @@ final class SendOrderStatusEmailListener implements ShouldQueue, ShouldBeUnique
 
     public int $backoff = 60;
 
+    public $afterCommit = true;
+
     public function uniqueId(OrderStatusChangedEvent $event): string
     {
         return 'order_status_'.$event->dto->orderId;

@@ -6,6 +6,7 @@ namespace App\Observers;
 
 use App\Models\ClickhouseActivity;
 use App\Services\Clickhouse\ClickhouseActivityService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 
 final readonly class ClickhouseActivityObserver
@@ -18,7 +19,9 @@ final readonly class ClickhouseActivityObserver
     {
         $row = $this->service->buildRow($activity);
 
-        Redis::xadd('clickhouse_activities_stream', '*', ['payload' => json_encode($row)]);
+        DB::afterCommit(function () use ($row): void {
+            Redis::xadd('clickhouse_activities_stream', '*', ['payload' => json_encode($row)]);
+        });
 
         $activity->id = is_numeric($row['id'] ?? null) ? (int) $row['id'] : 0;
         $activity->exists = true;

@@ -16,7 +16,7 @@ return [
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
             'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
-            'after_commit' => false,
+            'after_commit' => true,
         ],
 
         // RabbitMQ
@@ -24,6 +24,7 @@ return [
             'driver' => 'rabbitmq',
             'queue' => env('RABBITMQ_QUEUE', 'default'),
             'connection' => PhpAmqpLib\Connection\AMQPLazyConnection::class,
+            'after_commit' => true,
 
             'hosts' => [
                 [
