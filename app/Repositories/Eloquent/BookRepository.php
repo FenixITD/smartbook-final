@@ -239,11 +239,13 @@ final class BookRepository implements BookRepositoryInterface
 
     public function decrementStock(int $bookId, int $quantity): bool
     {
-        $affected = Book::where('id', $bookId)
-            ->where('stock', '>=', $quantity)
-            ->decrement('stock', $quantity);
+        $book = Book::find($bookId);
 
-        return $affected > 0;
+        if ($book === null || $book->stock < $quantity) {
+            return false;
+        }
+
+        return (bool) $book->decrement('stock', $quantity);
     }
 
     /** @param array<int> $ids
