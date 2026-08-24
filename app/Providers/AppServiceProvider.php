@@ -49,10 +49,13 @@ use Carbon\CarbonImmutable;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -205,5 +208,9 @@ class AppServiceProvider extends ServiceProvider
                 ->numbers()
                 ->symbols()
         );
+
+        // Required by $middleware->throttleApi() (bootstrap/app.php); unauthenticated requests are keyed by IP
+        RateLimiter::for('api', static fn (Request $request): Limit => Limit::perMinute(60)
+            ->by($request->user()?->id ?: $request->ip()));
     }
 }
