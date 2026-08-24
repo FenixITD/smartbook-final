@@ -130,11 +130,41 @@ class CreateOrderService
 
             if (!$useDirectItems) {
                 $this->cartItemRepository->deleteByUserId($dto->userId);
+            } else {
+                $this->consumeCartItems($dto->userId, $items);
             }
 
             return $order;
         });
 
         return $orderResponse;
+    }
+
+    /** @param array<OrderItemInputDto> $items */
+    private function consumeCartItems(int $userId, array $items): void
+    {
+        $cartQuantities = [];
+
+        foreach ($this->cartItemRepository->getAllByUserId($userId) as $cartItem) {
+            $cartQuantities[$cartItem->bookId] = $cartItem->quantity;
+        }
+
+        foreach ($items as $item) {
+            $available = $cartQuantities[$item->bookId] ?? 0;
+
+            if ($available <= 0) {
+                continue;
+            }
+
+            $remaining = $available - $item->quantity;
+
+            if ($remaining > 0) {
+                $this->cartItemRepository->updateByUserAndBook($userId, $item->bookId, $remaining);
+            } else {
+                $this->cartItemRepository->deleteByUserAndBook($userId, $item->bookId);
+            }
+
+            $cartQuantities[$item->bookId] = max(0, $remaining);
+        }
     }
 }
