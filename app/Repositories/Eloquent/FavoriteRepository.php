@@ -82,7 +82,6 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
     {
         return Favorite::where('user_id', $userId)
             ->orderByDesc('created_at')
-            ->limit(100)
             ->pluck('book_id')
             ->map(static fn (mixed $id) => is_numeric($id) ? (int) $id : throw new UnexpectedValueException('book_id is not numeric'))
             ->all();

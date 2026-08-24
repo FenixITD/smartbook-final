@@ -303,6 +303,27 @@ class FavoriteRepositoryTest extends TestCase
         $this->assertContains($book2->id, $result);
     }
 
+    public function test_get_book_ids_by_user_returns_all_ids_beyond_hundred(): void
+    {
+        $author = Author::factory()->create();
+        $books = Book::factory()->count(150)->create(['author_id' => $author->id]);
+        $now = now();
+
+        Favorite::insert($books->map(fn (Book $book): array => [
+            'user_id' => $this->user->id,
+            'book_id' => $book->id,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ])->all());
+
+        $result = $this->repository->getBookIdsByUser($this->user->id);
+
+        $this->assertCount(150, $result);
+        foreach ($books as $book) {
+            $this->assertContains($book->id, $result);
+        }
+    }
+
     public function test_get_book_ids_by_user_does_not_return_other_users_favorites(): void
     {
         $user2 = User::factory()->create();
@@ -316,24 +337,6 @@ class FavoriteRepositoryTest extends TestCase
         $this->assertCount(1, $result);
         $this->assertContains($this->book->id, $result);
         $this->assertNotContains($book2->id, $result);
-    }
-
-    public function test_get_book_ids_by_user_limits_to_100_results(): void
-    {
-        $users = User::factory()->count(100)->create();
-
-        foreach (range(1, 100) as $i) {
-            $book = $this->createBook('book-limit-' . $i);
-            Favorite::create(['user_id' => $this->user->id, 'book_id' => $book->id]);
-        }
-
-        $extraBook = $this->createBook('book-limit-extra');
-        $extraUser = $users->first();
-        Favorite::create(['user_id' => $this->user->id, 'book_id' => $extraBook->id]);
-
-        $result = $this->repository->getBookIdsByUser($this->user->id);
-
-        $this->assertCount(100, $result);
     }
 
     public function test_get_book_ids_by_user_returns_array_of_integers(): void
