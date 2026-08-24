@@ -21,7 +21,7 @@ final class SendOrderCreatedEmailListener implements ShouldQueue
 
     public int $backoff = 60;
 
-    public $afterCommit = true;
+    public bool $afterCommit = true;
 
     public function handle(OrderCreatedEvent $event): void
     {

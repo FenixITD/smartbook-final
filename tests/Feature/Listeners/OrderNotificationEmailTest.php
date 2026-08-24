@@ -47,6 +47,12 @@ final class OrderNotificationEmailTest extends TestCase
         $this->assertCount(1, Event::getListeners(OrderStatusChangedEvent::class));
     }
 
+    public function test_order_email_listeners_dispatch_after_commit(): void
+    {
+        $this->assertTrue((new SendOrderCreatedEmailListener)->afterCommit);
+        $this->assertTrue((new SendOrderStatusEmailListener)->afterCommit);
+    }
+
     public function test_created_emails_for_different_orders_are_all_queued(): void
     {
         Queue::fake();
