@@ -192,14 +192,18 @@ class AppServiceProvider extends ServiceProvider
             config('app.env') === 'production',
         );
 
-        Password::defaults(static fn (): Password|null => config('app.env') === 'production'
+        Password::defaults(static fn (): Password => config('app.env') === 'production'
             ? Password::min(12)
                 ->mixedCase()
                 ->letters()
                 ->numbers()
                 ->symbols()
                 ->uncompromised()
-            : null
+            : Password::min(12)
+                ->mixedCase()
+                ->letters()
+                ->numbers()
+                ->symbols()
         );
     }
 }
