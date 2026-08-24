@@ -36,8 +36,19 @@ final class ReviewObserver
 
     public function updated(Review $review): void
     {
-        if (! $review->wasChanged('rating')) {
+        $bookChanged = $review->wasChanged('book_id');
+        $ratingChanged = $review->wasChanged('rating');
+
+        if (! $bookChanged && ! $ratingChanged) {
             return;
+        }
+
+        if ($bookChanged) {
+            $originalRaw = $review->getOriginal('book_id');
+
+            if (is_int($originalRaw) || is_string($originalRaw)) {
+                $this->bookRepository->recalculateRating((int) $originalRaw);
+            }
         }
 
         $this->bookRepository->recalculateRating($review->book_id);

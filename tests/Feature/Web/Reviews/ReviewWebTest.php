@@ -173,4 +173,81 @@ final class ReviewWebTest extends TestCase
         $this->assertSame(0, (int) $book->ratings_count);
         $this->assertEqualsWithDelta(0.0, (float) $book->average_rating, 0.001);
     }
+
+    public function test_admin_can_move_review_to_another_book_and_both_ratings_recalculated(): void
+    {
+        $user = User::factory()->create();
+        $author = Author::factory()->create();
+        $firstBook = Book::factory()->create(['author_id' => $author->id]);
+        $secondBook = Book::factory()->create(['author_id' => $author->id]);
+        $review = Review::factory()->create(['user_id' => $user->id, 'book_id' => $firstBook->id, 'rating' => 5]);
+
+        $response = $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->put("/reviews/{$review->id}", [
+                'userId' => $user->id,
+                'bookId' => $secondBook->id,
+                'rating' => 5,
+                'comment' => 'Moved to another book',
+            ]);
+
+        $response->assertRedirect(route('reviews.index'));
+        $this->assertDatabaseHas('reviews', ['id' => $review->id, 'book_id' => $secondBook->id, 'rating' => 5]);
+
+        $firstBook->refresh();
+        $this->assertSame(0, (int) $firstBook->ratings_count);
+        $this->assertEqualsWithDelta(0.0, (float) $firstBook->average_rating, 0.001);
+
+        $secondBook->refresh();
+        $this->assertSame(1, (int) $secondBook->ratings_count);
+        $this->assertEqualsWithDelta(5.0, (float) $secondBook->average_rating, 0.001);
+    }
+
+    public function test_moving_review_with_rating_change_recalculates_old_book_too(): void
+    {
+        $user = User::factory()->create();
+        $author = Author::factory()->create();
+        $firstBook = Book::factory()->create(['author_id' => $author->id]);
+        $secondBook = Book::factory()->create(['author_id' => $author->id]);
+        $review = Review::factory()->create(['user_id' => $user->id, 'book_id' => $firstBook->id, 'rating' => 5]);
+
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->put("/reviews/{$review->id}", [
+                'userId' => $user->id,
+                'bookId' => $secondBook->id,
+                'rating' => 3,
+                'comment' => 'Moved with new rating',
+            ]);
+
+        $this->assertDatabaseHas('reviews', ['id' => $review->id, 'book_id' => $secondBook->id, 'rating' => 3]);
+
+        $firstBook->refresh();
+        $this->assertSame(0, (int) $firstBook->ratings_count);
+        $this->assertEqualsWithDelta(0.0, (float) $firstBook->average_rating, 0.001);
+
+        $secondBook->refresh();
+        $this->assertSame(1, (int) $secondBook->ratings_count);
+        $this->assertEqualsWithDelta(3.0, (float) $secondBook->average_rating, 0.001);
+    }
+
+    public function test_rating_only_update_recalculates_same_book_as_before(): void
+    {
+        $user = User::factory()->create();
+        $author = Author::factory()->create();
+        $book = Book::factory()->create(['author_id' => $author->id]);
+        $review = Review::factory()->create(['user_id' => $user->id, 'book_id' => $book->id, 'rating' => 5]);
+
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->put("/reviews/{$review->id}", [
+                'userId' => $user->id,
+                'bookId' => $book->id,
+                'rating' => 2,
+                'comment' => 'Rating only change',
+            ]);
+
+        $this->assertDatabaseHas('reviews', ['id' => $review->id, 'book_id' => $book->id, 'rating' => 2]);
+
+        $book->refresh();
+        $this->assertSame(1, (int) $book->ratings_count);
+        $this->assertEqualsWithDelta(2.0, (float) $book->average_rating, 0.001);
+    }
 }
