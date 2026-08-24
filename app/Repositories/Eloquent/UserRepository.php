@@ -31,6 +31,8 @@ final class UserRepository implements UserRepositoryInterface
         /** @var User $user */
         $user = User::findOrFail($userId);
 
+        $user->tokens()->delete();
+
         return $user->createToken($name)->plainTextToken;
     }
 }

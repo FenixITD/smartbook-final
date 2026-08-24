@@ -11,3 +11,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('clickhouse:sync-activities')->everyMinute();
+
+Schedule::command('sanctum:prune-expired')->daily();

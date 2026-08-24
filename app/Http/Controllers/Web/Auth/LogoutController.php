@@ -13,6 +13,8 @@ final class LogoutController extends Controller
 {
     public function __invoke(Request $request): RedirectResponse
     {
+        $request->user()?->tokens()->delete();
+
         Auth::logout();
 
         $request->session()->invalidate();
