@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 namespace Tests\Feature\Services\Book;
-use App\Models\{Author, Book, Review, User};
+use App\Models\{Author, Book, OrderItem, Review, User};
 use App\Services\Book\DeleteBookService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 final class DeleteBookServiceTest extends TestCase {
@@ -43,6 +44,24 @@ final class DeleteBookServiceTest extends TestCase {
         $this->assertDatabaseHas('reviews', ['id' => $keptReview->id]);
 
         Event::assertDispatched('eloquent.deleted: '.Review::class, 2);
+    }
+    public function test_deleting_ordered_book_is_rejected_and_cover_survives(): void {
+        Storage::fake('s3');
+        Storage::disk('s3')->put('covers/ordered-book.jpg', 'image-content');
+        $author = Author::factory()->create();
+        $book = Book::factory()->create(['author_id' => $author->id, 'cover_image' => 'covers/ordered-book.jpg']);
+        $buyer = User::factory()->create();
+        $order = \App\Models\Order::factory()->create(['user_id' => $buyer->id]);
+        OrderItem::factory()->create(['order_id' => $order->id, 'book_id' => $book->id]);
+
+        try {
+            $this->app->make(DeleteBookService::class)->execute($book->id);
+            $this->fail('ValidationException was not thrown.');
+        } catch (ValidationException) {
+        }
+
+        $this->assertDatabaseHas('books', ['id' => $book->id]);
+        Storage::disk('s3')->assertExists('covers/ordered-book.jpg');
     }
 }
 

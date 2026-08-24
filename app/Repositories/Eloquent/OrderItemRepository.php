@@ -42,6 +42,11 @@ final class OrderItemRepository implements OrderItemRepositoryInterface
             ->all();
     }
 
+    public function existsByBookId(int $bookId): bool
+    {
+        return OrderItem::query()->where('book_id', $bookId)->exists();
+    }
+
     public function create(OrderItemDto $data): OrderItemResponseDto
     {
         /** @var OrderItem $orderItem */

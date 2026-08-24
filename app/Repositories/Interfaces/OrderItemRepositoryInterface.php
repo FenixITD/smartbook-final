@@ -18,6 +18,8 @@ interface OrderItemRepositoryInterface
     /** @return array<OrderItemResponseDto> */
     public function getAllByOrderId(int $orderId): array;
 
+    public function existsByBookId(int $bookId): bool;
+
     public function create(OrderItemDto $data): OrderItemResponseDto;
 
     /** @param array<OrderItemDto> $data */
