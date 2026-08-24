@@ -6,13 +6,12 @@ namespace App\Listeners;
 
 use App\Events\OrderCreatedEvent;
 use App\Mail\OrderStatusMail;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
-final class SendOrderCreatedEmailListener implements ShouldQueue, ShouldBeUnique
+final class SendOrderCreatedEmailListener implements ShouldQueue
 {
     use InteractsWithQueue;
 

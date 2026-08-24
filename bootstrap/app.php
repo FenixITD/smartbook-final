@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
+    // Listeners are registered explicitly in AppServiceProvider.
+    // Laravel 12 enables event discovery by default, which would register
+    // every listener a second time (Class@handle) and duplicate notifications.
+    ->withEvents(discover: false)
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: []);
 
@@ -28,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return true;
             }
+
             return $request->expectsJson();
         });
     })->create();

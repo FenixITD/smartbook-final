@@ -6,13 +6,12 @@ namespace App\Listeners;
 
 use App\Events\OrderStatusChangedEvent;
 use App\Mail\OrderStatusMail;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 
-final class SendOrderStatusEmailListener implements ShouldQueue, ShouldBeUnique
+final class SendOrderStatusEmailListener implements ShouldQueue
 {
     use InteractsWithQueue;
 
@@ -23,16 +22,6 @@ final class SendOrderStatusEmailListener implements ShouldQueue, ShouldBeUnique
     public int $backoff = 60;
 
     public $afterCommit = true;
-
-    public function uniqueId(OrderStatusChangedEvent $event): string
-    {
-        return 'order_status_'.$event->dto->orderId;
-    }
-
-    public function uniqueFor(): int
-    {
-        return 60;
-    }
 
     public function handle(OrderStatusChangedEvent $event): void
     {
