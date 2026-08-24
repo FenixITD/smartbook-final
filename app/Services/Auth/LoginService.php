@@ -12,14 +12,20 @@ use Illuminate\Validation\ValidationException;
 
 class LoginService
 {
+    private const MAX_ATTEMPTS_PER_CREDENTIAL = 5;
+    private const MAX_ATTEMPTS_PER_IP = 20;
+
     public function login(LoginDto $dto): bool
     {
         $throttleKey = Str::transliterate(Str::lower($dto->email).'|'.$dto->ip);
+        $ipThrottleKey = 'login-ip:'.Str::transliterate($dto->ip);
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            $seconds = RateLimiter::availableIn($throttleKey);
+        if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_ATTEMPTS_PER_CREDENTIAL)) {
+            throw $this->throttled($throttleKey);
+        }
 
-            throw ValidationException::withMessages(['email' => __('auth.throttle', ['seconds' => $seconds, 'minutes' => ceil($seconds / 60)])]);
+        if (RateLimiter::tooManyAttempts($ipThrottleKey, self::MAX_ATTEMPTS_PER_IP)) {
+            throw $this->throttled($ipThrottleKey);
         }
 
         $attempt = Auth::attempt(
@@ -32,6 +38,7 @@ class LoginService
 
         if (!$attempt) {
             RateLimiter::hit($throttleKey);
+            RateLimiter::hit($ipThrottleKey);
 
             return false;
         }
@@ -39,5 +46,12 @@ class LoginService
         RateLimiter::clear($throttleKey);
 
         return true;
+    }
+
+    private function throttled(string $throttleKey): ValidationException
+    {
+        $seconds = RateLimiter::availableIn($throttleKey);
+
+        return ValidationException::withMessages(['email' => __('auth.throttle', ['seconds' => $seconds, 'minutes' => ceil($seconds / 60)])]);
     }
 }

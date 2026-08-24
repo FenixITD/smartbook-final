@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(except: []);
 
+        $middleware->throttleApi();
+
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
         ]);

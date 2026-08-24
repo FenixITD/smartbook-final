@@ -12,7 +12,7 @@ Route::middleware('guest')->group(function (): void {
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 
     Route::get('/register', [RegisterController::class, 'show'])->name('register');
-    Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+    Route::post('/register', [RegisterController::class, 'store'])->name('register.store')->middleware('throttle:5,1');
 });
 
 Route::middleware('auth')->group(function (): void {
