@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Auth\LoginService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 final class LoginController extends Controller
@@ -32,6 +33,18 @@ final class LoginController extends Controller
             return back()
                 ->withErrors(['email' => __('auth.failed')])
                 ->onlyInput('email');
+        }
+
+        $user = Auth::user();
+
+        if ($user !== null && $user->hasEnabledTwoFactorAuthentication()) {
+            Auth::logout();
+
+            $request->session()->put('login.id', $user->getKey());
+            $request->session()->put('login.remember', $request->boolean('remember'));
+            $request->session()->regenerate();
+
+            return redirect()->route('two-factor.login');
         }
 
         $request->session()->regenerate();
