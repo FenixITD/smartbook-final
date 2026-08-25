@@ -193,8 +193,8 @@ final class SyncClickhouseActivitiesCommand extends Command
 
                 $row = $this->toStringKeyed($decoded);
 
-                if ($row === []) {
-                    $badIds[$id] = 'decode_error: decoded payload is empty';
+                if (! isset($row['id'])) {
+                    $badIds[$id] = 'decode_error: missing required field "id"';
 
                     continue;
                 }

@@ -49,6 +49,10 @@ class ClickhouseManagerService
         }
 
         $columns = array_keys($rows[0]);
+
+        if ($columns === []) {
+            return;
+        }
         $quoted = '`' . implode('`,`', $columns) . '`';
 
         $sql = 'INSERT INTO `' . $table . '` (' . $quoted . ') VALUES ';
