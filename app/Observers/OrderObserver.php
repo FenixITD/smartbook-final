@@ -40,9 +40,8 @@ final class OrderObserver
         }
 
         $statusChanged = $model->wasChanged('status');
-        $paymentChanged = $model->wasChanged('payment_method');
 
-        if (!$statusChanged && !$paymentChanged) {
+        if (!$statusChanged) {
             return;
         }
 
@@ -51,7 +50,7 @@ final class OrderObserver
             ? OrderStatusEnum::tryFrom($rawStatus)
             : null;
 
-        if (!$paymentChanged && ($newStatus === null || !$newStatus->shouldNotify())) {
+        if ($newStatus === null || !$newStatus->shouldNotify()) {
             return;
         }
 

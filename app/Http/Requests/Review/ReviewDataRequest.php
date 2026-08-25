@@ -32,7 +32,7 @@ class ReviewDataRequest extends FormRequest
         return [
             'userId' => ['required', 'integer', 'exists:users,id'],
             'bookId' => ['required', 'integer', 'exists:books,id'],
-            'rating' => ['required', 'numeric', 'min:0', 'max:5'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'comment' => ['nullable', 'string'],
         ];
     }

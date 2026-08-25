@@ -55,12 +55,16 @@ class UpdateOrderService
         $currentStatus = OrderStatusEnum::tryFrom($order->status);
         $newStatus = OrderStatusEnum::tryFrom($dto->status);
 
-        if ($currentStatus !== null && $newStatus !== null) {
-            if (! $currentStatus->canTransitionTo($newStatus)) {
-                throw ValidationException::withMessages([
-                    'status' => "Invalid state transition. Cannot change order status from '{$currentStatus->value}' to '{$newStatus->value}'.",
-                ]);
-            }
+        if ($currentStatus === null || $newStatus === null) {
+            throw ValidationException::withMessages([
+                'status' => 'Invalid order status value.',
+            ]);
+        }
+
+        if (! $currentStatus->canTransitionTo($newStatus)) {
+            throw ValidationException::withMessages([
+                'status' => "Invalid state transition. Cannot change order status from '{$currentStatus->value}' to '{$newStatus->value}'.",
+            ]);
         }
 
         $updatedOrder = $this->repository->update($orderId, $dto);

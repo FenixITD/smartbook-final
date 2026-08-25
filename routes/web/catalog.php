@@ -12,6 +12,6 @@ Route::get('/catalog/{slug}', GetPublicBookController::class)->name('catalog.sho
 
 Route::middleware('auth')->group(function (): void {
     Route::post('/catalog/reviews', StorePublicReviewController::class)->name('catalog.reviews.store');
-    Route::put('/catalog/reviews/{review}', UpdatePublicReviewController::class)->name('catalog.reviews.update');
-    Route::delete('/catalog/reviews/{review}', DeletePublicReviewController::class)->name('catalog.reviews.destroy');
+    Route::put('/catalog/reviews/{review}', UpdatePublicReviewController::class)->name('catalog.reviews.update')->whereNumber('review');
+    Route::delete('/catalog/reviews/{review}', DeletePublicReviewController::class)->name('catalog.reviews.destroy')->whereNumber('review');
 });
