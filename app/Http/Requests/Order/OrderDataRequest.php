@@ -12,7 +12,7 @@ use OpenApi\Attributes as OA;
 
 #[OA\Schema(
     schema: 'OrderDataRequest',
-    required: ['userId', 'shippingAddress', 'items'],
+    required: ['userId', 'shippingAddress'],
     properties: [
         new OA\Property(property: 'userId', type: 'integer', example: 3),
         new OA\Property(property: 'shippingAddress', type: 'string', example: 'Pushkina 19'),
@@ -46,7 +46,7 @@ final class OrderDataRequest extends FormRequest
             'userId' => ['required', 'integer', 'exists:users,id'],
             'shippingAddress' => ['required', 'string', 'max:255'],
             'paymentMethod' => ['required', 'string', Rule::in(['cash', 'card', 'webpay'])],
-            'items' => ['required', 'array', 'min:1', 'max:50'],
+            'items' => ['nullable', 'array', 'min:1', 'max:50'],
             'items.*.bookId' => ['required', 'integer', 'distinct', 'exists:books,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:99'],
         ];
@@ -54,14 +54,18 @@ final class OrderDataRequest extends FormRequest
 
     public function toDto(): OrderDto
     {
-        $items = array_map(function (mixed $item): OrderItemInputDto {
-            $item = is_array($item) ? $item : [];
+        $rawItems = $this->input('items');
 
-            return new OrderItemInputDto(
-                bookId: (int) ($item['bookId'] ?? 0),
-                quantity: (int) ($item['quantity'] ?? 1),
-            );
-        }, (array) $this->input('items', []));
+        $items = $rawItems !== null
+            ? array_map(function (mixed $item): OrderItemInputDto {
+                $item = is_array($item) ? $item : [];
+
+                return new OrderItemInputDto(
+                    bookId: (int) ($item['bookId'] ?? 0),
+                    quantity: (int) ($item['quantity'] ?? 1),
+                );
+            }, (array) $rawItems)
+            : null;
 
         return new OrderDto(
             userId: $this->integer('userId'),
