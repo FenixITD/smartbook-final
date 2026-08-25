@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Feature\Auth\Api;
+namespace Tests\Feature\Auth\Api;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
