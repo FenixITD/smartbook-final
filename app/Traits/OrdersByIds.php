@@ -17,6 +17,8 @@ trait OrdersByIds
             return '1';
         }
 
+        $ids = array_map('intval', $ids);
+
         $cases = collect($ids)
             ->values()
             ->map(static fn (int $id, int $pos) => 'WHEN id = '.$id.' THEN '.$pos)
