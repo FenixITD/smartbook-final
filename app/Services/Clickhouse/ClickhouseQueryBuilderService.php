@@ -24,6 +24,8 @@ class ClickhouseQueryBuilderService
 
     private string $orderByDirection = 'DESC';
 
+    private bool $useFinal = false;
+
     public function __construct(
         private readonly ClickhouseManagerService $manager,
         private readonly string $table,
@@ -82,12 +84,20 @@ class ClickhouseQueryBuilderService
         return $this;
     }
 
+    public function final(): static
+    {
+        $this->useFinal = true;
+
+        return $this;
+    }
+
     public function count(): int
     {
         $where = $this->buildWhere();
+        $final = $this->useFinal ? ' FINAL' : '';
 
         return $this->manager->count(
-            "SELECT count() as count FROM {$this->table}{$where}",
+            "SELECT count() as count FROM {$this->table}{$final}{$where}",
             $this->bindings,
         );
     }
@@ -96,12 +106,13 @@ class ClickhouseQueryBuilderService
     public function get(): array
     {
         $where = $this->buildWhere();
+        $final = $this->useFinal ? ' FINAL' : '';
         $order = " ORDER BY {$this->orderByColumn} {$this->orderByDirection}";
         $limit = $this->limitValue !== null ? " LIMIT {$this->limitValue}" : '';
         $offset = $this->offsetValue !== null ? " OFFSET {$this->offsetValue}" : '';
 
         return $this->manager->select(
-            "SELECT * FROM {$this->table}{$where}{$order}{$limit}{$offset}",
+            "SELECT * FROM {$this->table}{$final}{$where}{$order}{$limit}{$offset}",
             $this->bindings,
         );
     }

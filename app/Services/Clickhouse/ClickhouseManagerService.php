@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Clickhouse;
 
 use ClickHouseDB\Client;
+use ClickHouseDB\Quote\FormatLine;
 
 use function is_scalar;
 
@@ -48,9 +49,20 @@ class ClickhouseManagerService
         }
 
         $columns = array_keys($rows[0]);
-        $values = array_map(static fn (array $row): array => array_values($row), $rows);
+        $quoted = '`' . implode('`,`', $columns) . '`';
 
-        $this->client->insert($table, $values, $columns);
+        $sql = 'INSERT INTO `' . $table . '` (' . $quoted . ') VALUES ';
+
+        foreach ($rows as $row) {
+            $sql .= '(' . FormatLine::Insert(array_values($row)) . '), ';
+        }
+
+        $sql = rtrim($sql, ', ');
+
+        $this->client->transport()->write($sql, [], true, [
+            'insert_deduplicate' => 1,
+            'insert_deduplicate_insert_timeout' => 600,
+        ]);
     }
 
     /**

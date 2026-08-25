@@ -22,7 +22,7 @@ final readonly class ActivityLogRepository implements ActivityLogRepositoryInter
         $cacheKey = 'activity_logs_' . md5(serialize($filters));
 
         return Cache::remember($cacheKey, 60, function () use ($filters) {
-            $query = $this->clickhouse->table('activity_log');
+            $query = $this->clickhouse->table('activity_log')->final();
 
             if ($filters->logName !== null) {
                 $query->where('log_name', $filters->logName);

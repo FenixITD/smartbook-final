@@ -42,6 +42,11 @@ final class ActivityLogRepositoryTest extends TestCase
             ->once()
             ->with('activity_log')
             ->andReturn($this->builder);
+
+        $this->builder
+            ->shouldReceive('final')
+            ->once()
+            ->andReturn($this->builder);
     }
 
     private function expectDefaultTerminalCalls(int $total, array $rows): void
