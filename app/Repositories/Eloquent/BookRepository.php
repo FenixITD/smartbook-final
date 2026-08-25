@@ -41,6 +41,10 @@ final class BookRepository implements BookRepositoryInterface
      */
     public function getListByIds(array $ids, BookFiltersDto $filters): array
     {
+        if ($ids === []) {
+            return [];
+        }
+
         return Book::query()
             ->whereIn('id', $ids)
             ->orderByRaw($this->orderByIds($ids))
@@ -61,6 +65,10 @@ final class BookRepository implements BookRepositoryInterface
 
     public function getWebListByIds(array $ids, int $total, BookFiltersDto $filters): PaginatedResponseDto
     {
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($filters->perPage);
+        }
+
         $items = Book::with(['author', 'genres'])
             ->whereIn('id', $ids)
             ->orderByRaw($this->orderByIds($ids))
@@ -71,6 +79,10 @@ final class BookRepository implements BookRepositoryInterface
 
     public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto
     {
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($perPage);
+        }
+
         $paginator = Book::with('author')
             ->whereIn('id', $ids)
             ->orderByRaw($this->orderByIds($ids))
@@ -167,6 +179,10 @@ final class BookRepository implements BookRepositoryInterface
 
     public function getOrderedByIds(array $ids, int $perPage): PaginatedResponseDto
     {
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($perPage);
+        }
+
         $paginator = Book::with('author')
             ->whereIn('id', $ids)
             ->orderByRaw($this->orderByIds($ids))
@@ -179,6 +195,10 @@ final class BookRepository implements BookRepositoryInterface
     /** @param array<int> $ids */
     public function getOrderedActiveByIds(array $ids, int $perPage): PaginatedResponseDto
     {
+        if ($ids === []) {
+            return PaginatedResponseDto::empty($perPage);
+        }
+
         $paginator = Book::with('author')
             ->whereIn('id', $ids)
             ->where('status', 'active')
