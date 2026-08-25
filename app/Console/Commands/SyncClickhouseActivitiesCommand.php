@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use App\Services\Clickhouse\ClickhouseManagerService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 use Throwable;
 
 final class SyncClickhouseActivitiesCommand extends Command
@@ -27,21 +28,30 @@ final class SyncClickhouseActivitiesCommand extends Command
 
     private const IDLE_THRESHOLD_MS = 5 * 60 * 1000;
 
+    private const MAX_STREAM_LEN = 100_000;
+
     public function handle(ClickhouseManagerService $clickhouseManagerService): int
     {
         $this->ensureGroupExists();
 
-        $consumerName = 'consumer-'.gethostname().'-'.getmypid();
+        $consumerName = 'consumer-'.Str::limit(gethostname(), 20).'-'.getmypid();
 
         $entries = $this->claimStaleEntries($consumerName);
 
         if (count($entries) < self::BATCH_SIZE) {
-            $fresh = Redis::xreadgroup(
-                self::GROUP,
-                $consumerName,
-                [self::STREAM => '>'],
-                self::BATCH_SIZE - count($entries)
-            );
+            try {
+                $remaining = self::BATCH_SIZE - count($entries);
+                $fresh = Redis::xreadgroup(
+                    self::GROUP,
+                    $consumerName,
+                    [self::STREAM => '>'],
+                    $remaining,
+                );
+            } catch (Throwable $e) {
+                $this->error('xreadgroup failed: '.$e->getMessage());
+
+                return self::FAILURE;
+            }
 
             if (is_array($fresh)) {
                 foreach ($fresh as $streamEntries) {
@@ -62,14 +72,7 @@ final class SyncClickhouseActivitiesCommand extends Command
 
         [$rows, $goodIds, $badIds] = $this->decodeEntries($entries);
 
-        foreach ($badIds as $id => $reason) {
-            $payload = $this->toStringKeyed($entries[$id])['payload'] ?? null;
-            $this->moveToDlq($id, is_string($payload) ? $payload : null, $reason);
-        }
-        if ($badIds !== []) {
-            Redis::xack(self::STREAM, self::GROUP, array_keys($badIds));
-            Redis::xdel(self::STREAM, array_keys($badIds));
-        }
+        $this->drainBadEntries($entries, $badIds);
 
         if ($rows === []) {
             return self::SUCCESS;
@@ -77,15 +80,18 @@ final class SyncClickhouseActivitiesCommand extends Command
 
         try {
             $clickhouseManagerService->insertBatch('activity_log', $rows);
-            Redis::xack(self::STREAM, self::GROUP, $goodIds);
-            Redis::xdel(self::STREAM, $goodIds);
-            $this->info('Synced '.count($rows).' activities to ClickHouse.');
         } catch (Throwable $e) {
-            $this->error($e->getMessage());
-            $this->warn(count($rows).' activities will be retried on next run.');
+            $this->error('ClickHouse insert failed: '.$e->getMessage());
+            $this->drainBadEntries($entries, array_flip($goodIds));
 
             return self::FAILURE;
         }
+
+        Redis::xack(self::STREAM, self::GROUP, $goodIds);
+        Redis::xdel(self::STREAM, $goodIds);
+        $this->info('Synced '.count($rows).' activities to ClickHouse.');
+
+        $this->trimStream();
 
         return self::SUCCESS;
     }
@@ -102,7 +108,7 @@ final class SyncClickhouseActivitiesCommand extends Command
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, array<string, mixed>>
      */
     private function claimStaleEntries(string $consumerName): array
     {
@@ -110,14 +116,20 @@ final class SyncClickhouseActivitiesCommand extends Command
         $cursor = '0-0';
 
         do {
-            $claim = Redis::xautoclaim(
-                self::STREAM,
-                self::GROUP,
-                $consumerName,
-                self::IDLE_THRESHOLD_MS,
-                $cursor,
-                100
-            );
+            try {
+                $claim = Redis::xautoclaim(
+                    self::STREAM,
+                    self::GROUP,
+                    $consumerName,
+                    self::IDLE_THRESHOLD_MS,
+                    $cursor,
+                    100,
+                );
+            } catch (Throwable $e) {
+                $this->error('xautoclaim failed: '.$e->getMessage());
+
+                break;
+            }
 
             if (! is_array($claim)) {
                 break;
@@ -129,9 +141,7 @@ final class SyncClickhouseActivitiesCommand extends Command
             }
 
             foreach ($claimed as $id => $fields) {
-                if (! is_string($id)) {
-                    $id = strval($id);
-                }
+                $id = (string) $id;
                 $deliveryCount = $this->deliveryCount($id);
 
                 if ($deliveryCount > self::MAX_DELIVERIES) {
@@ -163,12 +173,25 @@ final class SyncClickhouseActivitiesCommand extends Command
 
     private function deliveryCount(string $id): int
     {
-        $pending = Redis::xpending(self::STREAM, self::GROUP, $id, $id, 1);
-        $pending = is_array($pending) ? $pending : [];
-        $first = $pending[0] ?? null;
-        $count = is_array($first) ? ($first[3] ?? 1) : 1;
+        try {
+            $pending = Redis::xpending(self::STREAM, self::GROUP, $id, $id, 1);
 
-        return is_int($count) ? $count : 1;
+            if (! is_array($pending) || $pending === []) {
+                return 1;
+            }
+
+            $first = $pending[0] ?? null;
+
+            if (! is_array($first)) {
+                return 1;
+            }
+
+            $count = $first[3] ?? null;
+
+            return is_int($count) ? $count : 1;
+        } catch (Throwable) {
+            return 1;
+        }
     }
 
     /**
@@ -185,8 +208,31 @@ final class SyncClickhouseActivitiesCommand extends Command
             try {
                 $fields = $this->toStringKeyed($fields);
                 $payload = $fields['payload'] ?? '';
-                $decoded = json_decode(is_string($payload) ? $payload : '', true, 512, JSON_THROW_ON_ERROR);
-                $rows[] = $this->toStringKeyed($decoded);
+                $json = is_string($payload) ? $payload : '';
+
+                if ($json === '') {
+                    $badIds[$id] = 'decode_error: empty payload';
+
+                    continue;
+                }
+
+                $decoded = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+
+                if (! is_array($decoded)) {
+                    $badIds[$id] = 'decode_error: payload is not an object';
+
+                    continue;
+                }
+
+                $row = $this->toStringKeyed($decoded);
+
+                if ($row === []) {
+                    $badIds[$id] = 'decode_error: decoded payload is empty';
+
+                    continue;
+                }
+
+                $rows[] = $row;
                 $goodIds[] = $id;
             } catch (Throwable $e) {
                 $badIds[$id] = 'decode_error: '.$e->getMessage();
@@ -196,6 +242,25 @@ final class SyncClickhouseActivitiesCommand extends Command
         return [$rows, $goodIds, $badIds];
     }
 
+    /**
+     * @param  array<string, mixed>  $entries
+     * @param  array<string, string>  $badIds
+     */
+    private function drainBadEntries(array $entries, array $badIds): void
+    {
+        if ($badIds === []) {
+            return;
+        }
+
+        foreach ($badIds as $id => $reason) {
+            $payload = $this->toStringKeyed($entries[$id] ?? [])['payload'] ?? null;
+            $this->moveToDlq($id, is_string($payload) ? $payload : null, $reason);
+        }
+
+        Redis::xack(self::STREAM, self::GROUP, array_keys($badIds));
+        Redis::xdel(self::STREAM, array_keys($badIds));
+    }
+
     private function moveToDlq(string $id, ?string $payload, string $reason): void
     {
         Redis::xadd(self::DLQ_STREAM, '*', [
@@ -203,7 +268,16 @@ final class SyncClickhouseActivitiesCommand extends Command
             'payload' => $payload ?? '',
             'reason' => $reason,
             'failed_at' => now()->toIso8601String(),
-        ]);
+        ], ['MAXLEN', self::MAX_STREAM_LEN]);
+    }
+
+    private function trimStream(): void
+    {
+        try {
+            Redis::xtrim(self::STREAM, 'MAXLEN', self::MAX_STREAM_LEN);
+        } catch (Throwable) {
+            // best-effort, non-critical
+        }
     }
 
     /**
@@ -217,7 +291,7 @@ final class SyncClickhouseActivitiesCommand extends Command
 
         return array_combine(
             array_map(strval(...), array_keys($fields)),
-            array_values($fields)
+            array_values($fields),
         );
     }
 }

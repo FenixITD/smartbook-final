@@ -10,7 +10,7 @@ return [
     'username' => 'email',
     'email' => 'email',
     'views' => true,
-    'home' => '/home',
+    'home' => '/dashboard',
     'prefix' => '',
     'domain' => null,
     'lowercase_usernames' => false,
@@ -29,11 +29,6 @@ return [
             'confirmation' => null,
         ],
         'register' => null,
-        'verification' => [
-            'notice' => null,
-            'verify' => null,
-            'send' => null,
-        ],
         'user-profile-information' => [
             'update' => null,
         ],
@@ -55,7 +50,6 @@ return [
         'logout' => '/dashboard',
         'password-confirmation' => '/dashboard',
         'register' => '/dashboard',
-        'email-verification' => '/dashboard',
         'password-reset' => '/login',
     ],
     'features' => [
@@ -63,6 +57,8 @@ return [
         Features::resetPasswords(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),
-        Features::twoFactorAuthentication(),
+        Features::twoFactorAuthentication([
+            'confirmPassword' => true,
+        ]),
     ],
 ];
