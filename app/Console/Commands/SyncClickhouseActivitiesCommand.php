@@ -24,8 +24,6 @@ final class SyncClickhouseActivitiesCommand extends Command
 
     private const BATCH_SIZE = 1000;
 
-    private const MAX_DELIVERIES = 3;
-
     private const IDLE_THRESHOLD_MS = 5 * 60 * 1000;
 
     private const MAX_STREAM_LEN = 100_000;
@@ -82,7 +80,6 @@ final class SyncClickhouseActivitiesCommand extends Command
             $clickhouseManagerService->insertBatch('activity_log', $rows);
         } catch (Throwable $e) {
             $this->error('ClickHouse insert failed: '.$e->getMessage());
-            $this->drainBadEntries($entries, array_flip($goodIds));
 
             return self::FAILURE;
         }
@@ -147,22 +144,6 @@ final class SyncClickhouseActivitiesCommand extends Command
 
             foreach ($claimed as $id => $fields) {
                 $id = (string) $id;
-                $deliveryCount = $this->deliveryCount($id);
-
-                if ($deliveryCount > self::MAX_DELIVERIES) {
-                    $payload = $this->toStringKeyed($fields)['payload'] ?? null;
-                    $this->moveToDlq($id, is_string($payload) ? $payload : null, 'max_deliveries_exceeded');
-                    try {
-                        Redis::xack(self::STREAM, self::GROUP, [$id]);
-                        Redis::xdel(self::STREAM, [$id]);
-                    } catch (Throwable $e) {
-                        $this->warn('Failed to ack/del stale entry '.$id.': '.$e->getMessage());
-                    }
-                    $this->warn('Entry '.$id.' moved to dead letter after '.self::MAX_DELIVERIES.' attempts.');
-
-                    continue;
-                }
-
                 $result[$id] = $this->toStringKeyed($fields);
             }
 
@@ -178,29 +159,6 @@ final class SyncClickhouseActivitiesCommand extends Command
         }
 
         return $result;
-    }
-
-    private function deliveryCount(string $id): int
-    {
-        try {
-            $pending = Redis::xpending(self::STREAM, self::GROUP, $id, $id, 1);
-
-            if (! is_array($pending) || $pending === []) {
-                return 1;
-            }
-
-            $first = $pending[0] ?? null;
-
-            if (! is_array($first)) {
-                return 1;
-            }
-
-            $count = $first[3] ?? null;
-
-            return is_int($count) ? $count : 1;
-        } catch (Throwable) {
-            return 1;
-        }
     }
 
     /**
