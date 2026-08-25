@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Reviews;
 
 use App\Http\Requests\Review\ReviewDataRequest;
-use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use App\Services\Review\StorePublicReviewService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 final readonly class CreateReviewController
 {
     public function __construct(
-        private ReviewRepositoryInterface $repository,
+        private StorePublicReviewService $service,
     ) {
     }
 
@@ -23,7 +23,7 @@ final readonly class CreateReviewController
 
     public function store(ReviewDataRequest $request): RedirectResponse
     {
-        $this->repository->create($request->toDto());
+        $this->service->execute($request->toDto());
 
         return redirect()->route('reviews.index')
             ->with('success', 'Review created successfully.');

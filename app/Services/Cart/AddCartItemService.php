@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Cart;
 
 use App\Dto\CartItem\CartItemDto;
+use App\Infrastructure\Interfaces\TransactionManagerInterface;
 use App\Repositories\Interfaces\CartItemRepositoryInterface;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -15,42 +16,39 @@ class AddCartItemService
     public function __construct(
         private CartItemRepositoryInterface $repository,
         private BookRepositoryInterface $bookRepository,
+        private TransactionManagerInterface $transactionManager,
     ) {
     }
 
     public function add(int $bookId, int $quantity): void
     {
-        $book = $this->bookRepository->getById($bookId);
+        $this->transactionManager->transaction(function () use ($bookId, $quantity): void {
+            $userId = (int) Auth::id();
 
-        if ($book === null) {
-            throw ValidationException::withMessages(['cart' => 'Book not found.']);
-        }
+            $lockedBooks = $this->bookRepository->lockForUpdateByIds([$bookId]);
+            $book = $lockedBooks[$bookId] ?? null;
 
-        $userId = (int) Auth::id();
-        $cartItems = $this->repository->getAllByUserId($userId);
-
-        $currentQuantity = 0;
-        foreach ($cartItems as $item) {
-            if ($item->bookId === $bookId) {
-                $currentQuantity = $item->quantity;
-                break;
+            if ($book === null) {
+                throw ValidationException::withMessages(['cart' => 'Book not found.']);
             }
-        }
 
-        if ($currentQuantity + $quantity > $book->stock) {
-            throw ValidationException::withMessages([
-                'quantity' => "Cannot add more. Only {$book->stock} available in stock."
-            ]);
-        }
+            $currentQuantity = $this->repository->getQuantityByUserAndBook($userId, $bookId);
 
-        $this->repository->addOrIncrement(new CartItemDto(
-            userId: $userId,
-            bookId: $bookId,
-            quantity: $quantity,
-        ));
+            if ($currentQuantity + $quantity > $book->stock) {
+                throw ValidationException::withMessages([
+                    'quantity' => "Cannot add more. Only {$book->stock} available in stock."
+                ]);
+            }
 
-        activity('CartItem')
-            ->withProperties(['user_id' => $userId, 'book_id' => $bookId, 'quantity' => $quantity])
-            ->log('added');
+            $this->repository->addOrIncrement(new CartItemDto(
+                userId: $userId,
+                bookId: $bookId,
+                quantity: $quantity,
+            ));
+
+            activity('CartItem')
+                ->withProperties(['user_id' => $userId, 'book_id' => $bookId, 'quantity' => $quantity])
+                ->log('added');
+        });
     }
 }

@@ -8,7 +8,7 @@ use App\Dto\Review\ReviewDto;
 use App\Dto\Review\ReviewResponseDto;
 use App\Http\Controllers\Api\Reviews\CreateReviewController;
 use App\Http\Requests\Review\ReviewDataRequest;
-use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use App\Services\Review\StorePublicReviewService;
 use Illuminate\Http\Request;
 use Mockery;
 use Mockery\MockInterface;
@@ -16,22 +16,22 @@ use Tests\TestCase;
 
 final class CreateReviewControllerTest extends TestCase
 {
-    private MockInterface&ReviewRepositoryInterface $repository;
+    private MockInterface&StorePublicReviewService $service;
     private CreateReviewController $controller;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = Mockery::mock(ReviewRepositoryInterface::class);
-        $this->app->instance(ReviewRepositoryInterface::class, $this->repository);
+        $this->service = Mockery::mock(StorePublicReviewService::class);
+        $this->app->instance(StorePublicReviewService::class, $this->service);
         $this->controller = $this->app->make(CreateReviewController::class);
     }
 
     public function test_returns_201_with_created_review(): void
     {
-        $this->repository
-            ->shouldReceive('create')
+        $this->service
+            ->shouldReceive('execute')
             ->once()
             ->andReturn($this->makeResponseDto(id: 1));
 
@@ -42,8 +42,8 @@ final class CreateReviewControllerTest extends TestCase
 
     public function test_response_contains_created_review_data(): void
     {
-        $this->repository
-            ->shouldReceive('create')
+        $this->service
+            ->shouldReceive('execute')
             ->andReturn($this->makeResponseDto(id: 5, userId: 2, bookId: 3, rating: 4.5, comment: 'Great book'));
 
         $response = ($this->controller)($this->makeRequest([
@@ -63,10 +63,10 @@ final class CreateReviewControllerTest extends TestCase
         $this->assertSame('2024-01-01 00:00:00', $data['updatedAt']);
     }
 
-    public function test_passes_dto_from_request_to_repository(): void
+    public function test_passes_dto_from_request_to_service(): void
     {
-        $this->repository
-            ->shouldReceive('create')
+        $this->service
+            ->shouldReceive('execute')
             ->once()
             ->with(Mockery::on(function (ReviewDto $arg) {
                 return $arg->userId === 7

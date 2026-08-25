@@ -131,4 +131,11 @@ final class CartItemRepository implements CartItemRepositoryInterface
     {
         CartItem::where('user_id', $userId)->where('book_id', $bookId)->delete();
     }
+
+    public function getQuantityByUserAndBook(int $userId, int $bookId): int
+    {
+        return (int) CartItem::where('user_id', $userId)
+            ->where('book_id', $bookId)
+            ->value('quantity');
+    }
 }

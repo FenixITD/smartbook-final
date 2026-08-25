@@ -9,6 +9,7 @@ use App\Dto\Favorite\FavoriteFiltersDto;
 use App\Dto\Favorite\FavoriteResponseDto;
 use App\Models\Favorite;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use UnexpectedValueException;
 
 final class FavoriteRepository implements FavoriteRepositoryInterface
@@ -59,22 +60,30 @@ final class FavoriteRepository implements FavoriteRepositoryInterface
 
     public function toggle(int $userId, int $bookId): bool
     {
-        $deleted = Favorite::where('user_id', $userId)
-            ->where('book_id', $bookId)
-            ->delete();
+        return DB::transaction(function () use ($userId, $bookId): bool {
+            $existing = DB::table('favorites')
+                ->where('user_id', $userId)
+                ->where('book_id', $bookId)
+                ->lockForUpdate()
+                ->first();
 
-        if ($deleted > 0) {
-            return false;
-        }
+            if ($existing !== null) {
+                DB::table('favorites')
+                    ->where('id', $existing->id)
+                    ->delete();
 
-        Favorite::insertOrIgnore([
-            'user_id' => $userId,
-            'book_id' => $bookId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+                return false;
+            }
 
-        return true;
+            DB::table('favorites')->insert([
+                'user_id' => $userId,
+                'book_id' => $bookId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return true;
+        });
     }
 
     /** @return array<int> */

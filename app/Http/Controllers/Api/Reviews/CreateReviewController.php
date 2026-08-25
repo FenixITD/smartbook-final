@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Api\Reviews;
 
 use App\Http\Requests\Review\ReviewDataRequest;
 use App\Http\Resources\Review\ReviewResource;
-use App\Repositories\Interfaces\ReviewRepositoryInterface;
+use App\Services\Review\StorePublicReviewService;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
@@ -34,13 +34,13 @@ use OpenApi\Attributes as OA;
 readonly class CreateReviewController
 {
     public function __construct(
-        private ReviewRepositoryInterface $repository,
+        private StorePublicReviewService $service,
     ) {
     }
 
     public function __invoke(ReviewDataRequest $request): JsonResponse
     {
-        $review = $this->repository->create($request->toDto());
+        $review = $this->service->execute($request->toDto());
 
         return (new ReviewResource($review))->response()->setStatusCode(201);
     }

@@ -37,4 +37,6 @@ interface CartItemRepositoryInterface
     public function delete(int $id): bool;
 
     public function deleteByUserAndBook(int $userId, int $bookId): void;
+
+    public function getQuantityByUserAndBook(int $userId, int $bookId): int;
 }

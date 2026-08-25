@@ -16,6 +16,7 @@ use App\Traits\CreatesPaginatedResponse;
 use App\Traits\OrdersByIds;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\DB;
 
 final class BookRepository implements BookRepositoryInterface
 {
@@ -215,26 +216,28 @@ final class BookRepository implements BookRepositoryInterface
 
     public function recalculateRating(int $bookId): void
     {
-        $book = Book::find($bookId);
+        DB::transaction(function () use ($bookId): void {
+            $book = Book::lockForUpdate()->find($bookId);
 
-        if ($book === null) {
-            return;
-        }
+            if ($book === null) {
+                return;
+            }
 
-        $stats = $book->reviews()
-            ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as ratings_count')
-            ->first();
+            $stats = $book->reviews()
+                ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as ratings_count')
+                ->first();
 
-        $rawCount = $stats?->getAttribute('ratings_count');
-        $ratingsCount = is_numeric($rawCount) ? (int) $rawCount : 0;
+            $rawCount = $stats?->getAttribute('ratings_count');
+            $ratingsCount = is_numeric($rawCount) ? (int) $rawCount : 0;
 
-        $rawAvg = $stats?->getAttribute('avg_rating');
-        $averageRating = is_numeric($rawAvg) ? round((float) $rawAvg, 2) : null;
+            $rawAvg = $stats?->getAttribute('avg_rating');
+            $averageRating = is_numeric($rawAvg) ? round((float) $rawAvg, 2) : null;
 
-        $book->update([
-            'average_rating' => $ratingsCount > 0 ? $averageRating : 0,
-            'ratings_count' => $ratingsCount,
-        ]);
+            $book->update([
+                'average_rating' => $ratingsCount > 0 ? $averageRating : 0,
+                'ratings_count' => $ratingsCount,
+            ]);
+        });
     }
 
     public function decrementStock(int $bookId, int $quantity): bool
