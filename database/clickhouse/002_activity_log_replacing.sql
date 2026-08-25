@@ -1,6 +1,3 @@
--- Migrate activity_log from MergeTree to ReplacingMergeTree for row-level dedup.
--- Apply manually: clickhouse-client --multiquery < 002_activity_log_replacing.sql
-
 CREATE TABLE IF NOT EXISTS smartbook.activity_log_new
 (
     id UInt64,
