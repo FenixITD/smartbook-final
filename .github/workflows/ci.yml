@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Code Style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, json, bcmath, gd, pdo, pdo_sqlite
+          coverage: none
+      - run: composer install --no-progress --prefer-dist
+      - run: composer test:lint
+
+  stan:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, json, bcmath, gd, pdo, pdo_sqlite
+          coverage: none
+      - run: composer install --no-progress --prefer-dist
+      - run: composer stan
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, json, bcmath, gd, pdo, pdo_sqlite
+          coverage: none
+      - run: composer install --no-progress --prefer-dist
+      - run: php artisan key:generate
+      - run: vendor/bin/phpunit
