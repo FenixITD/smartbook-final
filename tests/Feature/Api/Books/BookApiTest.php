@@ -94,44 +94,69 @@ final class BookApiTest extends TestCase
     public function test_search_suggest_admin(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'title' => 'Harry Potter']);
 
         $mock = Mockery::mock(SearchSuggestBookService::class);
-        $mock->shouldReceive('execute')->withAnyArgs()->andReturn([
-            ['id' => $book->id, 'title' => 'Harry Potter', 'author' => 'Author', 'url' => 'http://localhost/books/1']
-        ]);
+        $mock->shouldReceive('execute')
+            ->once()
+            ->with('harry')
+            ->andReturn([
+                ['id' => 1, 'title' => 'Harry Potter 1', 'author' => 'Rowling', 'url' => 'http://localhost/books/1'],
+                ['id' => 2, 'title' => 'Harry Potter 2', 'author' => 'Rowling', 'url' => 'http://localhost/books/2'],
+            ]);
         $this->app->instance(SearchSuggestBookService::class, $mock);
 
         $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.books.suggest', ['q' => 'harry']));
 
-        $response->assertStatus(200)->assertJsonPath('0.title', 'Harry Potter');
+        $response->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                '*' => ['id', 'title', 'author', 'url'],
+            ]);
+    }
+
+    public function test_search_suggest_requires_admin(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+
+        $response = $this->actingAs($user, 'sanctum')->getJson(route('api.books.suggest', ['q' => 'harry']));
+
+        $response->assertStatus(403);
     }
 
     public function test_catalog_search_suggest(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'title' => 'Harry Potter']);
-
         $mock = Mockery::mock(SearchSuggestCatalogBookService::class);
-        $mock->shouldReceive('execute')->withAnyArgs()->andReturn([
-            ['id' => $book->id, 'title' => 'Harry Potter', 'author' => 'Author', 'cover_image' => null, 'price' => 10, 'url' => 'http://localhost/catalog/1']
-        ]);
+        $mock->shouldReceive('execute')
+            ->once()
+            ->with('harry')
+            ->andReturn([
+                ['id' => 1, 'title' => 'Harry Potter', 'author' => 'Rowling', 'cover_image' => 'cover.jpg', 'price' => '29.99', 'url' => 'http://localhost/catalog/harry-potter'],
+            ]);
         $this->app->instance(SearchSuggestCatalogBookService::class, $mock);
 
-        $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.books.catalog.suggest', ['q' => 'harry']));
+        $response = $this->getJson(route('api.books.catalog.suggest', ['q' => 'harry']));
 
-        $response->assertStatus(200)->assertJsonPath('0.title', 'Harry Potter');
+        $response->assertStatus(200)
+            ->assertJsonCount(1)
+            ->assertJsonStructure([
+                '*' => ['id', 'title', 'author', 'cover_image', 'price', 'url'],
+            ]);
+    }
+
+    public function test_catalog_search_suggest_is_public(): void
+    {
+        $mock = Mockery::mock(SearchSuggestCatalogBookService::class);
+        $mock->shouldReceive('execute')->once()->andReturn([]);
+        $this->app->instance(SearchSuggestCatalogBookService::class, $mock);
+
+        $response = $this->getJson(route('api.books.catalog.suggest', ['q' => 'test']));
+
+        $response->assertStatus(200);
     }
 
     public function test_search_suggest_validation(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-
-        $mock = Mockery::mock(SearchSuggestBookService::class);
-        $mock->shouldIgnoreMissing();
-        $this->app->instance(SearchSuggestBookService::class, $mock);
 
         $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.books.suggest', ['q' => '1']));
 

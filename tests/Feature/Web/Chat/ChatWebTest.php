@@ -3,18 +3,14 @@
 namespace Tests\Feature\Web\Chat;
 
 use App\Events\MessageSentEvent;
-use App\Http\Controllers\Web\Chat\CloseConversationController;
-use App\Http\Controllers\Web\Chat\GetMessageController;
-use App\Http\Controllers\Web\Chat\OpenConversationController;
-use App\Http\Controllers\Web\Chat\SendMessageController;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 final class ChatWebTest extends TestCase
@@ -24,24 +20,14 @@ final class ChatWebTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        if (class_exists(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)) {
-            $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
-        }
-
-        // Register isolated test routes to hit the controllers directly
-        Route::post('/_test/chat/open/{book}', OpenConversationController::class);
-        Route::post('/_test/chat/{conversation}/messages', SendMessageController::class);
-        Route::get('/_test/chat/{conversation}/messages', GetMessageController::class);
-        Route::post('/_test/chat/{conversation}/close', CloseConversationController::class);
+        $this->withoutMiddleware(ValidateCsrfToken::class);
     }
 
     public function test_admin_can_view_admin_conversations_page(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        // This route works naturally from your app's web routes
-        $response = $this->actingAs($admin)->get('/chat/admin');
+        $response = $this->actingAs($admin)->get(route('chat.admin'));
 
         $response->assertStatus(200)->assertViewIs('chat.admin');
     }
@@ -52,7 +38,7 @@ final class ChatWebTest extends TestCase
         $author = Author::factory()->create();
         $book = Book::factory()->create(['author_id' => $author->id]);
 
-        $response = $this->actingAs($user)->postJson("/_test/chat/open/{$book->id}");
+        $response = $this->actingAs($user)->postJson(route('chat.open', $book->id));
 
         $response->assertStatus(200)->assertJsonStructure(['conversation_id', 'messages']);
         $this->assertDatabaseHas('conversations', ['user_id' => $user->id, 'book_id' => $book->id, 'status' => 'open']);
@@ -67,7 +53,7 @@ final class ChatWebTest extends TestCase
         $book = Book::factory()->create(['author_id' => $author->id]);
         $conversation = Conversation::create(['user_id' => $user->id, 'book_id' => $book->id, 'status' => 'open']);
 
-        $response = $this->actingAs($user)->postJson("/_test/chat/{$conversation->id}/messages", [
+        $response = $this->actingAs($user)->postJson(route('chat.messages.store', $conversation->id), [
             'body' => 'Hello from user!'
         ]);
 
@@ -77,7 +63,6 @@ final class ChatWebTest extends TestCase
 
     public function test_user_cannot_send_message_to_another_users_conversation(): void
     {
-        // Explicitly set the roles to 'user' so they are not evaluated as admins
         $user = User::factory()->create(['role' => 'user']);
         $otherUser = User::factory()->create(['role' => 'user']);
 
@@ -86,7 +71,7 @@ final class ChatWebTest extends TestCase
 
         $conversation = Conversation::create(['user_id' => $otherUser->id, 'book_id' => $book->id, 'status' => 'open']);
 
-        $response = $this->actingAs($user)->postJson("/_test/chat/{$conversation->id}/messages", [
+        $response = $this->actingAs($user)->postJson(route('chat.messages.store', $conversation->id), [
             'body' => 'Hacking attempt'
         ]);
 
@@ -102,7 +87,7 @@ final class ChatWebTest extends TestCase
 
         Message::create(['conversation_id' => $conversation->id, 'user_id' => $user->id, 'body' => 'Test chat message']);
 
-        $response = $this->actingAs($user)->getJson("/_test/chat/{$conversation->id}/messages");
+        $response = $this->actingAs($user)->getJson(route('chat.messages.index', $conversation->id));
 
         $response->assertStatus(200)->assertJsonPath('messages.0.body', 'Test chat message');
     }
@@ -115,9 +100,21 @@ final class ChatWebTest extends TestCase
         $book = Book::factory()->create(['author_id' => $author->id]);
         $conversation = Conversation::create(['user_id' => $user->id, 'book_id' => $book->id, 'status' => 'open']);
 
-        $response = $this->actingAs($admin)->postJson("/_test/chat/{$conversation->id}/close");
+        $response = $this->actingAs($admin)->patchJson(route('chat.conversation.close', $conversation->id));
 
         $response->assertStatus(200)->assertJsonPath('status', 'closed');
         $this->assertDatabaseHas('conversations', ['id' => $conversation->id, 'status' => 'closed']);
+    }
+
+    public function test_non_admin_cannot_close_conversation(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        $author = Author::factory()->create();
+        $book = Book::factory()->create(['author_id' => $author->id]);
+        $conversation = Conversation::create(['user_id' => $user->id, 'book_id' => $book->id, 'status' => 'open']);
+
+        $response = $this->actingAs($user)->patchJson(route('chat.conversation.close', $conversation->id));
+
+        $response->assertStatus(403);
     }
 }

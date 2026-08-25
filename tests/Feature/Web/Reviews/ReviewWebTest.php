@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Web\Reviews;
 
-use App\Http\Controllers\Web\Reviews\DeletePublicReviewController;
-use App\Http\Controllers\Web\Reviews\StorePublicReviewController;
-use App\Http\Controllers\Web\Reviews\UpdatePublicReviewController;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Review;
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 final class ReviewWebTest extends TestCase
@@ -22,22 +19,13 @@ final class ReviewWebTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        if (class_exists(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class)) {
-            $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
-        }
-
-        // Register isolated test routes to hit the controllers directly
-        Route::post('/_test/public-reviews', StorePublicReviewController::class);
-        Route::put('/_test/public-reviews/{review}', UpdatePublicReviewController::class);
-        Route::delete('/_test/public-reviews/{review}', DeletePublicReviewController::class);
+        $this->withoutMiddleware(ValidateCsrfToken::class);
     }
 
     public function test_admin_can_view_reviews_list(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        // This route works naturally from your app's web routes
         $response = $this->actingAs($admin)->get('/reviews');
 
         $response->assertStatus(200)->assertViewIs('reviews.list');
@@ -51,7 +39,7 @@ final class ReviewWebTest extends TestCase
 
         $response = $this->actingAs($user)
             ->from('/catalog/book')
-            ->post('/_test/public-reviews', [
+            ->post(route('catalog.reviews.store'), [
                 'book_id' => $book->id,
                 'rating' => 4,
                 'comment' => 'Public review comment',
@@ -70,7 +58,7 @@ final class ReviewWebTest extends TestCase
 
         $response = $this->actingAs($user)
             ->from('/catalog/book')
-            ->post('/_test/public-reviews', [
+            ->post(route('catalog.reviews.store'), [
                 'book_id' => $book->id,
                 'rating' => 5,
                 'comment' => 'Another review',
@@ -88,7 +76,7 @@ final class ReviewWebTest extends TestCase
 
         $response = $this->actingAs($user)
             ->from('/catalog/book')
-            ->put("/_test/public-reviews/{$review->id}", [
+            ->put(route('catalog.reviews.update', $review->id), [
                 'book_id' => $book->id,
                 'rating' => 5,
                 'comment' => 'Updated my own review',
@@ -108,7 +96,7 @@ final class ReviewWebTest extends TestCase
 
         $response = $this->actingAs($user)
             ->from('/catalog/book')
-            ->put("/_test/public-reviews/{$review->id}", [
+            ->put(route('catalog.reviews.update', $review->id), [
                 'book_id' => $book->id,
                 'rating' => 5,
             ]);
@@ -127,7 +115,7 @@ final class ReviewWebTest extends TestCase
 
         $response = $this->actingAs($user)
             ->from('/catalog/book')
-            ->put("/_test/public-reviews/{$review->id}", [
+            ->put(route('catalog.reviews.update', $review->id), [
                 'book_id' => $book2->id,
                 'rating' => 5,
                 'comment' => 'Trying to retarget',
@@ -146,7 +134,7 @@ final class ReviewWebTest extends TestCase
 
         $response = $this->actingAs($user)
             ->from('/catalog/book')
-            ->delete("/_test/public-reviews/{$review->id}");
+            ->delete(route('catalog.reviews.destroy', $review->id));
 
         $response->assertRedirect('/catalog/book')->assertSessionHas('success');
         $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
@@ -164,7 +152,7 @@ final class ReviewWebTest extends TestCase
 
         $response = $this->actingAs($user)
             ->from('/catalog/book')
-            ->delete("/_test/public-reviews/{$review->id}");
+            ->delete(route('catalog.reviews.destroy', $review->id));
 
         $response->assertRedirect('/catalog/book')->assertSessionHas('success');
         $this->assertDatabaseMissing('reviews', ['id' => $review->id]);

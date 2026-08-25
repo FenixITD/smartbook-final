@@ -34,19 +34,64 @@ final class ReviewApiTest extends TestCase
     public function test_search_suggest_admin(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $user = User::factory()->create();
-        $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id]);
-        $review = Review::factory()->create(['user_id' => $user->id, 'book_id' => $book->id]);
 
         $mock = Mockery::mock(SearchSuggestReviewService::class);
-        $mock->shouldReceive('execute')->withAnyArgs()->andReturn([
-            ['id' => $review->id, 'user_name' => 'User', 'content' => 'Great!', 'url' => 'http://localhost/reviews/1']
-        ]);
+        $mock->shouldReceive('execute')
+            ->once()
+            ->with('great')
+            ->andReturn([
+                ['id' => 1, 'user_name' => 'Alice', 'content' => 'Great book!', 'url' => 'http://localhost/reviews/1'],
+                ['id' => 2, 'user_name' => 'Bob', 'content' => 'Really great read', 'url' => 'http://localhost/reviews/2'],
+            ]);
         $this->app->instance(SearchSuggestReviewService::class, $mock);
 
-        $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.reviews.suggest', ['q' => 'good']));
+        $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.reviews.suggest', ['q' => 'great']));
 
-        $response->assertStatus(200)->assertJsonPath('0.id', $review->id);
+        $response->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                '*' => ['id', 'user_name', 'content', 'url'],
+            ]);
+    }
+
+    public function test_search_suggest_returns_empty_for_no_match(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $mock = Mockery::mock(SearchSuggestReviewService::class);
+        $mock->shouldReceive('execute')
+            ->once()
+            ->with('zzz_nonexistent')
+            ->andReturn([]);
+        $this->app->instance(SearchSuggestReviewService::class, $mock);
+
+        $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.reviews.suggest', ['q' => 'zzz_nonexistent']));
+
+        $response->assertStatus(200)->assertJson([]);
+    }
+
+    public function test_search_suggest_rejects_short_query(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.reviews.suggest', ['q' => 'a']));
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['q']);
+    }
+
+    public function test_search_suggest_requires_auth(): void
+    {
+        $response = $this->getJson(route('api.reviews.suggest', ['q' => 'test']));
+
+        $response->assertStatus(401);
+    }
+
+    public function test_non_admin_cannot_access_suggest(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+
+        $response = $this->actingAs($user, 'sanctum')->getJson(route('api.reviews.suggest', ['q' => 'test']));
+
+        $response->assertStatus(403);
     }
 }

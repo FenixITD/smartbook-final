@@ -2,15 +2,12 @@
 
 namespace Tests\Feature\Web\CartItems;
 
-use App\Http\Controllers\Web\CartItems\ClearCartController;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\CartItem;
 use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 final class CartItemWebTest extends TestCase
@@ -20,14 +17,7 @@ final class CartItemWebTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        if (class_exists(ValidateCsrfToken::class)) {
-            $this->withoutMiddleware(ValidateCsrfToken::class);
-        }
-        if (class_exists(VerifyCsrfToken::class)) {
-            $this->withoutMiddleware(VerifyCsrfToken::class);
-        }
-
-        Route::post('/test-clear-cart', ClearCartController::class);
+        $this->withoutMiddleware(ValidateCsrfToken::class);
     }
 
     public function test_guest_can_view_cart(): void
@@ -97,7 +87,7 @@ final class CartItemWebTest extends TestCase
         $book = Book::factory()->create(['author_id' => $author->id]);
         session(['guest_cart' => [$book->id => ['book_id' => $book->id, 'quantity' => 1]]]);
 
-        $response = $this->post('/test-clear-cart');
+        $response = $this->delete(route('cart.clear'));
 
         $response->assertRedirect();
         $this->assertNull(session('guest_cart'));
@@ -170,7 +160,7 @@ final class CartItemWebTest extends TestCase
             CartItem::factory()->create(['user_id' => $user->id, 'book_id' => $b->id]);
         }
 
-        $response = $this->actingAs($user)->post('/test-clear-cart');
+        $response = $this->actingAs($user)->delete(route('cart.clear'));
 
         $response->assertRedirect();
         $this->assertDatabaseMissing('cart_items', ['user_id' => $user->id]);

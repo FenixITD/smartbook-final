@@ -98,16 +98,64 @@ final class AuthorApiTest extends TestCase
     public function test_search_suggest_admin(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
-        $author = Author::factory()->create(['name' => 'Leo Tolstoy']);
 
         $mock = Mockery::mock(SearchSuggestAuthorService::class);
-        $mock->shouldReceive('execute')->withAnyArgs()->andReturn([
-            ['id' => $author->id, 'name' => 'Leo Tolstoy', 'url' => 'http://localhost/authors/1']
-        ]);
+        $mock->shouldReceive('execute')
+            ->once()
+            ->with('leo')
+            ->andReturn([
+                ['id' => 1, 'name' => 'Leo Tolstoy', 'url' => 'http://localhost/authors/1'],
+                ['id' => 2, 'name' => 'Leonardo da Vinci', 'url' => 'http://localhost/authors/2'],
+            ]);
         $this->app->instance(SearchSuggestAuthorService::class, $mock);
 
         $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.authors.suggest', ['q' => 'leo']));
 
-        $response->assertStatus(200)->assertJsonPath('0.name', 'Leo Tolstoy');
+        $response->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                '*' => ['id', 'name', 'url'],
+            ]);
+    }
+
+    public function test_search_suggest_returns_empty_for_no_match(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $mock = Mockery::mock(SearchSuggestAuthorService::class);
+        $mock->shouldReceive('execute')
+            ->once()
+            ->with('zzz_nonexistent')
+            ->andReturn([]);
+        $this->app->instance(SearchSuggestAuthorService::class, $mock);
+
+        $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.authors.suggest', ['q' => 'zzz_nonexistent']));
+
+        $response->assertStatus(200)->assertJson([]);
+    }
+
+    public function test_search_suggest_rejects_short_query(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin, 'sanctum')->getJson(route('api.authors.suggest', ['q' => 'a']));
+
+        $response->assertStatus(422)->assertJsonValidationErrors(['q']);
+    }
+
+    public function test_search_suggest_requires_auth(): void
+    {
+        $response = $this->getJson(route('api.authors.suggest', ['q' => 'test']));
+
+        $response->assertStatus(401);
+    }
+
+    public function test_non_admin_cannot_access_suggest(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+
+        $response = $this->actingAs($user, 'sanctum')->getJson(route('api.authors.suggest', ['q' => 'test']));
+
+        $response->assertStatus(403);
     }
 }
