@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn () => redirect()->route('dashboard'))->name('home');
 Route::get('dashboard', DashboardController::class)->name('dashboard');
 
-require __DIR__.'/web/auth.php';
 require __DIR__.'/web/catalog.php';
 require __DIR__.'/web/carts.php';
 require __DIR__.'/web/webFavorites.php';
