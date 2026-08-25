@@ -30,4 +30,6 @@ interface ConversationRepositoryInterface
     public function getMessageCount(int $conversationId): int;
 
     public function getSummary(int $conversationId): ConversationSummaryDto|null;
+
+    public function getStatus(int $conversationId): string|null;
 }

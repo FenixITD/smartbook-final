@@ -13,6 +13,8 @@ class Message extends Model
 {
     use LogsActivity;
 
+    protected $touches = ['conversation'];
+
     protected $fillable = [
         'conversation_id',
         'user_id',

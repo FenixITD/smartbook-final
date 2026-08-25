@@ -29,6 +29,12 @@ class SendMessageService
             }
         }
 
+        $status = $this->conversationRepository->getStatus($dto->conversationId);
+
+        if ($status === 'closed') {
+            abort(403, 'Conversation is closed.');
+        }
+
         $messageDto = $this->messageRepository->create($dto->conversationId, $dto->userId, $dto->body);
 
         $messageCount = $this->conversationRepository->getMessageCount($dto->conversationId);

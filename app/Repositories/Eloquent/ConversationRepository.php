@@ -108,4 +108,10 @@ final class ConversationRepository implements ConversationRepositoryInterface
 
         return ConversationSummaryDto::fromModel($conversation);
     }
+
+    public function getStatus(int $conversationId): string|null
+    {
+        /** @var string|null */
+        return Conversation::where('id', $conversationId)->value('status');
+    }
 }
