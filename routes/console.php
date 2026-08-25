@@ -10,6 +10,6 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('clickhouse:sync-activities')->everyMinute();
+Schedule::command('clickhouse:sync-activities')->everyMinute()->withoutOverlapping();
 
 Schedule::command('sanctum:prune-expired')->daily();

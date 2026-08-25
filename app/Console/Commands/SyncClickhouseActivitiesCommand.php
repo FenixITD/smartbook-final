@@ -28,76 +28,91 @@ final class SyncClickhouseActivitiesCommand extends Command
 
     public function handle(ClickhouseManagerService $clickhouseManagerService): int
     {
-        $this->ensureGroupExists();
+        if ($this->isPredis()) {
+            $this->error('Stream sync requires phpredis. predis is not supported.');
+
+            return self::FAILURE;
+        }
+
+        try {
+            $this->ensureGroupExists();
+        } catch (Throwable $e) {
+            $this->error('Failed to ensure consumer group: '.$e->getMessage());
+
+            return self::FAILURE;
+        }
 
         $consumerName = 'consumer-'.Str::limit(gethostname(), 20).'-'.getmypid();
         $maxBatches = $this->option('max-batches') !== null ? (int) $this->option('max-batches') : null;
         $batches = 0;
         $totalSynced = 0;
 
-        do {
-            $entries = $this->claimStaleEntries($consumerName);
+        try {
+            do {
+                $entries = $this->claimStaleEntries($consumerName);
 
-            if (count($entries) < self::BATCH_SIZE) {
+                if (count($entries) < self::BATCH_SIZE) {
+                    try {
+                        $remaining = self::BATCH_SIZE - count($entries);
+                        $fresh = Redis::xreadgroup(
+                            self::GROUP,
+                            $consumerName,
+                            [self::STREAM => '>'],
+                            $remaining,
+                        );
+                    } catch (Throwable $e) {
+                        $this->error('xreadgroup failed: '.$e->getMessage());
+
+                        return self::FAILURE;
+                    }
+
+                    if (is_array($fresh)) {
+                        foreach ($fresh as $streamEntries) {
+                            if (! is_array($streamEntries)) {
+                                continue;
+                            }
+
+                            foreach ($streamEntries as $id => $fields) {
+                                $entries[strval($id)] = $this->toStringKeyed($fields);
+                            }
+                        }
+                    }
+                }
+
+                if ($entries === []) {
+                    break;
+                }
+
+                [$rows, $goodIds, $badIds] = $this->decodeEntries($entries);
+
+                $this->drainBadEntries($entries, $badIds);
+
+                if ($rows === []) {
+                    continue;
+                }
+
                 try {
-                    $remaining = self::BATCH_SIZE - count($entries);
-                    $fresh = Redis::xreadgroup(
-                        self::GROUP,
-                        $consumerName,
-                        [self::STREAM => '>'],
-                        $remaining,
-                    );
+                    $clickhouseManagerService->insertBatch('activity_log', $rows);
                 } catch (Throwable $e) {
-                    $this->error('xreadgroup failed: '.$e->getMessage());
+                    $this->error('ClickHouse insert failed: '.$e->getMessage());
 
                     return self::FAILURE;
                 }
 
-                if (is_array($fresh)) {
-                    foreach ($fresh as $streamEntries) {
-                        if (! is_array($streamEntries)) {
-                            continue;
-                        }
-
-                        foreach ($streamEntries as $id => $fields) {
-                            $entries[strval($id)] = $this->toStringKeyed($fields);
-                        }
-                    }
+                try {
+                    Redis::xack(self::STREAM, self::GROUP, $goodIds);
+                    Redis::xdel(self::STREAM, $goodIds);
+                } catch (Throwable $e) {
+                    $this->warn('Failed to ack/del synced entries: '.$e->getMessage());
                 }
-            }
 
-            if ($entries === []) {
-                break;
-            }
-
-            [$rows, $goodIds, $badIds] = $this->decodeEntries($entries);
-
-            $this->drainBadEntries($entries, $badIds);
-
-            if ($rows === []) {
-                continue;
-            }
-
-            try {
-                $clickhouseManagerService->insertBatch('activity_log', $rows);
-            } catch (Throwable $e) {
-                $this->error('ClickHouse insert failed: '.$e->getMessage());
-
-                return self::FAILURE;
-            }
-
-            try {
-                Redis::xack(self::STREAM, self::GROUP, $goodIds);
-                Redis::xdel(self::STREAM, $goodIds);
-            } catch (Throwable $e) {
-                $this->warn('Failed to ack/del synced entries: '.$e->getMessage());
-            }
-
-            $totalSynced += count($rows);
-            $batches++;
-        } while ($maxBatches === null || $batches < $maxBatches);
-
-        $this->trimStream();
+                $totalSynced += count($rows);
+                $batches++;
+            } while ($maxBatches === null || $batches < $maxBatches);
+        } finally {
+            $this->trimStream();
+            $this->deleteConsumer($consumerName);
+        }
 
         if ($totalSynced > 0) {
             $this->info('Synced '.$totalSynced.' activities to ClickHouse in '.$batches.' batch(es).');
@@ -114,6 +129,15 @@ final class SyncClickhouseActivitiesCommand extends Command
             if (! str_contains($e->getMessage(), 'BUSYGROUP')) {
                 throw $e;
             }
+        }
+    }
+
+    private function deleteConsumer(string $consumerName): void
+    {
+        try {
+            Redis::xgroup('DELCONSUMER', self::STREAM, self::GROUP, $consumerName);
+        } catch (Throwable) {
+            // best-effort
         }
     }
 
@@ -151,6 +175,10 @@ final class SyncClickhouseActivitiesCommand extends Command
             }
 
             foreach ($claimed as $id => $fields) {
+                if (count($result) >= self::BATCH_SIZE) {
+                    break 2;
+                }
+
                 $id = (string) $id;
                 $result[$id] = $this->toStringKeyed($fields);
             }
@@ -266,6 +294,11 @@ final class SyncClickhouseActivitiesCommand extends Command
     private function getStreamMaxLen(): int
     {
         return (int) config('clickhouse.stream_max_len', 100_000);
+    }
+
+    private function isPredis(): bool
+    {
+        return str_contains((string) config('database.redis.client', ''), 'predis');
     }
 
     /**
