@@ -24,7 +24,7 @@ final readonly class ClickhouseActivityObserver
         DB::afterCommit(function () use ($row): void {
             try {
                 $payload = json_encode($row, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
-                Redis::xadd('clickhouse_activities_stream', '*', ['payload' => $payload]);
+                Redis::xadd('clickhouse_activities_stream', '*', ['payload' => $payload], ['MAXLEN', config('clickhouse.stream_max_len', 100_000)]);
             } catch (Throwable $e) {
                 Log::warning('Failed to push activity to Redis stream', [
                     'error' => $e->getMessage(),
