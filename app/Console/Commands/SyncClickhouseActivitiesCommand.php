@@ -87,8 +87,13 @@ final class SyncClickhouseActivitiesCommand extends Command
             return self::FAILURE;
         }
 
-        Redis::xack(self::STREAM, self::GROUP, $goodIds);
-        Redis::xdel(self::STREAM, $goodIds);
+        try {
+            Redis::xack(self::STREAM, self::GROUP, $goodIds);
+            Redis::xdel(self::STREAM, $goodIds);
+        } catch (Throwable $e) {
+            $this->warn('Failed to ack/del synced entries: '.$e->getMessage());
+        }
+
         $this->info('Synced '.count($rows).' activities to ClickHouse.');
 
         $this->trimStream();
@@ -147,8 +152,12 @@ final class SyncClickhouseActivitiesCommand extends Command
                 if ($deliveryCount > self::MAX_DELIVERIES) {
                     $payload = $this->toStringKeyed($fields)['payload'] ?? null;
                     $this->moveToDlq($id, is_string($payload) ? $payload : null, 'max_deliveries_exceeded');
-                    Redis::xack(self::STREAM, self::GROUP, [$id]);
-                    Redis::xdel(self::STREAM, [$id]);
+                    try {
+                        Redis::xack(self::STREAM, self::GROUP, [$id]);
+                        Redis::xdel(self::STREAM, [$id]);
+                    } catch (Throwable $e) {
+                        $this->warn('Failed to ack/del stale entry '.$id.': '.$e->getMessage());
+                    }
                     $this->warn('Entry '.$id.' moved to dead letter after '.self::MAX_DELIVERIES.' attempts.');
 
                     continue;
@@ -257,18 +266,26 @@ final class SyncClickhouseActivitiesCommand extends Command
             $this->moveToDlq($id, is_string($payload) ? $payload : null, $reason);
         }
 
-        Redis::xack(self::STREAM, self::GROUP, array_keys($badIds));
-        Redis::xdel(self::STREAM, array_keys($badIds));
+        try {
+            Redis::xack(self::STREAM, self::GROUP, array_keys($badIds));
+            Redis::xdel(self::STREAM, array_keys($badIds));
+        } catch (Throwable $e) {
+            $this->warn('Failed to ack/del bad entries: '.$e->getMessage());
+        }
     }
 
     private function moveToDlq(string $id, ?string $payload, string $reason): void
     {
-        Redis::xadd(self::DLQ_STREAM, '*', [
-            'original_id' => $id,
-            'payload' => $payload ?? '',
-            'reason' => $reason,
-            'failed_at' => now()->toIso8601String(),
-        ], ['MAXLEN', self::MAX_STREAM_LEN]);
+        try {
+            Redis::xadd(self::DLQ_STREAM, '*', [
+                'original_id' => $id,
+                'payload' => $payload ?? '',
+                'reason' => $reason,
+                'failed_at' => now()->toIso8601String(),
+            ], ['MAXLEN', self::MAX_STREAM_LEN]);
+        } catch (Throwable $e) {
+            $this->warn('Failed to move entry '.$id.' to DLQ: '.$e->getMessage());
+        }
     }
 
     private function trimStream(): void
