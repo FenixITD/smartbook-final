@@ -61,5 +61,7 @@ return [
     'features' => [
         Features::resetPasswords(),
         Features::twoFactorAuthentication(),
+        Features::updateProfileInformation(),
+        Features::updatePasswords(),
     ],
 ];
