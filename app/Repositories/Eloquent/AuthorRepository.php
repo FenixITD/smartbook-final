@@ -11,7 +11,6 @@ use App\Dto\PaginatedResponseDto;
 use App\Models\Author;
 use App\Repositories\Interfaces\AuthorRepositoryInterface;
 use App\Traits\OrdersByIds;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Cache;
 
 /**

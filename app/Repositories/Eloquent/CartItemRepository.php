@@ -134,8 +134,10 @@ final class CartItemRepository implements CartItemRepositoryInterface
 
     public function getQuantityByUserAndBook(int $userId, int $bookId): int
     {
-        return (int) CartItem::where('user_id', $userId)
+        $value = CartItem::where('user_id', $userId)
             ->where('book_id', $bookId)
             ->value('quantity');
+
+        return is_numeric($value) ? (int) $value : 0;
     }
 }

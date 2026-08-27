@@ -59,10 +59,12 @@ final class OrderDataRequest extends FormRequest
         $items = $rawItems !== null
             ? array_map(function (mixed $item): OrderItemInputDto {
                 $item = is_array($item) ? $item : [];
+                $bookIdRaw = $item['bookId'] ?? 0;
+                $quantityRaw = $item['quantity'] ?? 1;
 
                 return new OrderItemInputDto(
-                    bookId: (int) ($item['bookId'] ?? 0),
-                    quantity: (int) ($item['quantity'] ?? 1),
+                    bookId: is_numeric($bookIdRaw) ? (int) $bookIdRaw : 0,
+                    quantity: is_numeric($quantityRaw) ? (int) $quantityRaw : 1,
                 );
             }, (array) $rawItems)
             : null;

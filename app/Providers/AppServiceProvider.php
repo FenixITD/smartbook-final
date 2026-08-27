@@ -211,6 +211,6 @@ class AppServiceProvider extends ServiceProvider
 
         // Required by $middleware->throttleApi() (bootstrap/app.php); unauthenticated requests are keyed by IP
         RateLimiter::for('api', static fn (Request $request): Limit => Limit::perMinute(60)
-            ->by($request->user()?->id ?: $request->ip()));
+            ->by($request->user() !== null ? (string) $request->user()->id : $request->ip()));
     }
 }

@@ -42,7 +42,7 @@ final class SyncClickhouseActivitiesCommand extends Command
             return self::FAILURE;
         }
 
-        $consumerName = 'consumer-'.Str::limit(gethostname(), 20).'-'.getmypid();
+        $consumerName = 'consumer-'.Str::limit((string) gethostname(), 20).'-'.(string) getmypid();
         $maxBatches = $this->option('max-batches') !== null ? (int) $this->option('max-batches') : null;
         $batches = 0;
         $totalSynced = 0;
@@ -276,7 +276,7 @@ final class SyncClickhouseActivitiesCommand extends Command
                 'payload' => $payload ?? '',
                 'reason' => $reason,
                 'failed_at' => now()->toIso8601String(),
-            ], ['MAXLEN', $this->getStreamMaxLen()]);
+            ], $this->getStreamMaxLen(), false);
         } catch (Throwable $e) {
             $this->warn('Failed to move entry '.$id.' to DLQ: '.$e->getMessage());
         }
@@ -285,7 +285,7 @@ final class SyncClickhouseActivitiesCommand extends Command
     private function trimStream(): void
     {
         try {
-            Redis::xtrim(self::STREAM, 'MAXLEN', $this->getStreamMaxLen());
+            Redis::xtrim(self::STREAM, 'MAXLEN', false, false, $this->getStreamMaxLen());
         } catch (Throwable) {
             // best-effort, non-critical
         }
@@ -293,12 +293,16 @@ final class SyncClickhouseActivitiesCommand extends Command
 
     private function getStreamMaxLen(): int
     {
-        return (int) config('clickhouse.stream_max_len', 100_000);
+        $value = config('clickhouse.stream_max_len', 100_000);
+
+        return is_numeric($value) ? (int) $value : 100_000;
     }
 
     private function isPredis(): bool
     {
-        return str_contains((string) config('database.redis.client', ''), 'predis');
+        $value = config('database.redis.client');
+
+        return is_string($value) && str_contains($value, 'predis');
     }
 
     /**

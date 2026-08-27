@@ -75,7 +75,6 @@ class UpdateOrderService
 
         if (
             $newStatus === OrderStatusEnum::Cancelled
-            && $currentStatus !== null
             && $currentStatus !== OrderStatusEnum::Cancelled
         ) {
             $this->restoreStock($orderId);

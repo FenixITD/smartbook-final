@@ -11,6 +11,10 @@ use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateUser implements CreatesNewUsers
 {
+    /**
+     * @param array<string, mixed> $input
+     * @phpstan-ignore method.childParameterType
+     */
     public function create(array $input): User
     {
         Validator::make($input, [

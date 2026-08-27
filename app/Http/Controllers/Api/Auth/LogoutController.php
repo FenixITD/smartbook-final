@@ -36,9 +36,10 @@ final readonly class LogoutController
 {
     public function __invoke(Request $request): JsonResponse
     {
-        $token = $request->user()->currentAccessToken();
+        $user = $request->user();
+        $token = $user?->currentAccessToken();
 
-        if ($token instanceof PersonalAccessToken) {
+        if ($token !== null) {
             $token->delete();
         }
 

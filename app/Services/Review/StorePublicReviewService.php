@@ -30,7 +30,8 @@ final readonly class StorePublicReviewService
         try {
             return $this->repository->create($dto);
         } catch (QueryException $e) {
-            if ($e->errorInfo[1] === 1062) {
+            $errorInfo = $e->errorInfo;
+            if (is_array($errorInfo) && isset($errorInfo[1]) && $errorInfo[1] === 1062) {
                 throw ValidationException::withMessages([
                     'book_id' => 'You have already reviewed this book.',
                 ]);

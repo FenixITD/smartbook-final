@@ -13,6 +13,8 @@ class Message extends Model
 {
     use LogsActivity;
 
+    /** @var array<int, string> */
+    // @phpstan-ignore property.phpDocType
     protected $touches = ['conversation'];
 
     protected $fillable = [

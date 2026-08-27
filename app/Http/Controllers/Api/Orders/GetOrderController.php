@@ -47,7 +47,7 @@ final readonly class GetOrderController
     {
         $order = $this->repository->getById($orderId);
 
-        if (! $order) {
+        if ($order === null) {
             return response()->json(['message' => 'Order not found'], 404);
         }
 

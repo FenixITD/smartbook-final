@@ -6,7 +6,6 @@ namespace App\Services\Clickhouse;
 
 use function count;
 use function is_int;
-use function is_scalar;
 
 class ClickhouseQueryBuilderService
 {
