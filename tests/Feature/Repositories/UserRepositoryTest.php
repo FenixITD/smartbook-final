@@ -10,6 +10,7 @@ use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\PersonalAccessToken;
+use Mockery;
 use Tests\TestCase;
 
 class UserRepositoryTest extends TestCase
@@ -21,6 +22,15 @@ class UserRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
         $this->repository = new UserRepository();
     }
 
@@ -145,14 +155,14 @@ class UserRepositoryTest extends TestCase
         $this->repository->createToken(99999, 'test-token');
     }
 
-    public function test_create_token_different_names_create_separate_tokens(): void
+    public function test_create_token_different_names_replaces_previous_tokens(): void
     {
         $user = User::factory()->create();
 
         $this->repository->createToken($user->id, 'token-one');
         $this->repository->createToken($user->id, 'token-two');
 
-        $this->assertDatabaseHas('personal_access_tokens', ['name' => 'token-one', 'tokenable_id' => $user->id]);
+        $this->assertDatabaseMissing('personal_access_tokens', ['name' => 'token-one', 'tokenable_id' => $user->id]);
         $this->assertDatabaseHas('personal_access_tokens', ['name' => 'token-two', 'tokenable_id' => $user->id]);
     }
 }

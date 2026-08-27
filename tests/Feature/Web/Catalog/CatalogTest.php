@@ -16,7 +16,7 @@ final class CatalogTest extends TestCase
     public function test_public_can_view_book_in_catalog(): void
     {
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'slug' => 'test-book']);
+        $book = Book::factory()->create(['author_id' => $author->id, 'slug' => 'test-book', 'status' => 'active']);
         $user = User::factory()->create();
         Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
 
@@ -29,7 +29,7 @@ final class CatalogTest extends TestCase
     {
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'slug' => 'test-book']);
+        $book = Book::factory()->create(['author_id' => $author->id, 'slug' => 'test-book', 'status' => 'active']);
         Review::factory()->create(['book_id' => $book->id, 'user_id' => $user->id]);
 
         $response = $this->actingAs($user)->get("/catalog/{$book->slug}");

@@ -31,7 +31,7 @@ final class UpdatePublicReviewServiceTest extends TestCase
         $dto = new ReviewDto(userId: 1, bookId: 5, rating: 2, comment: 'Updated');
 
         $this->repository->expects('getById')->with(10)->andReturn($review);
-        $this->repository->expects('update')->with(10, Mockery::on(fn ($d) => $d->rating === 2 && $d->comment === 'Updated'))->once();
+        $this->repository->expects('update')->with(10, Mockery::on(fn ($d) => $d->rating == 2 && $d->comment === 'Updated'))->once();
 
         $this->service->execute(10, $dto);
 

@@ -117,13 +117,13 @@ class SearchAuthorServiceTest extends TestCase
         $this->service->search(new AuthorFiltersDto());
     }
 
-    public function test_size_is_10000(): void
+    public function test_size_matches_per_page(): void
     {
         $this->client->expects('search')->withArgs(function (array $params): bool {
             return $params['body']['size'] === 10000;
         })->andReturn($this->makeElasticsearchResponse([]));
 
-        $this->service->search(new AuthorFiltersDto());
+        $this->service->search(new AuthorFiltersDto(perPage: 10000));
     }
 
     public function test_source_is_excluded(): void

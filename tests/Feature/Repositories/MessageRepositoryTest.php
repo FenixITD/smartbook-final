@@ -12,6 +12,7 @@ use App\Models\Message;
 use App\Models\User;
 use App\Repositories\Eloquent\MessageRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class MessageRepositoryTest extends TestCase
@@ -23,6 +24,15 @@ class MessageRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
         $this->repository = new MessageRepository();
     }
 

@@ -16,6 +16,7 @@ use App\Models\Review;
 use App\Models\User;
 use App\Repositories\Eloquent\BookRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 class BookRepositoryTest extends TestCase
@@ -27,6 +28,15 @@ class BookRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
         $this->repository = new BookRepository();
     }
 

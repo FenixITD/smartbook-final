@@ -37,7 +37,7 @@ class SearchSuggestOrderServiceTest extends TestCase
 
     public function test_returns_mapped_results_when_ids_found(): void
     {
-        $order = new OrderResponseDto(1, 1, 'Name', 10.0, 'status', 'address', 'method', 'date', 'date');
+        $order = new OrderResponseDto(1, 1, 'Name', '10.0', 'status', 'address', 'method', 'date', 'date');
         $this->searchService->expects('search')->with('query', 5)->andReturn([1]);
         $this->repository->expects('getByIds')->with([1])->andReturn([$order]);
 

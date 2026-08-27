@@ -12,6 +12,7 @@ use App\Models\Author;
 use App\Repositories\Eloquent\AuthorRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 final class AuthorRepositoryTest extends TestCase
@@ -23,6 +24,14 @@ final class AuthorRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
 
         $this->repository = new AuthorRepository();
     }

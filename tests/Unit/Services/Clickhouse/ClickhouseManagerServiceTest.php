@@ -52,12 +52,15 @@ final class ClickhouseManagerServiceTest extends TestCase
 
     public function test_insert_batch_calls_transport_write(): void
     {
-        $transport = Mockery::mock();
-        $transport->expects('write')->once()->andReturnUsing(function (string $sql) {
+        $statement = Mockery::mock(Statement::class);
+        $transport = Mockery::mock(\ClickHouseDB\Transport\Http::class);
+        $transport->shouldReceive('write')->once()->andReturnUsing(function (string $sql) use ($statement) {
             $this->assertStringContainsString('INSERT INTO `logs`', $sql);
             $this->assertStringContainsString("'hello'", $sql);
+
+            return $statement;
         });
-        $this->client->expects('transport')->andReturn($transport);
+        $this->client->shouldReceive('transport')->andReturn($transport);
 
         $this->service->insertBatch('logs', [['msg' => 'hello']]);
     }

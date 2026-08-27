@@ -47,7 +47,7 @@ final class CartItemApiTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
 
         $response = $this->actingAs($admin, 'sanctum')->postJson('/api/cartItems', [
             'userId' => $user->id,
@@ -68,7 +68,7 @@ final class CartItemApiTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
         $cartItem = CartItem::factory()->create(['user_id' => $user->id, 'book_id' => $book->id, 'quantity' => 1]);
 
         $response = $this->actingAs($admin, 'sanctum')->putJson("/api/cartItems/{$cartItem->id}", [

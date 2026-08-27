@@ -131,6 +131,7 @@ class GuestCartServiceTest extends TestCase
 
     public function test_update_ignores_missing_item(): void
     {
+        $this->bookRepository->expects('getById')->with(1)->andReturn(null);
         $this->storage->expects('getCart')->andReturn([]);
 
         $this->service->update(1, 5);

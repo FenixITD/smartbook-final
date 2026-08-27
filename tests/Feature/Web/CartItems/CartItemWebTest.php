@@ -29,7 +29,7 @@ final class CartItemWebTest extends TestCase
     public function test_guest_can_add_to_cart(): void
     {
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10, 'status' => 'active']);
 
         $response = $this->post('/cart', [
             'book_id' => $book->id,
@@ -44,7 +44,7 @@ final class CartItemWebTest extends TestCase
     public function test_guest_cannot_add_more_than_stock(): void
     {
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 5]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 5, 'status' => 'active']);
 
         $response = $this->post('/cart', [
             'book_id' => $book->id,
@@ -58,7 +58,7 @@ final class CartItemWebTest extends TestCase
     public function test_guest_can_update_cart(): void
     {
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10, 'status' => 'active']);
         session(['guest_cart' => [$book->id => ['book_id' => $book->id, 'quantity' => 1]]]);
 
         $response = $this->put("/cart/{$book->id}", [
@@ -72,7 +72,7 @@ final class CartItemWebTest extends TestCase
     public function test_guest_can_remove_from_cart(): void
     {
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
         session(['guest_cart' => [$book->id => ['book_id' => $book->id, 'quantity' => 1]]]);
 
         $response = $this->delete("/cart/{$book->id}");
@@ -84,7 +84,7 @@ final class CartItemWebTest extends TestCase
     public function test_guest_can_clear_cart(): void
     {
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
         session(['guest_cart' => [$book->id => ['book_id' => $book->id, 'quantity' => 1]]]);
 
         $response = $this->delete(route('cart.clear'));
@@ -104,7 +104,7 @@ final class CartItemWebTest extends TestCase
     {
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10, 'status' => 'active']);
 
         $response = $this->actingAs($user)->post('/cart', [
             'book_id' => $book->id,
@@ -123,7 +123,7 @@ final class CartItemWebTest extends TestCase
     {
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10, 'status' => 'active']);
         CartItem::factory()->create(['user_id' => $user->id, 'book_id' => $book->id, 'quantity' => 1]);
 
         $response = $this->actingAs($user)->put("/cart/{$book->id}", [
@@ -142,7 +142,7 @@ final class CartItemWebTest extends TestCase
     {
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
         $cartItem = CartItem::factory()->create(['user_id' => $user->id, 'book_id' => $book->id]);
 
         $response = $this->actingAs($user)->delete("/cart/{$book->id}");
@@ -155,7 +155,7 @@ final class CartItemWebTest extends TestCase
     {
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $books = Book::factory()->count(2)->create(['author_id' => $author->id]);
+        $books = Book::factory()->count(2)->create(['author_id' => $author->id, 'status' => 'active']);
         foreach ($books as $b) {
             CartItem::factory()->create(['user_id' => $user->id, 'book_id' => $b->id]);
         }
@@ -170,7 +170,7 @@ final class CartItemWebTest extends TestCase
     {
         $user = User::factory()->create(['email' => 'merge@example.com']);
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 15]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 15, 'status' => 'active']);
 
         session(['guest_cart' => [$book->id => ['book_id' => $book->id, 'quantity' => 3]]]);
 

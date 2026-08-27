@@ -36,7 +36,7 @@ final class StorePublicReviewServiceTest extends TestCase
 
         $result = $this->service->execute($dto);
 
-        $this->assertSame(5, $result->rating);
+        $this->assertSame(5.0, $result->rating);
     }
 
     public function test_throws_when_review_already_exists(): void
@@ -55,8 +55,9 @@ final class StorePublicReviewServiceTest extends TestCase
 
         $this->repository->expects('findByUserAndBook')->with(1, 10)->andReturn(null);
 
-        $exception = new QueryException('reviews', 'INSERT', new \PDOException('Duplicate entry', 1062));
-        $exception->errorInfo = [null, 1062];
+        $pdoException = new \PDOException('Duplicate entry', 1062);
+        $pdoException->errorInfo = ['HY000', 1062, 'Duplicate entry'];
+        $exception = new QueryException('sqlite', 'INSERT INTO ...', [], $pdoException);
         $this->repository->expects('create')->andThrow($exception);
 
         $this->expectException(ValidationException::class);

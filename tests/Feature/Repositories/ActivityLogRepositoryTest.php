@@ -24,6 +24,14 @@ final class ActivityLogRepositoryTest extends TestCase
     {
         parent::setUp();
 
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
         $this->clickhouse = Mockery::mock(ClickhouseManagerService::class);
         $this->builder = Mockery::mock(ClickhouseQueryBuilderService::class);
         $this->repository = new ActivityLogRepository($this->clickhouse);

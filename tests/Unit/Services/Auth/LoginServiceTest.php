@@ -127,7 +127,8 @@ class LoginServiceTest extends TestCase
         RateLimiter::shouldReceive('tooManyAttempts')
             ->twice()
             ->withArgs(function (string $key): bool {
-                return str_contains($key, 'user@example.com') && str_contains($key, '192.168.1.1');
+                return str_contains($key, 'user@example.com') && str_contains($key, '192.168.1.1')
+                    || str_contains($key, 'login-ip:192.168.1.1');
             })
             ->andReturn(false);
 

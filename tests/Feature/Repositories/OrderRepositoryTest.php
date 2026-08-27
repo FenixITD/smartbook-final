@@ -13,6 +13,8 @@ use App\Models\User;
 use App\Repositories\Eloquent\OrderRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
+use Mockery;
 use Tests\TestCase;
 
 class OrderRepositoryTest extends TestCase
@@ -26,8 +28,17 @@ class OrderRepositoryTest extends TestCase
     {
         parent::setUp();
 
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
         $this->repository = new OrderRepository();
-        $this->user = User::factory()->create();
+        $this->user = User::factory()->create(['role' => 'admin']);
+        $this->app['auth']->setUser($this->user);
     }
 
     private function createOrder(array $attributes = []): Order

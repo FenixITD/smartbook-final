@@ -20,7 +20,7 @@ final class OrderStatusEnumTest extends TestCase
         $this->assertTrue(OrderStatusEnum::Pending->canTransitionTo(OrderStatusEnum::Cancelled));
     }
 
-    #[DataProvider('invalidTransitionProvider')]
+    #[DataProvider('pendingInvalidTransitionProvider')]
     public function test_pending_rejects_invalid_transitions(OrderStatusEnum $target): void
     {
         $this->assertFalse(OrderStatusEnum::Pending->canTransitionTo($target));
@@ -36,7 +36,7 @@ final class OrderStatusEnumTest extends TestCase
         $this->assertTrue(OrderStatusEnum::Paid->canTransitionTo(OrderStatusEnum::Cancelled));
     }
 
-    #[DataProvider('invalidTransitionProvider')]
+    #[DataProvider('paidInvalidTransitionProvider')]
     public function test_paid_rejects_invalid_transitions(OrderStatusEnum $target): void
     {
         $this->assertFalse(OrderStatusEnum::Paid->canTransitionTo($target));
@@ -52,16 +52,20 @@ final class OrderStatusEnumTest extends TestCase
         $this->assertTrue(OrderStatusEnum::Shipped->canTransitionTo(OrderStatusEnum::Cancelled));
     }
 
-    #[DataProvider('invalidTransitionProvider')]
+    #[DataProvider('shippedInvalidTransitionProvider')]
     public function test_shipped_rejects_invalid_transitions(OrderStatusEnum $target): void
     {
         $this->assertFalse(OrderStatusEnum::Shipped->canTransitionTo($target));
     }
 
     #[DataProvider('terminalStatusProvider')]
-    public function test_terminal_statuses_reject_all_transitions(OrderStatusEnum $status): void
+    public function test_terminal_statuses_reject_all_non_self_transitions(OrderStatusEnum $status): void
     {
         foreach (OrderStatusEnum::cases() as $target) {
+            if ($target === $status) {
+                continue;
+            }
+
             $this->assertFalse(
                 $status->canTransitionTo($target),
                 "Expected {$status->value} -> {$target->value} to be rejected",
@@ -114,12 +118,33 @@ final class OrderStatusEnumTest extends TestCase
     /**
      * @return array<string, array{OrderStatusEnum}>
      */
-    public static function invalidTransitionProvider(): array
+    public static function pendingInvalidTransitionProvider(): array
+    {
+        return [
+            'to shipped' => [OrderStatusEnum::Shipped],
+            'to delivered' => [OrderStatusEnum::Delivered],
+        ];
+    }
+
+    /**
+     * @return array<string, array{OrderStatusEnum}>
+     */
+    public static function paidInvalidTransitionProvider(): array
     {
         return [
             'to pending' => [OrderStatusEnum::Pending],
-            'to shipped' => [OrderStatusEnum::Shipped],
             'to delivered' => [OrderStatusEnum::Delivered],
+        ];
+    }
+
+    /**
+     * @return array<string, array{OrderStatusEnum}>
+     */
+    public static function shippedInvalidTransitionProvider(): array
+    {
+        return [
+            'to pending' => [OrderStatusEnum::Pending],
+            'to paid' => [OrderStatusEnum::Paid],
         ];
     }
 

@@ -69,7 +69,7 @@ final class OrderWebTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'price' => 20.00, 'stock' => 5]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'price' => 20.00, 'stock' => 5, 'status' => 'active']);
 
         CartItem::factory()->create([
             'user_id' => $user->id,

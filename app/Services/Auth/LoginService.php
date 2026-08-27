@@ -17,8 +17,9 @@ class LoginService
 
     public function login(LoginDto $dto): bool
     {
-        $throttleKey = Str::transliterate(Str::lower($dto->email).'|'.$dto->ip);
-        $ipThrottleKey = 'login-ip:'.Str::transliterate($dto->ip);
+        $safeIp = $dto->ip ?? '';
+        $throttleKey = Str::transliterate(Str::lower($dto->email).'|'.$safeIp);
+        $ipThrottleKey = 'login-ip:'.Str::transliterate($safeIp);
 
         if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_ATTEMPTS_PER_CREDENTIAL)) {
             throw $this->throttled($throttleKey);

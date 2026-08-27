@@ -23,8 +23,8 @@ final class CreateOrderControllerTest extends TestCase
         $customer = User::factory()->create(['role' => 'user']);
         $author = Author::factory()->create();
 
-        $book1 = Book::factory()->create(['author_id' => $author->id, 'price' => 20.00, 'stock' => 10]);
-        $book2 = Book::factory()->create(['author_id' => $author->id, 'price' => 30.00, 'stock' => 10]);
+        $book1 = Book::factory()->create(['author_id' => $author->id, 'price' => 20.00, 'stock' => 10, 'status' => 'active']);
+        $book2 = Book::factory()->create(['author_id' => $author->id, 'price' => 30.00, 'stock' => 10, 'status' => 'active']);
 
         CartItem::factory()->create(['user_id' => $customer->id, 'book_id' => $book1->id, 'quantity' => 2]);
         CartItem::factory()->create(['user_id' => $customer->id, 'book_id' => $book2->id, 'quantity' => 1]);

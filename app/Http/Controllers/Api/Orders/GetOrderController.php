@@ -47,6 +47,10 @@ final readonly class GetOrderController
     {
         $order = $this->repository->getById($orderId);
 
+        if (! $order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
         return (new OrderResource($order))->response();
     }
 }

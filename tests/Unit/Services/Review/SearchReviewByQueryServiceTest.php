@@ -25,8 +25,9 @@ final class SearchReviewByQueryServiceTest extends TestCase
 
     private function makeResponse(array $hits, int $total = 1): Elasticsearch&MockInterface
     {
+        $responseData = ['hits' => ['hits' => $hits, 'total' => ['value' => $total]]];
         $response = Mockery::mock(Elasticsearch::class);
-        $response->expects('asArray')->andReturn(['hits' => ['hits' => $hits, 'total' => ['value' => $total]]]);
+        $response->shouldReceive('asArray')->andReturn($responseData);
         return $response;
     }
 
@@ -51,7 +52,8 @@ final class SearchReviewByQueryServiceTest extends TestCase
     public function test_search_paginated_returns_ids_and_total(): void
     {
         $hits = [['_id' => '1'], ['_id' => '2']];
-        $this->client->expects('search')->andReturn($this->makeResponse($hits, 10));
+        $response = $this->makeResponse($hits, 10);
+        $this->client->expects('search')->andReturn($response);
 
         $result = $this->service->searchPaginated('book', 2, 1);
 

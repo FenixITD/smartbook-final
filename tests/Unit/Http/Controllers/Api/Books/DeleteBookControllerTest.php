@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Http\Controllers\Api\Books;
 
 use App\Http\Controllers\Api\Books\DeleteBookController;
-use App\Repositories\Interfaces\BookRepositoryInterface;
+use App\Services\Book\DeleteBookService;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -13,11 +13,11 @@ final class DeleteBookControllerTest extends TestCase
 {
     public function test_returns_200_with_success_message(): void
     {
-        /** @var BookRepositoryInterface&MockInterface $repository */
-        $repository = $this->mock(BookRepositoryInterface::class);
-        $repository->shouldReceive('delete')->once()->with(1)->andReturn(true);
+        /** @var DeleteBookService&MockInterface $service */
+        $service = $this->mock(DeleteBookService::class);
+        $service->shouldReceive('execute')->once()->with(1);
 
-        $controller = new DeleteBookController($repository);
+        $controller = new DeleteBookController($service);
         $response = $controller->__invoke(1);
 
         $this->assertSame(200, $response->getStatusCode());
@@ -28,61 +28,56 @@ final class DeleteBookControllerTest extends TestCase
 
     public function test_response_contains_success_and_message_keys(): void
     {
-        /** @var BookRepositoryInterface&MockInterface $repository */
-        $repository = $this->mock(BookRepositoryInterface::class);
-        $repository->shouldReceive('delete')->andReturn(true);
+        /** @var DeleteBookService&MockInterface $service */
+        $service = $this->mock(DeleteBookService::class);
+        $service->shouldReceive('execute');
 
-        $response = (new DeleteBookController($repository))->__invoke(1);
-        $content  = json_decode((string) $response->getContent(), true);
+        $response = (new DeleteBookController($service))->__invoke(1);
+        $content = json_decode((string) $response->getContent(), true);
 
         $this->assertArrayHasKey('message', $content);
     }
 
-    public function test_passes_correct_book_id_to_repository(): void
+    public function test_passes_correct_book_id_to_service(): void
     {
-        /** @var BookRepositoryInterface&MockInterface $repository */
-        $repository = $this->mock(BookRepositoryInterface::class);
-        $repository->shouldReceive('delete')
+        /** @var DeleteBookService&MockInterface $service */
+        $service = $this->mock(DeleteBookService::class);
+        $service->shouldReceive('execute')
             ->once()
-            ->with(42)
-            ->andReturn(true);
+            ->with(42);
 
-        (new DeleteBookController($repository))->__invoke(42);
+        (new DeleteBookController($service))->__invoke(42);
     }
 
-    public function test_returns_200_regardless_of_repository_return_value(): void
+    public function test_always_returns_200(): void
     {
-        /** @var BookRepositoryInterface&MockInterface $repository */
-        $repository = $this->mock(BookRepositoryInterface::class);
-        $repository->shouldReceive('delete')->with(999)->andReturn(true);
+        /** @var DeleteBookService&MockInterface $service */
+        $service = $this->mock(DeleteBookService::class);
+        $service->shouldReceive('execute')->with(999);
 
-        $response = (new DeleteBookController($repository))->__invoke(999);
+        $response = (new DeleteBookController($service))->__invoke(999);
 
         $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function test_calls_repository_delete_exactly_once(): void
+    public function test_calls_service_execute_exactly_once(): void
     {
-        /** @var BookRepositoryInterface&MockInterface $repository */
-        $repository = $this->mock(BookRepositoryInterface::class);
-        $repository->shouldReceive('delete')
+        /** @var DeleteBookService&MockInterface $service */
+        $service = $this->mock(DeleteBookService::class);
+        $service->shouldReceive('execute')
             ->once()
-            ->with(5)
-            ->andReturn(true);
+            ->with(5);
 
-        (new DeleteBookController($repository))->__invoke(5);
+        (new DeleteBookController($service))->__invoke(5);
     }
 
-    public function test_does_not_call_other_repository_methods(): void
+    public function test_does_not_call_other_service_methods(): void
     {
-        /** @var BookRepositoryInterface&MockInterface $repository */
-        $repository = $this->mock(BookRepositoryInterface::class);
-        $repository->shouldReceive('delete')->once()->andReturn(true);
-        $repository->shouldNotReceive('getById');
-        $repository->shouldNotReceive('getList');
-        $repository->shouldNotReceive('create');
-        $repository->shouldNotReceive('update');
+        /** @var DeleteBookService&MockInterface $service */
+        $service = $this->mock(DeleteBookService::class);
+        $service->shouldReceive('execute')->once();
+        $service->shouldNotReceive('somethingElse');
 
-        (new DeleteBookController($repository))->__invoke(1);
+        (new DeleteBookController($service))->__invoke(1);
     }
 }

@@ -39,7 +39,7 @@ final class CheckoutTest extends TestCase
     {
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'price' => 25.00, 'stock' => 5]);
+        $book = Book::factory()->create(['author_id' => $author->id, 'price' => 25.00, 'stock' => 5, 'status' => 'active']);
 
         CartItem::factory()->create(['user_id' => $user->id, 'book_id' => $book->id, 'quantity' => 2]);
 
@@ -130,7 +130,8 @@ final class CheckoutTest extends TestCase
             'paymentMethod' => 'card',
         ]);
 
-        $response->assertUnprocessable();
+        $response->assertRedirect();
+        $response->assertSessionHasErrors(['cart']);
     }
 
     public function test_checkout_fails_when_insufficient_stock(): void
@@ -146,7 +147,8 @@ final class CheckoutTest extends TestCase
             'paymentMethod' => 'card',
         ]);
 
-        $response->assertUnprocessable();
+        $response->assertRedirect();
+        $response->assertSessionHasErrors(['stock']);
         $this->assertDatabaseMissing('orders', ['user_id' => $user->id]);
         $this->assertDatabaseHas('books', ['id' => $book->id, 'stock' => 1]);
     }
@@ -160,7 +162,8 @@ final class CheckoutTest extends TestCase
             'paymentMethod' => 'bitcoin',
         ]);
 
-        $response->assertUnprocessable();
+        $response->assertRedirect();
+        $response->assertSessionHasErrors(['paymentMethod']);
     }
 
     public function test_checkout_validates_shipping_address(): void
@@ -171,6 +174,7 @@ final class CheckoutTest extends TestCase
             'paymentMethod' => 'card',
         ]);
 
-        $response->assertUnprocessable();
+        $response->assertRedirect();
+        $response->assertSessionHasErrors(['shippingAddress']);
     }
 }

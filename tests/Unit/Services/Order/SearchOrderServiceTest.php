@@ -67,12 +67,10 @@ class SearchOrderServiceTest extends TestCase
         $this->service->search(new OrderFiltersDto(search: 'john'));
     }
 
-    public function test_uses_term_when_id_is_provided(): void
+    public function test_uses_match_all_when_only_id_is_provided(): void
     {
         $this->client->expects('search')->withArgs(function (array $params): bool {
-            $query = $params['body']['query'];
-            return isset($query['bool']['filter'][0]['term']['id'])
-                && $query['bool']['filter'][0]['term']['id'] === 5;
+            return isset($params['body']['query']['match_all']);
         })->andReturn($this->makeElasticsearchResponse([]));
 
         $this->service->search(new OrderFiltersDto(id: 5));

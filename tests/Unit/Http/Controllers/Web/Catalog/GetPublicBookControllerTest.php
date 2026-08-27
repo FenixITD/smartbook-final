@@ -33,11 +33,31 @@ final class GetPublicBookControllerTest extends TestCase
         $this->controller = $this->app->make(GetPublicBookController::class);
     }
 
+    private function makeBookDto(int $id = 1, string $status = 'active'): BookResponseDto
+    {
+        return new BookResponseDto(
+            id: $id,
+            title: 'Test Book',
+            slug: 'test-book',
+            authorId: 1,
+            authorName: 'Author',
+            description: 'Description',
+            price: '10.00',
+            stock: 5,
+            publishYear: 2024,
+            coverImage: null,
+            averageRating: null,
+            ratingsCount: null,
+            status: $status,
+            createdAt: now()->toDateTimeString(),
+            updatedAt: now()->toDateTimeString(),
+        );
+    }
+
     public function test_returns_view(): void
     {
         $slug = 'test-book-slug';
-        $bookDto = Mockery::mock(BookResponseDto::class);
-        $bookDto->id = 1;
+        $bookDto = $this->makeBookDto();
 
         $this->bookRepository
             ->shouldReceive('findBySlugWithRelations')
@@ -59,8 +79,7 @@ final class GetPublicBookControllerTest extends TestCase
     public function test_returns_correct_view_name(): void
     {
         $slug = 'test-book-slug';
-        $bookDto = Mockery::mock(BookResponseDto::class);
-        $bookDto->id = 1;
+        $bookDto = $this->makeBookDto();
 
         $this->bookRepository
             ->shouldReceive('findBySlugWithRelations')
@@ -79,8 +98,7 @@ final class GetPublicBookControllerTest extends TestCase
     {
         $slug = 'awesome-book';
         $bookId = 42;
-        $bookDto = Mockery::mock(BookResponseDto::class);
-        $bookDto->id = $bookId;
+        $bookDto = $this->makeBookDto(id: $bookId);
 
         $this->bookRepository
             ->shouldReceive('findBySlugWithRelations')
@@ -100,8 +118,7 @@ final class GetPublicBookControllerTest extends TestCase
     public function test_passes_book_and_reviews_data_to_view(): void
     {
         $slug = 'another-book';
-        $bookDto = Mockery::mock(BookResponseDto::class);
-        $bookDto->id = 5;
+        $bookDto = $this->makeBookDto(id: 5);
         $reviewsDto = Mockery::mock(PaginatedResponseDto::class);
 
         $this->bookRepository

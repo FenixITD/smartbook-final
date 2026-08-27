@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\Order\CreateOrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use Mockery;
 use Tests\TestCase;
 
 final class CreateOrderServiceTest extends TestCase
@@ -24,6 +25,15 @@ final class CreateOrderServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
         $this->service = $this->app->make(CreateOrderService::class);
     }
 
@@ -91,7 +101,7 @@ final class CreateOrderServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $author = Author::factory()->create();
-        $book = Book::factory()->create(['author_id' => $author->id, 'price' => 10.00, 'stock' => 5, 'status' => 'inactive']);
+        $book = Book::factory()->create(['author_id' => $author->id, 'price' => 10.00, 'stock' => 5, 'status' => 'draft']);
 
         CartItem::factory()->create(['user_id' => $user->id, 'book_id' => $book->id, 'quantity' => 1]);
 

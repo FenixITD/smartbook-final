@@ -27,6 +27,20 @@ class AddCartItemServiceTest extends TestCase
     {
         parent::setUp();
         config(['activitylog.enabled' => false]);
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
+        $pendingLog = Mockery::mock(\Spatie\Activitylog\PendingActivityLog::class);
+        $pendingLog->shouldReceive('useLog')->andReturnSelf();
+        $pendingLog->shouldReceive('logger')->andReturn($activityLogger);
+        $this->app->singleton(\Spatie\Activitylog\PendingActivityLog::class, fn () => $pendingLog);
+
         $this->repository = Mockery::mock(CartItemRepositoryInterface::class);
         $this->bookRepository = Mockery::mock(BookRepositoryInterface::class);
         $this->transactionManager = Mockery::mock(TransactionManagerInterface::class);

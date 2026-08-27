@@ -16,8 +16,8 @@ final class CreateOrderControllerTest extends TestCase
         $customer = User::factory()->create(['role' => 'user']);
         $author = Author::factory()->create();
 
-        $book1 = Book::factory()->create(['author_id' => $author->id, 'price' => 15.00, 'stock' => 5]);
-        $book2 = Book::factory()->create(['author_id' => $author->id, 'price' => 25.00, 'stock' => 5]);
+        $book1 = Book::factory()->create(['author_id' => $author->id, 'price' => 15.00, 'stock' => 5, 'status' => 'active']);
+        $book2 = Book::factory()->create(['author_id' => $author->id, 'price' => 25.00, 'stock' => 5, 'status' => 'active']);
 
         CartItem::factory()->create(['user_id' => $customer->id, 'book_id' => $book1->id, 'quantity' => 2]);
         CartItem::factory()->create(['user_id' => $customer->id, 'book_id' => $book2->id, 'quantity' => 1]);
@@ -30,7 +30,7 @@ final class CreateOrderControllerTest extends TestCase
         ]);
 
         $response->assertCreated();
-        $response->assertJsonPath('data.total', 55);
+        $response->assertJsonPath('data.total', '55.00');
         $response->assertJsonPath('data.status', 'pending');
 
         $this->assertDatabaseHas('orders', ['user_id' => $customer->id, 'total' => 55.00]);

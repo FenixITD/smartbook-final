@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Repositories\Eloquent\ConversationRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Mockery;
 use Tests\TestCase;
 
 class ConversationRepositoryTest extends TestCase
@@ -24,6 +25,15 @@ class ConversationRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+
         $this->repository = new ConversationRepository();
     }
 
@@ -158,14 +168,13 @@ class ConversationRepositoryTest extends TestCase
         $book2 = $this->createBook();
 
         $older = $this->createConversation($user, $book1);
-        $older->updated_at = now()->subHour();
-        $older->saveQuietly();
         $this->createMessage($older, $user);
 
         $newer = $this->createConversation($user, $book2);
-        $newer->updated_at = now();
-        $newer->saveQuietly();
         $this->createMessage($newer, $user);
+
+        DB::table('conversations')->where('id', $older->id)->update(['updated_at' => now()->subHour()]);
+        DB::table('conversations')->where('id', $newer->id)->update(['updated_at' => now()]);
 
         $result = $this->repository->getAllWithUnreadCounts();
 

@@ -36,6 +36,8 @@ class SendMessageServiceTest extends TestCase
         $message = new MessageDto(1, 10, 'body', 1, 'Admin', 'date');
 
         $this->conversationRepository->expects('getOwnerId')->never();
+        $this->conversationRepository->expects('getStatus')->with(10)->andReturn('open');
+        $this->conversationRepository->expects('getMessageCount')->with(10)->andReturn(2);
         $this->messageRepository->expects('create')->with(10, 1, 'body')->andReturn($message);
 
         $result = $this->service->sendMessage($dto);
@@ -52,6 +54,8 @@ class SendMessageServiceTest extends TestCase
         $message = new MessageDto(1, 10, 'body', 2, 'User', 'date');
 
         $this->conversationRepository->expects('getOwnerId')->with(10)->andReturn(2);
+        $this->conversationRepository->expects('getStatus')->with(10)->andReturn('open');
+        $this->conversationRepository->expects('getMessageCount')->with(10)->andReturn(2);
         $this->messageRepository->expects('create')->with(10, 2, 'body')->andReturn($message);
 
         $result = $this->service->sendMessage($dto);

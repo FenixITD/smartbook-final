@@ -12,11 +12,31 @@ use App\Models\User;
 use App\Repositories\Interfaces\BookRepositoryInterface;
 use App\Services\Order\DeleteOrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 use Tests\TestCase;
 
 final class StockManagementTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $activityLogger = Mockery::mock(\Spatie\Activitylog\ActivityLogger::class);
+        $activityLogger->shouldReceive('useLog')->andReturnSelf();
+        $activityLogger->shouldReceive('event')->andReturnSelf();
+        $activityLogger->shouldReceive('performedOn')->andReturnSelf();
+        $activityLogger->shouldReceive('withProperties')->andReturnSelf();
+        $activityLogger->shouldReceive('log')->andReturnNull();
+        $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
+    }
+
+    private function actAsAdmin(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $this->app['auth']->setUser($admin);
+    }
 
     public function test_decrement_stock_reduces_quantity(): void
     {
@@ -56,6 +76,7 @@ final class StockManagementTest extends TestCase
 
     public function test_delete_pending_order_restores_stock(): void
     {
+        $this->actAsAdmin();
         $author = Author::factory()->create();
         $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 0, 'status' => 'active']);
         $user = User::factory()->create();
@@ -70,6 +91,7 @@ final class StockManagementTest extends TestCase
 
     public function test_delete_paid_order_restores_stock(): void
     {
+        $this->actAsAdmin();
         $author = Author::factory()->create();
         $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 0, 'status' => 'active']);
         $user = User::factory()->create();
@@ -83,6 +105,7 @@ final class StockManagementTest extends TestCase
 
     public function test_delete_shipped_order_restores_stock(): void
     {
+        $this->actAsAdmin();
         $author = Author::factory()->create();
         $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 0, 'status' => 'active']);
         $user = User::factory()->create();
@@ -96,6 +119,7 @@ final class StockManagementTest extends TestCase
 
     public function test_delete_delivered_order_does_not_restore_stock(): void
     {
+        $this->actAsAdmin();
         $author = Author::factory()->create();
         $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10, 'status' => 'active']);
         $user = User::factory()->create();
@@ -109,6 +133,7 @@ final class StockManagementTest extends TestCase
 
     public function test_delete_cancelled_order_does_not_restore_stock(): void
     {
+        $this->actAsAdmin();
         $author = Author::factory()->create();
         $book = Book::factory()->create(['author_id' => $author->id, 'stock' => 10, 'status' => 'active']);
         $user = User::factory()->create();
