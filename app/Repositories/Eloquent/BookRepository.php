@@ -11,7 +11,6 @@ use App\Dto\Dashboard\DashboardFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Models\Book;
 use App\Repositories\Interfaces\BookRepositoryInterface;
-
 use App\Traits\CreatesPaginatedResponse;
 use App\Traits\OrdersByIds;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -35,8 +34,7 @@ final class BookRepository implements BookRepositoryInterface
     }
 
     /**
-     * @param array<int> $ids
-     *
+     * @param  array<int>  $ids
      * @return array<BookResponseDto>
      */
     public function getListByIds(array $ids, BookFiltersDto $filters): array
@@ -103,6 +101,7 @@ final class BookRepository implements BookRepositoryInterface
 
         $items = Book::with(['author', 'genres'])
             ->whereIn('id', $ids)
+            ->when(! $filters->showNonActive, fn ($query) => $query->where('status', 'active'))
             ->orderBy($column, $direction)
             ->get();
 
@@ -120,7 +119,7 @@ final class BookRepository implements BookRepositoryInterface
         return PaginatedResponseDto::fromPaginator($paginator, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
-    public function getById(int $id): BookResponseDto|null
+    public function getById(int $id): ?BookResponseDto
     {
         $bookId = Book::find($id);
 

@@ -27,7 +27,7 @@ class BookFactory extends Factory
             'cover_image' => fake()->imageUrl,
             'average_rating' => 0,
             'ratings_count' => 0,
-            'status' => fake()->randomElement(['active', 'draft', 'archived']),
+            'status' => 'active',
         ];
     }
 }

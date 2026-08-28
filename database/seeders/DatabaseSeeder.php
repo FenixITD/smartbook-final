@@ -46,9 +46,13 @@ class DatabaseSeeder extends Seeder
         Author::factory()->count(10)->create();
         Genre::factory()->count(15)->create();
 
-        Book::factory()->count(50)->create()->each(static function ($book): void {
+        Book::factory()->count(50)->create(['status' => 'active'])->each(static function ($book): void {
             $genres = Genre::inRandomOrder()->limit(random_int(1, 4))->pluck('id');
             $book->genres()->attach($genres);
+        });
+
+        Book::inRandomOrder()->limit(10)->get()->each(static function (Book $book): void {
+            $book->update(['status' => fake()->randomElement(['draft', 'archived'])]);
         });
 
         /**

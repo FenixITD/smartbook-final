@@ -13,9 +13,7 @@ class SearchBookForDashboardService
 {
     use ExecutesElasticsearchQueries;
 
-    public function __construct(private Client $client)
-    {
-    }
+    public function __construct(private Client $client) {}
 
     /**
      * @return array{0: array<int>, 1: int}
@@ -40,6 +38,10 @@ class SearchBookForDashboardService
     {
         $must = [];
         $filter = [];
+
+        if (! $filters->showNonActive) {
+            $filter[] = ['term' => ['status' => 'active']];
+        }
 
         if ($filters->search !== null && $filters->search !== '') {
             $must[] = [
@@ -84,7 +86,7 @@ class SearchBookForDashboardService
         }
 
         if ($must === [] && $filter === []) {
-            return ['match_all' => new stdClass()];
+            return ['match_all' => new stdClass];
         }
 
         $bool = [];
@@ -93,9 +95,7 @@ class SearchBookForDashboardService
             $bool['must'] = $must;
         }
 
-        if ($filter !== []) {
-            $bool['filter'] = $filter;
-        }
+        $bool['filter'] = $filter;
 
         return ['bool' => $bool];
     }

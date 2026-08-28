@@ -37,7 +37,7 @@ class BookRepositoryTest extends TestCase
         $activityLogger->shouldReceive('log')->andReturnNull();
         $this->app->singleton(\Spatie\Activitylog\ActivityLogger::class, fn () => $activityLogger);
 
-        $this->repository = new BookRepository();
+        $this->repository = new BookRepository;
     }
 
     private function makeBookDto(array $overrides = []): BookDto
@@ -61,7 +61,7 @@ class BookRepositoryTest extends TestCase
     {
         Book::factory()->for(Author::factory())->count(3)->create();
 
-        $filters = new BookFiltersDto();
+        $filters = new BookFiltersDto;
         $result = $this->repository->getList($filters);
 
         $this->assertCount(3, $result);
@@ -96,7 +96,7 @@ class BookRepositoryTest extends TestCase
         $books = Book::factory()->for(Author::factory())->count(5)->create();
         $ids = $books->take(2)->pluck('id')->all();
 
-        $filters = new BookFiltersDto();
+        $filters = new BookFiltersDto;
         $result = $this->repository->getListByIds($ids, $filters);
 
         $this->assertCount(2, $result);
@@ -111,7 +111,7 @@ class BookRepositoryTest extends TestCase
         $books = Book::factory()->for(Author::factory())->count(3)->create();
         $ids = $books->pluck('id')->reverse()->values()->all();
 
-        $filters = new BookFiltersDto();
+        $filters = new BookFiltersDto;
         $result = $this->repository->getListByIds($ids, $filters);
 
         $this->assertSame($ids[0], $result[0]->id);
@@ -123,7 +123,7 @@ class BookRepositoryTest extends TestCase
     {
         Book::factory()->for(Author::factory())->count(3)->create();
 
-        $filters = new BookFiltersDto();
+        $filters = new BookFiltersDto;
         $result = $this->repository->getWebList($filters);
 
         $this->assertInstanceOf(PaginatedResponseDto::class, $result);
@@ -136,7 +136,7 @@ class BookRepositoryTest extends TestCase
         $genre = Genre::factory()->create();
         $book->genres()->attach($genre->id);
 
-        $filters = new BookFiltersDto();
+        $filters = new BookFiltersDto;
         $result = $this->repository->getWebList($filters);
 
         $item = $result->items[0];
@@ -149,7 +149,7 @@ class BookRepositoryTest extends TestCase
         $books = Book::factory()->for(Author::factory())->count(5)->create();
         $ids = $books->take(3)->pluck('id')->all();
 
-        $filters = new BookFiltersDto();
+        $filters = new BookFiltersDto;
         $result = $this->repository->getWebListByIds($ids, count($ids), $filters);
 
         $this->assertSame(3, $result->total);
@@ -171,8 +171,8 @@ class BookRepositoryTest extends TestCase
     public function test_get_dashboard_list_by_ids_sorts_by_price_asc(): void
     {
         $author = Author::factory()->create();
-        $cheap = Book::factory()->create(['price' => 5.00, 'author_id' => $author->id]);
-        $expensive = Book::factory()->create(['price' => 50.00, 'author_id' => $author->id]);
+        $cheap = Book::factory()->create(['price' => 5.00, 'author_id' => $author->id, 'status' => 'active']);
+        $expensive = Book::factory()->create(['price' => 50.00, 'author_id' => $author->id, 'status' => 'active']);
         $ids = [$cheap->id, $expensive->id];
 
         $filters = new DashboardFiltersDto(sort: 'price_asc');
@@ -184,8 +184,8 @@ class BookRepositoryTest extends TestCase
     public function test_get_dashboard_list_by_ids_sorts_by_price_desc(): void
     {
         $author = Author::factory()->create();
-        $cheap = Book::factory()->create(['price' => 5.00, 'author_id' => $author->id]);
-        $expensive = Book::factory()->create(['price' => 50.00, 'author_id' => $author->id]);
+        $cheap = Book::factory()->create(['price' => 5.00, 'author_id' => $author->id, 'status' => 'active']);
+        $expensive = Book::factory()->create(['price' => 50.00, 'author_id' => $author->id, 'status' => 'active']);
         $ids = [$cheap->id, $expensive->id];
 
         $filters = new DashboardFiltersDto(sort: 'price_desc');
@@ -197,8 +197,8 @@ class BookRepositoryTest extends TestCase
     public function test_get_dashboard_list_by_ids_sorts_by_newest(): void
     {
         $author = Author::factory()->create();
-        $old = Book::factory()->create(['publish_year' => 2000, 'author_id' => $author->id]);
-        $new = Book::factory()->create(['publish_year' => 2024, 'author_id' => $author->id]);
+        $old = Book::factory()->create(['publish_year' => 2000, 'author_id' => $author->id, 'status' => 'active']);
+        $new = Book::factory()->create(['publish_year' => 2024, 'author_id' => $author->id, 'status' => 'active']);
         $ids = [$old->id, $new->id];
 
         $filters = new DashboardFiltersDto(sort: 'newest');
@@ -210,14 +210,44 @@ class BookRepositoryTest extends TestCase
     public function test_get_dashboard_list_by_ids_sorts_by_rating_by_default(): void
     {
         $author = Author::factory()->create();
-        $lowRated = Book::factory()->create(['average_rating' => 1.00, 'author_id' => $author->id]);
-        $highRated = Book::factory()->create(['average_rating' => 4.99, 'author_id' => $author->id]);
+        $lowRated = Book::factory()->create(['average_rating' => 1.00, 'author_id' => $author->id, 'status' => 'active']);
+        $highRated = Book::factory()->create(['average_rating' => 4.99, 'author_id' => $author->id, 'status' => 'active']);
         $ids = [$lowRated->id, $highRated->id];
 
         $filters = new DashboardFiltersDto(sort: 'rating');
         $result = $this->repository->getDashboardListByIds($ids, count($ids), $filters);
 
         $this->assertSame($highRated->id, $result->items[0]->id);
+    }
+
+    public function test_get_dashboard_list_by_ids_hides_non_active_for_customers(): void
+    {
+        $author = Author::factory()->create();
+        $active = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
+        $draft = Book::factory()->create(['author_id' => $author->id, 'status' => 'draft']);
+        $archived = Book::factory()->create(['author_id' => $author->id, 'status' => 'archived']);
+        $ids = [$active->id, $draft->id, $archived->id];
+
+        $filters = new DashboardFiltersDto;
+        $result = $this->repository->getDashboardListByIds($ids, count($ids), $filters);
+
+        $this->assertCount(1, $result->items);
+        $this->assertSame($active->id, $result->items[0]->id);
+    }
+
+    public function test_get_dashboard_list_by_ids_shows_all_statuses_for_admin(): void
+    {
+        $author = Author::factory()->create();
+        $active = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
+        $draft = Book::factory()->create(['author_id' => $author->id, 'status' => 'draft']);
+        $archived = Book::factory()->create(['author_id' => $author->id, 'status' => 'archived']);
+        $ids = [$active->id, $draft->id, $archived->id];
+
+        $filters = new DashboardFiltersDto(showNonActive: true);
+        $result = $this->repository->getDashboardListByIds($ids, count($ids), $filters);
+
+        $this->assertCount(3, $result->items);
+        $this->assertSame($ids, array_map(static fn ($item) => $item->id, $result->items));
     }
 
     public function test_get_by_id_returns_book_response_dto_when_found(): void
@@ -387,7 +417,7 @@ class BookRepositoryTest extends TestCase
 
     public function test_get_list_returns_empty_array_when_no_books(): void
     {
-        $filters = new BookFiltersDto();
+        $filters = new BookFiltersDto;
         $result = $this->repository->getList($filters);
 
         $this->assertSame([], $result);

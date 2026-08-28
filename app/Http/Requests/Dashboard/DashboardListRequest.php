@@ -37,6 +37,7 @@ final class DashboardListRequest extends FormRequest
             status: $this->filled('status') ? $this->str('status')->toString() : null,
             sort: $this->str('sort', DashboardFiltersDto::DEFAULT_SORT)->toString(),
             perPage: DashboardFiltersDto::DEFAULT_PER_PAGE,
+            showNonActive: $this->user()?->role === 'admin',
         );
     }
 }

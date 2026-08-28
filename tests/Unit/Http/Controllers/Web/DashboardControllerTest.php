@@ -8,6 +8,7 @@ use App\Dto\Dashboard\DashboardFiltersDto;
 use App\Dto\PaginatedResponseDto;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Requests\Dashboard\DashboardListRequest;
+use App\Models\User;
 use App\Repositories\Interfaces\FavoriteRepositoryInterface;
 use App\Repositories\Interfaces\GenreRepositoryInterface;
 use App\Services\Book\GetDashboardBooksService;
@@ -22,8 +23,11 @@ use Tests\TestCase;
 final class DashboardControllerTest extends TestCase
 {
     private MockInterface&GetDashboardBooksService $dashboardBooksService;
+
     private MockInterface&GenreRepositoryInterface $genreRepository;
+
     private MockInterface&FavoriteRepositoryInterface $favoriteRepository;
+
     private DashboardController $controller;
 
     protected function setUp(): void
@@ -114,6 +118,34 @@ final class DashboardControllerTest extends TestCase
             'status' => 'active',
             'sort' => 'price_asc',
         ]));
+    }
+
+    public function test_to_dto_sets_show_non_active_for_admin(): void
+    {
+        $request = $this->makeRequest();
+        $admin = new User;
+        $admin->role = 'admin';
+        $request->setUserResolver(fn () => $admin);
+
+        $this->assertTrue($request->toDto()->showNonActive);
+    }
+
+    public function test_to_dto_sets_show_non_active_false_for_customer(): void
+    {
+        $request = $this->makeRequest();
+        $customer = new User;
+        $customer->role = 'user';
+        $request->setUserResolver(fn () => $customer);
+
+        $this->assertFalse($request->toDto()->showNonActive);
+    }
+
+    public function test_to_dto_sets_show_non_active_false_for_guest(): void
+    {
+        $request = $this->makeRequest();
+        $request->setUserResolver(fn () => null);
+
+        $this->assertFalse($request->toDto()->showNonActive);
     }
 
     private function makeRequest(array $data = []): DashboardListRequest

@@ -14,8 +14,10 @@ final readonly class DashboardFiltersDto
         public ?string $status = null,
         public string $sort = self::DEFAULT_SORT,
         public int $perPage = self::DEFAULT_PER_PAGE,
+        public bool $showNonActive = false,
     ) {}
 
     public const DEFAULT_SORT = 'rating';
+
     public const DEFAULT_PER_PAGE = 18;
 }
