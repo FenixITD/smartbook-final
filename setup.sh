@@ -42,11 +42,11 @@ docker compose exec app composer install
 echo "Clearing any stale config cache..."
 docker compose exec app php artisan config:clear
 
-echo "Building frontend and starting remaining services..."
-docker compose up -d
-
 echo "Generating APP_KEY..."
 docker compose exec app php artisan key:generate
+
+echo "Building frontend and starting remaining services..."
+docker compose up -d
 
 echo "Running analytics migrations (ClickHouse)..."
 docker compose exec app php artisan clickhouse:migrate
@@ -55,8 +55,7 @@ echo "Running main DB migrations (PostgreSQL) and seeding test data..."
 docker compose exec app php artisan migrate --seed
 
 echo "Setting permissions for storage and cache folders..."
-docker compose exec app chown -R www-data:www-data storage bootstrap/cache
-docker compose exec app chmod -R 775 storage bootstrap/cache
+docker compose exec app chmod -R 777 storage bootstrap/cache
 
 echo "================================================="
 echo "DONE! The project has been successfully deployed and started."
