@@ -22,6 +22,7 @@ class OpenConversationService
         return new ConversationMessageDto(
             conversationId: $conversationId,
             messages: $messages,
+            status: $this->conversationRepository->getStatus($conversationId) ?? 'open',
         );
     }
 }

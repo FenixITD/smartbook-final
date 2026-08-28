@@ -105,8 +105,12 @@
                         ${{ number_format($book->price, 2) }}
                     </span>
 
-                    {{-- Add to cart --}}
-                    @if ($book->stock > 0)
+                    {{-- Status / Add to cart --}}
+                    @if ($book->status === 'draft' || $book->status === 'archived')
+                        <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white w-fit {{ $book->status === 'draft' ? 'bg-amber-500' : 'bg-zinc-500' }}">
+                            {{ ucfirst($book->status) }}
+                        </span>
+                    @elseif ($book->stock > 0)
                         <form action="{{ route('cart.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="book_id" value="{{ $book->id }}">
@@ -133,7 +137,7 @@
                         <p class="text-sm text-green-600 dark:text-green-400 mt-1">
                             In stock ({{ $book->stock }} available)
                         </p>
-                    @else
+                    @elseif ($book->stock === 0)
                         <button disabled
                                 class="flex items-center gap-2 bg-zinc-200 dark:bg-zinc-700 text-zinc-400 font-semibold px-6 py-2.5 rounded-xl text-sm cursor-not-allowed w-fit">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:18px;height:18px;">

@@ -106,28 +106,6 @@ final class GetActivityLogControllerTest extends TestCase
         ($this->controller)($this->makeRequest(['perPage' => 50]));
     }
 
-    public function test_passes_log_name_filter_to_repository(): void
-    {
-        $this->repository
-            ->shouldReceive('getPaginated')
-            ->once()
-            ->with(Mockery::on(fn (ActivityLogFiltersDto $dto) => $dto->logName === 'Book'))
-            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
-
-        ($this->controller)($this->makeRequest(['logName' => 'Book']));
-    }
-
-    public function test_passes_null_log_name_when_not_provided(): void
-    {
-        $this->repository
-            ->shouldReceive('getPaginated')
-            ->once()
-            ->with(Mockery::on(fn (ActivityLogFiltersDto $dto) => $dto->logName === null))
-            ->andReturn(Mockery::mock(PaginatedResponseDto::class));
-
-        ($this->controller)($this->makeRequest());
-    }
-
     public function test_passes_subject_type_class_to_repository(): void
     {
         $this->repository

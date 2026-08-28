@@ -26,6 +26,7 @@ final class OpenConversationController extends Controller
 
         return response()->json([
             'conversation_id' => $result->conversationId,
+            'status' => $result->status,
             'messages' => array_map(static fn (MessageDto $message): array => $message->toArray(),
                 $result->messages,
             ),

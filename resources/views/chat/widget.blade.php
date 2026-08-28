@@ -4,6 +4,7 @@
         open: false,
         loading: false,
         sending: false,
+        closed: false,
         messages: [],
         body: '',
         conversationId: null,
@@ -23,6 +24,7 @@
                 });
                 const data = await res.json();
                 this.conversationId = data.conversation_id;
+                this.closed = data.status === 'closed';
                 this.messages = data.messages;
                 this.scrollToBottom();
                 this.subscribeToChannel();
@@ -32,7 +34,7 @@
         },
 
         async send() {
-            if (!this.body.trim() || this.sending) return;
+            if (!this.body.trim() || this.sending || this.closed) return;
 
             this.sending = true;
             const text = this.body;
@@ -50,6 +52,12 @@
                 });
 
                 if (!res.ok) {
+                    if (res.status === 403) {
+                        this.closed = true;
+                        this.body = '';
+                        return;
+                    }
+
                     this.body = text;
                     return;
                 }
@@ -141,18 +149,27 @@
                 </template>
             </div>
 
+            <div x-show="closed" class="px-3 py-2.5 border-t border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950">
+                <p class="text-xs font-medium text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                    This conversation was closed by the administrator. You can no longer send messages here.
+                </p>
+            </div>
+
             <div class="px-3 py-3 border-t border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
                 <div class="flex gap-2">
                     <input
                         x-model="body"
-                        @keydown.enter.prevent="send()"
+                        @keydown.enter.prevent="!closed && send()"
                         placeholder="Write a message..."
-                        class="flex-1 rounded-xl border border-zinc-300 dark:border-zinc-600 px-3 py-2 text-sm dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        :disabled="sending || loading"
+                        class="flex-1 rounded-xl border border-zinc-300 dark:border-zinc-600 px-3 py-2 text-sm dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                        :disabled="sending || loading || closed"
                     />
                     <button
                         @click="send()"
-                        :disabled="!body.trim() || sending || loading"
+                        :disabled="!body.trim() || sending || loading || closed"
                         class="bg-blue-600 hover:bg-blue-700 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 text-white rounded-xl px-3 py-2 transition"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

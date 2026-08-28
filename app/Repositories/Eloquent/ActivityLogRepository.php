@@ -24,16 +24,12 @@ final readonly class ActivityLogRepository implements ActivityLogRepositoryInter
         return Cache::remember($cacheKey, 60, function () use ($filters) {
             $query = $this->clickhouse->table('activity_log')->final();
 
-            if ($filters->logName !== null) {
-                $query->where('log_name', $filters->logName);
+            if ($filters->subjectType !== null) {
+                $query->where('subject_type', $filters->subjectType);
             }
 
             if ($filters->causerId !== null) {
                 $query->where('causer_id', $filters->causerId);
-            }
-
-            if ($filters->subjectType !== null) {
-                $query->where('subject_type', $filters->subjectType);
             }
 
             if ($filters->logNames !== []) {

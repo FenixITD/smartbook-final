@@ -21,10 +21,18 @@ final class ConversationMessageDtoTest extends TestCase
             '2026-06-01T10:00:00+00:00'
         );
 
-        $dto = new ConversationMessageDto(5, [$message]);
+        $dto = new ConversationMessageDto(5, [$message], 'open');
 
         $this->assertSame(5, $dto->conversationId);
+        $this->assertSame('open', $dto->status);
         $this->assertCount(1, $dto->messages);
         $this->assertSame($message, $dto->messages[0]);
+    }
+
+    public function test_conversation_message_dto_keeps_status(): void
+    {
+        $dto = new ConversationMessageDto(5, [], 'closed');
+
+        $this->assertSame('closed', $dto->status);
     }
 }

@@ -12,6 +12,7 @@ final readonly class ConversationMessageDto
     public function __construct(
         public int $conversationId,
         public array $messages,
+        public string $status,
     ) {
     }
 }

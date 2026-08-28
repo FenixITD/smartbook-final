@@ -42,7 +42,8 @@ final class OpenConversationControllerTest extends TestCase
 
         $conversationDto = new ConversationMessageDto(
             conversationId: 42,
-            messages: [$messageDto]
+            messages: [$messageDto],
+            status: 'open',
         );
 
         $this->service
@@ -58,9 +59,11 @@ final class OpenConversationControllerTest extends TestCase
         $data = json_decode((string) $response->getContent(), true);
 
         $this->assertArrayHasKey('conversation_id', $data);
+        $this->assertArrayHasKey('status', $data);
         $this->assertArrayHasKey('messages', $data);
 
         $this->assertSame(42, $data['conversation_id']);
+        $this->assertSame('open', $data['status']);
         $this->assertCount(1, $data['messages']);
         $this->assertSame('I have a question about this book', $data['messages'][0]['body']);
     }

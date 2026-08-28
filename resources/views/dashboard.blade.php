@@ -135,11 +135,19 @@
                                         </div>
                                     @endif
 
-                                    @if ($book->status === 'active' && $book->stock > 0)
+                                    @if ($book->status === 'draft')
+                                        <span class="absolute top-2 left-2 text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full font-medium">
+                                            Draft
+                                        </span>
+                                    @elseif ($book->status === 'archived')
+                                        <span class="absolute top-2 left-2 text-xs bg-zinc-500 text-white px-2 py-0.5 rounded-full font-medium">
+                                            Archived
+                                        </span>
+                                    @elseif ($book->stock > 0)
                                         <span class="absolute top-2 left-2 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-medium">
                                             In stock
                                         </span>
-                                    @elseif ($book->stock === 0)
+                                    @else
                                         <span class="absolute top-2 left-2 text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-medium">
                                             Out of stock
                                         </span>
@@ -190,8 +198,8 @@
                                     <input type="hidden" name="book_id" value="{{ $book->id }}">
                                     <input type="hidden" name="quantity" value="1">
                                     <button type="submit"
-                                            @disabled($book->stock === 0)
-                                            title="{{ $book->stock === 0 ? 'Out of stock' : 'Add to cart' }}"
+                                            @disabled($book->status !== 'active' || $book->stock === 0)
+                                            title="{{ $book->status !== 'active' || $book->stock === 0 ? 'Out of stock' : 'Add to cart' }}"
                                             class="w-full py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600">
                                         <flux:icon name="shopping-cart" class="w-3.5 h-3.5" />
                                         Add to cart

@@ -25,18 +25,6 @@
                         </flux:select>
                     </div>
 
-                    <div class="w-48">
-                        <flux:label for="logName">Log name</flux:label>
-                        <flux:select id="logName" name="logName">
-                            <flux:select.option value="">All</flux:select.option>
-                            @foreach ($subjectTypes as $type)
-                                <flux:select.option value="{{ $type }}" :selected="request('logName') === $type">
-                                    {{ $type }}
-                                </flux:select.option>
-                            @endforeach
-                        </flux:select>
-                    </div>
-
                     <div class="w-32">
                         <flux:label for="perPage">Per page</flux:label>
                         <flux:select id="perPage" name="perPage">
@@ -50,7 +38,7 @@
 
                     <flux:button type="submit" variant="filled">Apply</flux:button>
 
-                    @if (request('subjectType') || request('logName') || request('perPage'))
+                    @if (request('subjectType') || request('perPage'))
                         <flux:button href="{{ route('activity-logs.index') }}" variant="ghost">Reset</flux:button>
                     @endif
                 </form>

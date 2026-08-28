@@ -110,23 +110,6 @@ final class ActivityLogRepositoryTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    public function test_applies_log_name_filter(): void
-    {
-        $this->expectTableCall();
-
-        $this->builder
-            ->shouldReceive('where')
-            ->once()
-            ->with('log_name', 'audit')
-            ->andReturn($this->builder);
-
-        $this->expectDefaultTerminalCalls(total: 0, rows: []);
-
-        $this->repository->getPaginated(new ActivityLogFiltersDto(logName: 'audit'));
-
-        $this->addToAssertionCount(1);
-    }
-
     public function test_applies_causer_id_filter(): void
     {
         $this->expectTableCall();
@@ -185,12 +168,6 @@ final class ActivityLogRepositoryTest extends TestCase
         $this->builder
             ->shouldReceive('where')
             ->once()
-            ->with('log_name', 'audit')
-            ->andReturn($this->builder);
-
-        $this->builder
-            ->shouldReceive('where')
-            ->once()
             ->with('causer_id', 7)
             ->andReturn($this->builder);
 
@@ -209,7 +186,6 @@ final class ActivityLogRepositoryTest extends TestCase
         $this->expectDefaultTerminalCalls(total: 0, rows: []);
 
         $this->repository->getPaginated(new ActivityLogFiltersDto(
-            logName: 'audit',
             subjectType: 'App\\Models\\Order',
             causerId: 7,
             logNames: ['audit', 'debug'],

@@ -7,7 +7,6 @@ namespace App\Http\Requests\ActivityLog;
 use App\Dto\ActivityLog\ActivityLogFiltersDto;
 use App\Models\Author;
 use App\Models\Book;
-use App\Models\CartItem;
 use App\Models\Conversation;
 use App\Models\Favorite;
 use App\Models\Genre;
@@ -28,7 +27,6 @@ final class ActivityLogFilterRequest extends FormRequest
         'Conversation' => Conversation::class,
         'Message' => Message::class,
         'Favorite' => Favorite::class,
-        'CartItem' => CartItem::class,
     ];
 
     public function authorize(): bool
@@ -41,7 +39,6 @@ final class ActivityLogFilterRequest extends FormRequest
     {
         return [
             'perPage' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'logName' => ['nullable', 'string', 'in:'.implode(',', array_keys(self::SUBJECT_TYPE_MAP))],
             'subjectType' => ['nullable', 'string', 'in:'.implode(',', array_keys(self::SUBJECT_TYPE_MAP))],
         ];
     }
@@ -53,7 +50,6 @@ final class ActivityLogFilterRequest extends FormRequest
         return new ActivityLogFiltersDto(
             page: $this->integer('page', 1),
             perPage: $this->integer('perPage', 20),
-            logName: $this->filled('logName') ? $this->string('logName')->toString() : null,
             subjectType: $subjectKey !== null ? (self::SUBJECT_TYPE_MAP[$subjectKey] ?? null) : null,
         );
     }
