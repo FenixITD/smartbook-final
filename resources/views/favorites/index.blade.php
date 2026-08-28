@@ -20,7 +20,7 @@
                     @foreach ($books->items as $book)
                         <div class="group flex flex-col rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5">
 
-                            <a href="{{ route('catalog.show', $book->id) }}" class="flex flex-col flex-1">
+                            <a href="{{ route('catalog.show', $book->slug) }}" class="flex flex-col flex-1">
 
                                 {{-- Cover --}}
                                 <div class="relative aspect-[2/3] bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
@@ -47,7 +47,7 @@
 
                                 {{-- Info --}}
                                 <div class="p-3 flex flex-col gap-1 flex-1">
-                                    <p class="text-xs text-zinc-400 dark:text-zinc-500 truncate">{{ $book->author?->name ?? '—' }}</p>
+                                    <p class="text-xs text-zinc-400 dark:text-zinc-500 truncate">{{ $book->authorName ?? '—' }}</p>
                                     <p class="text-sm font-medium text-zinc-900 dark:text-zinc-100 leading-tight line-clamp-2">{{ $book->title }}</p>
 
                                     @if ($book->averageRating > 0)

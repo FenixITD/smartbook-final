@@ -14,8 +14,7 @@ final readonly class ShowFavoritesController
 {
     public function __construct(
         private FavoriteService $favoriteService,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Request $request): View
     {
@@ -24,7 +23,7 @@ final readonly class ShowFavoritesController
 
         $books = $this->favoriteService->getBooksByUser(
             userId: $user->id,
-            filters: new FavoriteFiltersDto(perPage: 18),
+            filters: new FavoriteFiltersDto(perPage: 18, showNonActive: $user->role === 'admin'),
         );
 
         return view('favorites.index', compact('books'));

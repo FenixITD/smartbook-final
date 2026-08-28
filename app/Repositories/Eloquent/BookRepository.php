@@ -75,7 +75,7 @@ final class BookRepository implements BookRepositoryInterface
         return $this->createPaginatedResponse($items, $total, $filters->perPage, static fn (Book $book) => BookResponseDto::fromModel($book));
     }
 
-    public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto
+    public function getByIdsWithAuthor(array $ids, int $perPage, bool $showNonActive = false): PaginatedResponseDto
     {
         if ($ids === []) {
             return PaginatedResponseDto::empty($perPage);
@@ -83,6 +83,7 @@ final class BookRepository implements BookRepositoryInterface
 
         $paginator = Book::with('author')
             ->whereIn('id', $ids)
+            ->when(! $showNonActive, fn ($query) => $query->where('status', 'active'))
             ->orderByRaw($this->orderByIds($ids))
             ->paginate($perPage)
             ->withQueryString();

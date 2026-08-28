@@ -16,7 +16,9 @@ use Tests\TestCase;
 class FavoriteServiceTest extends TestCase
 {
     private FavoriteRepositoryInterface&MockInterface $favoriteRepository;
+
     private BookRepositoryInterface&MockInterface $bookRepository;
+
     private FavoriteService $service;
 
     protected function setUp(): void
@@ -43,9 +45,22 @@ class FavoriteServiceTest extends TestCase
         $paginated = new PaginatedResponseDto([], 0, 10, 1, 1);
 
         $this->favoriteRepository->expects('getBookIdsByUser')->with(2)->andReturn([5, 6]);
-        $this->bookRepository->expects('getByIdsWithAuthor')->with([5, 6], 10)->andReturn($paginated);
+        $this->bookRepository->expects('getByIdsWithAuthor')->with([5, 6], 10, false)->andReturn($paginated);
 
         $result = $this->service->getBooksByUser(2, $filters);
+
+        $this->assertSame($paginated, $result);
+    }
+
+    public function test_get_books_by_user_passes_show_non_active_flag(): void
+    {
+        $filters = new FavoriteFiltersDto(null, null, 10, showNonActive: true);
+        $paginated = new PaginatedResponseDto([], 0, 10, 1, 1);
+
+        $this->favoriteRepository->expects('getBookIdsByUser')->with(3)->andReturn([5, 6]);
+        $this->bookRepository->expects('getByIdsWithAuthor')->with([5, 6], 10, true)->andReturn($paginated);
+
+        $result = $this->service->getBooksByUser(3, $filters);
 
         $this->assertSame($paginated, $result);
     }

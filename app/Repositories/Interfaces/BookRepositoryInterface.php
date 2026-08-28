@@ -16,8 +16,7 @@ interface BookRepositoryInterface
     public function getList(BookFiltersDto $filters): array;
 
     /**
-     * @param array<int> $ids
-     *
+     * @param  array<int>  $ids
      * @return array<BookResponseDto>
      */
     public function getListByIds(array $ids, BookFiltersDto $filters): array;
@@ -28,12 +27,12 @@ interface BookRepositoryInterface
     public function getWebListByIds(array $ids, int $total, BookFiltersDto $filters): PaginatedResponseDto;
 
     /** @param array<int> $ids */
-    public function getByIdsWithAuthor(array $ids, int $perPage): PaginatedResponseDto;
+    public function getByIdsWithAuthor(array $ids, int $perPage, bool $showNonActive = false): PaginatedResponseDto;
 
     /** @param array<int> $ids */
     public function getDashboardListByIds(array $ids, int $total, DashboardFiltersDto $filters): PaginatedResponseDto;
 
-    public function getById(int $id): BookResponseDto|null;
+    public function getById(int $id): ?BookResponseDto;
 
     /** @param array<int, int> $quantitiesByBookId */
     public function getTotalByIdsAndQuantities(array $quantitiesByBookId): string;
@@ -58,7 +57,7 @@ interface BookRepositoryInterface
 
     public function create(BookDto $data): BookResponseDto;
 
-    public function update(int $id, BookDto $data): BookResponseDto|null;
+    public function update(int $id, BookDto $data): ?BookResponseDto;
 
     public function delete(int $id): bool;
 
@@ -73,7 +72,7 @@ interface BookRepositoryInterface
     public function incrementStock(int $bookId, int $quantity): bool;
 
     /**
-     * @param array<int> $ids
+     * @param  array<int>  $ids
      * @return array<int, BookResponseDto>
      */
     public function lockForUpdateByIds(array $ids): array;

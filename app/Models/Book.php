@@ -58,7 +58,7 @@ class Book extends Model
             'description' => $this->description,
             'author_id' => $this->author_id,
             'genre_ids' => $this->genres->pluck('id')->all(),
-            'price' => $this->price,
+            'price' => (float) $this->price,
             'stock' => $this->stock,
             'publish_year' => (int) $this->publish_year,
             'cover_image' => $this->cover_image,

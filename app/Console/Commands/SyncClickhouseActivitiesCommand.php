@@ -285,7 +285,7 @@ final class SyncClickhouseActivitiesCommand extends Command
     private function trimStream(): void
     {
         try {
-            Redis::xtrim(self::STREAM, 'MAXLEN', false, false, $this->getStreamMaxLen());
+            Redis::xtrim(self::STREAM, (string) $this->getStreamMaxLen(), false);
         } catch (Throwable) {
             // best-effort, non-critical
         }
@@ -302,7 +302,7 @@ final class SyncClickhouseActivitiesCommand extends Command
     {
         $value = config('database.redis.client');
 
-        return is_string($value) && str_contains($value, 'predis');
+        return $value === 'predis';
     }
 
     /**

@@ -168,6 +168,34 @@ class BookRepositoryTest extends TestCase
         }
     }
 
+    public function test_get_by_ids_with_author_hides_non_active_by_default(): void
+    {
+        $author = Author::factory()->create();
+        $active = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
+        $draft = Book::factory()->create(['author_id' => $author->id, 'status' => 'draft']);
+        $archived = Book::factory()->create(['author_id' => $author->id, 'status' => 'archived']);
+        $ids = [$active->id, $draft->id, $archived->id];
+
+        $result = $this->repository->getByIdsWithAuthor($ids, 15);
+
+        $this->assertSame(1, $result->total);
+        $this->assertSame($active->id, $result->items[0]->id);
+    }
+
+    public function test_get_by_ids_with_author_shows_all_statuses_when_enabled(): void
+    {
+        $author = Author::factory()->create();
+        $active = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
+        $draft = Book::factory()->create(['author_id' => $author->id, 'status' => 'draft']);
+        $archived = Book::factory()->create(['author_id' => $author->id, 'status' => 'archived']);
+        $ids = [$active->id, $draft->id, $archived->id];
+
+        $result = $this->repository->getByIdsWithAuthor($ids, 15, true);
+
+        $this->assertSame(3, $result->total);
+        $this->assertSame($ids, array_map(static fn ($item) => $item->id, $result->items));
+    }
+
     public function test_get_dashboard_list_by_ids_sorts_by_price_asc(): void
     {
         $author = Author::factory()->create();

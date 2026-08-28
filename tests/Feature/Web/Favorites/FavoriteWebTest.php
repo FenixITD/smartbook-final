@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Feature\Web\Favorites;
 
@@ -31,13 +33,55 @@ final class FavoriteWebTest extends TestCase
     public function test_authenticated_user_can_view_favorites(): void
     {
         $user = User::factory()->create();
-        $author = Author::factory()->create();
+        $author = Author::factory()->create(['name' => 'J.R.R. Tolkien']);
         $book = Book::factory()->create(['author_id' => $author->id]);
 
         Favorite::insert(['user_id' => $user->id, 'book_id' => $book->id, 'created_at' => now(), 'updated_at' => now()]);
 
         $response = $this->actingAs($user)->get('/favorites');
         $response->assertStatus(200)->assertViewIs('favorites.index');
+
+        $response->assertSee('J.R.R. Tolkien');
+        $response->assertSee(route('catalog.show', $book->slug));
+        $response->assertDontSee(route('catalog.show', $book->id));
+    }
+
+    public function test_customer_favorites_hide_non_active_books(): void
+    {
+        $user = User::factory()->create(['role' => 'user']);
+        $author = Author::factory()->create();
+        $active = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
+        $archived = Book::factory()->create(['author_id' => $author->id, 'status' => 'archived']);
+
+        Favorite::insert([
+            ['user_id' => $user->id, 'book_id' => $active->id, 'created_at' => now(), 'updated_at' => now()],
+            ['user_id' => $user->id, 'book_id' => $archived->id, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        $response = $this->actingAs($user)->get('/favorites');
+
+        $bookIds = collect($response->viewData('books')->items)->pluck('id')->all();
+        $this->assertSame([$active->id], $bookIds);
+        $response->assertDontSee(route('catalog.show', $archived->slug));
+    }
+
+    public function test_admin_favorites_show_all_statuses(): void
+    {
+        $user = User::factory()->create(['role' => 'admin']);
+        $author = Author::factory()->create();
+        $active = Book::factory()->create(['author_id' => $author->id, 'status' => 'active']);
+        $draft = Book::factory()->create(['author_id' => $author->id, 'status' => 'draft']);
+
+        Favorite::insert([
+            ['user_id' => $user->id, 'book_id' => $active->id, 'created_at' => now(), 'updated_at' => now()],
+            ['user_id' => $user->id, 'book_id' => $draft->id, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        $response = $this->actingAs($user)->get('/favorites');
+
+        $bookIds = collect($response->viewData('books')->items)->pluck('id')->all();
+        $this->assertSame([$active->id, $draft->id], $bookIds);
+        $response->assertSee(route('catalog.show', $draft->slug));
     }
 
     public function test_authenticated_user_can_toggle_favorite_on(): void

@@ -14,10 +14,9 @@ class FavoriteService
     public function __construct(
         private FavoriteRepositoryInterface $favoriteRepository,
         private BookRepositoryInterface $bookRepository,
-    ) {
-    }
+    ) {}
 
-    public function getBooksByUser(int $userId, FavoriteFiltersDto $filters): PaginatedResponseDto|null
+    public function getBooksByUser(int $userId, FavoriteFiltersDto $filters): ?PaginatedResponseDto
     {
         $favoriteBookIds = $this->favoriteRepository->getBookIdsByUser($userId);
 
@@ -25,6 +24,6 @@ class FavoriteService
             return null;
         }
 
-        return $this->bookRepository->getByIdsWithAuthor($favoriteBookIds, $filters->perPage);
+        return $this->bookRepository->getByIdsWithAuthor($favoriteBookIds, $filters->perPage, $filters->showNonActive);
     }
 }

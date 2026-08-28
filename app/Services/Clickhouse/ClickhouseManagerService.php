@@ -53,24 +53,23 @@ class ClickhouseManagerService
         if ($columns === []) {
             return;
         }
-        $quoted = '`' . implode('`,`', $columns) . '`';
+        $quoted = '`'.implode('`,`', $columns).'`';
 
-        $sql = 'INSERT INTO `' . $table . '` (' . $quoted . ') VALUES ';
+        $sql = 'INSERT INTO `'.$table.'` ('.$quoted.') VALUES ';
 
         foreach ($rows as $row) {
-            $sql .= '(' . FormatLine::Insert(array_values($row)) . '), ';
+            $sql .= '('.FormatLine::Insert(array_values($row)).'), ';
         }
 
         $sql = rtrim($sql, ', ');
 
         $this->client->transport()->write($sql, [], true, [
             'insert_deduplicate' => 1,
-            'insert_deduplicate_insert_timeout' => 600,
         ]);
     }
 
     /**
-     * @param array<string, mixed> $bindings
+     * @param  array<string, mixed>  $bindings
      * @return array<int, array<string, mixed>>
      */
     public function select(string $sql, array $bindings = []): array
